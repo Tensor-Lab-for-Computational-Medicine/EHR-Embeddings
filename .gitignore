@@ -65,16 +65,21 @@ ENV/
 env.bak/
 venv.bak/
 
-# Project specific
-embeddings_cache/
-models/
+# Project specific - Cache and temporary files
+cache/
 *.joblib
 *.pkl
-*.h5
-*.hdf5
+
+# Project specific - Large data files
+data/raw/*.h5
+data/raw/*.hdf5
+data/processed/
+outputs/models/
+outputs/figures/*.png
+outputs/figures/*.jpg
+outputs/figures/*.pdf
 
 # Data files (may contain sensitive information)
-data/
 *.csv
 *.json
 *.xlsx

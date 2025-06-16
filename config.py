@@ -20,9 +20,9 @@ class Config:
     MAX_RETRIES = int(os.getenv("MAX_RETRIES", "3"))
     
     # Data Paths
-    EHR_DATA_PATH = os.getenv("EHR_DATA_PATH", "data/ehr_data.csv")
-    EMBEDDINGS_CACHE_DIR = Path(os.getenv("EMBEDDINGS_CACHE_DIR", "embeddings_cache/"))
-    MODEL_OUTPUT_DIR = Path(os.getenv("MODEL_OUTPUT_DIR", "models/"))
+    EHR_DATA_PATH = os.getenv("EHR_DATA_PATH", "data/processed/ehr_data.csv")
+    EMBEDDINGS_CACHE_DIR = Path(os.getenv("EMBEDDINGS_CACHE_DIR", "cache/"))
+    MODEL_OUTPUT_DIR = Path(os.getenv("MODEL_OUTPUT_DIR", "outputs/models/"))
     
     # Logging
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")

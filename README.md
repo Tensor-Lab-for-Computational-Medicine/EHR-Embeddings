@@ -96,21 +96,39 @@ jupyter notebook notebook_example.ipynb
 
 ```
 ehr_embeddings/
-├── src/
+├── src/                   # Source code
 │   ├── __init__.py
 │   ├── embeddings.py      # Gemini API integration
-│   └── ml_pipeline.py     # ML pipeline and models
+│   ├── ml_pipeline.py     # ML pipeline and models
+│   └── README.md          # Source documentation
+├── data/                  # Data storage
+│   ├── raw/               # Raw, unprocessed data
+│   │   ├── all_hourly_data.h5  # Main EHR dataset (7.2GB)
+│   │   └── mimic_legacy.txt    # Legacy MIMIC data
+│   ├── processed/         # Processed data files
+│   └── README.md          # Data documentation
+├── notebooks/             # Jupyter notebooks
+│   ├── h5_first_5_rows.ipynb   # Data exploration
+│   ├── example_usage.ipynb     # Usage examples
+│   └── README.md               # Notebook documentation
+├── outputs/               # Generated outputs
+│   ├── figures/           # Plots and visualizations
+│   ├── models/            # Trained ML models
+│   ├── reports/           # Analysis reports
+│   └── README.md          # Output documentation
+├── docs/                  # Project documentation
+│   └── EHR Embeddings Analysis Plan.md
+├── cache/                 # Cached embeddings
+│   ├── *.pkl              # Cached embedding files
+│   └── README.md          # Cache documentation
+├── logs/                  # Log files
 ├── config.py              # Configuration management
 ├── requirements.txt       # Python dependencies
 ├── setup.py              # Setup script
 ├── example_usage.py      # Complete usage example
-├── notebook_example.ipynb # Jupyter tutorial
 ├── README.md             # This file
-├── .env                  # Environment variables (create from template)
-├── data/                 # EHR data storage
-├── embeddings_cache/     # Embedding cache
-├── models/               # Trained models
-└── logs/                 # Log files
+├── .gitignore            # Git ignore rules
+└── __pycache__/          # Python cache files
 ```
 
 ## 🧩 Core Components
