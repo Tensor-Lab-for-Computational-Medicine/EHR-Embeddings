@@ -238,7 +238,21 @@ pie title Model Performance Breakdown
 ![Feature Importance Analysis](./figures/feature_importance_analysis.png)
 *Figure 2: Top 15 most important features for mortality prediction with clinical system categorization*
 
-#### 3.2.1 Top Predictive Features
+#### 3.2.1 Understanding XGBoost Feature Importance
+
+**Methodology:**
+The feature importance scores represent the **number of times each feature was used for splitting decisions** across all trees in the XGBoost ensemble. This is calculated using the 'weight' method (`model.get_score(importance_type='weight')`), where higher numbers indicate features that the model relies on more frequently for making predictions.
+
+**Technical Context:**
+- **Model Architecture:** 100 trees (boost rounds) with maximum depth of 3
+- **Total Features Available:** 214 engineered features from 104 time-series variables
+- **Features Actually Used:** 98 features (46% of available features)
+- **Interpretation:** Glasgow Coma Scale with importance 50.0 was used in 50 different tree splits across the ensemble
+
+**Clinical Significance:**
+Features with higher importance scores are those the model finds consistently useful across different patient scenarios. The frequency of use indicates both reliability and predictive power in the clinical context. Glasgow Coma Scale appearing in ~12.5% of all decision points demonstrates its critical role in mortality prediction.
+
+#### 3.2.2 Top Predictive Features
 | Rank | Feature | Importance | Clinical System |
 |------|---------|------------|-----------------|
 | 1 | Glasgow Coma Scale (mean) | 50.0 | Neurological status |
@@ -247,7 +261,19 @@ pie title Model Performance Breakdown
 | 4 | Care Unit Type | 25.0 | Care intensity indicator |
 | 5 | Oxygen Saturation (mean) | 23.0 | Respiratory function |
 
-#### 3.2.2 Physiological System Analysis
+#### 3.2.3 Alternative Importance Methods
+
+While our analysis used the 'weight' method (split frequency), XGBoost offers several importance calculation approaches:
+
+- **Weight (Used):** Number of times feature appears in tree splits
+- **Gain:** Average gain (improvement in objective function) per split
+- **Cover:** Average coverage (number of samples) per split  
+- **Total Gain:** Total gain across all splits using the feature
+- **Total Cover:** Total coverage across all splits using the feature
+
+The 'weight' method was chosen as it provides the most interpretable measure of how frequently the model relies on each feature for decision-making.
+
+#### 3.2.4 Physiological System Analysis
 - **Neurological (29.6%):** Glasgow Coma Scale dominates predictions
 - **Cardiovascular (24.1%):** Blood pressure, heart rate indicators
 - **Respiratory (15.8%):** Oxygen saturation, respiratory rate

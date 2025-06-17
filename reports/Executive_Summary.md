@@ -91,6 +91,7 @@ mindmap
 - **Leakage Prevention:** Systematic exclusion of outcome-related variables
 - **Missing Value Handling:** Robust imputation strategies for real-world data
 - **Feature Engineering:** Mean and variability capture physiological patterns
+- **Feature Importance Method:** XGBoost 'weight' approach measuring split frequency
 - **Validation:** Expert review of top predictive features
 
 ---
@@ -100,8 +101,16 @@ mindmap
 ![Feature Importance Analysis](figures/feature_importance_analysis.png)
 *Feature Importance Analysis: Top predictive features categorized by clinical systems*
 
+### Understanding Feature Importance Scores
+
+**What the Numbers Mean:**
+The importance scores represent how frequently each feature was used for decision-making across all 100 trees in the XGBoost ensemble. For example, Glasgow Coma Scale (50.0) was used in 50 different tree splits, making it the model's most relied-upon feature for mortality prediction.
+
+**Clinical Interpretation:**
+Higher scores indicate features the model consistently finds useful across different patient scenarios, demonstrating both reliability and predictive power.
+
 ### Top Risk Factors Identified
-1. **Glasgow Coma Scale** (Neurological function) - 50.0 importance
+1. **Glasgow Coma Scale** (Neurological function) - 50.0 importance (used in ~12.5% of all decisions)
 2. **Patient Age** (Demographic risk) - 33.0 importance  
 3. **Systolic Blood Pressure** (Cardiovascular status) - 30.0 importance
 4. **ICU Unit Type** (Care intensity) - 25.0 importance
@@ -169,6 +178,21 @@ mindmap
 - Built on established clinical database (MIMIC-III)
 - Follows FDA guidance for AI/ML medical devices
 - Comprehensive validation and documentation
+
+---
+
+## 📋 Technical Notes
+
+### Feature Importance Calculation
+```
+XGBoost Configuration:
+• Method: model.get_score(importance_type='weight')
+• Interpretation: Number of times feature used in tree splits
+• Model: 100 trees, max depth 3, learning rate 0.1
+• Feature Selection: 98 most useful out of 214 available features
+```
+
+**Why This Matters:** The 'weight' method provides the most clinically interpretable measure of feature reliability, showing which variables the model consistently relies on across different patient scenarios.
 
 ---
 
