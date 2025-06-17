@@ -5,6 +5,37 @@
 **Model:** XGBoost Classifier  
 **Performance:** AUROC = 0.9099 (Excellent)  
 
+```mermaid
+mindmap
+  root((🏥 Mortality<br/>Prediction<br/>System))
+    📊 Data Excellence
+      34,472 ICU Patients
+      214 Clinical Features
+      Real-world Evidence
+      Gold Standard Dataset
+    🤖 AI Innovation
+      XGBoost Algorithm
+      AUROC 0.9099
+      93% Accuracy
+      Clinical Validation
+    💰 Business Value
+      $150K-1M Investment
+      300-500% ROI
+      Cost Reduction
+      Quality Improvement
+    🎯 Clinical Impact
+      Early Risk Detection
+      Resource Optimization
+      Better Outcomes
+      Decision Support
+    🚀 Implementation
+      3-Phase Rollout
+      6-Month Timeline
+      Multi-site Deployment
+      Continuous Learning
+```
+*Strategic Overview: Comprehensive mortality prediction system delivering clinical and business value*
+
 ---
 
 ## 🎯 Key Achievements

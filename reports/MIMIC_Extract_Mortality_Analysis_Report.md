@@ -8,6 +8,38 @@
 
 ## Executive Summary
 
+```mermaid
+graph TD
+    A["🏥 MIMIC-Extract Mortality Prediction Analysis"] --> B["📊 Dataset"]
+    A --> C["🤖 Model"]
+    A --> D["🎯 Performance"]
+    A --> E["💡 Clinical Impact"]
+    
+    B --> B1["34,472 ICU Patients<br/>826 Deaths (2.4%)<br/>214 Features<br/>First 24 Hours"]
+    
+    C --> C1["XGBoost Algorithm<br/>98 Features Used<br/>Train/Test Split 75/25<br/>Hyperparameter Tuned"]
+    
+    D --> D1["AUROC: 0.9099<br/>Accuracy: 93.0%<br/>Specificity: 99.2%<br/>Sensitivity: 34.4%"]
+    
+    E --> E1["Low False Alarms (0.8%)<br/>High Precision (82.3%)<br/>Early Risk Detection<br/>Resource Optimization"]
+    
+    B1 --> F["🌟 Key Findings"]
+    C1 --> F
+    D1 --> F
+    E1 --> F
+    
+    F --> F1["Top Predictor:<br/>Glasgow Coma Scale"]
+    F --> F2["Age & Vital Signs<br/>Highly Predictive"]
+    F --> F3["Ready for Clinical<br/>Validation Studies"]
+    
+    style A fill:#e3f2fd
+    style F fill:#e8f5e8
+    style F1 fill:#ffcdd2
+    style F2 fill:#fff3e0
+    style F3 fill:#e8f5e8
+```
+*Analysis Overview: Key components and findings of the MIMIC-Extract mortality prediction study*
+
 This report presents a comprehensive analysis of in-hospital mortality prediction using the MIMIC-Extract dataset. We developed and evaluated an XGBoost-based machine learning model to predict patient mortality risk using clinical data from the first 24 hours of ICU stay. The model achieved excellent discriminative performance with an AUROC of 0.9099, demonstrating strong potential for clinical decision support.
 
 **Key Findings:**
