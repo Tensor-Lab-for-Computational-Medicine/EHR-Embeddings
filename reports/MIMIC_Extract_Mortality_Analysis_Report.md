@@ -198,7 +198,7 @@ We evaluated model performance using multiple complementary metrics:
 
 ### 3.1 Model Performance
 
-![Model Performance Dashboard](figures/model_performance_dashboard.png)
+![Model Performance Dashboard](./figures/model_performance_dashboard.png)
 *Figure 1: Comprehensive model performance evaluation including ROC curve, confusion matrix, precision-recall curve, and metrics summary*
 
 #### 3.1.1 Primary Performance Metrics
@@ -235,7 +235,7 @@ pie title Model Performance Breakdown
 
 ### 3.2 Feature Importance Analysis
 
-![Feature Importance Analysis](figures/feature_importance_analysis.png)
+![Feature Importance Analysis](./figures/feature_importance_analysis.png)
 *Figure 2: Top 15 most important features for mortality prediction with clinical system categorization*
 
 #### 3.2.1 Top Predictive Features
@@ -256,7 +256,7 @@ pie title Model Performance Breakdown
 
 ### 3.3 Clinical Insights
 
-![Clinical Insights](figures/clinical_insights.png)
+![Clinical Insights](./figures/clinical_insights.png)
 *Figure 3: Clinical insights including risk distributions, age relationships, Glasgow Coma Scale impact, and ICU unit mortality rates*
 
 #### 3.3.1 Risk Stratification Patterns
@@ -341,7 +341,7 @@ The high performance may indicate excellent feature engineering or potential dat
 
 ## 5. Implementation Considerations
 
-![Implementation Timeline](figures/implementation_timeline.png)
+![Implementation Timeline](./figures/implementation_timeline.png)
 *Figure 4: Three-phase implementation roadmap with risk-benefit analysis for clinical deployment*
 
 ### 5.1 Clinical Deployment
