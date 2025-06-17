@@ -9,6 +9,9 @@
 
 ## 🎯 Key Achievements
 
+![Model Performance Dashboard](figures/model_performance_dashboard.png)
+*Model Performance Dashboard: ROC curve (AUROC=0.9099), confusion matrix, precision-recall curve, and comprehensive metrics*
+
 ### Exceptional Model Performance
 - **AUROC: 0.9099** - Excellent discriminative ability, surpassing most published benchmarks
 - **93.0% Accuracy** - High overall correctness in mortality predictions
@@ -63,6 +66,9 @@
 
 ## 🏥 Clinical Insights
 
+![Feature Importance Analysis](figures/feature_importance_analysis.png)
+*Feature Importance Analysis: Top predictive features categorized by clinical systems*
+
 ### Top Risk Factors Identified
 1. **Glasgow Coma Scale** (Neurological function) - 50.0 importance
 2. **Patient Age** (Demographic risk) - 33.0 importance  
@@ -78,6 +84,9 @@
 ---
 
 ## 🚀 Implementation Roadmap
+
+![Implementation Timeline](figures/implementation_timeline.png)
+*Implementation Timeline: Three-phase deployment strategy with risk-benefit analysis*
 
 ### Phase 1: Validation & Preparation (0-6 months)
 - **External Validation:** Test on independent hospital datasets

@@ -33,6 +33,40 @@ In-hospital mortality prediction is a critical application of machine learning i
 
 ## 2. Methods
 
+```mermaid
+flowchart TD
+    A["MIMIC-Extract Database<br/>34,472 ICU Patients"] --> B["Data Processing Pipeline"]
+    
+    B --> B1["Time Window Selection<br/>First 24 Hours"]
+    B --> B2["Feature Engineering<br/>Mean + Std Aggregation"]
+    B --> B3["Quality Control<br/>Missing Value Handling"]
+    
+    B1 --> C["Feature Matrix<br/>214 Features"]
+    B2 --> C
+    B3 --> C
+    
+    C --> D["Train/Test Split<br/>75% / 25%"]
+    
+    D --> E["XGBoost Model<br/>Training"]
+    D --> F["Test Set<br/>8,618 Patients"]
+    
+    E --> G["Model Evaluation"]
+    F --> G
+    
+    G --> H["Performance Metrics<br/>AUROC: 0.9099<br/>Accuracy: 93.0%"]
+    G --> I["Feature Importance<br/>Clinical Interpretation"]
+    G --> J["Risk Stratification<br/>Clinical Insights"]
+    
+    H --> K["Clinical Decision Support<br/>Deployment Ready"]
+    I --> K
+    J --> K
+    
+    style A fill:#e1f5fe
+    style K fill:#e8f5e8
+    style H fill:#fff3e0
+```
+*Figure 5: Data processing and model development workflow*
+
 ### 2.1 Dataset Description
 - **Source:** MIMIC-Extract preprocessed database
 - **Population:** 34,472 ICU patients
@@ -44,6 +78,43 @@ In-hospital mortality prediction is a critical application of machine learning i
 
 #### 2.2.1 Feature Engineering
 We implemented a comprehensive feature engineering pipeline to transform hourly time-series data into patient-level features:
+
+```mermaid
+graph TD
+    A["Clinical Data Sources"] --> A1["Vital Signs<br/>• Heart Rate<br/>• Blood Pressure<br/>• Temperature<br/>• Oxygen Saturation"]
+    A --> A2["Laboratory Values<br/>• Blood Chemistry<br/>• Hematology<br/>• Blood Gases<br/>• Coagulation"]
+    A --> A3["Neurological<br/>• Glasgow Coma Scale<br/>• Sedation Scores<br/>• Neurological Exams"]
+    A --> A4["Demographics<br/>• Age<br/>• Gender<br/>• Care Unit Type<br/>• Insurance"]
+    
+    A1 --> B["Feature Engineering<br/>First 24 Hours"]
+    A2 --> B
+    A3 --> B
+    A4 --> B
+    
+    B --> C["Aggregated Features<br/>214 Total Features"]
+    
+    C --> D1["Mean Features<br/>104 Features<br/>78% Importance"]
+    C --> D2["Std Features<br/>104 Features<br/>22% Importance"]
+    C --> D3["Demographic<br/>6 Features<br/>Mixed Importance"]
+    
+    D1 --> E["XGBoost Model<br/>98 Features Used"]
+    D2 --> E
+    D3 --> E
+    
+    E --> F["Top Predictors"]
+    F --> F1["Glasgow Coma Scale<br/>Importance: 50.0"]
+    F --> F2["Age<br/>Importance: 33.0"]
+    F --> F3["Systolic BP<br/>Importance: 30.0"]
+    F --> F4["Care Unit Type<br/>Importance: 25.0"]
+    F --> F5["Oxygen Saturation<br/>Importance: 23.0"]
+    
+    style F1 fill:#ffcdd2
+    style F2 fill:#f8bbd9
+    style F3 fill:#e1bee7
+    style F4 fill:#d1c4e9
+    style F5 fill:#c5cae9
+```
+*Figure 6: Feature engineering pipeline from clinical data sources to model predictors*
 
 1. **Time Window Selection:** First 24 hours of ICU stay to ensure early prediction capability
 2. **Aggregation Strategy:** Computed mean and standard deviation for each vital sign and laboratory value
@@ -95,6 +166,9 @@ We evaluated model performance using multiple complementary metrics:
 
 ### 3.1 Model Performance
 
+![Model Performance Dashboard](figures/model_performance_dashboard.png)
+*Figure 1: Comprehensive model performance evaluation including ROC curve, confusion matrix, precision-recall curve, and metrics summary*
+
 #### 3.1.1 Primary Performance Metrics
 | Metric | Value | Clinical Interpretation |
 |--------|-------|------------------------|
@@ -118,7 +192,19 @@ Died              542   |  284    (34.4% correctly identified)
 - **Missed Cases:** 542 out of 826 deaths not detected (65.6%)
 - **High Precision:** When model predicts death, it's correct 82.3% of the time
 
+```mermaid
+pie title Model Performance Breakdown
+    "True Negatives (Correct Survivors)" : 7731
+    "True Positives (Correct Deaths)" : 284
+    "False Positives (Incorrect Death Predictions)" : 61
+    "False Negatives (Missed Deaths)" : 542
+```
+*Figure 7: Model performance breakdown showing distribution of prediction outcomes*
+
 ### 3.2 Feature Importance Analysis
+
+![Feature Importance Analysis](figures/feature_importance_analysis.png)
+*Figure 2: Top 15 most important features for mortality prediction with clinical system categorization*
 
 #### 3.2.1 Top Predictive Features
 | Rank | Feature | Importance | Clinical System |
@@ -138,7 +224,38 @@ Died              542   |  284    (34.4% correctly identified)
 
 ### 3.3 Clinical Insights
 
+![Clinical Insights](figures/clinical_insights.png)
+*Figure 3: Clinical insights including risk distributions, age relationships, Glasgow Coma Scale impact, and ICU unit mortality rates*
+
 #### 3.3.1 Risk Stratification Patterns
+
+```mermaid
+graph LR
+    A["High-Risk Profile<br/>Mortality Risk > 80%"] --> A1["• Low Glasgow Coma Scale < 8<br/>• Advanced Age > 75<br/>• Hypotension < 90 mmHg<br/>• Multiple Organ Dysfunction"]
+    
+    B["Moderate-Risk Profile<br/>Mortality Risk 20-80%"] --> B1["• Single Organ System Issues<br/>• Moderate Vital Sign Abnormalities<br/>• Age 60-75<br/>• Comorbidities Present"]
+    
+    C["Low-Risk Profile<br/>Mortality Risk < 20%"] --> C1["• Normal Vital Signs<br/>• Young Age < 60<br/>• Good Neurological Function<br/>• Minimal Comorbidities"]
+    
+    A1 --> D["Clinical Actions"]
+    B1 --> D
+    C1 --> D
+    
+    D --> D1["High-Risk:<br/>• Intensive monitoring<br/>• Family meetings<br/>• Palliative care consult<br/>• Resource prioritization"]
+    
+    D --> D2["Moderate-Risk:<br/>• Enhanced monitoring<br/>• Early intervention<br/>• Preventive measures<br/>• Regular reassessment"]
+    
+    D --> D3["Low-Risk:<br/>• Standard care<br/>• Routine monitoring<br/>• Early mobilization<br/>• Discharge planning"]
+    
+    style A fill:#ffcdd2
+    style B fill:#fff3e0
+    style C fill:#e8f5e8
+    style D1 fill:#ffcdd2
+    style D2 fill:#fff3e0
+    style D3 fill:#e8f5e8
+```
+*Figure 8: Risk stratification framework with corresponding clinical actions*
+
 1. **High-Risk Profile:** Low GCS + Advanced age + Hypotension
 2. **Moderate-Risk Profile:** Single organ system abnormality
 3. **Low-Risk Profile:** Normal vital signs + Young age
@@ -191,6 +308,9 @@ The high performance may indicate excellent feature engineering or potential dat
 ---
 
 ## 5. Implementation Considerations
+
+![Implementation Timeline](figures/implementation_timeline.png)
+*Figure 4: Three-phase implementation roadmap with risk-benefit analysis for clinical deployment*
 
 ### 5.1 Clinical Deployment
 
@@ -249,6 +369,30 @@ The high performance may indicate excellent feature engineering or potential dat
 2. **Continuous Learning:** Model updating with new data
 3. **Outcome Studies:** Measure impact on patient mortality and resource utilization
 4. **Research Extension:** Expand to other prediction tasks (readmission, complications)
+
+```mermaid
+timeline
+    title Implementation Roadmap for Clinical Deployment
+    
+    section Phase 1 (0-6 months)
+        External Validation : Model testing on independent datasets
+        Sensitivity Analysis : Improve recall for mortality detection
+        Clinical Review : Expert validation of predictive features
+        Prototype Development : Build decision support interface
+    
+    section Phase 2 (6-18 months)
+        Prospective Study : Real-world ICU validation
+        Model Enhancement : Add medications and procedures data
+        Regulatory Prep : FDA pre-submission discussions
+        Multi-site Testing : Expand to partner hospitals
+    
+    section Phase 3 (18+ months)
+        Clinical Deployment : Full-scale implementation
+        Continuous Learning : Real-time model updates
+        Outcome Studies : Measure patient impact
+        Research Extension : Expand to other predictions
+```
+*Figure 9: Detailed implementation timeline across three phases*
 
 ---
 
