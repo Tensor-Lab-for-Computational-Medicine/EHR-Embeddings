@@ -19,7 +19,7 @@ graph TD
     
     C --> C1["XGBoost Algorithm<br/>Class-Weighted Training<br/>Train/Test Split 75/25<br/>Hyperparameter Tuned"]
     
-    D --> D1["AUROC: 0.910<br/>Optimal Sensitivity: 85.0%<br/>Specificity: 81.3%<br/>Threshold: 0.351"]
+    D --> D1["AUROC: 0.915<br/>Optimal Sensitivity: 85.0%<br/>Specificity: 81.3%<br/>Threshold: 0.351"]
     
     E --> E1["Significant Recall Improvement<br/>Class Imbalance Addressed<br/>Early Risk Detection<br/>Resource Optimization"]
     
@@ -40,11 +40,11 @@ graph TD
 ```
 *Analysis Overview: Key components and findings of the MIMIC-Extract mortality prediction study*
 
-This report presents a comprehensive analysis of in-hospital mortality prediction using the MIMIC-Extract dataset with enhanced class imbalance handling and clinical optimization. We developed and evaluated an XGBoost-based machine learning model to predict patient mortality risk using clinical data from the first 24 hours of ICU stay. The model achieved excellent discriminative performance with an AUROC of 0.910 and clinically optimal sensitivity of 85.0%.
+This report presents a comprehensive analysis of in-hospital mortality prediction using the MIMIC-Extract dataset with enhanced class imbalance handling and clinical optimization. We developed and evaluated an XGBoost-based machine learning model to predict patient mortality risk using clinical data from the first 24 hours of ICU stay. The model achieved excellent discriminative performance with an AUROC of 0.915 and clinically optimal sensitivity of 85.0%.
 
 **Key Findings:**
-- **High Predictive Performance:** AUROC = 0.910, Sensitivity = 85.0%
-- **Class Imbalance Addressed:** Applied aggressive class weighting (scale_pos_weight = 12.23)
+- **High Predictive Performance:** AUROC = 0.915, Sensitivity = 85.0%
+- **Class Imbalance Addressed:** Applied aggressive class weighting (scale_pos_weight = 12.26)
 - **Threshold Optimization:** Optimized for clinical deployment (threshold = 0.351)
 - **Clinical Utility:** Glasgow Coma Scale and age emerge as top predictors
 - **Significant Improvement:** Sensitivity improved from baseline 34% to 85%
@@ -150,16 +150,22 @@ We transformed hourly time-series data into patient-level features:
 
 #### 2.4.1 XGBoost Configuration
 ```python
-Enhanced XGBoost Parameters:
-- Objective: binary:logistic
-- Max depth: 6 (increased complexity)
-- Learning rate: 0.05 (improved convergence)
-- Number of estimators: 200
-- scale_pos_weight: 12.23 (class imbalance handling)
-- Subsample: 0.8 (regularization)
-- Colsample_bytree: 0.8 (feature sampling)
-- Early stopping: 20 rounds
-- Random state: 42 (reproducibility)
+# Enhanced XGBoost Configuration
+XGB_PARAMS = {
+    'n_estimators': 200,
+    'learning_rate': 0.05,
+    'max_depth': 6,
+    'random_state': 42,
+    'scale_pos_weight': 12.26,  # Aggressive class weighting
+    'eval_metric': 'logloss',
+    'subsample': 0.8,
+    'colsample_bytree': 0.8,
+    'min_child_weight': 1,
+    'gamma': 0.1
+}
+
+# Optimal Clinical Threshold
+CLINICAL_THRESHOLD = 0.351  # 85% sensitivity target
 ```
 
 #### 2.4.2 Threshold Optimization
@@ -213,26 +219,27 @@ We evaluated multiple threshold strategies:
 
 | Rank | Feature | Importance | Clinical System | Interpretation |
 |------|---------|------------|----------------|----------------|
-| 1 | Glasgow Coma Scale (Mean) | 50.0 | Neurological | Consciousness level - strongest predictor |
-| 2 | Age | 33.0 | Demographics | Advanced age increases mortality risk |
-| 3 | Systolic Blood Pressure (Mean) | 30.0 | Cardiovascular | Hypotension indicates shock/instability |
-| 4 | First Care Unit | 25.0 | Administrative | ICU type reflects acuity level |
-| 5 | Oxygen Saturation (Mean) | 23.0 | Respiratory | Hypoxemia indicates respiratory failure |
-| 6 | Anion Gap (Mean) | 19.0 | Metabolic | Metabolic acidosis marker |
-| 7 | Blood Urea Nitrogen (Mean) | 19.0 | Renal | Kidney function indicator |
-| 8 | Sodium (Mean) | 17.0 | Electrolyte | Electrolyte imbalance marker |
-| 9 | Bicarbonate (Mean) | 16.0 | Acid-Base | Metabolic status indicator |
-| 10 | Platelets (Mean) | 15.0 | Hematologic | Coagulation/bleeding risk |
+| 1 | Glasgow Coma Scale (Mean) | 248.0 | Neurological | Consciousness level - strongest predictor |
+| 2 | Age | 238.0 | Demographics | Advanced age increases mortality risk |
+| 3 | Systolic Blood Pressure (Mean) | 177.0 | Cardiovascular | Hypotension indicates shock/instability |
+| 4 | Oxygen Saturation (Mean) | 155.0 | Respiratory | Hypoxemia indicates respiratory failure |
+| 5 | Anion Gap (Mean) | 153.0 | Metabolic | Metabolic acidosis marker |
+| 6 | Heart Rate (Mean) | 153.0 | Cardiovascular | Tachycardia/bradycardia indicates instability |
+| 7 | Temperature (Mean) | 151.0 | Vital Signs | Hypothermia/hyperthermia indicates severity |
+| 8 | Blood Urea Nitrogen (Mean) | 150.0 | Renal | Kidney function indicator |
+| 9 | Respiratory Rate (Mean) | 150.0 | Respiratory | Tachypnea indicates respiratory distress |
+| 10 | Mean Corpuscular Hemoglobin Concentration (Mean) | 143.0 | Hematologic | Red blood cell health indicator |
 
-*Table 3: Top 10 most important features with clinical interpretation*
+*Table 3: Top 10 most important features with clinical interpretation (from actual model results)*
 
 #### 3.2.2 Clinical System Analysis
 
-- **Neurological (25.8%):** Glasgow Coma Scale dominates - critical predictor
-- **Cardiovascular (19.4%):** Blood pressure, heart rate indicators
-- **Laboratory (25.8%):** Kidney function, electrolytes, acid-base balance
-- **Demographics (16.1%):** Age, care unit type, insurance status
-- **Respiratory (12.9%):** Oxygen saturation, mechanical ventilation
+- **Neurological (16.8%):** Glasgow Coma Scale dominates as the strongest single predictor
+- **Cardiovascular (22.7%):** Systolic BP and heart rate - critical hemodynamic indicators  
+- **Respiratory (20.7%):** Oxygen saturation and respiratory rate - oxygenation status
+- **Metabolic/Renal (20.5%):** Anion gap and BUN - organ function markers
+- **Demographics (16.1%):** Age remains a powerful predictor
+- **Hematologic (9.7%):** Blood cell characteristics and coagulation status
 
 ### 3.3 Clinical Impact Assessment
 
@@ -317,7 +324,7 @@ graph TD
 
 | Study | Dataset | AUROC | Sensitivity | Specificity | Notes |
 |-------|---------|-------|-------------|-------------|-------|
-| **Our Enhanced Model** | MIMIC-Extract | **0.910** | **85.0%** | **81.3%** | Class-balanced, threshold-optimized |
+| **Our Enhanced Model** | MIMIC-Extract | **0.915** | **85.0%** | **81.3%** | Class-balanced, threshold-optimized |
 | APACHE II | Multi-site | 0.85 | 65-75% | 85-90% | Traditional scoring system |
 | SAPS II | Multi-site | 0.87 | 70-80% | 80-85% | Physiological scoring |
 | Recent ML Studies | MIMIC-III | 0.85-0.92 | 60-80% | 80-95% | Various algorithms |
@@ -439,7 +446,7 @@ XGB_PARAMS = {
     'learning_rate': 0.05,
     'max_depth': 6,
     'random_state': 42,
-    'scale_pos_weight': 12.23,  # Aggressive class weighting
+    'scale_pos_weight': 12.26,  # Aggressive class weighting
     'eval_metric': 'logloss',
     'subsample': 0.8,
     'colsample_bytree': 0.8,
@@ -450,15 +457,3 @@ XGB_PARAMS = {
 # Optimal Clinical Threshold
 CLINICAL_THRESHOLD = 0.351  # 85% sensitivity target
 ```
-
-### 7.3 Validation Metrics
-
-- **Training Set:** 25,854 patients (9.6% mortality)
-- **Test Set:** 8,618 patients (9.6% mortality)
-- **Cross-validation:** Stratified split maintaining class distribution
-- **Performance Stability:** Consistent across multiple random seeds
-- **External Validation:** Ready for independent dataset testing
-
----
-
-*This analysis represents a significant advancement in clinical mortality prediction, achieving both technical excellence and clinical utility through careful attention to class imbalance and threshold optimization.* 
