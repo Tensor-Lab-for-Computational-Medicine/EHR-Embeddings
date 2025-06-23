@@ -25,7 +25,9 @@ This report analyzes the performance of two machine learning models for predicti
 
 | Metric | Value |
 |--------|-------|
-| **Total Patients** | 23,944 ICU stays |
+| **Original Dataset** | 34,472 ICU patients |
+| **After Time Filtering** | 23,944 ICU stays (69.5% retention) |
+| **Excluded Patients** | 10,528 (insufficient 24h data) |
 | **Training Set** | 15,713 patients (65.6%) |
 | **Validation Set** | 2,245 patients (9.4%) |
 | **Test Set** | 5,986 patients (25.0%) |
@@ -33,6 +35,13 @@ This report analyzes the performance of two machine learning models for predicti
 | **Time Window** | First 24 hours + 6h gap |
 | **Features** | 478 engineered features |
 | **Feature Types** | 54 dynamic + 50 static clinical variables |
+
+### Data Filtering Rationale
+The study required patients with sufficient early ICU data for meaningful prediction:
+- **24-hour data window:** Patients needed at least 24 hours of recorded vital signs and lab values
+- **6-hour gap:** Gap between prediction window and outcome to ensure true early prediction
+- **30.5% exclusion rate:** Patients with very short ICU stays or incomplete early records were excluded
+- This filtering ensures **high-quality, complete feature engineering** for reliable predictions
 
 ### Feature Engineering Approach
 - **Temporal aggregation:** Mean, standard deviation for each vital sign/lab value
