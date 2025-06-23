@@ -165,24 +165,156 @@ Based on SHAP feature importance analysis, the top predictive features include:
 ![SHAP Feature Importance](shap_analysis_importance.png)
 *Figure 5: SHAP feature importance ranking by average absolute impact. Features are ranked by their overall contribution to model predictions, regardless of direction.*
 
-![Feature Importance](feature_importance.png)
-*Figure 6: Additional feature importance analysis showing the most predictive clinical variables across both models.*
-
 ### 🔍 Individual Patient Explanations
 
-![XGBoost Waterfall Plot](shap_analysis_waterfall_xgboost.png)
-*Figure 7: XGBoost SHAP waterfall plots for individual patient predictions. Each plot shows how features contribute to push the prediction above or below the baseline, providing transparent explanations for individual risk assessments.*
+#### 🎯 **Updated Waterfall Plot Analysis - Targeted Outcome Comparison**
 
-![Logistic Regression Waterfall Plot](shap_analysis_waterfall_logistic_regression.png)
-*Figure 8: Logistic Regression SHAP waterfall plots for individual patient predictions. These plots demonstrate how each feature contributes to the final mortality risk prediction for specific patients.*
+Our analysis now provides **targeted waterfall plots comparing patients with different outcomes**, offering deeper insights into how the model explains risk for patients who survived versus those who died. This approach provides clinically meaningful comparisons by demonstrating how the same model explains different outcomes.
+
+#### **XGBoost Outcome-Based Patient Explanations:**
+
+![XGBoost Survived Patient Waterfall Plot](shap_analysis_waterfall_xgboost_survived_patient.png)
+*Figure 6a: XGBoost SHAP waterfall plot for a patient who survived. This plot shows how clinical features contributed to a lower mortality risk prediction, with protective factors (blue bars) outweighing risk factors (red bars).*
+
+![XGBoost Died Patient Waterfall Plot](shap_analysis_waterfall_xgboost_died_patient.png)
+*Figure 6b: XGBoost SHAP waterfall plot for a patient who died. This contrasting example demonstrates how clinical features contributed to a higher mortality risk prediction, illustrating the model's reasoning for high-risk cases.*
+
+#### **Logistic Regression Outcome-Based Patient Explanations:**
+
+![Logistic Regression Survived Patient Waterfall Plot](shap_analysis_waterfall_logistic_regression_survived_patient.png)
+*Figure 7a: Logistic Regression SHAP waterfall plot for a patient who survived. Comparison with XGBoost reveals how different models may prioritize different protective factors for similar patients.*
+
+![Logistic Regression Died Patient Waterfall Plot](shap_analysis_waterfall_logistic_regression_died_patient.png)
+*Figure 7b: Logistic Regression SHAP waterfall plot for a patient who died. This enables direct model comparison for high-risk cases, showing how linear and tree-based models explain mortality risk differently.*
+
+---
+
+## 📚 **Comprehensive Guide to Interpreting SHAP Visualizations**
+
+### 🎯 **Understanding SHAP Summary Plots (Figures 4 & 5)**
+
+#### **What You See:**
+- **X-axis:** SHAP values (impact on model output)
+  - **Positive values (right):** Increase mortality risk
+  - **Negative values (left):** Decrease mortality risk
+  - **Zero line:** Neutral impact
+- **Y-axis:** Features ranked by importance
+- **Colors:** Feature values for each patient
+  - **🔴 Red:** High feature values
+  - **🔵 Blue:** Low feature values
+- **Dot Density:** Indicates distribution of feature impacts
+
+#### **Clinical Interpretation:**
+- **Consistent patterns:** Features that always increase/decrease risk
+- **Value-dependent effects:** Same feature can help or hurt based on patient's value
+- **Feature importance:** Top features have largest average impact
+- **Population insights:** Understand which clinical parameters matter most
+
+### 🔍 **Understanding Individual Waterfall Plots (Figures 6a-7b)**
+
+#### **📊 Reading the Plot Components:**
+
+1. **Baseline (E[f(X)]):** 
+   - Starting point representing average mortality risk across all patients in the dataset
+   - This is what the model would predict for an "average" patient
+
+2. **Feature Bars:**
+   - **🔴 Red bars:** Features pushing risk HIGHER than baseline
+   - **🔵 Blue bars:** Features pushing risk LOWER than baseline
+   - **Bar length:** Magnitude of the feature's impact on this patient's prediction
+
+3. **Final Prediction:**
+   - Rightmost value showing the patient's final predicted mortality risk
+   - Calculated as: Baseline + Sum of all feature contributions
+
+#### **🔍 Critical: Understanding the Grayed Numbers (Feature Values)**
+
+**This is the key to clinical interpretation that was missing before:**
+
+- **The grayed number next to each feature = THE ACTUAL STANDARDIZED VALUE for this patient**
+- **Example interpretations:**
+  - `"2.5 = Heart_rate_mean"` → Patient's average heart rate was 2.5 standard deviations **above normal**
+  - `"-1.2 = Temperature_mean"` → Patient's temperature was 1.2 standard deviations **below normal**  
+  - `"-0.612 = Bun_last_in_24h"` → Patient's BUN level was 0.612 standard deviations **below average**
+  - `"0.1 = Blood_pressure_systolic_mean"` → Patient's systolic BP was close to **population average**
+
+#### **🧮 Standardized Values Explained:**
+- **Negative values (-1.0, -2.5, etc.):** Below population average
+- **Positive values (+1.0, +2.5, etc.):** Above population average  
+- **Values near zero:** Close to population average
+- **Extreme values (>2 or <-2):** Unusually high or low compared to other ICU patients
+
+#### **⚖️ Comparative Analysis: Survived vs. Died Patients**
+
+**The targeted selection approach enables direct comparison of model reasoning:**
+
+**Survived Patient Characteristics:**
+- **Predicted Risk:** Typically shows lower final risk score
+- **Protective Factors:** More blue bars (features reducing risk)
+- **Clinical Profile:** Normal or favorable clinical values
+- **Model Validation:** Low predicted risk aligning with positive outcome
+
+**Died Patient Characteristics:**
+- **Predicted Risk:** Typically shows higher final risk score  
+- **Risk Factors:** More red bars (features increasing risk)
+- **Clinical Profile:** Abnormal or concerning clinical values
+- **Model Validation:** High predicted risk aligning with adverse outcome
+
+#### **💡 Clinical Interpretation Examples:**
+
+**Example 1: Contrasting Heart Rate Impact**
+- **Survived Patient:** `"-0.5 = Heart_rate_mean"` with small blue bar (-0.02)
+  - *Clinical meaning:* Normal heart rate providing slight protection
+- **Died Patient:** `"2.8 = Heart_rate_mean"` with large red bar (+0.18)  
+  - *Clinical meaning:* Severely elevated heart rate significantly increasing risk
+
+**Example 2: Protective vs. Risk Laboratory Values**
+- **Survived Patient:** `"0.1 = Creatinine_mean"` with small blue bar (-0.01)
+  - *Clinical meaning:* Normal kidney function providing protection
+- **Died Patient:** `"3.2 = Creatinine_mean"` with large red bar (+0.25)
+  - *Clinical meaning:* Severe kidney dysfunction significantly increasing mortality risk
+
+**Example 3: Cumulative Risk Profile**
+- **Survived Patient:** Multiple small blue bars with few red bars
+  - *Clinical meaning:* Overall stable clinical profile with protective factors
+- **Died Patient:** Multiple large red bars overwhelming protective factors
+  - *Clinical meaning:* Multi-organ dysfunction creating high cumulative risk
+
+### ⚖️ **Key Insights for Clinical Decision-Making:**
+
+1. **Outcome-Based Model Validation:** Direct comparison of model explanations for survived vs. died patients validates model reasoning
+2. **Comparative Risk Factors:** Understanding how the same clinical parameters affect different outcome groups
+3. **Protective Factor Identification:** Clear visualization of what clinical values provide protection from mortality
+4. **Risk Factor Recognition:** Identification of clinical values that significantly increase mortality risk
+5. **Cumulative Effect Understanding:** How multiple risk factors compound versus how protective factors provide resilience
+6. **Model Performance Validation:** Verification that high-risk predictions align with adverse outcomes and vice versa
+
+### 🏥 **Using These Insights in Clinical Practice:**
+
+#### **For Individual Patients:**
+- **Compare patient profiles:** Assess whether current patient resembles survived or died cases
+- **Identify modifiable risk factors:** Focus on abnormal values that had large impacts in died patients
+- **Prioritize interventions:** Target features that showed protective effects in survived patients
+- **Monitor high-impact parameters:** Watch clinical values that differentiated outcomes
+- **Validate clinical intuition:** Ensure SHAP explanations align with clinical assessment
+
+#### **For Quality Improvement:**
+- **Benchmark analysis:** Compare patient profiles against known outcome cases
+- **Risk stratification:** Use comparative patterns to identify high-risk clinical profiles  
+- **Protocol optimization:** Focus care pathways on features that differentiated outcomes
+- **Training enhancement:** Use contrasting cases for clinical education and AI literacy
+- **Performance monitoring:** Track whether interventions move patients toward "survived" profiles
 
 ### 💡 Clinical Interpretability
 
-The SHAP waterfall plots reveal:
-- **Protective factors:** Normal vital signs and stable lab values
-- **Risk factors:** Extreme values and deteriorating trends  
-- **Cumulative effects:** Multiple moderate risk factors can compound
-- **Individual explanations:** Each prediction is transparently explained
+The enhanced comparative SHAP waterfall plots now reveal:
+- **Outcome-specific patterns:** Clear differences in clinical profiles between survived and died patients
+- **Protective vs. risk factors:** Direct visualization of features that help versus harm patient outcomes
+- **Model validation:** Verification that predictions align with actual clinical outcomes
+- **Comparative clinical values:** How the same parameters can be protective or harmful based on their values
+- **Cumulative risk assessment:** Understanding how multiple factors combine to determine overall mortality risk
+- **Treatment targets:** Identification of modifiable clinical parameters that could improve outcomes
+- **Clinical decision support:** Evidence-based insights for prioritizing interventions and monitoring
 
 ---
 
@@ -280,21 +412,51 @@ This analysis provides a strong foundation for implementing AI-assisted mortalit
 
 This report includes the following visualizations generated during model evaluation:
 
+### **📈 Performance Evaluation Figures:**
 1. **Figure 1:** ROC Curves - Model discrimination performance comparison
 2. **Figure 2:** Precision-Recall Curves - Performance in class-imbalanced setting  
 3. **Figure 3:** Confusion Matrices - Classification results breakdown
-4. **Figure 4:** SHAP Summary Plots - Feature impact on predictions
-5. **Figure 5:** SHAP Feature Importance - Ranking by average impact
-6. **Figure 6:** Feature Importance - Additional feature analysis
-7. **Figure 7:** XGBoost Waterfall Plots - Individual prediction explanations
-8. **Figure 8:** Logistic Regression Waterfall Plots - Individual prediction explanations
 
-### 📁 Data Files Included:
-- `performance_summary.csv` - Complete performance metrics
-- `shap_data.pkl` - SHAP analysis data for further exploration
-- `feature_importance.pkl` - Feature importance rankings
-- `evaluation_log.txt` - Detailed evaluation process log
+### **🔍 SHAP Explainability Figures:**
+4. **Figure 4:** SHAP Summary Plots - Feature impact on predictions with value-based coloring
+5. **Figure 5:** SHAP Feature Importance - Ranking by average absolute impact magnitude
+
+### **🏥 Individual Patient Explanation Figures:**
+
+#### **XGBoost Model Outcome-Based Explanations:**
+6. **Figure 6a:** XGBoost Survived Patient Waterfall Plot - Protective factor analysis for favorable outcome
+7. **Figure 6b:** XGBoost Died Patient Waterfall Plot - Risk factor analysis for adverse outcome
+
+#### **Logistic Regression Model Outcome-Based Explanations:**
+8. **Figure 7a:** Logistic Regression Survived Patient Waterfall Plot - Linear model explanation for favorable outcome
+9. **Figure 7b:** Logistic Regression Died Patient Waterfall Plot - Linear model explanation for adverse outcome
+
+### **🎯 Key Improvements in Updated Figures:**
+
+#### **Enhanced Comparative Waterfall Plots:**
+- **Outcome-focused selection:** Targeted comparison of survived vs. died patients for clinical relevance
+- **Model validation:** Direct verification that predictions align with actual outcomes
+- **Contrasting insights:** Clear visualization of protective vs. risk factor patterns
+- **Clinical education:** Ideal cases for training staff on AI-assisted mortality prediction
+- **Improved readability:** Larger figure size (14x10) with enhanced fonts and labels
+
+#### **Comprehensive Interpretation Guides:**
+- **Comparative analysis:** Step-by-step guide for contrasting survived vs. died cases
+- **Clinical translation:** Converting SHAP differences into actionable clinical insights  
+- **Outcome validation:** Understanding how model explanations align with patient outcomes
+- **Decision support:** Using comparative cases for clinical decision-making and risk assessment
+
+### 📁 **Data Files Included:**
+- `performance_summary.csv` - Complete performance metrics with confidence intervals
+- `shap_data.pkl` - SHAP analysis data for further exploration and research
+- `evaluation_log.txt` - Detailed evaluation process log with patient selection details
+
+### 🔄 **Figure Generation Details:**
+- **Targeted patient selection:** One survived and one died patient per model for meaningful comparison
+- **Outcome-based naming:** Files clearly identify patient outcome type for easy reference
+- **Enhanced quality:** 300 DPI resolution with optimized fonts for clinical presentation
+- **Clinical relevance:** Selected cases provide maximum educational and validation value
 
 ---
 
-*Report generated from model evaluation outputs including ROC curves, precision-recall analysis, confusion matrices, SHAP feature importance, and bootstrap confidence intervals.* 
+*Report updated to include individual patient waterfall plots with comprehensive interpretation guides. The enhanced SHAP analysis provides deeper insights into personalized risk factors and enables more effective clinical decision-making through transparent AI explanations.* 
