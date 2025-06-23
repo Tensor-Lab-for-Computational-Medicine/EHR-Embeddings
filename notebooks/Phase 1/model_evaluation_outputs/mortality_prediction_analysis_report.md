@@ -60,6 +60,26 @@ The study required patients with sufficient early ICU data for meaningful predic
 | **XGBoost** | **0.888** | **0.584** | **0.912** | **0.611** | **0.458** | **0.524** | **0.965** |
 | Logistic Regression | 0.865 | 0.514 | 0.810 | 0.329 | 0.761 | 0.460 | 0.816 |
 
+### 📋 Detailed Performance Data Table
+
+**XGBoost Model Performance:**
+- **AUROC:** 0.8878 (95% CI: 0.8740-0.9011, σ=0.0070)
+- **AUPRC:** 0.5841 (95% CI: 0.5480-0.6218, σ=0.0190)
+- **Accuracy:** 91.16%
+- **Precision (Class 1):** 61.13%
+- **Recall (Class 1):** 45.83%
+- **F1-Score (Class 1):** 52.39%
+- **Specificity:** 96.54%
+
+**Logistic Regression Model Performance:**
+- **AUROC:** 0.8649 (95% CI: 0.8500-0.8797, σ=0.0079)
+- **AUPRC:** 0.5143 (95% CI: 0.4781-0.5559, σ=0.0194)
+- **Accuracy:** 81.02%
+- **Precision (Class 1):** 32.92%
+- **Recall (Class 1):** 76.06%
+- **F1-Score (Class 1):** 45.96%
+- **Specificity:** 81.61%
+
 ### 🔍 Statistical Significance (95% Confidence Intervals)
 
 #### XGBoost Model
@@ -90,9 +110,21 @@ The study required patients with sufficient early ICU data for meaningful predic
   - Better for ensuring no high-risk patients are missed
 
 ### 📈 ROC and Precision-Recall Curve Analysis
+
+![ROC Curves](roc_curves.png)
+*Figure 1: ROC curves comparing XGBoost and Logistic Regression models. Both models show strong separation from the random classifier baseline, with XGBoost achieving superior AUROC (0.888 vs 0.865).*
+
+![Precision-Recall Curves](pr_curves.png)
+*Figure 2: Precision-Recall curves demonstrating model performance in the class-imbalanced setting. XGBoost maintains higher precision across all recall levels, with AUPRC of 0.584 vs 0.514 for Logistic Regression.*
+
 - Both models show **strong separation** from random classifier baseline
 - XGBoost maintains **consistent advantage** across all operating points
 - **Precision-Recall curves** demonstrate superior performance in class-imbalanced scenario
+
+### 🎯 Confusion Matrix Analysis
+
+![Confusion Matrices](confusion_matrices.png)
+*Figure 3: Confusion matrices showing the trade-off between sensitivity and specificity. XGBoost optimizes for precision (fewer false positives), while Logistic Regression achieves higher recall (fewer false negatives).*
 
 ---
 
@@ -124,6 +156,25 @@ Based on SHAP feature importance analysis, the top predictive features include:
 #### 📈 **Temporal Trends**
 - **6-hour and 24-hour slopes:** Direction of clinical trajectory
 - **Worsening trends:** Strong predictors of adverse outcomes
+
+### 💡 SHAP Feature Analysis Visualizations
+
+![SHAP Summary Plot](shap_analysis_summary.png)
+*Figure 4: SHAP summary plots showing feature impact on mortality predictions. The x-axis represents SHAP values (impact on model output), with positive values increasing mortality risk. Colors indicate feature values: red = high, blue = low.*
+
+![SHAP Feature Importance](shap_analysis_importance.png)
+*Figure 5: SHAP feature importance ranking by average absolute impact. Features are ranked by their overall contribution to model predictions, regardless of direction.*
+
+![Feature Importance](feature_importance.png)
+*Figure 6: Additional feature importance analysis showing the most predictive clinical variables across both models.*
+
+### 🔍 Individual Patient Explanations
+
+![XGBoost Waterfall Plot](shap_analysis_waterfall_xgboost.png)
+*Figure 7: XGBoost SHAP waterfall plots for individual patient predictions. Each plot shows how features contribute to push the prediction above or below the baseline, providing transparent explanations for individual risk assessments.*
+
+![Logistic Regression Waterfall Plot](shap_analysis_waterfall_logistic_regression.png)
+*Figure 8: Logistic Regression SHAP waterfall plots for individual patient predictions. These plots demonstrate how each feature contributes to the final mortality risk prediction for specific patients.*
 
 ### 💡 Clinical Interpretability
 
@@ -222,6 +273,27 @@ The model is technically ready for pilot deployment, pending:
 - Continuous monitoring system implementation
 
 This analysis provides a strong foundation for implementing AI-assisted mortality prediction in intensive care settings, with the potential to improve patient outcomes through earlier identification of high-risk patients.
+
+---
+
+## 📊 Appendix: Figure Summary
+
+This report includes the following visualizations generated during model evaluation:
+
+1. **Figure 1:** ROC Curves - Model discrimination performance comparison
+2. **Figure 2:** Precision-Recall Curves - Performance in class-imbalanced setting  
+3. **Figure 3:** Confusion Matrices - Classification results breakdown
+4. **Figure 4:** SHAP Summary Plots - Feature impact on predictions
+5. **Figure 5:** SHAP Feature Importance - Ranking by average impact
+6. **Figure 6:** Feature Importance - Additional feature analysis
+7. **Figure 7:** XGBoost Waterfall Plots - Individual prediction explanations
+8. **Figure 8:** Logistic Regression Waterfall Plots - Individual prediction explanations
+
+### 📁 Data Files Included:
+- `performance_summary.csv` - Complete performance metrics
+- `shap_data.pkl` - SHAP analysis data for further exploration
+- `feature_importance.pkl` - Feature importance rankings
+- `evaluation_log.txt` - Detailed evaluation process log
 
 ---
 
