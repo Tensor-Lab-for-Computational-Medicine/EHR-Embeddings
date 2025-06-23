@@ -260,6 +260,10 @@ Our analysis now provides **targeted waterfall plots comparing patients with dif
 ![Logistic Regression Died Patient Waterfall Plot](shap_analysis_waterfall_logistic_regression_died_patient.png)
 *Figure 8b: Logistic Regression SHAP waterfall plot for a patient who died. This enables direct model comparison for high-risk cases, showing how linear and tree-based models explain mortality risk differently. Note: Score shown is uncalibrated.*
 
+### 🔗 **SHAP Interaction Effects Analysis:**
+11. **Figure 9a:** XGBoost SHAP Interaction Summary Plot - Feature combination effects on mortality predictions
+12. **Figure 9b:** XGBoost Feature Interaction Heatmap - Interaction strength matrix for top clinical features
+
 ---
 
 ## 📚 **Comprehensive Guide to Interpreting SHAP Visualizations**
@@ -563,7 +567,11 @@ This report includes the following visualizations generated during model evaluat
 9. **Figure 8a:** Logistic Regression Survived Patient Waterfall Plot - Linear model explanation for favorable outcome
 10. **Figure 8b:** Logistic Regression Died Patient Waterfall Plot - Linear model explanation for adverse outcome
 
-### **🎯 Key Improvements in Updated Figures:**
+### **🔗 SHAP Interaction Effects Analysis:**
+11. **Figure 9a:** XGBoost SHAP Interaction Summary Plot - Feature combination effects on mortality predictions
+12. **Figure 9b:** XGBoost Feature Interaction Heatmap - Interaction strength matrix for top clinical features
+
+### 🎯 **Key Improvements in Updated Figures:**
 
 #### **Enhanced Comparative Waterfall Plots:**
 - **Outcome-focused selection:** Targeted comparison of survived vs. died patients for clinical relevance
@@ -577,6 +585,7 @@ This report includes the following visualizations generated during model evaluat
 - **Clinical translation:** Converting SHAP differences into actionable clinical insights  
 - **Outcome validation:** Understanding how model explanations align with patient outcomes
 - **Decision support:** Using comparative cases for clinical decision-making and risk assessment
+- **Interaction effects:** Understanding how clinical features work together beyond individual effects
 
 ### 📁 **Data Files Included:**
 - `performance_summary.csv` - Complete performance metrics with confidence intervals
@@ -591,4 +600,92 @@ This report includes the following visualizations generated during model evaluat
 
 ---
 
-*Report updated to include individual patient waterfall plots with comprehensive interpretation guides. The enhanced SHAP analysis provides deeper insights into personalized risk factors and enables more effective clinical decision-making through transparent AI explanations.* 
+*Report updated to include individual patient waterfall plots with comprehensive interpretation guides. The enhanced SHAP analysis provides deeper insights into personalized risk factors and enables more effective clinical decision-making through transparent AI explanations.*
+
+---
+
+## 🔗 SHAP Interaction Effects Analysis
+
+### 🎯 **Understanding Feature Interactions in Clinical Predictions**
+
+Beyond individual feature effects, **SHAP interaction values reveal how clinical features work together** to influence mortality predictions. This is particularly valuable in healthcare where physiological parameters often interact (e.g., heart rate and blood pressure, or respiratory rate and oxygen saturation).
+
+### 📊 **XGBoost Interaction Analysis**
+
+![XGBoost SHAP Interaction Summary](shap_analysis_interaction_summary_xgboost.png)
+*Figure 9a: XGBoost SHAP interaction effects summary plot. This visualization shows how combinations of clinical features interact to influence mortality predictions, revealing complex relationships beyond individual feature effects.*
+
+![XGBoost SHAP Interaction Heatmap](shap_analysis_interaction_heatmap_xgboost.png)
+*Figure 9b: XGBoost feature interaction heatmap showing the strength of interactions between top clinical features. Darker colors indicate stronger interactions, helping identify which clinical parameters work together to affect mortality risk.*
+
+### 🔬 **Clinical Significance of Interaction Effects**
+
+#### **🫀 Cardiovascular Interactions:**
+- **Heart Rate × Blood Pressure:** Combined effects on cardiac output and perfusion
+- **Cardiac Output × Fluid Balance:** Interaction affecting hemodynamic stability
+- **MAP × Heart Rate:** Synergistic effects on organ perfusion
+
+#### **🫁 Respiratory Interactions:**
+- **Oxygen Saturation × Respiratory Rate:** Combined assessment of respiratory function
+- **FiO2 × PEEP:** Interaction effects of ventilatory support
+- **SpO2 × Heart Rate:** Cardiopulmonary coupling effects
+
+#### **🧪 Laboratory Interactions:**
+- **BUN × Creatinine:** Combined kidney function assessment
+- **Lactate × Blood Pressure:** Tissue perfusion and metabolic status
+- **ALT × AST:** Liver function interaction patterns
+
+#### **🧠 Neurological Interactions:**
+- **GCS Components:** How motor, verbal, and eye opening responses combine
+- **GCS × Vital Signs:** Interaction between consciousness and physiological stability
+
+### 💡 **Interpreting Interaction Effects**
+
+#### **Strong Positive Interactions:**
+- **Clinical Meaning:** Features that amplify each other's effects
+- **Example:** High heart rate + low blood pressure = severe hemodynamic compromise
+- **Risk Assessment:** Combined abnormalities create higher risk than sum of individual effects
+
+#### **Weak/No Interactions:**
+- **Clinical Meaning:** Features that act independently
+- **Example:** Liver enzymes may not interact strongly with respiratory parameters
+- **Risk Assessment:** Individual effects can be assessed separately
+
+#### **Protective Interactions:**
+- **Clinical Meaning:** One normal feature can partially compensate for another abnormal one
+- **Example:** Good oxygen saturation partially offsetting elevated heart rate
+- **Risk Assessment:** Compensatory mechanisms reducing overall risk
+
+### 🏥 **Clinical Applications of Interaction Analysis**
+
+#### **For Individual Patient Assessment:**
+1. **Comprehensive Risk Evaluation:** Consider feature combinations, not just individual abnormalities
+2. **Intervention Prioritization:** Target interactions that have the strongest risk effects
+3. **Monitoring Strategy:** Watch for deteriorating interactions between key parameters
+4. **Therapeutic Planning:** Address feature combinations that create high-risk interactions
+
+#### **For Clinical Protocol Development:**
+1. **Early Warning Systems:** Include interaction terms in risk scoring systems
+2. **Care Pathways:** Design protocols considering feature interactions
+3. **Resource Allocation:** Focus on patients with high-risk feature combinations
+4. **Quality Metrics:** Monitor interaction patterns for population health insights
+
+#### **For Medical Education:**
+1. **Pathophysiology Understanding:** Demonstrate how clinical parameters interact
+2. **Case-Based Learning:** Use interaction examples for teaching complex cases
+3. **Clinical Reasoning:** Train staff to think about feature combinations
+4. **AI Literacy:** Help clinicians understand how AI models capture interactions
+
+### ⚠️ **Limitations of Interaction Analysis**
+
+#### **Model-Specific:**
+- **Tree-Based Models Only:** Interaction values currently available only for XGBoost
+- **Computational Cost:** Requires smaller sample sizes due to computational complexity
+- **Interpretation Complexity:** Requires clinical expertise to understand medical relevance
+
+#### **Clinical Context:**
+- **Temporal Dynamics:** Static interactions may not capture time-dependent relationships
+- **Causality:** Interactions show association, not causal relationships
+- **Individual Variation:** Population-level interactions may not apply to all patients
+
+--- 
