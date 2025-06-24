@@ -15,7 +15,18 @@ from sklearn.metrics import (
     roc_auc_score, average_precision_score, classification_report, 
     confusion_matrix, roc_curve, precision_recall_curve
 )
-import xgboost as xgb
+
+# Try to import XGBoost, but handle gracefully if it fails
+try:
+    import xgboost as xgb
+    XGBOOST_AVAILABLE = True
+    logging.info("XGBoost successfully imported")
+except ImportError as e:
+    logging.warning(f"XGBoost not available: {e}")
+    logging.warning("XGBoost classifiers will be disabled")
+    XGBOOST_AVAILABLE = False
+    xgb = None
+
 import optuna
 from scipy.stats import bootstrap
 import matplotlib.pyplot as plt
@@ -50,19 +61,26 @@ CLASSIFIER_CONFIGS = {
         use_hyperparameter_tuning=False,
         scale_features=True
     ),
-    'xgboost': ClassifierConfig(
-        name='xgboost',
-        description='XGBoost Gradient Boosting',
-        use_hyperparameter_tuning=True,
-        scale_features=False
-    ),
-    'xgboost_simple': ClassifierConfig(
-        name='xgboost_simple',
-        description='Simple XGBoost without extensive tuning',
-        use_hyperparameter_tuning=False,
-        scale_features=False
-    )
 }
+
+# Add XGBoost configurations only if XGBoost is available
+if XGBOOST_AVAILABLE:
+    CLASSIFIER_CONFIGS.update({
+        'xgboost': ClassifierConfig(
+            name='xgboost',
+            description='XGBoost Gradient Boosting',
+            use_hyperparameter_tuning=True,
+            scale_features=False
+        ),
+        'xgboost_simple': ClassifierConfig(
+            name='xgboost_simple',
+            description='Simple XGBoost without extensive tuning',
+            use_hyperparameter_tuning=False,
+            scale_features=False
+        )
+    })
+else:
+    logging.warning("XGBoost configurations not available - only Logistic Regression will be used")
 
 # =============================================================================
 # CLASSIFIER TRAINING FUNCTIONS
@@ -98,6 +116,8 @@ class EmbeddingClassifier:
                 class_weight='balanced'
             )
         elif 'xgboost' in self.config.name:
+            if not XGBOOST_AVAILABLE:
+                raise ValueError(f"XGBoost not available but config '{self.config.name}' requires it")
             return xgb.XGBClassifier(
                 random_state=self.config.random_state,
                 n_jobs=-1,
@@ -138,6 +158,8 @@ class EmbeddingClassifier:
     
     def _tune_xgboost(self, X_train: np.ndarray, y_train: np.ndarray) -> Dict[str, Any]:
         """Tune hyperparameters for XGBoost using Optuna."""
+        if not XGBOOST_AVAILABLE:
+            raise ValueError("XGBoost not available for hyperparameter tuning")
         
         def objective(trial):
             params = {

@@ -604,6 +604,282 @@ This report includes the following visualizations generated during model evaluat
 
 ---
 
+## 📊 Technical Methodology: Data Splitting and SHAP Accuracy
+
+### ❓ **Question 1: Stratified Sampling and Randomness**
+
+**"We stratified the data to ensure equal proportion of mortalities. How does this stratification ensure randomness in our train/test split?"**
+
+#### 🎯 **Understanding Stratified Sampling**
+
+**Stratified sampling maintains both randomness AND class balance simultaneously through a two-step process:**
+
+#### **Step 1: Preserve Class Distribution**
+- **Original Dataset:** 23,944 patients with 10.6% mortality rate (2,541 deaths, 21,403 survivors)
+- **Stratification Goal:** Maintain ~10.6% mortality in each split (train/validation/test)
+- **Without Stratification Risk:** Random splits could create imbalanced distributions (e.g., 8% mortality in training, 15% in test)
+
+#### **Step 2: Random Sampling Within Strata**
+**Randomness is preserved through random sampling within each outcome group:**
+
+```python
+# Conceptual stratified splitting process:
+# 1. Separate patients by outcome
+survivors = patients[patients['mortality'] == 0]  # 21,403 patients
+deaths = patients[patients['mortality'] == 1]     # 2,541 patients
+
+# 2. Randomly sample from each group proportionally
+train_survivors = random_sample(survivors, size=0.656 * len(survivors))
+train_deaths = random_sample(deaths, size=0.656 * len(deaths))
+
+# 3. Combine to create balanced training set
+train_set = combine(train_survivors, train_deaths)
+# Result: 15,713 patients with ~10.6% mortality, randomly selected
+```
+
+#### **🔀 How Randomness is Maintained:**
+
+1. **Random Patient Selection:** Within each stratum (survived/died), patients are randomly selected
+2. **No Selection Bias:** Clinical characteristics are not used for splitting decisions
+3. **Equal Probability:** Each patient has equal chance of assignment within their outcome group
+4. **Independent Assignment:** Patient assignments are independent of clinical features
+
+#### **📊 Verification of Randomness:**
+
+**Randomness can be verified by checking that clinical characteristics are balanced across splits:**
+
+| Clinical Feature | Expected Result |
+|------------------|-----------------|
+| Age (mean ± SD) | Similar across train/validation/test |
+| ICU Length of Stay | Similar across splits |
+| SOFA Score | Similar across splits |
+| **Mortality Rate** | **Exactly 10.6% in each split** |
+
+**Non-significant p-values (>0.05) would confirm random distribution of patient characteristics across splits.**
+
+#### **🎯 Benefits of Stratified Random Sampling:**
+
+1. **Maintains Randomness:** Patients randomly assigned within outcome groups
+2. **Prevents Class Imbalance:** Each split has representative mortality rates
+3. **Reduces Variance:** More stable performance estimates across splits
+4. **Improves Generalization:** Training set representative of test conditions
+5. **Statistical Validity:** Enables valid performance comparisons between models
+
+---
+
+### ❓ **Question 2: Quantifying SHAP Value Accuracy**
+
+**"The accuracy of SHAP values depend on the sample size. How do we quantify the accuracy of SHAP values?"**
+
+#### 🔬 **SHAP Value Accuracy: Multiple Quantification Methods**
+
+**SHAP value accuracy is critical for reliable clinical interpretation. We employ several complementary approaches:**
+
+#### **Method 1: Bootstrap Confidence Intervals**
+
+**Approach:** Generate SHAP values from multiple bootstrap samples to estimate uncertainty
+
+```python
+# Bootstrap SHAP analysis process:
+n_bootstrap = 1000
+shap_bootstrap_results = []
+
+for i in range(n_bootstrap):
+    # 1. Bootstrap sample patients (with replacement)
+    bootstrap_indices = np.random.choice(len(X_test), size=len(X_test), replace=True)
+    X_bootstrap = X_test.iloc[bootstrap_indices]
+    
+    # 2. Calculate SHAP values for bootstrap sample
+    explainer = shap.TreeExplainer(xgb_model)
+    shap_values_bootstrap = explainer.shap_values(X_bootstrap)
+    
+    # 3. Store feature importance rankings
+    shap_bootstrap_results.append(shap_values_bootstrap)
+
+# 4. Calculate confidence intervals for each feature
+shap_feature_importance_ci = calculate_bootstrap_ci(shap_bootstrap_results)
+```
+
+**Expected Results Format:**
+
+| Feature | Mean SHAP Impact | 95% CI Lower | 95% CI Upper | Stability Score |
+|---------|------------------|---------------|---------------|-----------------|
+| [Top features] | [To be calculated] | [To be calculated] | [To be calculated] | [To be calculated] |
+
+**Interpretation:**
+- **Narrow CI:** High SHAP accuracy and stability
+- **Wide CI:** Lower confidence in feature importance
+- **Stability Score:** Proportion of bootstrap samples where feature ranked in top 10
+
+#### **Method 2: Sample Size Convergence Analysis**
+
+**Approach:** Evaluate SHAP value stability across different sample sizes
+
+```python
+# Sample size convergence testing:
+sample_sizes = [100, 250, 500, 1000, 2000, 5986]  # 5986 = full test set
+convergence_results = {}
+
+for n in sample_sizes:
+    # Multiple random samples of size n
+    shap_estimates = []
+    for trial in range(50):  # 50 random samples per size
+        random_indices = np.random.choice(len(X_test), size=n, replace=False)
+        X_sample = X_test.iloc[random_indices]
+        
+        explainer = shap.TreeExplainer(xgb_model)
+        shap_values = explainer.shap_values(X_sample)
+        
+        # Calculate feature importance
+        feature_importance = np.abs(shap_values).mean(axis=0)
+        shap_estimates.append(feature_importance)
+    
+    # Calculate standard error for this sample size
+    convergence_results[n] = {
+        'mean': np.mean(shap_estimates, axis=0),
+        'std_error': np.std(shap_estimates, axis=0) / np.sqrt(50)
+    }
+```
+
+**Expected Sample Size Convergence Results Format:**
+
+| Sample Size | Feature 1 SHAP (Mean ± SE) | Feature 2 SHAP (Mean ± SE) | Convergence Status |
+|-------------|-----------------------------|-----------------------|--------------------|
+| 100 | [To be calculated] | [To be calculated] | [To be assessed] |
+| 250 | [To be calculated] | [To be calculated] | [To be assessed] |
+| 500 | [To be calculated] | [To be calculated] | [To be assessed] |
+| 1000 | [To be calculated] | [To be calculated] | [To be assessed] |
+| 2000 | [To be calculated] | [To be calculated] | [To be assessed] |
+| **Full Dataset** | **[To be calculated]** | **[To be calculated]** | **[To be assessed]** |
+
+**Convergence Criteria:**
+- **Standard Error < 0.01:** Acceptable accuracy for clinical interpretation
+- **Standard Error < 0.005:** High accuracy for research purposes
+- **Coefficient of Variation < 5%:** Excellent stability
+
+#### **Method 3: SHAP Value Standard Error Estimation**
+
+**Theoretical Framework:** SHAP values follow asymptotic normality, enabling standard error calculation
+
+```python
+# Standard error calculation for SHAP values:
+def calculate_shap_standard_errors(shap_values, n_features, n_samples):
+    """
+    Calculate standard errors for SHAP feature importance values
+    
+    Based on asymptotic properties of Shapley values
+    """
+    # Feature importance (mean absolute SHAP values)
+    feature_importance = np.abs(shap_values).mean(axis=0)
+    
+    # Variance estimation for each feature
+    feature_variance = np.var(np.abs(shap_values), axis=0)
+    
+    # Standard error calculation
+    standard_errors = np.sqrt(feature_variance / n_samples)
+    
+    # 95% confidence intervals
+    ci_lower = feature_importance - 1.96 * standard_errors
+    ci_upper = feature_importance + 1.96 * standard_errors
+    
+    return feature_importance, standard_errors, ci_lower, ci_upper
+
+# Apply to our analysis:
+shap_importance, shap_se, shap_ci_low, shap_ci_high = calculate_shap_standard_errors(
+    shap_values=shap_values_test, 
+    n_features=478, 
+    n_samples=5986
+)
+```
+
+**Expected Standard Error Results Format:**
+
+| Rank | Feature | SHAP Importance | Standard Error | Relative Error (%) | Accuracy Rating |
+|------|---------|-----------------|----------------|--------------------|-----------------|
+| 1 | [Feature 1] | [To be calculated] | [To be calculated] | [To be calculated] | [To be assessed] |
+| 2 | [Feature 2] | [To be calculated] | [To be calculated] | [To be calculated] | [To be assessed] |
+| 3 | [Feature 3] | [To be calculated] | [To be calculated] | [To be calculated] | [To be assessed] |
+| ... | ... | ... | ... | ... | ... |
+| 10 | [Feature 10] | [To be calculated] | [To be calculated] | [To be calculated] | [To be assessed] |
+
+#### **Method 4: Feature Ranking Stability Assessment**
+
+**Approach:** Evaluate consistency of feature rankings across subsamples
+
+```python
+# Feature ranking stability analysis:
+def evaluate_ranking_stability(X_test, model, n_trials=100, subsample_ratio=0.8):
+    """
+    Assess stability of SHAP feature rankings across subsamples
+    """
+    feature_rankings = []
+    n_subsample = int(len(X_test) * subsample_ratio)
+    
+    for trial in range(n_trials):
+        # Random subsample
+        subsample_indices = np.random.choice(len(X_test), size=n_subsample, replace=False)
+        X_subsample = X_test.iloc[subsample_indices]
+        
+        # Calculate SHAP values
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X_subsample)
+        
+        # Rank features by importance
+        feature_importance = np.abs(shap_values).mean(axis=0)
+        ranking = np.argsort(feature_importance)[::-1]  # Descending order
+        feature_rankings.append(ranking)
+    
+    # Calculate ranking stability metrics
+    stability_metrics = calculate_ranking_stability_metrics(feature_rankings)
+    return stability_metrics
+
+# Ranking stability results:
+stability_results = evaluate_ranking_stability(X_test, xgb_model)
+```
+
+**Expected Feature Ranking Stability Results Format:**
+
+| Top-K Features | Average Rank Correlation | Rank Stability Score | Interpretation |
+|----------------|--------------------------|----------------------|----------------|
+| Top 5 | [To be calculated] | [To be calculated] | [To be assessed] |
+| Top 10 | [To be calculated] | [To be calculated] | [To be assessed] |
+| Top 20 | [To be calculated] | [To be calculated] | [To be assessed] |
+| Top 50 | [To be calculated] | [To be calculated] | [To be assessed] |
+| All Features | [To be calculated] | [To be calculated] | [To be assessed] |
+
+**Rank Stability Score:** Proportion of trials where feature appears in specified top-K group
+
+#### **🎯 Recommended SHAP Accuracy Thresholds for Clinical Use**
+
+| Accuracy Level | Standard Error | Relative Error | Minimum Sample Size | Clinical Application |
+|----------------|----------------|----------------|--------------------|----------------------|
+| **Research Grade** | < 0.005 | < 3% | > 2000 | Peer-reviewed publications |
+| **Clinical Grade** | < 0.010 | < 5% | > 1000 | Clinical decision support |
+| **Screening Grade** | < 0.020 | < 10% | > 500 | Initial risk assessment |
+| **Exploratory** | < 0.050 | < 15% | > 100 | Preliminary analysis |
+
+#### **📋 SHAP Accuracy Assessment Framework**
+
+**When completed, this analysis should evaluate:**
+
+**Sample Size:** [Current test set size]  
+**Top Feature Accuracy:** [Standard errors to be calculated]  
+**Feature Ranking Stability:** [Stability scores to be calculated]  
+**Confidence Intervals:** [Bootstrap CIs to be generated]  
+**Convergence Assessment:** [Sample size convergence to be evaluated]  
+
+**Clinical Interpretation Confidence:** [To be determined based on results]
+
+#### **🚧 Limitations and Considerations**
+
+1. **Computational Cost:** Higher accuracy requires larger samples and more bootstrap iterations
+2. **Model Complexity:** More complex models may require larger samples for stable SHAP values
+3. **Feature Interactions:** Interaction effects may need additional sample size considerations
+4. **Clinical Context:** Accuracy requirements may vary based on clinical stakes (screening vs. treatment decisions)
+5. **Population Drift:** SHAP accuracy may change with different patient populations
+
+---
+
 ## 🔗 SHAP Interaction Effects Analysis
 
 ### 🎯 **Understanding Feature Interactions in Clinical Predictions**

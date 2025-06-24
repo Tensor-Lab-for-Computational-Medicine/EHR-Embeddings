@@ -1,0 +1,721 @@
+As a critical care specialist with expertise in mortality prediction, analyze this ICU patient data:
+
+{
+  "patient_type": "ICU_patient",
+  "clinical_data": {
+    "vital_signs": {
+      "temperature": {
+        "mean_value": 37.3086,
+        "24h_volatility_std_dev": 0.2723,
+        "24h_absolute_minimum": 36.8889,
+        "24h_absolute_maximum": 37.5556,
+        "most_recent_value": 37.3333,
+        "24h_trend_slope": 0.0174,
+        "6h_trend_slope": 0.0
+      }
+    },
+    "cardiovascular": {
+      "diastolic_blood_pressure": {
+        "mean_value": 62.8696,
+        "24h_volatility_std_dev": 9.7062,
+        "24h_absolute_minimum": 38.0,
+        "24h_absolute_maximum": 76.0,
+        "most_recent_value": 64.0,
+        "24h_trend_slope": -0.3765,
+        "6h_trend_slope": 2.5143
+      },
+      "systolic_blood_pressure": {
+        "mean_value": 119.3478,
+        "24h_volatility_std_dev": 17.1957,
+        "24h_absolute_minimum": 95.0,
+        "24h_absolute_maximum": 153.0,
+        "most_recent_value": 124.0,
+        "24h_trend_slope": 0.0958,
+        "6h_trend_slope": 2.7143
+      },
+      "pulmonary_artery_pressure_systolic": {
+        "mean_value": 34.425,
+        "24h_volatility_std_dev": 4.6084,
+        "24h_absolute_minimum": 26.75,
+        "24h_absolute_maximum": 44.0,
+        "most_recent_value": 34.0,
+        "24h_trend_slope": -0.0227,
+        "6h_trend_slope": 0.0036
+      }
+    },
+    "respiratory": {
+      "respiratory_rate": {
+        "mean_value": 14.2355,
+        "24h_volatility_std_dev": 4.1963,
+        "24h_absolute_minimum": 0.0,
+        "24h_absolute_maximum": 20.0,
+        "most_recent_value": 13.0,
+        "24h_trend_slope": -0.078,
+        "6h_trend_slope": 0.0286
+      },
+      "respiratory_rate_set": {
+        "mean_value": 16.0,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 16.0,
+        "24h_absolute_maximum": 16.0,
+        "most_recent_value": 16.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      }
+    },
+    "neurological": {
+      "glascow_coma_scale_total": {
+        "mean_value": 13.3333,
+        "24h_volatility_std_dev": 0.7071,
+        "24h_absolute_minimum": 10.0,
+        "24h_absolute_maximum": 15.0,
+        "most_recent_value": 15.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      }
+    },
+    "laboratory_values": {
+      "blood_urea_nitrogen": {
+        "mean_value": 10.6,
+        "24h_volatility_std_dev": 0.5477,
+        "24h_absolute_minimum": 10.0,
+        "24h_absolute_maximum": 11.0,
+        "most_recent_value": 11.0,
+        "24h_trend_slope": 0.0714,
+        "6h_trend_slope": 0.0
+      },
+      "calcium_ionized": {
+        "mean_value": 1.0,
+        "24h_volatility_std_dev": 0.0624,
+        "24h_absolute_minimum": 1.0,
+        "24h_absolute_maximum": 1.0,
+        "most_recent_value": 1.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "creatinine": {
+        "mean_value": 0.7,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 0.7,
+        "24h_absolute_maximum": 0.7,
+        "most_recent_value": 0.7,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "glucose": {
+        "mean_value": 131.6429,
+        "24h_volatility_std_dev": 25.1574,
+        "24h_absolute_minimum": 95.0,
+        "24h_absolute_maximum": 163.0,
+        "most_recent_value": 115.0,
+        "24h_trend_slope": -3.0367,
+        "6h_trend_slope": 0.0
+      },
+      "potassium": {
+        "mean_value": 4.1167,
+        "24h_volatility_std_dev": 0.6898,
+        "24h_absolute_minimum": 3.6,
+        "24h_absolute_maximum": 4.9,
+        "most_recent_value": 4.9,
+        "24h_trend_slope": 0.1513,
+        "6h_trend_slope": 0.0
+      },
+      "potassium_serum": {
+        "mean_value": 4.25,
+        "24h_volatility_std_dev": 0.9192,
+        "24h_absolute_minimum": 3.6,
+        "24h_absolute_maximum": 4.9,
+        "most_recent_value": 4.9,
+        "24h_trend_slope": 0.1857,
+        "6h_trend_slope": -0.025
+      },
+      "sodium": {
+        "mean_value": 136.2,
+        "24h_volatility_std_dev": 2.1679,
+        "24h_absolute_minimum": 134.0,
+        "24h_absolute_maximum": 139.0,
+        "most_recent_value": 134.0,
+        "24h_trend_slope": -0.5,
+        "6h_trend_slope": 0.0
+      },
+      "chloride": {
+        "mean_value": 105.8,
+        "24h_volatility_std_dev": 0.8367,
+        "24h_absolute_minimum": 105.0,
+        "24h_absolute_maximum": 107.0,
+        "most_recent_value": 106.0,
+        "24h_trend_slope": 0.0143,
+        "6h_trend_slope": 0.0
+      },
+      "creatinine_ascites": {
+        "mean_value": 1.0,
+        "24h_volatility_std_dev": null
+      },
+      "calcium": {
+        "mean_value": 7.44,
+        "24h_volatility_std_dev": 0.2191
+      },
+      "creatinine_pleural": {
+        "mean_value": 1.2,
+        "24h_volatility_std_dev": null
+      },
+      "chloride_urine": {
+        "mean_value": 47.0,
+        "24h_volatility_std_dev": 20.3556
+      },
+      "creatinine_urine": {
+        "mean_value": 80.0,
+        "24h_volatility_std_dev": 18.3848
+      },
+      "creatinine_body_fluid": {
+        "mean_value": 1.9,
+        "24h_volatility_std_dev": null
+      },
+      "calcium_urine": {
+        "mean_value": 2.0,
+        "24h_volatility_std_dev": 5.1265
+      }
+    },
+    "blood_chemistry": {
+      "bicarbonate": {
+        "mean_value": 24.6,
+        "24h_volatility_std_dev": 2.0736,
+        "24h_absolute_minimum": 21.0,
+        "24h_absolute_maximum": 26.0,
+        "most_recent_value": 26.0,
+        "24h_trend_slope": 0.3571,
+        "6h_trend_slope": 0.0
+      },
+      "co2": {
+        "mean_value": 23.6667,
+        "24h_volatility_std_dev": 1.4142,
+        "24h_absolute_minimum": 23.0,
+        "24h_absolute_maximum": 24.0,
+        "most_recent_value": 24.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.2
+      },
+      "co2_(etco2,_pco2,_etc.)": {
+        "mean_value": 28.0,
+        "24h_volatility_std_dev": 1.6499,
+        "24h_absolute_minimum": 28.0,
+        "24h_absolute_maximum": 28.0,
+        "most_recent_value": 28.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "lactate": {
+        "mean_value": 1.9,
+        "24h_volatility_std_dev": 0.611,
+        "24h_absolute_minimum": 1.9,
+        "24h_absolute_maximum": 1.9,
+        "most_recent_value": 1.9,
+        "24h_trend_slope": -0.045,
+        "6h_trend_slope": -0.04
+      },
+      "ph": {
+        "mean_value": 7.34,
+        "24h_volatility_std_dev": 0.0402,
+        "24h_absolute_minimum": 7.34,
+        "24h_absolute_maximum": 7.34,
+        "most_recent_value": 7.34,
+        "24h_trend_slope": 0.0011,
+        "6h_trend_slope": 0.0
+      },
+      "phosphate": {
+        "mean_value": 2.7667,
+        "24h_volatility_std_dev": 0.2309
+      },
+      "alkaline_phosphate": {
+        "mean_value": 80.0,
+        "24h_volatility_std_dev": 4.6188
+      },
+      "lactate_dehydrogenase_pleural": {
+        "mean_value": 286.0,
+        "24h_volatility_std_dev": 26.163
+      },
+      "lymphocytes_atypical_csl": {
+        "mean_value": 1.0,
+        "24h_volatility_std_dev": null
+      },
+      "phosphorous": {
+        "mean_value": 2.7,
+        "24h_volatility_std_dev": 0.2828
+      },
+      "ph_urine": {
+        "mean_value": 5.5,
+        "24h_volatility_std_dev": 0.3536
+      },
+      "lymphocytes_body_fluid": {
+        "mean_value": 13.0,
+        "24h_volatility_std_dev": 7.7782
+      },
+      "lymphocytes_percent": {
+        "mean_value": 13.0,
+        "24h_volatility_std_dev": null
+      },
+      "lymphocytes_pleural": {
+        "mean_value": 27.0,
+        "24h_volatility_std_dev": 2.4749
+      },
+      "lymphocytes_ascites": {
+        "mean_value": 15.0,
+        "24h_volatility_std_dev": 13.435
+      },
+      "lactate_dehydrogenase": {
+        "mean_value": 261.0,
+        "24h_volatility_std_dev": 38.1838
+      },
+      "lymphocytes_atypical": {
+        "mean_value": 1.5,
+        "24h_volatility_std_dev": 1.4142
+      },
+      "basophils": {
+        "mean_value": 0.3,
+        "24h_volatility_std_dev": 0.0707
+      },
+      "lymphocytes": {
+        "mean_value": 10.5,
+        "24h_volatility_std_dev": 2.4042
+      },
+      "neutrophils": {
+        "mean_value": 82.0,
+        "24h_volatility_std_dev": 3.7859
+      },
+      "eosinophils": {
+        "mean_value": 2.0,
+        "24h_volatility_std_dev": 4.2426
+      }
+    },
+    "hematology": {
+      "hematocrit": {
+        "mean_value": 27.93,
+        "24h_volatility_std_dev": 1.2508,
+        "24h_absolute_minimum": 27.0,
+        "24h_absolute_maximum": 30.05,
+        "most_recent_value": 27.0,
+        "24h_trend_slope": -0.2314,
+        "6h_trend_slope": 0.0
+      },
+      "hemoglobin": {
+        "mean_value": 9.64,
+        "24h_volatility_std_dev": 0.251,
+        "24h_absolute_minimum": 9.4,
+        "24h_absolute_maximum": 10.0,
+        "most_recent_value": 9.7,
+        "24h_trend_slope": 0.0043,
+        "6h_trend_slope": 0.0
+      },
+      "platelets": {
+        "mean_value": 223.5,
+        "24h_volatility_std_dev": 5.1962,
+        "24h_absolute_minimum": 219.0,
+        "24h_absolute_maximum": 228.0,
+        "most_recent_value": 219.0,
+        "24h_trend_slope": -1.26,
+        "6h_trend_slope": 0.0
+      },
+      "mean_corpuscular_hemoglobin": {
+        "mean_value": 32.4,
+        "24h_volatility_std_dev": 1.5556
+      },
+      "mean_corpuscular_hemoglobin_concentration": {
+        "mean_value": 34.8,
+        "24h_volatility_std_dev": 1.5556
+      }
+    },
+    "coagulation": {
+      "fibrinogen": {
+        "mean_value": 240.0,
+        "24h_volatility_std_dev": 17.1896,
+        "24h_absolute_minimum": 230.0,
+        "24h_absolute_maximum": 251.0,
+        "most_recent_value": 246.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "partial_thromboplastin_time": {
+        "mean_value": 29.0,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 29.0,
+        "24h_absolute_maximum": 29.0,
+        "most_recent_value": 29.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "prothrombin_time_inr": {
+        "mean_value": 1.3,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 1.3,
+        "24h_absolute_maximum": 1.3,
+        "most_recent_value": 1.3,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "prothrombin_time_pt": {
+        "mean_value": 14.0,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 14.0,
+        "24h_absolute_maximum": 14.0,
+        "most_recent_value": 14.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      }
+    },
+    "static_demographics": {
+      "weight": {
+        "mean_value": 82.8695,
+        "24h_volatility_std_dev": 0.0615
+      },
+      "height": {
+        "mean_value": 157.24,
+        "24h_volatility_std_dev": null
+      }
+    },
+    "other": {
+      "heart_rate": {
+        "mean_value": 85.7971,
+        "24h_volatility_std_dev": 9.0642,
+        "24h_absolute_minimum": 74.0,
+        "24h_absolute_maximum": 101.0,
+        "most_recent_value": 83.0,
+        "24h_trend_slope": 0.0903,
+        "6h_trend_slope": 0.1714
+      },
+      "mean_blood_pressure": {
+        "mean_value": 76.0652,
+        "24h_volatility_std_dev": 11.5702,
+        "24h_absolute_minimum": 51.0,
+        "24h_absolute_maximum": 94.0,
+        "most_recent_value": 80.0,
+        "24h_trend_slope": -0.2213,
+        "6h_trend_slope": 2.8857
+      },
+      "oxygen_saturation": {
+        "mean_value": 99.9565,
+        "24h_volatility_std_dev": 0.2085,
+        "24h_absolute_minimum": 99.0,
+        "24h_absolute_maximum": 100.0,
+        "most_recent_value": 100.0,
+        "24h_trend_slope": 0.0059,
+        "6h_trend_slope": 0.0
+      },
+      "fraction_inspired_oxygen": {
+        "mean_value": 0.5,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 0.5,
+        "24h_absolute_maximum": 0.5,
+        "most_recent_value": 0.5,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "fraction_inspired_oxygen_set": {
+        "mean_value": 0.525,
+        "24h_volatility_std_dev": 0.1429,
+        "24h_absolute_minimum": 0.4,
+        "24h_absolute_maximum": 0.875,
+        "most_recent_value": 0.5,
+        "24h_trend_slope": -0.0099,
+        "6h_trend_slope": 0.0
+      },
+      "peak_inspiratory_pressure": {
+        "mean_value": 18.0,
+        "24h_volatility_std_dev": 2.6077,
+        "24h_absolute_minimum": 14.0,
+        "24h_absolute_maximum": 22.0,
+        "most_recent_value": 19.0,
+        "24h_trend_slope": -0.1804,
+        "6h_trend_slope": 0.0
+      },
+      "plateau_pressure": {
+        "mean_value": 15.4,
+        "24h_volatility_std_dev": 2.0736,
+        "24h_absolute_minimum": 14.0,
+        "24h_absolute_maximum": 19.0,
+        "most_recent_value": 15.0,
+        "24h_trend_slope": -0.1304,
+        "6h_trend_slope": 0.0
+      },
+      "positive_end-expiratory_pressure": {
+        "mean_value": 5.0,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 5.0,
+        "24h_absolute_maximum": 5.0,
+        "most_recent_value": 5.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "positive_end-expiratory_pressure_set": {
+        "mean_value": 5.0,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 5.0,
+        "24h_absolute_maximum": 5.0,
+        "most_recent_value": 5.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "tidal_volume_observed": {
+        "mean_value": 499.5,
+        "24h_volatility_std_dev": 44.1396,
+        "24h_absolute_minimum": 421.0,
+        "24h_absolute_maximum": 542.0,
+        "most_recent_value": 483.0,
+        "24h_trend_slope": -1.1569,
+        "6h_trend_slope": 0.0
+      },
+      "tidal_volume_set": {
+        "mean_value": 500.0,
+        "24h_volatility_std_dev": 0.0,
+        "24h_absolute_minimum": 500.0,
+        "24h_absolute_maximum": 500.0,
+        "most_recent_value": 500.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "tidal_volume_spontaneous": {
+        "mean_value": 532.0,
+        "24h_volatility_std_dev": 72.4006,
+        "24h_absolute_minimum": 532.0,
+        "24h_absolute_maximum": 532.0,
+        "most_recent_value": 532.0,
+        "24h_trend_slope": 1.331,
+        "6h_trend_slope": 0.0
+      },
+      "cardiac_index": {
+        "mean_value": 2.6592,
+        "24h_volatility_std_dev": 0.4023,
+        "24h_absolute_minimum": 2.1028,
+        "24h_absolute_maximum": 3.3348,
+        "most_recent_value": 2.788,
+        "24h_trend_slope": 0.0178,
+        "6h_trend_slope": 0.0046
+      },
+      "cardiac_output_thermodilution": {
+        "mean_value": 5.1045,
+        "24h_volatility_std_dev": 0.7253,
+        "24h_absolute_minimum": 4.12,
+        "24h_absolute_maximum": 6.26,
+        "most_recent_value": 5.4,
+        "24h_trend_slope": 0.0379,
+        "6h_trend_slope": 0.0025
+      },
+      "cardiac_output_fick": {
+        "mean_value": 5.7367,
+        "24h_volatility_std_dev": 0.9152,
+        "24h_absolute_minimum": 4.9536,
+        "24h_absolute_maximum": 6.5542,
+        "most_recent_value": 5.7263,
+        "24h_trend_slope": 0.0012,
+        "6h_trend_slope": 0.0
+      },
+      "central_venous_pressure": {
+        "mean_value": 10.5754,
+        "24h_volatility_std_dev": 2.9287,
+        "24h_absolute_minimum": 6.0,
+        "24h_absolute_maximum": 16.0,
+        "most_recent_value": 10.0,
+        "24h_trend_slope": -0.0643,
+        "6h_trend_slope": 0.0
+      },
+      "pulmonary_artery_pressure_mean": {
+        "mean_value": 27.0176,
+        "24h_volatility_std_dev": 3.6827,
+        "24h_absolute_minimum": 21.0,
+        "24h_absolute_maximum": 34.0,
+        "most_recent_value": 27.0,
+        "24h_trend_slope": -0.0323,
+        "6h_trend_slope": 0.0
+      },
+      "pulmonary_capillary_wedge_pressure": {
+        "mean_value": 16.0,
+        "24h_volatility_std_dev": 2.7049,
+        "24h_absolute_minimum": 14.0,
+        "24h_absolute_maximum": 19.0,
+        "most_recent_value": 16.0,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "systemic_vascular_resistance": {
+        "mean_value": 988.649,
+        "24h_volatility_std_dev": 186.7413,
+        "24h_absolute_minimum": 715.152,
+        "24h_absolute_maximum": 1317.27,
+        "most_recent_value": 915.254,
+        "24h_trend_slope": -8.6545,
+        "6h_trend_slope": 1.3684
+      },
+      "anion_gap": {
+        "mean_value": 10.2,
+        "24h_volatility_std_dev": 3.3466,
+        "24h_absolute_minimum": 7.0,
+        "24h_absolute_maximum": 15.0,
+        "most_recent_value": 7.0,
+        "24h_trend_slope": -0.7429,
+        "6h_trend_slope": 0.0
+      },
+      "lactic_acid": {
+        "mean_value": 1.8,
+        "24h_volatility_std_dev": 0.5132,
+        "24h_absolute_minimum": 1.5,
+        "24h_absolute_maximum": 2.1,
+        "most_recent_value": 1.6,
+        "24h_trend_slope": -0.0383,
+        "6h_trend_slope": 0.0
+      },
+      "partial_pressure_of_carbon_dioxide": {
+        "mean_value": 50.0,
+        "24h_volatility_std_dev": 4.1076,
+        "24h_absolute_minimum": 50.0,
+        "24h_absolute_maximum": 50.0,
+        "most_recent_value": 50.0,
+        "24h_trend_slope": -0.0558,
+        "6h_trend_slope": 0.0
+      },
+      "partial_pressure_of_oxygen": {
+        "mean_value": 150.6667,
+        "24h_volatility_std_dev": 59.1956,
+        "24h_absolute_minimum": 94.0,
+        "24h_absolute_maximum": 214.0,
+        "most_recent_value": 111.0,
+        "24h_trend_slope": -5.5113,
+        "6h_trend_slope": -1.25
+      },
+      "venous_pvo2": {
+        "mean_value": 41.75,
+        "24h_volatility_std_dev": 6.9348,
+        "24h_absolute_minimum": 41.0,
+        "24h_absolute_maximum": 42.0,
+        "most_recent_value": 41.5,
+        "24h_trend_slope": 0.3003,
+        "6h_trend_slope": 0.75
+      },
+      "red_blood_cell_count": {
+        "mean_value": 2.94,
+        "24h_volatility_std_dev": 0.0707,
+        "24h_absolute_minimum": 2.89,
+        "24h_absolute_maximum": 2.99,
+        "most_recent_value": 2.89,
+        "24h_trend_slope": -0.0143,
+        "6h_trend_slope": 0.0167
+      },
+      "troponin-i": {
+        "mean_value": 1.9167,
+        "24h_volatility_std_dev": 1.4142,
+        "24h_absolute_minimum": 1.3,
+        "24h_absolute_maximum": 2.21,
+        "most_recent_value": 1.7,
+        "24h_trend_slope": 0.025,
+        "6h_trend_slope": null
+      },
+      "troponin-t": {
+        "mean_value": 0.06,
+        "24h_volatility_std_dev": 0.02,
+        "24h_absolute_minimum": 0.05,
+        "24h_absolute_maximum": 0.07,
+        "most_recent_value": 0.06,
+        "24h_trend_slope": 0.0,
+        "6h_trend_slope": 0.0
+      },
+      "red_blood_cell_count_csf": {
+        "mean_value": 19.0,
+        "24h_volatility_std_dev": 18.3848
+      },
+      "total_protein": {
+        "mean_value": 5.9,
+        "24h_volatility_std_dev": 0.1061
+      },
+      "red_blood_cell_count_urine": {
+        "mean_value": 7.0,
+        "24h_volatility_std_dev": 8.6588
+      },
+      "cholesterol": {
+        "mean_value": 160.0,
+        "24h_volatility_std_dev": 0.0
+      },
+      "red_blood_cell_count_ascites": {
+        "mean_value": 1026.5,
+        "24h_volatility_std_dev": 236.1737
+      },
+      "monocytes": {
+        "mean_value": 4.0,
+        "24h_volatility_std_dev": 0.9899
+      },
+      "asparate_aminotransferase": {
+        "mean_value": 40.0,
+        "24h_volatility_std_dev": 5.1962
+      },
+      "white_blood_cell_count": {
+        "mean_value": 9.35,
+        "24h_volatility_std_dev": 0.1732
+      },
+      "cholesterol_ldl": {
+        "mean_value": 89.0,
+        "24h_volatility_std_dev": 5.6569
+      },
+      "monocytes_csl": {
+        "mean_value": 20.0,
+        "24h_volatility_std_dev": 2.1213
+      },
+      "albumin_pleural": {
+        "mean_value": 2.0,
+        "24h_volatility_std_dev": null
+      },
+      "post_void_residual": {
+        "mean_value": 160.5478,
+        "24h_volatility_std_dev": 47.6201
+      },
+      "albumin_ascites": {
+        "mean_value": 1.5,
+        "24h_volatility_std_dev": null
+      },
+      "red_blood_cell_count_pleural": {
+        "mean_value": 4300.0,
+        "24h_volatility_std_dev": 424.2641
+      },
+      "bilirubin": {
+        "mean_value": 0.65,
+        "24h_volatility_std_dev": 0.1065
+      },
+      "albumin": {
+        "mean_value": 3.2,
+        "24h_volatility_std_dev": 0.0577
+      },
+      "magnesium": {
+        "mean_value": 3.28,
+        "24h_volatility_std_dev": 1.8727
+      },
+      "albumin_urine": {
+        "mean_value": 9.25,
+        "24h_volatility_std_dev": 0.4243
+      },
+      "mean_corpuscular_volume": {
+        "mean_value": 93.0,
+        "24h_volatility_std_dev": 0.0
+      },
+      "total_protein_urine": {
+        "mean_value": 59.0,
+        "24h_volatility_std_dev": 29.8981
+      },
+      "alanine_aminotransferase": {
+        "mean_value": 29.0,
+        "24h_volatility_std_dev": 2.8284
+      },
+      "cholesterol_hdl": {
+        "mean_value": 44.0,
+        "24h_volatility_std_dev": 2.8284
+      },
+      "white_blood_cell_count_urine": {
+        "mean_value": 4.0,
+        "24h_volatility_std_dev": 4.142
+      }
+    }
+  }
+}
+
+Create an embedding that captures your clinical assessment for mortality risk prediction. Consider:
+- Severity scoring implications (APACHE, SOFA conceptual frameworks)
+- Physiological reserve and failure patterns
+- Trajectory of clinical parameters
+- Known mortality risk factors in critical care
+
+Your embedding should embody the clinical expertise used in mortality prognostication.

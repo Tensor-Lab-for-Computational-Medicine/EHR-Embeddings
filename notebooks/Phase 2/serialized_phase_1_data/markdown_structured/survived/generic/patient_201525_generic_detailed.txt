@@ -1,0 +1,833 @@
+You are tasked with creating a semantic embedding that captures the essential clinical characteristics of an ICU patient. 
+
+Patient Data:
+# ICU Patient Clinical Data Summary
+
+## Vital Signs
+
+### Temperature
+
+- **Mean Value**: 36.452
+- **Most Recent Value**: 35.889
+- **24h Absolute Minimum**: 35.889
+- **24h Absolute Maximum**: 37.389
+- **24h Volatility (Std Dev)**: 0.564
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.040
+
+
+## Cardiovascular
+
+### Diastolic Blood Pressure
+
+- **Mean Value**: 56.478
+- **Most Recent Value**: 50.000
+- **24h Absolute Minimum**: 42.000
+- **24h Absolute Maximum**: 81.000
+- **24h Volatility (Std Dev)**: 8.649
+- **6h Trend (Slope)**: -1.095
+- **24h Trend (Slope)**: -0.966
+
+### Systolic Blood Pressure
+
+- **Mean Value**: 132.635
+- **Most Recent Value**: 116.000
+- **24h Absolute Minimum**: 95.000
+- **24h Absolute Maximum**: 167.000
+- **24h Volatility (Std Dev)**: 15.389
+- **6h Trend (Slope)**: -5.873
+- **24h Trend (Slope)**: -1.516
+
+### Pulmonary Artery Pressure Systolic
+
+- **Mean Value**: 34.425
+- **Most Recent Value**: 34.000
+- **24h Absolute Minimum**: 26.750
+- **24h Absolute Maximum**: 44.000
+- **24h Volatility (Std Dev)**: 4.608
+- **6h Trend (Slope)**: 0.004
+- **24h Trend (Slope)**: -0.023
+
+
+## Respiratory
+
+### Respiratory Rate
+
+- **Mean Value**: 20.476
+- **Most Recent Value**: 14.333
+- **24h Absolute Minimum**: 14.000
+- **24h Absolute Maximum**: 28.000
+- **24h Volatility (Std Dev)**: 4.391
+- **6h Trend (Slope)**: -2.292
+- **24h Trend (Slope)**: -0.295
+
+### Respiratory Rate Set
+
+- **Mean Value**: 14.000
+- **Most Recent Value**: 14.000
+- **24h Absolute Minimum**: 14.000
+- **24h Absolute Maximum**: 14.000
+- **24h Volatility (Std Dev)**: 0.000
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+
+## Neurological
+
+### Glascow Coma Scale Total
+
+- **Mean Value**: 13.333
+- **Most Recent Value**: 15.000
+- **24h Absolute Minimum**: 10.000
+- **24h Absolute Maximum**: 15.000
+- **24h Volatility (Std Dev)**: 0.707
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+
+## Laboratory Values
+
+### Blood Urea Nitrogen
+
+- **Mean Value**: 63.000
+- **Most Recent Value**: 65.000
+- **24h Absolute Minimum**: 61.000
+- **24h Absolute Maximum**: 65.000
+- **24h Volatility (Std Dev)**: 2.828
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.364
+
+### Calcium Ionized
+
+- **Mean Value**: 1.128
+- **Most Recent Value**: 1.130
+- **24h Absolute Minimum**: 1.070
+- **24h Absolute Maximum**: 1.180
+- **24h Volatility (Std Dev)**: 0.062
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Creatinine
+
+- **Mean Value**: 3.550
+- **Most Recent Value**: 3.600
+- **24h Absolute Minimum**: 3.500
+- **24h Absolute Maximum**: 3.600
+- **24h Volatility (Std Dev)**: 0.071
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.009
+
+### Glucose
+
+- **Mean Value**: 66.389
+- **Most Recent Value**: 61.000
+- **24h Absolute Minimum**: 53.333
+- **24h Absolute Maximum**: 82.000
+- **24h Volatility (Std Dev)**: 9.660
+- **6h Trend (Slope)**: -5.000
+- **24h Trend (Slope)**: 0.189
+
+### Potassium
+
+- **Mean Value**: 3.850
+- **Most Recent Value**: 3.800
+- **24h Absolute Minimum**: 3.800
+- **24h Absolute Maximum**: 3.900
+- **24h Volatility (Std Dev)**: 0.071
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.009
+
+### Potassium Serum
+
+- **Mean Value**: 3.850
+- **Most Recent Value**: 3.800
+- **24h Absolute Minimum**: 3.800
+- **24h Absolute Maximum**: 3.900
+- **24h Volatility (Std Dev)**: 0.071
+- **6h Trend (Slope)**: -0.025
+- **24h Trend (Slope)**: -0.009
+
+### Sodium
+
+- **Mean Value**: 135.500
+- **Most Recent Value**: 136.000
+- **24h Absolute Minimum**: 135.000
+- **24h Absolute Maximum**: 136.000
+- **24h Volatility (Std Dev)**: 0.707
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.091
+
+### Chloride
+
+- **Mean Value**: 96.000
+- **Most Recent Value**: 96.000
+- **24h Absolute Minimum**: 96.000
+- **24h Absolute Maximum**: 96.000
+- **24h Volatility (Std Dev)**: 0.000
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Creatinine Ascites
+
+- **Mean Value**: 1.000
+- **24h Volatility (Std Dev)**: N/A
+
+### Calcium
+
+- **Mean Value**: 8.250
+- **24h Volatility (Std Dev)**: 0.071
+
+### Creatinine Pleural
+
+- **Mean Value**: 1.200
+- **24h Volatility (Std Dev)**: N/A
+
+### Chloride Urine
+
+- **Mean Value**: 79.000
+- **24h Volatility (Std Dev)**: 20.356
+
+### Creatinine Urine
+
+- **Mean Value**: 66.000
+- **24h Volatility (Std Dev)**: 18.385
+
+### Creatinine Body Fluid
+
+- **Mean Value**: 1.900
+- **24h Volatility (Std Dev)**: N/A
+
+### Calcium Urine
+
+- **Mean Value**: 2.000
+- **24h Volatility (Std Dev)**: 5.127
+
+
+## Blood Chemistry
+
+### Bicarbonate
+
+- **Mean Value**: 27.500
+- **Most Recent Value**: 27.000
+- **24h Absolute Minimum**: 27.000
+- **24h Absolute Maximum**: 28.000
+- **24h Volatility (Std Dev)**: 0.707
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.091
+
+### Co2
+
+- **Mean Value**: 23.667
+- **Most Recent Value**: 24.000
+- **24h Absolute Minimum**: 23.000
+- **24h Absolute Maximum**: 24.000
+- **24h Volatility (Std Dev)**: 1.414
+- **6h Trend (Slope)**: 0.200
+- **24h Trend (Slope)**: 0.000
+
+### Co2 (etco2, Pco2, Etc.)
+
+- **Mean Value**: 32.000
+- **Most Recent Value**: 32.000
+- **24h Absolute Minimum**: 32.000
+- **24h Absolute Maximum**: 32.000
+- **24h Volatility (Std Dev)**: 0.000
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Lactate
+
+- **Mean Value**: 0.600
+- **Most Recent Value**: 0.600
+- **24h Absolute Minimum**: 0.600
+- **24h Absolute Maximum**: 0.600
+- **24h Volatility (Std Dev)**: 0.611
+- **6h Trend (Slope)**: -0.040
+- **24h Trend (Slope)**: -0.045
+
+### Ph
+
+- **Mean Value**: 7.350
+- **Most Recent Value**: 7.380
+- **24h Absolute Minimum**: 7.320
+- **24h Absolute Maximum**: 7.380
+- **24h Volatility (Std Dev)**: 0.042
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.007
+
+### Phosphate
+
+- **Mean Value**: 6.950
+- **24h Volatility (Std Dev)**: 0.071
+
+### Alkaline Phosphate
+
+- **Mean Value**: 86.000
+- **24h Volatility (Std Dev)**: 4.619
+
+### Lactate Dehydrogenase Pleural
+
+- **Mean Value**: 286.000
+- **24h Volatility (Std Dev)**: 26.163
+
+### Lymphocytes Atypical Csl
+
+- **Mean Value**: 1.000
+- **24h Volatility (Std Dev)**: N/A
+
+### Phosphorous
+
+- **Mean Value**: 6.950
+- **24h Volatility (Std Dev)**: 0.071
+
+### Ph Urine
+
+- **Mean Value**: 5.000
+- **24h Volatility (Std Dev)**: 0.354
+
+### Lymphocytes Body Fluid
+
+- **Mean Value**: 13.000
+- **24h Volatility (Std Dev)**: 7.778
+
+### Lymphocytes Percent
+
+- **Mean Value**: 13.000
+- **24h Volatility (Std Dev)**: N/A
+
+### Lymphocytes Pleural
+
+- **Mean Value**: 27.000
+- **24h Volatility (Std Dev)**: 2.475
+
+### Lymphocytes Ascites
+
+- **Mean Value**: 15.000
+- **24h Volatility (Std Dev)**: 13.435
+
+### Lactate Dehydrogenase
+
+- **Mean Value**: 261.000
+- **24h Volatility (Std Dev)**: 38.184
+
+### Lymphocytes Atypical
+
+- **Mean Value**: 1.500
+- **24h Volatility (Std Dev)**: 1.414
+
+### Basophils
+
+- **Mean Value**: 0.100
+- **24h Volatility (Std Dev)**: 0.071
+
+### Lymphocytes
+
+- **Mean Value**: 6.600
+- **24h Volatility (Std Dev)**: 2.404
+
+### Neutrophils
+
+- **Mean Value**: 88.100
+- **24h Volatility (Std Dev)**: 3.786
+
+### Eosinophils
+
+- **Mean Value**: 2.000
+- **24h Volatility (Std Dev)**: 4.243
+
+
+## Hematology
+
+### Hematocrit
+
+- **Mean Value**: 29.350
+- **Most Recent Value**: 29.200
+- **24h Absolute Minimum**: 29.200
+- **24h Absolute Maximum**: 29.500
+- **24h Volatility (Std Dev)**: 0.212
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.027
+
+### Hemoglobin
+
+- **Mean Value**: 9.850
+- **Most Recent Value**: 9.900
+- **24h Absolute Minimum**: 9.800
+- **24h Absolute Maximum**: 9.900
+- **24h Volatility (Std Dev)**: 0.071
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.009
+
+### Platelets
+
+- **Mean Value**: 175.000
+- **Most Recent Value**: 184.000
+- **24h Absolute Minimum**: 166.000
+- **24h Absolute Maximum**: 184.000
+- **24h Volatility (Std Dev)**: 12.728
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 1.636
+
+### Mean Corpuscular Hemoglobin
+
+- **Mean Value**: 30.750
+- **24h Volatility (Std Dev)**: 0.212
+
+### Mean Corpuscular Hemoglobin Concentration
+
+- **Mean Value**: 33.550
+- **24h Volatility (Std Dev)**: 0.212
+
+
+## Coagulation
+
+### Fibrinogen
+
+- **Mean Value**: 240.000
+- **Most Recent Value**: 246.000
+- **24h Absolute Minimum**: 230.000
+- **24h Absolute Maximum**: 251.000
+- **24h Volatility (Std Dev)**: 17.190
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Partial Thromboplastin Time
+
+- **Mean Value**: 25.800
+- **Most Recent Value**: 25.400
+- **24h Absolute Minimum**: 25.400
+- **24h Absolute Maximum**: 26.200
+- **24h Volatility (Std Dev)**: 0.566
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.073
+
+### Prothrombin Time Inr
+
+- **Mean Value**: 1.200
+- **Most Recent Value**: 1.200
+- **24h Absolute Minimum**: 1.200
+- **24h Absolute Maximum**: 1.200
+- **24h Volatility (Std Dev)**: 0.000
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Prothrombin Time Pt
+
+- **Mean Value**: 14.200
+- **Most Recent Value**: 14.300
+- **24h Absolute Minimum**: 14.100
+- **24h Absolute Maximum**: 14.300
+- **24h Volatility (Std Dev)**: 0.141
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.018
+
+
+## Static Demographics
+
+### Weight
+
+- **Mean Value**: 89.502
+- **24h Volatility (Std Dev)**: 0.170
+
+### Height
+
+- **Mean Value**: 172.860
+- **24h Volatility (Std Dev)**: N/A
+
+
+## Other
+
+### Heart Rate
+
+- **Mean Value**: 70.710
+- **Most Recent Value**: 67.000
+- **24h Absolute Minimum**: 62.000
+- **24h Absolute Maximum**: 84.000
+- **24h Volatility (Std Dev)**: 5.128
+- **6h Trend (Slope)**: -4.027
+- **24h Trend (Slope)**: -0.035
+
+### Mean Blood Pressure
+
+- **Mean Value**: 74.383
+- **Most Recent Value**: 66.000
+- **24h Absolute Minimum**: 53.000
+- **24h Absolute Maximum**: 91.000
+- **24h Volatility (Std Dev)**: 8.434
+- **6h Trend (Slope)**: -3.092
+- **24h Trend (Slope)**: -0.883
+
+### Oxygen Saturation
+
+- **Mean Value**: 97.529
+- **Most Recent Value**: 100.000
+- **24h Absolute Minimum**: 93.000
+- **24h Absolute Maximum**: 100.000
+- **24h Volatility (Std Dev)**: 1.969
+- **6h Trend (Slope)**: 1.230
+- **24h Trend (Slope)**: -0.094
+
+### Fraction Inspired Oxygen
+
+- **Mean Value**: 0.867
+- **Most Recent Value**: 0.600
+- **24h Absolute Minimum**: 0.600
+- **24h Absolute Maximum**: 1.000
+- **24h Volatility (Std Dev)**: 0.189
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.015
+
+### Fraction Inspired Oxygen Set
+
+- **Mean Value**: 0.525
+- **Most Recent Value**: 0.500
+- **24h Absolute Minimum**: 0.400
+- **24h Absolute Maximum**: 0.875
+- **24h Volatility (Std Dev)**: 0.143
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.010
+
+### Peak Inspiratory Pressure
+
+- **Mean Value**: 20.250
+- **Most Recent Value**: 30.000
+- **24h Absolute Minimum**: 14.000
+- **24h Absolute Maximum**: 30.000
+- **24h Volatility (Std Dev)**: 7.762
+- **6h Trend (Slope)**: 1.750
+- **24h Trend (Slope)**: 0.787
+
+### Plateau Pressure
+
+- **Mean Value**: 18.600
+- **Most Recent Value**: 18.000
+- **24h Absolute Minimum**: 17.000
+- **24h Absolute Maximum**: 20.000
+- **24h Volatility (Std Dev)**: 1.633
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Positive End-expiratory Pressure
+
+- **Mean Value**: 5.000
+- **Most Recent Value**: 5.000
+- **24h Absolute Minimum**: 5.000
+- **24h Absolute Maximum**: 5.000
+- **24h Volatility (Std Dev)**: 0.000
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Positive End-expiratory Pressure Set
+
+- **Mean Value**: 6.200
+- **Most Recent Value**: 8.000
+- **24h Absolute Minimum**: 5.000
+- **24h Absolute Maximum**: 8.000
+- **24h Volatility (Std Dev)**: 1.643
+- **6h Trend (Slope)**: 0.577
+- **24h Trend (Slope)**: 0.137
+
+### Tidal Volume Observed
+
+- **Mean Value**: 491.500
+- **Most Recent Value**: 478.000
+- **24h Absolute Minimum**: 443.000
+- **24h Absolute Maximum**: 529.000
+- **24h Volatility (Std Dev)**: 38.906
+- **6h Trend (Slope)**: -12.750
+- **24h Trend (Slope)**: 1.574
+
+### Tidal Volume Set
+
+- **Mean Value**: 500.000
+- **Most Recent Value**: 500.000
+- **24h Absolute Minimum**: 500.000
+- **24h Absolute Maximum**: 500.000
+- **24h Volatility (Std Dev)**: 0.000
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Tidal Volume Spontaneous
+
+- **Mean Value**: 510.667
+- **Most Recent Value**: 437.000
+- **24h Absolute Minimum**: 437.000
+- **24h Absolute Maximum**: 584.333
+- **24h Volatility (Std Dev)**: 104.180
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -29.467
+
+### Cardiac Index
+
+- **Mean Value**: 2.659
+- **Most Recent Value**: 2.788
+- **24h Absolute Minimum**: 2.103
+- **24h Absolute Maximum**: 3.335
+- **24h Volatility (Std Dev)**: 0.402
+- **6h Trend (Slope)**: 0.005
+- **24h Trend (Slope)**: 0.018
+
+### Cardiac Output Thermodilution
+
+- **Mean Value**: 5.105
+- **Most Recent Value**: 5.400
+- **24h Absolute Minimum**: 4.120
+- **24h Absolute Maximum**: 6.260
+- **24h Volatility (Std Dev)**: 0.725
+- **6h Trend (Slope)**: 0.003
+- **24h Trend (Slope)**: 0.038
+
+### Cardiac Output Fick
+
+- **Mean Value**: 5.737
+- **Most Recent Value**: 5.726
+- **24h Absolute Minimum**: 4.954
+- **24h Absolute Maximum**: 6.554
+- **24h Volatility (Std Dev)**: 0.915
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.001
+
+### Central Venous Pressure
+
+- **Mean Value**: 10.575
+- **Most Recent Value**: 10.000
+- **24h Absolute Minimum**: 6.000
+- **24h Absolute Maximum**: 16.000
+- **24h Volatility (Std Dev)**: 2.929
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.064
+
+### Pulmonary Artery Pressure Mean
+
+- **Mean Value**: 27.018
+- **Most Recent Value**: 27.000
+- **24h Absolute Minimum**: 21.000
+- **24h Absolute Maximum**: 34.000
+- **24h Volatility (Std Dev)**: 3.683
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.032
+
+### Pulmonary Capillary Wedge Pressure
+
+- **Mean Value**: 16.000
+- **Most Recent Value**: 16.000
+- **24h Absolute Minimum**: 14.000
+- **24h Absolute Maximum**: 19.000
+- **24h Volatility (Std Dev)**: 2.705
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Systemic Vascular Resistance
+
+- **Mean Value**: 988.649
+- **Most Recent Value**: 915.254
+- **24h Absolute Minimum**: 715.152
+- **24h Absolute Maximum**: 1317.270
+- **24h Volatility (Std Dev)**: 186.741
+- **6h Trend (Slope)**: 1.368
+- **24h Trend (Slope)**: -8.654
+
+### Anion Gap
+
+- **Mean Value**: 16.000
+- **Most Recent Value**: 17.000
+- **24h Absolute Minimum**: 15.000
+- **24h Absolute Maximum**: 17.000
+- **24h Volatility (Std Dev)**: 1.414
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.182
+
+### Lactic Acid
+
+- **Mean Value**: 0.600
+- **Most Recent Value**: 0.600
+- **24h Absolute Minimum**: 0.600
+- **24h Absolute Maximum**: 0.600
+- **24h Volatility (Std Dev)**: 0.513
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.038
+
+### Partial Pressure Of Carbon Dioxide
+
+- **Mean Value**: 55.500
+- **Most Recent Value**: 52.000
+- **24h Absolute Minimum**: 52.000
+- **24h Absolute Maximum**: 59.000
+- **24h Volatility (Std Dev)**: 4.950
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: -0.778
+
+### Partial Pressure Of Oxygen
+
+- **Mean Value**: 150.667
+- **Most Recent Value**: 111.000
+- **24h Absolute Minimum**: 94.000
+- **24h Absolute Maximum**: 214.000
+- **24h Volatility (Std Dev)**: 59.196
+- **6h Trend (Slope)**: -1.250
+- **24h Trend (Slope)**: -5.511
+
+### Venous Pvo2
+
+- **Mean Value**: 41.750
+- **Most Recent Value**: 41.500
+- **24h Absolute Minimum**: 41.000
+- **24h Absolute Maximum**: 42.000
+- **24h Volatility (Std Dev)**: 6.935
+- **6h Trend (Slope)**: 0.750
+- **24h Trend (Slope)**: 0.300
+
+### Red Blood Cell Count
+
+- **Mean Value**: 3.205
+- **Most Recent Value**: 3.190
+- **24h Absolute Minimum**: 3.190
+- **24h Absolute Maximum**: 3.220
+- **24h Volatility (Std Dev)**: 0.021
+- **6h Trend (Slope)**: 0.017
+- **24h Trend (Slope)**: -0.003
+
+### Troponin-i
+
+- **Mean Value**: 1.917
+- **Most Recent Value**: 1.700
+- **24h Absolute Minimum**: 1.300
+- **24h Absolute Maximum**: 2.210
+- **24h Volatility (Std Dev)**: 1.414
+- **6h Trend (Slope)**: N/A
+- **24h Trend (Slope)**: 0.025
+
+### Troponin-t
+
+- **Mean Value**: 0.060
+- **Most Recent Value**: 0.060
+- **24h Absolute Minimum**: 0.050
+- **24h Absolute Maximum**: 0.070
+- **24h Volatility (Std Dev)**: 0.020
+- **6h Trend (Slope)**: 0.000
+- **24h Trend (Slope)**: 0.000
+
+### Red Blood Cell Count Csf
+
+- **Mean Value**: 19.000
+- **24h Volatility (Std Dev)**: 18.385
+
+### Total Protein
+
+- **Mean Value**: 5.900
+- **24h Volatility (Std Dev)**: 0.106
+
+### Red Blood Cell Count Urine
+
+- **Mean Value**: 7.000
+- **24h Volatility (Std Dev)**: 8.659
+
+### Cholesterol
+
+- **Mean Value**: 160.000
+- **24h Volatility (Std Dev)**: 0.000
+
+### Red Blood Cell Count Ascites
+
+- **Mean Value**: 1026.500
+- **24h Volatility (Std Dev)**: 236.174
+
+### Monocytes
+
+- **Mean Value**: 4.300
+- **24h Volatility (Std Dev)**: 0.990
+
+### Asparate Aminotransferase
+
+- **Mean Value**: 26.000
+- **24h Volatility (Std Dev)**: 5.196
+
+### White Blood Cell Count
+
+- **Mean Value**: 10.000
+- **24h Volatility (Std Dev)**: 0.283
+
+### Cholesterol Ldl
+
+- **Mean Value**: 89.000
+- **24h Volatility (Std Dev)**: 5.657
+
+### Monocytes Csl
+
+- **Mean Value**: 20.000
+- **24h Volatility (Std Dev)**: 2.121
+
+### Albumin Pleural
+
+- **Mean Value**: 2.000
+- **24h Volatility (Std Dev)**: N/A
+
+### Post Void Residual
+
+- **Mean Value**: 160.548
+- **24h Volatility (Std Dev)**: 47.620
+
+### Albumin Ascites
+
+- **Mean Value**: 1.500
+- **24h Volatility (Std Dev)**: N/A
+
+### Red Blood Cell Count Pleural
+
+- **Mean Value**: 4300.000
+- **24h Volatility (Std Dev)**: 424.264
+
+### Bilirubin
+
+- **Mean Value**: 0.800
+- **24h Volatility (Std Dev)**: 0.106
+
+### Albumin
+
+- **Mean Value**: 3.500
+- **24h Volatility (Std Dev)**: 0.058
+
+### Magnesium
+
+- **Mean Value**: 2.100
+- **24h Volatility (Std Dev)**: 0.000
+
+### Albumin Urine
+
+- **Mean Value**: 9.250
+- **24h Volatility (Std Dev)**: 0.424
+
+### Mean Corpuscular Volume
+
+- **Mean Value**: 92.000
+- **24h Volatility (Std Dev)**: 0.000
+
+### Total Protein Urine
+
+- **Mean Value**: 59.000
+- **24h Volatility (Std Dev)**: 29.898
+
+### Alanine Aminotransferase
+
+- **Mean Value**: 27.000
+- **24h Volatility (Std Dev)**: 2.828
+
+### Cholesterol Hdl
+
+- **Mean Value**: 44.000
+- **24h Volatility (Std Dev)**: 2.828
+
+### White Blood Cell Count Urine
+
+- **Mean Value**: 4.000
+- **24h Volatility (Std Dev)**: 4.142
+
+
+
+Please generate an embedding that:
+1. Captures the patient's overall clinical state
+2. Preserves important physiological patterns
+3. Maintains relevant temporal information
+4. Represents the complexity of the clinical picture
+
+Focus on creating a rich, informative representation suitable for medical analysis.
