@@ -3,9 +3,125 @@
 import pandas as pd
 import numpy as np
 import json
+import os
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 import logging
+
+# =============================================================================
+# REFERENCE RANGES LOADING
+# =============================================================================
+
+def load_lab_reference_ranges(reference_file_path: str = '../../data/Lab_reference_ranges.csv') -> Dict[str, Dict[str, Any]]:
+    """
+    Load lab reference ranges from CSV file.
+    
+    Args:
+        reference_file_path: Path to the lab reference ranges CSV file
+        
+    Returns:
+        Dictionary mapping feature names to reference range information
+    """
+    try:
+        # Try different possible paths for the reference file
+        possible_paths = [
+            reference_file_path,
+            '../../data/Lab_reference_ranges.csv',
+            '../data/Lab_reference_ranges.csv',
+            'data/Lab_reference_ranges.csv',
+            os.path.join(os.path.dirname(__file__), '../../data/Lab_reference_ranges.csv')
+        ]
+        
+        reference_df = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                reference_df = pd.read_csv(path)
+                break
+        
+        if reference_df is None:
+            logging.warning(f"Lab reference ranges file not found at any of these paths: {possible_paths}")
+            return {}
+        
+        reference_ranges = {}
+        
+        for _, row in reference_df.iterrows():
+            feature_name = row['feature_name'].lower().strip()
+            
+            # Extract bounds, handling N/A values
+            male_lower_raw = row['Male Lower Bound'] if pd.notna(row['Male Lower Bound']) and row['Male Lower Bound'] != 'N/A' else None
+            male_upper_raw = row['Male Upper Bound'] if pd.notna(row['Male Upper Bound']) and row['Male Upper Bound'] != 'N/A' else None
+            female_lower_raw = row['Female Lower Bound'] if pd.notna(row['Female Lower Bound']) and row['Female Lower Bound'] != 'N/A' else None
+            female_upper_raw = row['Female Upper Bound'] if pd.notna(row['Female Upper Bound']) and row['Female Upper Bound'] != 'N/A' else None
+            
+            # Convert to float if they're not None
+            try:
+                male_lower = float(male_lower_raw) if male_lower_raw is not None else None
+                male_upper = float(male_upper_raw) if male_upper_raw is not None else None
+                female_lower = float(female_lower_raw) if female_lower_raw is not None else None
+                female_upper = float(female_upper_raw) if female_upper_raw is not None else None
+            except (ValueError, TypeError):
+                # Skip if can't convert to float
+                continue
+            
+            reference_ranges[feature_name] = {
+                'male_lower': male_lower,
+                'male_upper': male_upper,
+                'female_lower': female_lower,
+                'female_upper': female_upper,
+                'units': row.get('Units', ''),
+                'notes': row.get('Notes/Context', '')
+            }
+        
+        logging.info(f"Loaded reference ranges for {len(reference_ranges)} lab features")
+        return reference_ranges
+        
+    except Exception as e:
+        logging.error(f"Error loading lab reference ranges: {e}")
+        return {}
+
+def get_reference_range_annotation(feature_name: str, value: float, reference_ranges: Dict[str, Dict[str, Any]], gender: Optional[str] = None) -> str:
+    """
+    Get reference range annotation for a lab value.
+    
+    Args:
+        feature_name: Name of the lab feature
+        value: The lab value to annotate
+        reference_ranges: Dictionary of reference ranges
+        gender: Patient gender ('male' or 'female'), if available
+        
+    Returns:
+        Annotation string like '(high)', '(normal)', '(low)', or '' if no range available
+    """
+    if pd.isna(value) or feature_name.lower() not in reference_ranges:
+        return ''
+    
+    ranges = reference_ranges[feature_name.lower()]
+    
+    # Determine which bounds to use
+    if gender and gender.lower() in ['male', 'm']:
+        lower_bound = ranges['male_lower']
+        upper_bound = ranges['male_upper']
+    elif gender and gender.lower() in ['female', 'f']:
+        lower_bound = ranges['female_lower']
+        upper_bound = ranges['female_upper']
+    else:
+        # Use male ranges as default if gender unknown, or use the most restrictive bounds
+        lower_bound = ranges['male_lower'] or ranges['female_lower']
+        upper_bound = ranges['male_upper'] or ranges['female_upper']
+    
+    # If no bounds available, return empty annotation
+    if lower_bound is None and upper_bound is None:
+        return ''
+    
+    # Determine if value is high, low, or normal
+    if lower_bound is not None and value < lower_bound:
+        return ' (low)'
+    elif upper_bound is not None and value > upper_bound:
+        return ' (high)'
+    elif (lower_bound is None or value >= lower_bound) and (upper_bound is None or value <= upper_bound):
+        return ' (normal)'
+    else:
+        return ''
 
 # =============================================================================
 # SERIALIZATION CONFIGURATION
@@ -27,6 +143,15 @@ SERIALIZATION_FORMATS = {
     'markdown_structured': SerializationConfig(
         name='markdown_structured',
         description='Structured Markdown with clear sections and headers',
+        include_feature_names=True,
+        include_units=True,
+        group_by_category=True,
+        use_structured_format=True,
+        max_decimal_places=3
+    ),
+    'markdown_structured_annotated': SerializationConfig(
+        name='markdown_structured_annotated',
+        description='Structured Markdown with lab value reference range annotations (high/normal/low)',
         include_feature_names=True,
         include_units=True,
         group_by_category=True,
@@ -197,11 +322,25 @@ def categorize_base_features(base_feature_names: List[str]) -> Dict[str, List[st
 # SERIALIZATION FUNCTIONS
 # =============================================================================
 
-def format_value(value: float, config: SerializationConfig) -> str:
+def format_value(value, config: SerializationConfig) -> str:
     """Format a numerical value according to the configuration."""
     if pd.isna(value):
         return "N/A"
-    return f"{value:.{config.max_decimal_places}f}"
+    # Handle non-numeric values (like strings)
+    try:
+        float_value = float(value)
+        return f"{float_value:.{config.max_decimal_places}f}"
+    except (ValueError, TypeError):
+        return str(value)
+
+def format_value_with_annotation(value: float, config: SerializationConfig, feature_name: str, reference_ranges: Dict[str, Dict[str, Any]], gender: Optional[str] = None) -> str:
+    """Format a numerical value with reference range annotation."""
+    if pd.isna(value):
+        return "N/A"
+    
+    formatted_value = f"{value:.{config.max_decimal_places}f}"
+    annotation = get_reference_range_annotation(feature_name, value, reference_ranges, gender)
+    return formatted_value + annotation
 
 def clean_feature_name(feature_name: str) -> str:
     """Clean feature names for better readability."""
@@ -237,6 +376,10 @@ def serialize_patient_data(patient_data: pd.Series, format_name: str) -> str:
     
     if format_name == 'markdown_structured':
         return _serialize_to_markdown_structured(patient_data, config, categories, base_features)
+    elif format_name == 'markdown_structured_annotated':
+        # Load reference ranges for annotation
+        reference_ranges = load_lab_reference_ranges()
+        return _serialize_to_markdown_structured_annotated(patient_data, config, categories, base_features, reference_ranges)
     elif format_name == 'markdown_dense':
         return _serialize_to_markdown_dense(patient_data, config, base_features)
     elif format_name == 'json_structured':
@@ -247,6 +390,100 @@ def serialize_patient_data(patient_data: pd.Series, format_name: str) -> str:
         return _serialize_to_natural_language(patient_data, config, categories, base_features)
     else:
         raise ValueError(f"Serialization function not implemented for format: {format_name}")
+
+def _serialize_to_markdown_structured_annotated(patient_data: pd.Series, config: SerializationConfig, 
+                                              categories: Dict[str, List[str]], base_features: Dict[str, Dict[str, str]], 
+                                              reference_ranges: Dict[str, Dict[str, Any]]) -> str:
+    """Serialize to structured Markdown format with reference range annotations."""
+    markdown_parts = ["# ICU Patient Clinical Data Summary (with Reference Range Annotations)\n"]
+    
+    # Try to extract gender if available for more accurate reference ranges
+    gender = None
+    gender_features = ['gender', 'sex', 'patient_gender']
+    for gender_feature in gender_features:
+        if gender_feature in patient_data.index:
+            gender_value = patient_data[gender_feature]
+            if pd.notna(gender_value):
+                gender = str(gender_value).lower()
+                break
+    
+    for category, base_names in categories.items():
+        if not base_names:
+            continue
+            
+        markdown_parts.append(f"## {category}\n")
+        
+        for base_name in base_names:
+            if base_name in base_features:
+                clean_base_name = clean_feature_name(base_name)
+                markdown_parts.append(f"### {clean_base_name}\n")
+                
+                measurements = base_features[base_name]
+                
+                # Define preferred order for measurements
+                measurement_order = [
+                    'Mean Value',
+                    'Most Recent Value', 
+                    '24h Absolute Minimum',
+                    '24h Absolute Maximum',
+                    '24h Volatility (Std Dev)',
+                    '6h Trend (Slope)',
+                    '24h Trend (Slope)',
+                    'Base Value'
+                ]
+                
+                for measurement_type in measurement_order:
+                    if measurement_type in measurements:
+                        feature_name = measurements[measurement_type]
+                        value = patient_data[feature_name]
+                        
+                        # Use annotated formatting if this feature has reference ranges
+                        # Try both base name and base name with "_mean" suffix
+                        ref_key = None
+                        if base_name.lower() in reference_ranges:
+                            ref_key = base_name.lower()
+                        elif f"{base_name.lower()}_mean" in reference_ranges:
+                            ref_key = f"{base_name.lower()}_mean"
+                        
+                        if ref_key:
+                            formatted_value = format_value_with_annotation(value, config, ref_key, reference_ranges, gender)
+                        else:
+                            formatted_value = format_value(value, config)
+                        
+                        markdown_parts.append(f"- **{measurement_type}**: {formatted_value}")
+                
+                # Add any remaining measurements not in the standard order
+                for measurement_type, feature_name in measurements.items():
+                    if measurement_type not in measurement_order:
+                        value = patient_data[feature_name]
+                        
+                        # Use annotated formatting if this feature has reference ranges
+                        # Try both base name and base name with "_mean" suffix
+                        ref_key = None
+                        if base_name.lower() in reference_ranges:
+                            ref_key = base_name.lower()
+                        elif f"{base_name.lower()}_mean" in reference_ranges:
+                            ref_key = f"{base_name.lower()}_mean"
+                        
+                        if ref_key:
+                            formatted_value = format_value_with_annotation(value, config, ref_key, reference_ranges, gender)
+                        else:
+                            formatted_value = format_value(value, config)
+                        
+                        markdown_parts.append(f"- **{measurement_type}**: {formatted_value}")
+                
+                markdown_parts.append("")  # Empty line between features
+        
+        markdown_parts.append("")  # Empty line between categories
+    
+    # Add legend for annotations
+    markdown_parts.append("## Reference Range Legend\n")
+    markdown_parts.append("- **(normal)**: Value within normal reference range")
+    markdown_parts.append("- **(high)**: Value above normal reference range")
+    markdown_parts.append("- **(low)**: Value below normal reference range")
+    markdown_parts.append("- No annotation: No reference range available or not a lab value")
+    
+    return "\n".join(markdown_parts)
 
 def _serialize_to_markdown_structured(patient_data: pd.Series, config: SerializationConfig, 
                                     categories: Dict[str, List[str]], base_features: Dict[str, Dict[str, str]]) -> str:
