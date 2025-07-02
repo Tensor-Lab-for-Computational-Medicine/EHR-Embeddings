@@ -1,0 +1,525 @@
+Your task is to create an embedding optimized for predicting in-hospital mortality in ICU patients.
+
+Patient Clinical Data:
+# ICU Patient Clinical Data Summary
+
+## Vital Signs
+
+- **Diastolic Blood Pressure Mean**: 0.756
+- **Diastolic Blood Pressure Std**: 0.392
+- **Diastolic Blood Pressure Min**: 0.760
+- **Diastolic Blood Pressure Max**: 0.295
+- **Heart Rate Mean**: -0.881
+- **Heart Rate Std**: -0.326
+- **Heart Rate Min**: -0.632
+- **Heart Rate Max**: -0.995
+- **Mean Blood Pressure Mean**: 0.293
+- **Mean Blood Pressure Std**: 0.231
+- **Mean Blood Pressure Min**: 0.289
+- **Mean Blood Pressure Max**: -0.120
+- **Oxygen Saturation Mean**: -0.769
+- **Oxygen Saturation Std**: 0.082
+- **Oxygen Saturation Min**: 0.125
+- **Oxygen Saturation Max**: 0.437
+- **Respiratory Rate Mean**: -0.906
+- **Respiratory Rate Std**: -0.660
+- **Respiratory Rate Min**: -0.834
+- **Respiratory Rate Max**: -1.064
+- **Systolic Blood Pressure Mean**: -0.371
+- **Systolic Blood Pressure Std**: -0.055
+- **Systolic Blood Pressure Min**: -0.730
+- **Systolic Blood Pressure Max**: -0.653
+- **Temperature Mean**: -0.806
+- **Temperature Std**: -0.561
+- **Temperature Min**: -0.379
+- **Temperature Max**: -1.017
+- **Respiratory Rate Set Mean**: 0.333
+- **Respiratory Rate Set Std**: -0.058
+- **Respiratory Rate Set Min**: 0.370
+- **Respiratory Rate Set Max**: 0.426
+
+## Cardiovascular
+
+- **Cardiac Index Mean**: -0.070
+- **Cardiac Index Std**: -0.072
+- **Cardiac Index Min**: -0.062
+- **Cardiac Index Max**: -0.066
+- **Cardiac Output Thermodilution Mean**: -0.050
+- **Cardiac Output Thermodilution Std**: -0.053
+- **Cardiac Output Thermodilution Min**: -0.051
+- **Cardiac Output Thermodilution Max**: -0.041
+- **Cardiac Output Fick Mean**: -0.056
+- **Cardiac Output Fick Std**: -0.054
+- **Cardiac Output Fick Min**: -0.059
+- **Cardiac Output Fick Max**: -0.059
+- **Central Venous Pressure Mean**: -0.065
+- **Central Venous Pressure Std**: -0.090
+- **Central Venous Pressure Min**: -0.009
+- **Central Venous Pressure Max**: -0.100
+- **Pulmonary Artery Pressure Mean Mean**: -0.024
+- **Pulmonary Artery Pressure Mean Std**: -0.053
+- **Pulmonary Artery Pressure Mean Min**: -0.011
+- **Pulmonary Artery Pressure Mean Max**: -0.044
+- **Pulmonary Artery Pressure Systolic Mean**: -0.063
+- **Pulmonary Artery Pressure Systolic Std**: -0.074
+- **Pulmonary Artery Pressure Systolic Min**: -0.034
+- **Pulmonary Artery Pressure Systolic Max**: -0.053
+- **Systemic Vascular Resistance Mean**: -0.041
+- **Systemic Vascular Resistance Std**: -0.080
+- **Systemic Vascular Resistance Min**: -0.041
+- **Systemic Vascular Resistance Max**: -0.052
+
+## Respiratory
+
+- **Fraction Inspired Oxygen Mean**: 2.135
+- **Fraction Inspired Oxygen Std**: 1.555
+- **Fraction Inspired Oxygen Min**: 1.098
+- **Fraction Inspired Oxygen Max**: 0.354
+- **Fraction Inspired Oxygen Set Mean**: -0.117
+- **Fraction Inspired Oxygen Set Std**: 0.052
+- **Fraction Inspired Oxygen Set Min**: -0.245
+- **Fraction Inspired Oxygen Set Max**: 0.222
+- **Peak Inspiratory Pressure Mean**: 0.778
+- **Peak Inspiratory Pressure Std**: 0.845
+- **Peak Inspiratory Pressure Min**: -0.032
+- **Peak Inspiratory Pressure Max**: 0.941
+- **Plateau Pressure Mean**: 0.971
+- **Plateau Pressure Std**: -1.047
+- **Plateau Pressure Min**: 1.276
+- **Plateau Pressure Max**: 0.476
+- **Positive End-expiratory Pressure Mean**: 3.660
+- **Positive End-expiratory Pressure Std**: 3.982
+- **Positive End-expiratory Pressure Min**: -0.170
+- **Positive End-expiratory Pressure Max**: 3.970
+- **Positive End-expiratory Pressure Set Mean**: 2.879
+- **Positive End-expiratory Pressure Set Std**: 4.893
+- **Positive End-expiratory Pressure Set Min**: -3.653
+- **Positive End-expiratory Pressure Set Max**: 3.334
+- **Tidal Volume Observed Mean**: 1.393
+- **Tidal Volume Observed Std**: 1.171
+- **Tidal Volume Observed Min**: 0.028
+- **Tidal Volume Observed Max**: 3.121
+- **Tidal Volume Set Mean**: 1.993
+- **Tidal Volume Set Std**: 1.131
+- **Tidal Volume Set Min**: 1.099
+- **Tidal Volume Set Max**: 2.580
+- **Tidal Volume Spontaneous Mean**: 2.649
+- **Tidal Volume Spontaneous Std**: 2.115
+- **Tidal Volume Spontaneous Min**: 1.712
+- **Tidal Volume Spontaneous Max**: 3.020
+- **Pulmonary Capillary Wedge Pressure Mean**: -0.026
+- **Pulmonary Capillary Wedge Pressure Std**: -0.028
+- **Pulmonary Capillary Wedge Pressure Min**: -0.025
+- **Pulmonary Capillary Wedge Pressure Max**: -0.008
+- **Partial Pressure Of Carbon Dioxide Mean**: -0.314
+- **Partial Pressure Of Carbon Dioxide Std**: 0.706
+- **Partial Pressure Of Carbon Dioxide Min**: -1.333
+- **Partial Pressure Of Carbon Dioxide Max**: 0.234
+- **Partial Pressure Of Oxygen Mean**: -0.079
+- **Partial Pressure Of Oxygen Std**: -0.086
+- **Partial Pressure Of Oxygen Min**: -0.161
+- **Partial Pressure Of Oxygen Max**: -0.119
+
+## Neurological
+
+- **Glascow Coma Scale Total Mean**: 0.290
+- **Glascow Coma Scale Total Std**: -0.337
+- **Glascow Coma Scale Total Min**: 0.027
+- **Glascow Coma Scale Total Max**: 0.391
+
+## Laboratory Values
+
+- **Blood Urea Nitrogen Mean**: -0.485
+- **Blood Urea Nitrogen Std**: -0.800
+- **Blood Urea Nitrogen Min**: -0.406
+- **Blood Urea Nitrogen Max**: -0.551
+- **Calcium Ionized Mean**: -0.024
+- **Calcium Ionized Std**: -0.032
+- **Calcium Ionized Min**: 0.002
+- **Calcium Ionized Max**: -0.043
+- **Creatinine Mean**: -0.309
+- **Creatinine Std**: -0.536
+- **Creatinine Min**: -0.250
+- **Creatinine Max**: -0.355
+- **Glucose Mean**: 0.288
+- **Glucose Std**: -0.831
+- **Glucose Min**: 1.406
+- **Glucose Max**: -0.317
+- **Potassium Mean**: 0.560
+- **Potassium Std**: 0.308
+- **Potassium Min**: 0.642
+- **Potassium Max**: 0.541
+- **Potassium Serum Mean**: 0.074
+- **Potassium Serum Std**: -1.150
+- **Potassium Serum Min**: 0.483
+- **Potassium Serum Max**: -0.261
+- **Sodium Mean**: 0.207
+- **Sodium Std**: -0.426
+- **Sodium Min**: 0.267
+- **Sodium Max**: -0.009
+- **Chloride Mean**: 0.008
+- **Chloride Std**: 0.338
+- **Chloride Min**: -0.187
+- **Chloride Max**: -0.031
+- **Calcium Urine Mean**: -0.017
+- **Calcium Urine Std**: 0.000
+- **Creatinine Body Fluid Mean**: -0.009
+- **Creatinine Body Fluid Std**: 0.000
+- **Calcium Mean**: 0.182
+- **Calcium Std**: -0.356
+- **Creatinine Pleural Mean**: -0.006
+- **Creatinine Pleural Std**: 0.000
+- **Creatinine Urine Mean**: -0.083
+- **Creatinine Urine Std**: -0.034
+- **Creatinine Ascites Mean**: -0.008
+- **Creatinine Ascites Std**: 0.000
+- **Chloride Urine Mean**: -0.062
+- **Chloride Urine Std**: -0.013
+
+## Blood Chemistry
+
+- **Anion Gap Mean**: -0.913
+- **Anion Gap Std**: -1.163
+- **Anion Gap Min**: -0.562
+- **Anion Gap Max**: -1.023
+- **Bicarbonate Mean**: 0.560
+- **Bicarbonate Std**: -1.269
+- **Bicarbonate Min**: 0.795
+- **Bicarbonate Max**: 0.245
+- **Co2 Mean**: 0.015
+- **Co2 Std**: -0.040
+- **Co2 Min**: 0.030
+- **Co2 Max**: -0.060
+- **Co2 (etco2, Pco2, Etc.) Mean**: -0.310
+- **Co2 (etco2, Pco2, Etc.) Std**: 0.462
+- **Co2 (etco2, Pco2, Etc.) Min**: -0.932
+- **Co2 (etco2, Pco2, Etc.) Max**: -0.181
+- **Lactate Mean**: -0.610
+- **Lactate Std**: -1.040
+- **Lactate Min**: -0.409
+- **Lactate Max**: -0.619
+- **Ph Mean**: 0.184
+- **Ph Std**: 0.133
+- **Ph Min**: -0.628
+- **Ph Max**: 0.532
+- **Lymphocytes Body Fluid Mean**: -0.040
+- **Lymphocytes Body Fluid Std**: -0.002
+- **Neutrophils Mean**: 0.181
+- **Neutrophils Std**: -0.102
+- **Lymphocytes Percent Mean**: -0.009
+- **Lymphocytes Percent Std**: 0.000
+- **Lactate Dehydrogenase Pleural Mean**: -0.026
+- **Lactate Dehydrogenase Pleural Std**: -0.005
+- **Lymphocytes Ascites Mean**: -0.032
+- **Lymphocytes Ascites Std**: -0.000
+- **Lymphocytes Pleural Mean**: -0.014
+- **Lymphocytes Pleural Std**: -0.007
+- **Lymphocytes Mean**: -0.193
+- **Lymphocytes Std**: -0.098
+- **Phosphorous Mean**: 0.197
+- **Phosphorous Std**: -0.158
+- **Lymphocytes Atypical Mean**: -0.064
+- **Lymphocytes Atypical Std**: -0.012
+- **Lymphocytes Atypical Csl Mean**: -0.015
+- **Lymphocytes Atypical Csl Std**: 0.000
+- **Basophils Mean**: -0.149
+- **Basophils Std**: -0.088
+- **Eosinophils Mean**: -0.017
+- **Eosinophils Std**: 0.000
+- **Phosphate Mean**: 0.167
+- **Phosphate Std**: -0.197
+- **Ph Urine Mean**: -0.224
+- **Ph Urine Std**: -0.048
+- **Alkaline Phosphate Mean**: -0.172
+- **Alkaline Phosphate Std**: -0.124
+- **Lactate Dehydrogenase Mean**: -0.111
+- **Lactate Dehydrogenase Std**: -0.065
+
+## Hematology
+
+- **Hematocrit Mean**: 2.326
+- **Hematocrit Std**: 1.263
+- **Hematocrit Min**: 1.989
+- **Hematocrit Max**: 2.673
+- **Hemoglobin Mean**: 2.133
+- **Hemoglobin Std**: 0.895
+- **Hemoglobin Min**: 1.880
+- **Hemoglobin Max**: 2.431
+- **Platelets Mean**: -0.097
+- **Platelets Std**: -1.044
+- **Platelets Min**: 0.081
+- **Platelets Max**: -0.275
+- **Red Blood Cell Count Mean**: 1.529
+- **Red Blood Cell Count Std**: -0.197
+- **Red Blood Cell Count Min**: 1.728
+- **Red Blood Cell Count Max**: 1.150
+- **Mean Corpuscular Hemoglobin Concentration Mean**: -0.118
+- **Mean Corpuscular Hemoglobin Concentration Std**: -0.200
+- **Mean Corpuscular Hemoglobin Mean**: 0.107
+- **Mean Corpuscular Hemoglobin Std**: -0.214
+- **Red Blood Cell Count Ascites Mean**: -0.016
+- **Red Blood Cell Count Ascites Std**: -0.001
+- **Red Blood Cell Count Urine Mean**: -0.111
+- **Red Blood Cell Count Urine Std**: -0.031
+- **Red Blood Cell Count Csf Mean**: -0.026
+- **Red Blood Cell Count Csf Std**: -0.011
+- **Red Blood Cell Count Pleural Mean**: -0.013
+- **Red Blood Cell Count Pleural Std**: -0.008
+
+## Coagulation
+
+- **Fibrinogen Mean**: -0.152
+- **Fibrinogen Std**: -0.097
+- **Fibrinogen Min**: -0.150
+- **Fibrinogen Max**: -0.146
+- **Partial Thromboplastin Time Mean**: -0.313
+- **Partial Thromboplastin Time Std**: -0.334
+- **Partial Thromboplastin Time Min**: -0.219
+- **Partial Thromboplastin Time Max**: -0.356
+- **Prothrombin Time Inr Mean**: -0.192
+- **Prothrombin Time Inr Std**: -0.122
+- **Prothrombin Time Inr Min**: -0.159
+- **Prothrombin Time Inr Max**: -0.165
+- **Prothrombin Time Pt Mean**: -0.225
+- **Prothrombin Time Pt Std**: -0.171
+- **Prothrombin Time Pt Min**: -0.204
+- **Prothrombin Time Pt Max**: -0.223
+
+## Static Demographics
+
+- **Weight Mean**: 1.364
+- **Weight Std**: -0.231
+- **Height Mean**: 0.535
+- **Height Std**: 0.000
+
+## Trends and Changes
+
+- **Diastolic Blood Pressure Last In 24h**: -0.159
+- **Heart Rate Last In 24h**: -0.173
+- **Mean Blood Pressure Last In 24h**: -0.371
+- **Oxygen Saturation Last In 24h**: -0.736
+- **Respiratory Rate Last In 24h**: -0.001
+- **Systolic Blood Pressure Last In 24h**: -0.255
+- **Temperature Last In 24h**: -0.274
+- **Fraction Inspired Oxygen Last In 24h**: -0.047
+- **Fraction Inspired Oxygen Set Last In 24h**: -0.011
+- **Peak Inspiratory Pressure Last In 24h**: -0.456
+- **Plateau Pressure Last In 24h**: 0.779
+- **Positive End-expiratory Pressure Last In 24h**: -0.216
+- **Positive End-expiratory Pressure Set Last In 24h**: -3.068
+- **Respiratory Rate Set Last In 24h**: 0.249
+- **Tidal Volume Observed Last In 24h**: 3.812
+- **Tidal Volume Set Last In 24h**: 1.091
+- **Tidal Volume Spontaneous Last In 24h**: 4.208
+- **Cardiac Index Last In 24h**: -0.060
+- **Cardiac Output Thermodilution Last In 24h**: -0.037
+- **Cardiac Output Fick Last In 24h**: -0.053
+- **Central Venous Pressure Last In 24h**: -0.052
+- **Glascow Coma Scale Total Last In 24h**: 0.446
+- **Pulmonary Artery Pressure Mean Last In 24h**: -0.021
+- **Pulmonary Artery Pressure Systolic Last In 24h**: -0.067
+- **Pulmonary Capillary Wedge Pressure Last In 24h**: -0.024
+- **Systemic Vascular Resistance Last In 24h**: -0.051
+- **Anion Gap Last In 24h**: -0.711
+- **Bicarbonate Last In 24h**: 0.499
+- **Co2 Last In 24h**: 0.044
+- **Co2 (etco2, Pco2, Etc.) Last In 24h**: -1.434
+- **Lactate Last In 24h**: -0.488
+- **Lactic Acid Last In 24h**: -0.455
+- **Partial Pressure Of Carbon Dioxide Last In 24h**: -1.774
+- **Partial Pressure Of Oxygen Last In 24h**: -0.144
+- **Ph Last In 24h**: 1.105
+- **Venous Pvo2 Last In 24h**: -0.024
+- **Blood Urea Nitrogen Last In 24h**: -0.458
+- **Calcium Ionized Last In 24h**: -0.025
+- **Creatinine Last In 24h**: -0.299
+- **Glucose Last In 24h**: 0.338
+- **Potassium Last In 24h**: -0.016
+- **Potassium Serum Last In 24h**: -0.037
+- **Sodium Last In 24h**: 0.293
+- **Chloride Last In 24h**: 0.217
+- **Hematocrit Last In 24h**: 1.998
+- **Hemoglobin Last In 24h**: 1.854
+- **Platelets Last In 24h**: -0.021
+- **Red Blood Cell Count Last In 24h**: 1.691
+- **Fibrinogen Last In 24h**: -0.146
+- **Partial Thromboplastin Time Last In 24h**: -0.281
+- **Prothrombin Time Inr Last In 24h**: -0.211
+- **Prothrombin Time Pt Last In 24h**: -0.226
+- **Troponin-i Last In 24h**: -0.078
+- **Troponin-t Last In 24h**: -0.168
+- **Diastolic Blood Pressure Trend 24h**: 0.574
+- **Diastolic Blood Pressure Trend 6h**: -1.312
+- **Heart Rate Trend 24h**: 0.888
+- **Heart Rate Trend 6h**: 0.483
+- **Mean Blood Pressure Trend 24h**: 0.638
+- **Mean Blood Pressure Trend 6h**: -1.229
+- **Oxygen Saturation Trend 24h**: 0.161
+- **Oxygen Saturation Trend 6h**: -0.833
+- **Respiratory Rate Trend 24h**: 0.355
+- **Respiratory Rate Trend 6h**: 0.420
+- **Systolic Blood Pressure Trend 24h**: 0.530
+- **Systolic Blood Pressure Trend 6h**: -0.971
+- **Temperature Trend 24h**: -0.285
+- **Temperature Trend 6h**: 0.332
+- **Fraction Inspired Oxygen Trend 24h**: -0.491
+- **Fraction Inspired Oxygen Trend 6h**: 0.020
+- **Fraction Inspired Oxygen Set Trend 24h**: 0.116
+- **Fraction Inspired Oxygen Set Trend 6h**: 0.032
+- **Peak Inspiratory Pressure Trend 24h**: -1.168
+- **Peak Inspiratory Pressure Trend 6h**: 0.036
+- **Plateau Pressure Trend 24h**: -0.297
+- **Plateau Pressure Trend 6h**: 0.005
+- **Positive End-expiratory Pressure Trend 24h**: -1.627
+- **Positive End-expiratory Pressure Trend 6h**: -0.014
+- **Positive End-expiratory Pressure Set Trend 24h**: -2.129
+- **Positive End-expiratory Pressure Set Trend 6h**: 0.018
+- **Respiratory Rate Set Trend 24h**: 0.006
+- **Respiratory Rate Set Trend 6h**: 0.010
+- **Tidal Volume Observed Trend 24h**: 0.207
+- **Tidal Volume Observed Trend 6h**: 0.019
+- **Tidal Volume Set Trend 24h**: -1.015
+- **Tidal Volume Set Trend 6h**: 0.026
+- **Tidal Volume Spontaneous Trend 24h**: 1.427
+- **Tidal Volume Spontaneous Trend 6h**: -0.016
+- **Cardiac Index Trend 24h**: 0.007
+- **Cardiac Index Trend 6h**: 0.001
+- **Cardiac Output Thermodilution Trend 24h**: 0.010
+- **Cardiac Output Thermodilution Trend 6h**: -0.003
+- **Cardiac Output Fick Trend 24h**: 0.011
+- **Cardiac Output Fick Trend 6h**: -0.003
+- **Central Venous Pressure Trend 24h**: -0.009
+- **Central Venous Pressure Trend 6h**: -0.004
+- **Glascow Coma Scale Total Trend 24h**: -0.319
+- **Glascow Coma Scale Total Trend 6h**: -0.105
+- **Pulmonary Artery Pressure Mean Trend 24h**: 0.005
+- **Pulmonary Artery Pressure Mean Trend 6h**: 0.012
+- **Pulmonary Artery Pressure Systolic Trend 24h**: 0.011
+- **Pulmonary Artery Pressure Systolic Trend 6h**: 0.002
+- **Pulmonary Capillary Wedge Pressure Trend 24h**: 0.009
+- **Pulmonary Capillary Wedge Pressure Trend 6h**: -0.004
+- **Systemic Vascular Resistance Trend 24h**: 0.022
+- **Systemic Vascular Resistance Trend 6h**: 0.021
+- **Anion Gap Trend 24h**: 0.346
+- **Anion Gap Trend 6h**: 0.011
+- **Bicarbonate Trend 24h**: -0.030
+- **Bicarbonate Trend 6h**: -0.018
+- **Co2 Trend 24h**: -0.099
+- **Co2 Trend 6h**: 0.006
+- **Co2 (etco2, Pco2, Etc.) Trend 24h**: -0.290
+- **Co2 (etco2, Pco2, Etc.) Trend 6h**: -0.007
+- **Lactate Trend 24h**: -0.044
+- **Lactate Trend 6h**: -0.010
+- **Lactic Acid Trend 24h**: -0.149
+- **Lactic Acid Trend 6h**: -0.001
+- **Partial Pressure Of Carbon Dioxide Trend 24h**: -0.714
+- **Partial Pressure Of Carbon Dioxide Trend 6h**: 0.001
+- **Partial Pressure Of Oxygen Trend 24h**: 0.079
+- **Partial Pressure Of Oxygen Trend 6h**: 0.007
+- **Ph Trend 24h**: 0.415
+- **Ph Trend 6h**: -0.004
+- **Venous Pvo2 Trend 24h**: 0.007
+- **Venous Pvo2 Trend 6h**: 0.000
+- **Blood Urea Nitrogen Trend 24h**: 0.255
+- **Blood Urea Nitrogen Trend 6h**: 0.010
+- **Calcium Ionized Trend 24h**: -0.011
+- **Calcium Ionized Trend 6h**: -0.001
+- **Creatinine Trend 24h**: 0.134
+- **Creatinine Trend 6h**: -0.009
+- **Glucose Trend 24h**: 0.028
+- **Glucose Trend 6h**: -0.016
+- **Potassium Trend 24h**: -0.274
+- **Potassium Trend 6h**: 0.001
+- **Potassium Serum Trend 24h**: -0.096
+- **Potassium Serum Trend 6h**: 0.004
+- **Sodium Trend 24h**: 0.396
+- **Sodium Trend 6h**: -0.037
+- **Chloride Trend 24h**: 0.791
+- **Chloride Trend 6h**: -0.023
+- **Hematocrit Trend 24h**: -1.487
+- **Hematocrit Trend 6h**: 0.001
+- **Hemoglobin Trend 24h**: -1.052
+- **Hemoglobin Trend 6h**: 0.007
+- **Platelets Trend 24h**: 0.298
+- **Platelets Trend 6h**: -0.008
+- **Red Blood Cell Count Trend 24h**: 0.069
+- **Red Blood Cell Count Trend 6h**: -0.017
+- **Fibrinogen Trend 24h**: -0.035
+- **Fibrinogen Trend 6h**: 0.006
+- **Partial Thromboplastin Time Trend 24h**: 0.053
+- **Partial Thromboplastin Time Trend 6h**: 0.023
+- **Prothrombin Time Inr Trend 24h**: 0.099
+- **Prothrombin Time Inr Trend 6h**: 0.014
+- **Prothrombin Time Pt Trend 24h**: 0.122
+- **Prothrombin Time Pt Trend 6h**: 0.019
+- **Troponin-i Trend 24h**: -0.024
+- **Troponin-i Trend 6h**: 0.000
+- **Troponin-t Trend 24h**: -0.032
+- **Troponin-t Trend 6h**: -0.000
+
+## Other
+
+- **Lactic Acid Mean**: -0.559
+- **Lactic Acid Std**: -1.011
+- **Lactic Acid Min**: -0.409
+- **Lactic Acid Max**: -0.585
+- **Venous Pvo2 Mean**: -0.023
+- **Venous Pvo2 Std**: -0.009
+- **Venous Pvo2 Min**: -0.022
+- **Venous Pvo2 Max**: -0.026
+- **Troponin-i Mean**: -0.076
+- **Troponin-i Std**: -0.043
+- **Troponin-i Min**: -0.072
+- **Troponin-i Max**: -0.078
+- **Troponin-t Mean**: -0.162
+- **Troponin-t Std**: -0.124
+- **Troponin-t Min**: -0.139
+- **Troponin-t Max**: -0.166
+- **White Blood Cell Count Urine Mean**: -0.083
+- **White Blood Cell Count Urine Std**: -0.034
+- **Total Protein Mean**: -0.002
+- **Total Protein Std**: -0.006
+- **Monocytes Csl Mean**: -0.024
+- **Monocytes Csl Std**: 0.002
+- **Asparate Aminotransferase Mean**: -0.131
+- **Asparate Aminotransferase Std**: -0.098
+- **White Blood Cell Count Mean**: 0.515
+- **White Blood Cell Count Std**: -0.837
+- **Cholesterol Mean**: -0.022
+- **Cholesterol Std**: -0.033
+- **Albumin Ascites Mean**: -0.012
+- **Albumin Ascites Std**: 0.000
+- **Post Void Residual Mean**: -0.029
+- **Post Void Residual Std**: -0.022
+- **Albumin Urine Mean**: -0.023
+- **Albumin Urine Std**: -0.006
+- **Total Protein Urine Mean**: -0.036
+- **Total Protein Urine Std**: -0.008
+- **Cholesterol Hdl Mean**: -0.037
+- **Cholesterol Hdl Std**: -0.013
+- **Cholesterol Ldl Mean**: -0.017
+- **Cholesterol Ldl Std**: -0.018
+- **Mean Corpuscular Volume Mean**: 0.096
+- **Mean Corpuscular Volume Std**: -0.347
+- **Alanine Aminotransferase Mean**: -0.128
+- **Alanine Aminotransferase Std**: -0.094
+- **Albumin Pleural Mean**: 0.012
+- **Albumin Pleural Std**: 0.000
+- **Bilirubin Mean**: -0.175
+- **Bilirubin Std**: -0.150
+- **Monocytes Mean**: -0.096
+- **Monocytes Std**: -0.088
+- **Albumin Mean**: -0.012
+- **Albumin Std**: -0.137
+- **Magnesium Mean**: 0.592
+- **Magnesium Std**: 0.645
+
+
+Generate an embedding that prioritizes:
+- Hemodynamic instability indicators (blood pressure variability, cardiac output)
+- Respiratory failure markers (oxygenation, ventilatory support)
+- Organ dysfunction signs (renal, hepatic, neurological)
+- Metabolic derangements (lactate, pH, glucose control)
+- Clinical trajectory and trends over time
+
+The embedding should be specifically tuned to distinguish between patients at high vs. low mortality risk.

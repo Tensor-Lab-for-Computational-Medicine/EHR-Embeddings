@@ -1,0 +1,12 @@
+As a critical care specialist with expertise in mortality prediction, analyze this ICU patient data:
+
+This ICU patient presents with the following clinical characteristics:
+ Vital signs show average diastolic blood pressure of -0.89, variability in diastolic blood pressure (std: 0.12), minimum diastolic blood pressure of -1.08.... Cardiovascular measurements include average cardiac index of 7.08, variability in cardiac index (std: -1.27).... Respiratory measurements include average fraction inspired oxygen of -0.66, variability in fraction inspired oxygen (std: 0.08).... Neurological measurements include average glascow coma scale total of -1.11, variability in glascow coma scale total (std: 0.12).... Laboratory results indicate average blood urea nitrogen of 2.87, variability in blood urea nitrogen (std: 2.15), minimum blood urea nitrogen of 2.48.... Blood Chemistry measurements include average anion gap of 2.27, variability in anion gap (std: 1.40).... Hematology measurements include average hematocrit of -0.60, variability in hematocrit (std: -0.37).... Coagulation measurements include average fibrinogen of -1.23, variability in fibrinogen (std: -0.75).... Static Demographics measurements include average weight of -0.10, variability in weight (std: -0.20).... Clinical trends reveal diastolic blood pressure last in 24h of -0.09, heart rate last in 24h of -0.35....
+
+Create an embedding that captures your clinical assessment for mortality risk prediction. Consider:
+- Severity scoring implications (APACHE, SOFA conceptual frameworks)
+- Physiological reserve and failure patterns
+- Trajectory of clinical parameters
+- Known mortality risk factors in critical care
+
+Your embedding should embody the clinical expertise used in mortality prognostication.
