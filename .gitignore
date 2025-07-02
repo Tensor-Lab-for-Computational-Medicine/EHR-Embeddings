@@ -69,6 +69,7 @@ venv.bak/
 cache/
 *.joblib
 *.pkl
+serialized_prompts/
 
 # Project specific - Large data files
 data/raw/*.h5

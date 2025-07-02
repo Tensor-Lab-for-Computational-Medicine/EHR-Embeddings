@@ -30,6 +30,7 @@ class Config:
         self.SEED = config.get('SEED', 42)
         self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 15)
         self.OPTUNA_TIMEOUT = config.get('OPTUNA_TIMEOUT', 1800)
+        self.REUSE_EXISTING_STUDY = config.get('REUSE_EXISTING_STUDY', True)
         
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
 
@@ -65,48 +66,6 @@ def load_preprocessed_data(config):
     
     logging.info(f"Data shapes: X_train={data['X_train'].shape}, X_val={data['X_val'].shape}, X_test={data['X_test'].shape}")
     return data['X_train'], data['X_val'], data['X_test'], data['y_train'], data['y_val'], data['y_test'], data['scaler'], data['imputation_values']
-
-def clean_data_for_xgboost(X_train, X_val, X_test):
-    """Clean data for XGBoost while preserving NaN values for missingness learning."""
-    logging.info("Performing data validation for XGBoost...")
-    
-    # Log data types - should all be numeric after preprocessing
-    # Compatible approach for older pandas versions
-    numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64', 'bool']
-    non_numeric_cols = [col for col in X_train.columns if str(X_train[col].dtype) not in numeric_types]
-    if len(non_numeric_cols) > 0:
-        raise ValueError(f"Found non-numeric columns after preprocessing: {non_numeric_cols}. "
-                        "All categorical encoding should be done in preprocessing.")
-    
-    logging.info(f"✓ All {len(X_train.columns)} columns are numeric")
-    
-    # Replace infinite values with NaN
-    for df in [X_train, X_val, X_test]:
-        df.replace([np.inf, -np.inf], np.nan, inplace=True)
-    
-    # Only impute extremely sparse features (>95% missing)
-    for col in X_train.columns:
-        if X_train[col].isna().mean() > 0.95:
-            median_val = X_train[col].median() if not pd.isna(X_train[col].median()) else 0.0
-            for df in [X_train, X_val, X_test]:
-                df[col].fillna(median_val, inplace=True)
-    
-    # Clip extreme values using percentile bounds
-    for col in X_train.columns:
-        if X_train[col].abs().max() > 1e10:
-            p1, p99 = X_train[col].quantile([0.01, 0.99])
-            for df in [X_train, X_val, X_test]:
-                df[col] = df[col].clip(p1, p99)
-    
-    # CRITICAL FIX: Convert all dtypes to simple float for XGBoost compatibility
-    # This approach is more robust than complex dtype checking
-    X_train = X_train.astype(float)
-    X_val = X_val.astype(float)
-    X_test = X_test.astype(float)
-    
-    logging.info(f"✓ Preserved {X_train.isna().sum().sum()} NaN values for XGBoost missingness learning")
-    logging.info(f"✓ Data type conversion completed for XGBoost compatibility")
-    return X_train, X_val, X_test
 
 # =============================================================================
 # EVALUATION WITH UNCERTAINTY QUANTIFICATION
@@ -166,7 +125,19 @@ def evaluate_with_uncertainty(y_true, y_pred_proba, y_pred=None, n_bootstrap=100
 
 def tune_xgboost(X_train, y_train, X_val, y_val, config):
     """Tune XGBoost hyperparameters using Optuna."""
-    logging.info(f"Starting Optuna search with {config.N_OPTUNA_TRIALS} trials...")
+    study_path = os.path.join(config.OUTPUT_DIR, f'{get_cache_prefix(config)}_optuna_study.pkl')
+    
+    if os.path.exists(study_path) and config.REUSE_EXISTING_STUDY:
+        logging.info(f"Loading existing Optuna study from {study_path}")
+        with open(study_path, 'rb') as f:
+            study = pickle.load(f)
+        logging.info(f"Loaded study with {len(study.trials)} completed trials, best AUROC: {study.best_value:.4f}")
+        logging.info("Reusing existing study results without additional optimization")
+        return study.best_params
+    
+    # Create new study only if no existing study or REUSE_EXISTING_STUDY is False
+    logging.info(f"Creating new Optuna study with {config.N_OPTUNA_TRIALS} trials...")
+    study = optuna.create_study(direction='maximize')
     
     scale_pos_weight = (y_train == 0).sum() / (y_train == 1).sum()
     
@@ -186,18 +157,17 @@ def tune_xgboost(X_train, y_train, X_val, y_val, config):
         }
         
         model = xgb.XGBClassifier(**params)
-        
-        # CRITICAL FIX: Ensure proper dtypes for XGBoost training
-        y_train_clean = y_train.astype(int)
-        y_val_clean = y_val.astype(int)
-        
-        model.fit(X_train, y_train_clean, eval_set=[(X_val, y_val_clean)], eval_metric='auc',
+        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], eval_metric='auc',
                   early_stopping_rounds=30, verbose=False)
         
-        return roc_auc_score(y_val_clean, model.predict_proba(X_val)[:, 1])
+        return roc_auc_score(y_val, model.predict_proba(X_val)[:, 1])
 
-    study = optuna.create_study(direction='maximize')
     study.optimize(objective, n_trials=config.N_OPTUNA_TRIALS, timeout=config.OPTUNA_TIMEOUT)
+    
+    # Save the study
+    with open(study_path, 'wb') as f:
+        pickle.dump(study, f)
+    logging.info(f"Study saved to {study_path}")
     
     logging.info(f"Best validation AUROC: {study.best_value:.4f}")
     return study.best_params
@@ -209,13 +179,9 @@ def train_final_model(X_train, X_val, y_train, y_val, best_params, config):
     X_full = pd.concat([X_train, X_val])
     y_full = pd.concat([y_train, y_val])
     
-    # CRITICAL FIX: Reset index and ensure proper dtypes after concat
+    # Reset index after concatenation
     X_full = X_full.reset_index(drop=True)
     y_full = y_full.reset_index(drop=True)
-    
-    # Simple dtype conversion for XGBoost compatibility
-    X_full = X_full.astype(float)
-    y_full = y_full.astype(int)
     
     final_params = best_params.copy()
     final_params.update({
@@ -278,9 +244,9 @@ def main(config_dict=None):
     
     start_time = time.time()
     
-    # Load and clean data
+    # Load preprocessed data (no additional cleaning needed)
     X_train, X_val, X_test, y_train, y_val, y_test, scaler, imputation_values = load_preprocessed_data(config)
-    X_train, X_val, X_test = clean_data_for_xgboost(X_train, X_val, X_test)
+    logging.info("Using preprocessed data directly - no additional cleaning required")
     
     # Tune hyperparameters
     best_params = tune_xgboost(X_train, y_train, X_val, y_val, config)
@@ -290,10 +256,6 @@ def main(config_dict=None):
     
     # Evaluate on test set
     logging.info("--- FINAL EVALUATION ON TEST SET ---")
-    
-    # CRITICAL FIX: Ensure X_test dtypes are compatible before prediction
-    X_test = X_test.astype(float)
-    
     y_pred_proba = model.predict_proba(X_test)[:, 1]
     y_pred = model.predict(X_test)
     
