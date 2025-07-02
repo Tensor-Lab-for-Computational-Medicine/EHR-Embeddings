@@ -1,0 +1,63 @@
+2025-07-01 23:49:53,254 [INFO] - Using cached data - skipping preprocessing!
+2025-07-01 23:49:56,336 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42
+2025-07-01 23:49:56,402 [INFO] - Data shapes: X_train=(14825, 392), X_val=(2118, 392), X_test=(5648, 392)
+2025-07-01 23:49:56,402 [INFO] - Performing optimized data cleaning for Elastic Net...
+2025-07-01 23:49:56,411 [INFO] - ✓ All 392 columns are numeric
+2025-07-01 23:49:56,411 [INFO] - Replacing infinite values...
+2025-07-01 23:49:56,801 [INFO] - Converting to float32 for efficiency...
+2025-07-01 23:49:56,849 [INFO] - Total missing values before imputation: 2039274
+2025-07-01 23:49:56,850 [INFO] - Performing median imputation...
+2025-07-01 23:49:57,257 [INFO] - ✓ Successfully imputed 2039274 missing values
+2025-07-01 23:49:57,257 [INFO] - ✓ Data prepared for Elastic Net (already scaled, no missing values)
+2025-07-01 23:49:57,258 [INFO] - Starting optimized Optuna search with 15 trials...
+2025-07-01 23:51:15,371 [INFO] - Trial 0 converged in [1650] iterations, C=0.0177, l1_ratio=0.942, tol=6.25e-04
+2025-07-01 23:51:15,376 [INFO] - Trial 0 AUROC: 0.691523 [C=0.0177, l1_ratio=0.942, features_used=275, converged=True]
+2025-07-01 23:51:21,323 [INFO] - Trial 1 converged in [126] iterations, C=0.0009, l1_ratio=0.163, tol=3.97e-03
+2025-07-01 23:51:21,327 [INFO] - Trial 1 AUROC: 0.665017 [C=0.0009, l1_ratio=0.163, features_used=171, converged=True]
+2025-07-01 23:51:24,079 [INFO] - Trial 2 converged in [68] iterations, C=0.4043, l1_ratio=0.704, tol=8.12e-03
+2025-07-01 23:51:24,083 [INFO] - Trial 2 AUROC: 0.656106 [C=0.4043, l1_ratio=0.704, features_used=138, converged=True]
+2025-07-01 23:52:23,150 [WARNING] - Trial 3 reached max_iter (1500) with C=9.8777, l1_ratio=0.218
+2025-07-01 23:52:23,154 [INFO] - Trial 3 AUROC: 0.655352 [C=9.8777, l1_ratio=0.218, features_used=276, converged=False]
+2025-07-01 23:53:49,792 [INFO] - Trial 4 converged in [1813] iterations, C=0.0067, l1_ratio=0.524, tol=7.48e-05
+2025-07-01 23:53:49,797 [INFO] - Trial 4 AUROC: 0.691685 [C=0.0067, l1_ratio=0.524, features_used=257, converged=True]
+2025-07-01 23:55:01,367 [INFO] - Trial 5 converged in [1812] iterations, C=0.4689, l1_ratio=0.147, tol=1.26e-04
+2025-07-01 23:55:01,372 [INFO] - Trial 5 AUROC: 0.691685 [C=0.4689, l1_ratio=0.147, features_used=276, converged=True]
+2025-07-01 23:56:07,059 [WARNING] - Trial 6 reached max_iter (1500) with C=0.0545, l1_ratio=0.779
+2025-07-01 23:56:07,064 [INFO] - Trial 6 AUROC: 0.655326 [C=0.0545, l1_ratio=0.779, features_used=276, converged=False]
+2025-07-01 23:57:29,604 [INFO] - Trial 7 converged in [2100] iterations, C=0.3585, l1_ratio=0.056, tol=3.25e-05
+2025-07-01 23:57:29,608 [INFO] - Trial 7 AUROC: 0.691673 [C=0.3585, l1_ratio=0.056, features_used=277, converged=True]
+2025-07-01 23:57:37,809 [INFO] - Trial 8 converged in [190] iterations, C=0.0002, l1_ratio=0.940, tol=2.66e-03
+2025-07-01 23:57:37,815 [INFO] - Trial 8 AUROC: 0.664560 [C=0.0002, l1_ratio=0.940, features_used=89, converged=True]
+2025-07-01 23:58:56,640 [INFO] - Trial 9 converged in [1801] iterations, C=0.0067, l1_ratio=0.106, tol=2.09e-04
+2025-07-01 23:58:56,644 [INFO] - Trial 9 AUROC: 0.691694 [C=0.0067, l1_ratio=0.106, features_used=276, converged=True]
+2025-07-02 00:00:46,557 [INFO] - Trial 10 converged in [2800] iterations, C=46.8618, l1_ratio=0.366, tol=1.13e-05
+2025-07-02 00:00:46,561 [INFO] - Trial 10 AUROC: 0.691736 [C=46.8618, l1_ratio=0.366, features_used=278, converged=True]
+2025-07-02 00:02:38,450 [INFO] - Trial 11 converged in [2801] iterations, C=41.1668, l1_ratio=0.347, tol=1.18e-05
+2025-07-02 00:02:38,455 [INFO] - Trial 11 AUROC: 0.691704 [C=41.1668, l1_ratio=0.347, features_used=278, converged=True]
+2025-07-02 00:04:28,933 [INFO] - Trial 12 converged in [2801] iterations, C=77.2605, l1_ratio=0.369, tol=1.03e-05
+2025-07-02 00:04:28,937 [INFO] - Trial 12 AUROC: 0.691711 [C=77.2605, l1_ratio=0.369, features_used=278, converged=True]
+2025-07-02 00:06:32,087 [INFO] - Trial 13 converged in [2802] iterations, C=69.5483, l1_ratio=0.430, tol=1.08e-05
+2025-07-02 00:06:32,091 [INFO] - Trial 13 AUROC: 0.691705 [C=69.5483, l1_ratio=0.430, features_used=278, converged=True]
+2025-07-02 00:07:54,337 [INFO] - Trial 14 converged in [2100] iterations, C=8.8586, l1_ratio=0.545, tol=2.71e-05
+2025-07-02 00:07:54,341 [INFO] - Trial 14 AUROC: 0.691685 [C=8.8586, l1_ratio=0.545, features_used=277, converged=True]
+2025-07-02 00:07:54,342 [INFO] - Best validation AUROC: 0.691736
+2025-07-02 00:07:54,343 [INFO] - Best parameters: {'C': 46.86183228417106, 'l1_ratio': 0.3664531201491985, 'max_iter': 5000, 'tol': 1.1321021804230373e-05}
+2025-07-02 00:07:54,344 [INFO] - Parameter exploration summary:
+2025-07-02 00:07:54,345 [INFO] -   C range explored: 0.000246 - 77.260538
+2025-07-02 00:07:54,345 [INFO] -   l1_ratio range explored: 0.056 - 0.942
+2025-07-02 00:07:54,346 [INFO] -   AUROC range: 0.655326 - 0.691736
+2025-07-02 00:07:54,346 [INFO] -   AUROC std: 0.015498
+2025-07-02 00:07:54,347 [INFO] - Training final model on combined train+validation data...
+2025-07-02 00:07:54,355 [INFO] - Using final parameters: C=46.861832, l1_ratio=0.366
+2025-07-02 00:07:54,356 [INFO] - Using tol=1.13e-05, max_iter=5000
+2025-07-02 00:09:36,029 [INFO] - Final model converged in [2260] iterations (101.67s)
+2025-07-02 00:09:36,030 [INFO] - Final model uses 277/392 features (70.7%)
+2025-07-02 00:09:36,030 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-02 00:09:36,037 [INFO] - Calculating bootstrap CIs with 1000 samples (optimized)...
+2025-07-02 00:09:37,966 [INFO] - Test AUROC: 0.7274 (95% CI: 0.7049-0.7500)
+2025-07-02 00:09:37,966 [INFO] - Test AUPRC: 0.2493 (95% CI: 0.2244-0.2821)
+2025-07-02 00:09:37,973 [INFO] - Model saved to: phase_1_outputs/model_2_elastic_net.pkl
+2025-07-02 00:09:37,973 [INFO] - Imputer saved to: phase_1_outputs/imputer_elastic_net.pkl
+2025-07-02 00:09:37,974 [INFO] - Preprocessing scaler saved to: phase_1_outputs/scaler_elastic_net.pkl
+2025-07-02 00:09:37,974 [INFO] - Results saved to: phase_1_outputs/results_elastic_net.pkl
+2025-07-02 00:09:37,974 [INFO] - Analysis completed in 19.69 minutes
