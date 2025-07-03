@@ -59,15 +59,15 @@ Once everyone has successfully completed a dry run, you are ready to process all
 3.  **Run the script again** with your assigned worker ID, just like in the dry run.
     * **Person 1 (Worker 0) runs:**
         ```bash
-        python generate_embeddings.py --worker-id 0
+        python "notebooks/Phase 3/generate_embeddings.py" --worker-id 0
         ```
     * **Person 2 (Worker 1) runs:**
         ```bash
-        python generate_embeddings.py --worker-id 1
+        python "notebooks/Phase 3/generate_embeddings.py" --worker-id 1
         ```
     * **Person 3 (Worker 2) runs:**
         ```bash
-        python generate_embeddings.py --worker-id 2
+        python "notebooks/Phase 3/generate_embeddings.py" --worker-id 2
         ```
 4.  The script will now start processing its assigned third of the files. A progress bar will show you how long it will take. You can let it run in the background.
 
