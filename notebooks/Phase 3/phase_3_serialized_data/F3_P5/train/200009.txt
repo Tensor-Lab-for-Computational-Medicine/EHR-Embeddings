@@ -1,58 +1,58 @@
-The following is a summary of the first 24 hours of a patient's ICU stay. Generate a clinical embedding that is oriented around the patient's dominant pathophysiological process. Determine if the primary driver of risk appears to be cardiovascular, respiratory, septic, or metabolic in nature, and encode this assessment into the embedding.
+The following is a summary of the first 24 hours of a patient's ICU stay. Their lab values and vitals were averaged over each hour of their first 24 hours. This data was then processed to extract features.  Generate a clinical embedding that is oriented around the patient's dominant pathophysiological process. Determine if the primary driver of risk appears to be cardiovascular, respiratory, septic, or metabolic in nature, and encode this assessment into the embedding.
 
 This is a 48-year-old female.
 
 Key abnormal findings from the first 24 hours include:
-* Bicarbonate: The most recent hourly average was 21.00 (Low < 22.00).
-* Calcium Ionized: The most recent hourly average was 1.19 (Low < 4.60).
-* Calcium Ionized: The overall 24h average was 1.12 (Low < 4.60).
-* Cardiac Index: The mean min 24h was 2.12 (Low < 2.50).
-* Central Venous Pressure: The most recent hourly average was 9.33 (High > 6.00).
-* Central Venous Pressure: The mean max 24h was 10.00 (High > 6.00).
-* Central Venous Pressure: The overall 24h average was 8.02 (High > 6.00).
-* Chloride: The most recent hourly average was 113.00 (High > 107.00).
-* Chloride: The overall 24h average was 112.40 (High > 107.00).
-* Co2: The most recent hourly average was 21.00 (Low < 22.00).
-* Creatinine: The most recent hourly average was 0.50 (Low < 0.59).
-* Creatinine: The overall 24h average was 0.50 (Low < 0.59).
-* Diastolic Blood Pressure: The mean max 24h was 81.33 (High > 80.00).
-* Diastolic Blood Pressure: The mean min 24h was 49.00 (Low < 60.00).
-* Fibrinogen: The most recent hourly average was 195.00 (Low < 200.00).
-* Fibrinogen: The overall 24h average was 195.00 (Low < 200.00).
-* Glucose: The most recent hourly average was 137.00 (High > 100.00).
-* Glucose: The overall 24h average was 119.34 (High > 100.00).
-* Heart Rate: The mean max 24h was 105.00 (High > 100.00).
-* Hematocrit: The most recent hourly average was 30.80 (Low < 36.00).
-* Hematocrit: The overall 24h average was 28.16 (Low < 36.00).
-* Hemoglobin: The most recent hourly average was 10.60 (Low < 12.00).
-* Hemoglobin: The overall 24h average was 9.55 (Low < 12.00).
-* Lactate: The most recent hourly average was 2.60 (High > 1.00).
-* Lactate: The overall 24h average was 2.00 (High > 1.00).
-* Lactic Acid: The most recent hourly average was 2.60 (High > 1.00).
-* Lactic Acid: The overall 24h average was 2.00 (High > 1.00).
-* Mean Blood Pressure: The mean min 24h was 60.00 (Low < 70.00).
-* Partial Pressure Of Oxygen: The overall 24h average was 308.21 (High > 100.00).
-* Partial Thromboplastin Time: The most recent hourly average was 36.10 (High > 35.00).
-* Partial Thromboplastin Time: The overall 24h average was 35.42 (High > 35.00).
-* Ph: The most recent hourly average was 7.32 (Low < 7.35).
-* Platelets: The most recent hourly average was 81.00 (Low < 150.00).
-* Prothrombin Time Inr: The most recent hourly average was 1.40 (High > 1.10).
-* Prothrombin Time Inr: The overall 24h average was 1.30 (High > 1.10).
-* Prothrombin Time Pt: The most recent hourly average was 15.10 (High > 13.50).
-* Prothrombin Time Pt: The overall 24h average was 14.48 (High > 13.50).
-* Pulmonary Artery Pressure Systolic: The mean max 24h was 37.67 (High > 25.00).
-* Pulmonary Artery Pressure Systolic: The overall 24h average was 29.19 (High > 25.00).
-* Red Blood Cell Count: The most recent hourly average was 3.32 (Low < 3.50).
-* Red Blood Cell Count: The overall 24h average was 3.16 (Low < 3.50).
-* Respiratory Rate: The mean max 24h was 21.00 (High > 18.00).
-* Respiratory Rate: The mean min 24h was 10.00 (Low < 12.00).
-* Systemic Vascular Resistance: The mean max 24h was 1204.94 (High > 1200.00).
-* Systemic Vascular Resistance: The mean min 24h was 784.00 (Low < 800.00).
-* Systolic Blood Pressure: The mean max 24h was 123.33 (High > 120.00).
-* Systolic Blood Pressure: The mean min 24h was 86.00 (Low < 90.00).
-* Temperature: The most recent hourly average was 37.53 (Low < 97.00).
-* Temperature: The overall 24h average was 37.42 (Low < 97.00).
-* Tidal Volume Set: The most recent hourly average was 550.00 (High > 8.00).
-* Tidal Volume Set: The overall 24h average was 458.33 (High > 8.00).
-* White Blood Cell Count: The most recent hourly average was 11.50 (High > 11.00).
-* White Blood Cell Count: The overall 24h average was 12.42 (High > 11.00).
+* Bicarbonate: The most recent hourly average was 21.00 mmol/L (Low < 22.00).
+* Calcium Ionized: The most recent hourly average was 1.19 mg/dL (Low < 4.60).
+* Calcium Ionized: The overall 24h average was 1.12 mg/dL (Low < 4.60).
+* Cardiac Index: The mean min 24h was 2.12 L/min/m² (Low < 2.50).
+* Central Venous Pressure: The most recent hourly average was 9.33 mmHg (High > 6.00).
+* Central Venous Pressure: The mean max 24h was 10.00 mmHg (High > 6.00).
+* Central Venous Pressure: The overall 24h average was 8.02 mmHg (High > 6.00).
+* Chloride: The most recent hourly average was 113.00 mEq/L (High > 107.00).
+* Chloride: The overall 24h average was 112.40 mEq/L (High > 107.00).
+* Co2: The most recent hourly average was 21.00 mmol/L (Low < 22.00).
+* Creatinine: The most recent hourly average was 0.50 mg/dL (Low < 0.59).
+* Creatinine: The overall 24h average was 0.50 mg/dL (Low < 0.59).
+* Diastolic Blood Pressure: The mean max 24h was 81.33 mmHg (High > 80.00).
+* Diastolic Blood Pressure: The mean min 24h was 49.00 mmHg (Low < 60.00).
+* Fibrinogen: The most recent hourly average was 195.00 mg/dL (Low < 200.00).
+* Fibrinogen: The overall 24h average was 195.00 mg/dL (Low < 200.00).
+* Glucose: The most recent hourly average was 137.00 mg/dL (High > 100.00).
+* Glucose: The overall 24h average was 119.34 mg/dL (High > 100.00).
+* Heart Rate: The mean max 24h was 105.00 bpm (High > 100.00).
+* Hematocrit: The most recent hourly average was 30.80 % (Low < 36.00).
+* Hematocrit: The overall 24h average was 28.16 % (Low < 36.00).
+* Hemoglobin: The most recent hourly average was 10.60 g/dL (Low < 12.00).
+* Hemoglobin: The overall 24h average was 9.55 g/dL (Low < 12.00).
+* Lactate: The most recent hourly average was 2.60 mmol/L (High > 1.00).
+* Lactate: The overall 24h average was 2.00 mmol/L (High > 1.00).
+* Lactic Acid: The most recent hourly average was 2.60 mmol/L (High > 1.00).
+* Lactic Acid: The overall 24h average was 2.00 mmol/L (High > 1.00).
+* Mean Blood Pressure: The mean min 24h was 60.00 mmHg (Low < 70.00).
+* Partial Pressure Of Oxygen: The overall 24h average was 308.21 mmHg (High > 100.00).
+* Partial Thromboplastin Time: The most recent hourly average was 36.10 seconds (High > 35.00).
+* Partial Thromboplastin Time: The overall 24h average was 35.42 seconds (High > 35.00).
+* Ph: The most recent hourly average was 7.32 - (Low < 7.35).
+* Platelets: The most recent hourly average was 81.00 x 10⁹/L (Low < 150.00).
+* Prothrombin Time Inr: The most recent hourly average was 1.40 - (High > 1.10).
+* Prothrombin Time Inr: The overall 24h average was 1.30 - (High > 1.10).
+* Prothrombin Time Pt: The most recent hourly average was 15.10 seconds (High > 13.50).
+* Prothrombin Time Pt: The overall 24h average was 14.48 seconds (High > 13.50).
+* Pulmonary Artery Pressure Systolic: The mean max 24h was 37.67 mmHg (High > 25.00).
+* Pulmonary Artery Pressure Systolic: The overall 24h average was 29.19 mmHg (High > 25.00).
+* Red Blood Cell Count: The most recent hourly average was 3.32 x 10¹²/L (Low < 3.50).
+* Red Blood Cell Count: The overall 24h average was 3.16 x 10¹²/L (Low < 3.50).
+* Respiratory Rate: The mean max 24h was 21.00 breaths/min (High > 18.00).
+* Respiratory Rate: The mean min 24h was 10.00 breaths/min (Low < 12.00).
+* Systemic Vascular Resistance: The mean max 24h was 1204.94 dynes·sec/cm⁵ (High > 1200.00).
+* Systemic Vascular Resistance: The mean min 24h was 784.00 dynes·sec/cm⁵ (Low < 800.00).
+* Systolic Blood Pressure: The mean max 24h was 123.33 mmHg (High > 120.00).
+* Systolic Blood Pressure: The mean min 24h was 86.00 mmHg (Low < 90.00).
+* Temperature: The most recent hourly average was 37.53 °C (High > 37.20).
+* Temperature: The overall 24h average was 37.42 °C (High > 37.20).
+* Tidal Volume Set: The most recent hourly average was 550.00 mL/kg IBW (High > 8.00).
+* Tidal Volume Set: The overall 24h average was 458.33 mL/kg IBW (High > 8.00).
+* White Blood Cell Count: The most recent hourly average was 11.50 x 10⁹/L (High > 11.00).
+* White Blood Cell Count: The overall 24h average was 12.42 x 10⁹/L (High > 11.00).

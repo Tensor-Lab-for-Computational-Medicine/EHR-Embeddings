@@ -346,7 +346,7 @@ Mean Stddev 24H: 12.12
 Most Recent Hourly Average: 114.00
 Overall 24h Average: 98.87
 
---- Temperature (°F) ---
+--- Temperature (°C) ---
 Hourly Measurement Count: 15.00
 Mean Slope 24H: 0.16
 Mean Stddev 24H: 1.03

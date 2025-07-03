@@ -414,12 +414,12 @@ Mean Stddev 24H: 22.20
 Most Recent Hourly Average: 113.60 (Normal)
 Overall 24h Average: 91.89 (Normal)
 
---- Temperature (°F) ---
+--- Temperature (°C) ---
 Hourly Measurement Count: 11.00
 Mean Slope 24H: -0.03
 Mean Stddev 24H: 0.81
-Most Recent Hourly Average: 37.33 (Low < 97.00)
-Overall 24h Average: 37.33 (Low < 97.00)
+Most Recent Hourly Average: 37.33 (High > 37.20)
+Overall 24h Average: 37.33 (High > 37.20)
 
 --- Tidal Volume Observed (mL/kg IBW) ---
 Hourly Measurement Count: 2.00

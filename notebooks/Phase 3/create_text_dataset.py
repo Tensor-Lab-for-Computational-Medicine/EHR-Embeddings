@@ -66,7 +66,7 @@ def reverse_transform_data(df: pd.DataFrame, scaler, label_encoders: dict) -> pd
 
 def main():
     """Main execution function."""
-    DRY_RUN = True
+    DRY_RUN = False
     DRY_RUN_SAMPLE_SIZE = 1 
 
     logging.info("--- Starting Phase III: Text Dataset Serialization ---")

@@ -1,4 +1,4 @@
-The following is a summary of the first 24 hours of a patient's ICU stay. Generate a clinical embedding that is oriented around the patient's dominant pathophysiological process. Determine if the primary driver of risk appears to be cardiovascular, respiratory, septic, or metabolic in nature, and encode this assessment into the embedding.
+The following is a summary of the first 24 hours of a patient's ICU stay. Their lab values and vitals were averaged over each hour of their first 24 hours. This data was then processed to extract features.  Generate a clinical embedding that is oriented around the patient's dominant pathophysiological process. Determine if the primary driver of risk appears to be cardiovascular, respiratory, septic, or metabolic in nature, and encode this assessment into the embedding.
 
 --- Age ---
 Value: 59.79
@@ -312,7 +312,7 @@ Mean Stddev 24H: 7.88
 Most Recent Hourly Average: 97.00
 Overall 24h Average: 89.76
 
---- Temperature (°F) ---
+--- Temperature (°C) ---
 Hourly Measurement Count: 7.00
 Mean Slope 24H: 0.03
 Mean Stddev 24H: 0.40

@@ -1,0 +1,13 @@
+2025-07-03 14:14:01,700 [WARNING] - DRY RUN ENABLED: Processing only the first experimental arm on a subset of data.
+2025-07-03 14:14:01,700 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P0
+================================================================================
+2025-07-03 14:14:01,700 [INFO] - Loading data for experimental arm: F1_P0...
+2025-07-03 14:14:01,712 [WARNING] - DRY RUN: Subsetting data to 100 stratified samples per split.
+2025-07-03 14:14:01,721 [INFO] - Loading train embeddings for 100 samples...
+2025-07-03 14:14:01,736 [ERROR] - Embedding file not found for icustay_id 200009 in train set. Exiting.
+2025-07-03 14:14:01,736 [ERROR] - !!! An error occurred while processing arm F1_P0: [Errno 2] No such file or directory: 'notebooks/Phase 4/phase_4_embeddings/F1_P0/train/200009.npy'
+2025-07-03 14:14:01,736 [ERROR] - Skipping arm F1_P0 and continuing to the next one.
+2025-07-03 14:14:01,736 [INFO] - 
+Full analysis completed in 0.00 hours

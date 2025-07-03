@@ -1,7 +1,7 @@
 # text_generator.py
 """
-Final core logic for generating representations. This version robustly filters
-out all imputed values and correctly hides 6-hour data when the measurement count is zero.
+Final core logic for generating representations. This version adds units to the
+F3 narrative summary for enhanced clarity.
 """
 import pandas as pd
 from collections import defaultdict
@@ -77,7 +77,16 @@ def _create_narrative_summary(patient_series: pd.Series, reference_ranges: pd.Da
             if "High" in flag or "Low" in flag:
                 label = FEATURE_LABEL_MAP.get(suffix, suffix.replace('_', ' ').title())
                 formatted_val = _format_value(value)
-                abnormal_findings.append(f"* {display_base}: The {label.lower()} was {formatted_val}{flag}.")
+                
+                # FIX: Look up the unit and add it to the summary string.
+                unit = ""
+                lookup_key = f"{raw_base}_mean"
+                if lookup_key in reference_ranges.index:
+                    unit_val = reference_ranges.loc[lookup_key, 'Units']
+                    if pd.notna(unit_val) and str(unit_val).strip().upper() != 'N/A':
+                        unit = f" {unit_val}"
+
+                abnormal_findings.append(f"* {display_base}: The {label.lower()} was {formatted_val}{unit}{flag}.")
 
     if abnormal_findings:
         summary_lines.extend(abnormal_findings)
@@ -90,11 +99,9 @@ def _generate_structured_representation(patient_series: pd.Series, representatio
     """Generates the full structured text for F1 or F2 representations."""
     feature_groups = defaultdict(list)
     
-    # FIX: Pre-scan to find which groups have a zero 6-hour count
     zero_6h_count_features = set()
     for feature, value in patient_series.items():
         _, display_base, suffix = _parse_feature_name(feature)
-        # Check for both simple and compound 6-hour count suffixes
         if suffix in ['count_6h', 'mean_count_6h'] and isinstance(value, (int, float)) and value < 1:
             zero_6h_count_features.add(display_base)
 
@@ -125,7 +132,6 @@ def _generate_structured_representation(patient_series: pd.Series, representatio
         full_text.append(f"--- {display_base}{unit} ---")
         
         for label, value, raw_base, suffix in sorted(feature_groups[display_base], key=lambda x: x[0]):
-            # FIX: Filter out 6h count and slope if the 6h count is zero for that group
             suffixes_to_filter = ['count_6h', 'slope_6h', 'mean_count_6h', 'mean_slope_6h']
             if suffix in suffixes_to_filter and display_base in zero_6h_count_features:
                 continue

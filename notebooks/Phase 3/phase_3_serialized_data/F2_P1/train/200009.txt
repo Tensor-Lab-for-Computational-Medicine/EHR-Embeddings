@@ -1,4 +1,4 @@
-The following is a summary of the first 24 hours of a patient's ICU stay. Generate a patient state embedding optimized for predicting in-hospital mortality from this data.
+The following is a summary of the first 24 hours of a patient's ICU stay. Their lab values and vitals were averaged over each hour of their first 24 hours. This data was then processed to extract features.  Generate a patient state embedding optimized for predicting in-hospital mortality from this data.
 
 --- Age ---
 Value: 47.56
@@ -348,12 +348,12 @@ Mean Stddev 24H: 12.12
 Most Recent Hourly Average: 114.00 (Normal)
 Overall 24h Average: 98.87 (Normal)
 
---- Temperature (°F) ---
+--- Temperature (°C) ---
 Hourly Measurement Count: 15.00
 Mean Slope 24H: 0.16
 Mean Stddev 24H: 1.03
-Most Recent Hourly Average: 37.53 (Low < 97.00)
-Overall 24h Average: 37.42 (Low < 97.00)
+Most Recent Hourly Average: 37.53 (High > 37.20)
+Overall 24h Average: 37.42 (High > 37.20)
 
 --- Tidal Volume Observed (mL/kg IBW) ---
 Hourly Measurement Count: 5.00

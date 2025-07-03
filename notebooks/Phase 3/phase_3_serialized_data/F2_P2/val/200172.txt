@@ -1,4 +1,4 @@
-The following is a summary of the first 24 hours of a patient's ICU stay. From the perspective of an experienced ICU physician, generate a clinical embedding that synthesizes this data to capture the patient's overall severity and primary risk factors.
+The following is a summary of the first 24 hours of a patient's ICU stay. Their lab values and vitals were averaged over each hour of their first 24 hours. This data was then processed to extract features.  From the perspective of an experienced ICU physician, generate a clinical embedding that synthesizes this data to capture the patient's overall severity and primary risk factors.
 
 --- Age ---
 Value: 59.79
@@ -312,12 +312,12 @@ Mean Stddev 24H: 7.88
 Most Recent Hourly Average: 97.00 (Normal)
 Overall 24h Average: 89.76 (Low < 90.00)
 
---- Temperature (°F) ---
+--- Temperature (°C) ---
 Hourly Measurement Count: 7.00
 Mean Slope 24H: 0.03
 Mean Stddev 24H: 0.40
-Most Recent Hourly Average: 37.83 (Low < 97.00)
-Overall 24h Average: 37.02 (Low < 97.00)
+Most Recent Hourly Average: 37.83 (High > 37.20)
+Overall 24h Average: 37.02 (Normal)
 
 --- Troponin-T (ng/mL) ---
 Hourly Measurement Count: 1.00
