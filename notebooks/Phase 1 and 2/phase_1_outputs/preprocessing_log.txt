@@ -1,0 +1,57 @@
+2025-07-02 19:38:48,344 [INFO] - Loading data...
+2025-07-02 19:38:49,817 [INFO] - NumExpr defaulting to 8 threads.
+2025-07-02 19:38:55,169 [INFO] - Age filtered: 32550 patients, 2080959 records
+2025-07-02 19:39:02,862 [INFO] - Time window filtered: 22591 patients, (542184, 104) time-series
+2025-07-02 19:39:45,935 [INFO] - Demographics processed: (22591, 4)
+2025-07-02 19:39:45,936 [INFO] - Demographic encoders: ['gender_encoded', 'ethnicity_encoded', 'insurance_encoded']
+2025-07-02 19:39:45,958 [INFO] - Splits: train=14825, val=2118, test=5648 subjects
+2025-07-02 19:39:46,343 [INFO] - Engineering features for 6 categories
+2025-07-02 19:45:47,897 [INFO] - Features engineered: (14825, 454)
+2025-07-02 19:45:48,066 [INFO] - Engineering features for 6 categories
+2025-07-02 19:46:39,368 [INFO] - Features engineered: (2118, 454)
+2025-07-02 19:46:39,534 [INFO] - Engineering features for 6 categories
+2025-07-02 19:48:56,949 [INFO] - Features engineered: (5648, 454)
+2025-07-02 19:48:57,011 [INFO] - ✓ All features are numeric - no categorical encoding needed
+2025-07-02 19:48:58,936 [INFO] - ✓ Outlier handling: 442 features, 84100 values clipped (1-99 percentiles)
+2025-07-02 19:48:58,937 [INFO] - Applying derived feature imputation scheme...
+2025-07-02 19:48:59,014 [INFO] - Imputation: Value=198, Variation=58, Trend=82, Other=120
+2025-07-02 19:48:59,124 [INFO] - X_train: 2337214 → 0 NaN values
+2025-07-02 19:48:59,168 [INFO] - X_val: 333058 → 0 NaN values
+2025-07-02 19:48:59,226 [INFO] - X_test: 892160 → 0 NaN values
+2025-07-02 19:48:59,227 [INFO] - ✓ Derived feature imputation completed
+2025-07-02 19:49:00,328 [INFO] - ✓ Data normalized: 458 numeric features
+2025-07-02 19:49:00,372 [INFO] - Saved label encoders for: ['gender_encoded', 'ethnicity_encoded', 'insurance_encoded']
+2025-07-02 19:49:00,372 [INFO] - Data saved with prefix: preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42
+2025-07-02 19:49:00,373 [INFO] - Outlier bounds saved for reproducibility
+2025-07-02 19:49:00,373 [INFO] - Preprocessing completed in 10.20 minutes
+2025-07-02 19:49:00,374 [INFO] - Final shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-02 19:49:00,375 [INFO] - Mortality rates: train=0.101, val=0.101, test=0.101
+2025-07-02 19:49:00,375 [INFO] - Outlier handling: (1, 99) percentile clipping
+2025-07-02 19:49:01,043 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42
+2025-07-02 19:49:01,075 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-02 19:49:01,075 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-07-02 19:49:01,076 [INFO] - Creating new Optuna study with 15 trials...
+2025-07-02 19:56:03,954 [INFO] - Study saved to phase_1_outputs/preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
+2025-07-02 19:56:03,955 [INFO] - Best validation AUROC: 0.8878
+2025-07-02 19:56:03,956 [INFO] - Training final model on combined train+validation data...
+2025-07-02 19:57:11,677 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-02 19:57:11,866 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-07-02 19:57:14,086 [INFO] - Test AUROC: 0.9080 (95% CI: 0.8968-0.9193)
+2025-07-02 19:57:14,087 [INFO] - Test AUPRC: 0.6193 (95% CI: 0.5850-0.6559)
+2025-07-02 19:57:14,102 [INFO] - Model saved to: phase_1_outputs/model_1_xgboost_baseline.pkl
+2025-07-02 19:57:14,103 [INFO] - Results saved to: phase_1_outputs/results_xgboost_baseline.pkl
+2025-07-02 19:57:14,104 [INFO] - Analysis completed in 8.22 minutes
+2025-07-02 19:57:15,812 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42
+2025-07-02 19:57:15,891 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-02 19:57:15,892 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-07-02 19:57:15,893 [INFO] - Creating new Optuna study with 15 trials...
+2025-07-02 20:11:12,533 [INFO] - Study saved to phase_1_outputs/preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42_optuna_study_elastic_net.pkl
+2025-07-02 20:11:12,533 [INFO] - Best validation AUROC: 0.8691
+2025-07-02 20:11:12,534 [INFO] - Training final model on combined train+validation data...
+2025-07-02 20:11:25,902 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-02 20:11:25,940 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-07-02 20:11:27,860 [INFO] - Test AUROC: 0.8983 (95% CI: 0.8864-0.9093)
+2025-07-02 20:11:27,860 [INFO] - Test AUPRC: 0.5549 (95% CI: 0.5189-0.5932)
+2025-07-02 20:11:27,866 [INFO] - Model saved to: phase_1_outputs/model_2_elastic_net_baseline.pkl
+2025-07-02 20:11:27,867 [INFO] - Results saved to: phase_1_outputs/results_elastic_net_baseline.pkl
+2025-07-02 20:11:27,867 [INFO] - Analysis completed in 14.20 minutes

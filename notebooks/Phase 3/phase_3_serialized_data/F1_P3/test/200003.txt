@@ -1,0 +1,448 @@
+The following is a summary of the first 24 hours of a patient's ICU stay. Generate a clinical embedding that focuses on the relationships between physiological systems and the temporal evolution of key variables within this period.
+
+--- Age ---
+Value: 48.30
+
+--- Alanine Aminotransferase (U/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.83
+Most Recent Hourly Average: 48.00
+Overall 24h Average: 58.33
+
+--- Albumin (g/dL) ---
+Hourly Measurement Count: 2.00
+Most Recent Hourly Average: 2.80
+
+--- Alkaline Phosphate (U/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -3.79
+Most Recent Hourly Average: 217.00
+Overall 24h Average: 256.33
+
+--- Anion Gap (mmol/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.16
+Mean Stddev 24H: 3.06
+Most Recent Hourly Average: 15.00
+Overall 24h Average: 17.67
+
+--- Asparate Aminotransferase (U/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.31
+Most Recent Hourly Average: 43.00
+Overall 24h Average: 47.00
+
+--- Bicarbonate (mmol/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.18
+Mean Stddev 24H: 3.61
+Most Recent Hourly Average: 25.00
+Overall 24h Average: 22.00
+
+--- Bilirubin (mg/dL) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.07
+Most Recent Hourly Average: 3.90
+Overall 24h Average: 2.99
+
+--- Blood Urea Nitrogen (mg/dL) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.09
+Mean Stddev 24H: 1.00
+Most Recent Hourly Average: 19.00
+Overall 24h Average: 20.00
+
+--- Calcium (mg/dL) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.04
+Mean Stddev 24H: 0.42
+Most Recent Hourly Average: 8.30
+Overall 24h Average: 7.83
+
+--- Calcium Ionized (mg/dL) ---
+Hourly Measurement Count: 1.00
+Mean Slope 24H: 0.00
+Mean Stddev 24H: 0.00
+Most Recent Hourly Average: 1.05
+Overall 24h Average: 1.05
+
+--- Cardiac Index (L/min/m²) ---
+Mean Max 24H: 3.33
+Mean Min 24H: 2.10
+
+--- Cardiac Output Thermodilution (L/min) ---
+Mean Max 24H: 6.26
+Mean Min 24H: 4.16
+
+--- Central Venous Pressure (mmHg) ---
+Hourly Measurement Count: 1.00
+Mean Max 24H: 12.00
+Mean Min 24H: 12.00
+Mean Slope 24H: -0.00
+Mean Stddev 24H: 0.00
+Most Recent Hourly Average: 12.00
+Overall 24h Average: 12.00
+
+--- Chloride (mEq/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.17
+Mean Stddev 24H: 2.00
+Most Recent Hourly Average: 107.00
+Overall 24h Average: 105.00
+
+--- Co2 (mmol/L) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.44
+Mean Stddev 24H: 4.95
+Most Recent Hourly Average: 25.00
+Overall 24h Average: 21.50
+
+--- Co2 (Etco2, Pco2, Etc.) ---
+Hourly Measurement Count: 4.00
+Mean Slope 24H: 0.42
+Mean Stddev 24H: 3.30
+Most Recent Hourly Average: 28.00
+Overall 24h Average: 23.75
+
+--- Creatinine (mg/dL) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.01
+Mean Stddev 24H: 0.15
+Most Recent Hourly Average: 0.70
+Overall 24h Average: 0.87
+
+--- Diastolic Blood Pressure (mmHg) ---
+Hourly Measurement Count: 23.00
+Hours with Measurements in 6h: 6.00
+Mean Max 24H: 70.00
+Mean Min 24H: 33.50
+Mean Slope 24H: 0.81
+Mean Slope 6H: 3.22
+Mean Stddev 24H: 11.90
+Most Recent Hourly Average: 65.00
+Overall 24h Average: 55.66
+
+--- Ethnicity ---
+Value: WHITE
+
+--- Fraction Inspired Oxygen Set (%) ---
+Hourly Measurement Count: 8.00
+Mean Slope 24H: -0.01
+Mean Stddev 24H: 0.23
+Most Recent Hourly Average: 0.70
+Overall 24h Average: 0.80
+
+--- Gender ---
+Value: M
+
+--- Glascow Coma Scale Total (Points (3-15)) ---
+Hourly Measurement Count: 7.00
+Mean Slope 24H: -0.35
+Mean Stddev 24H: 4.43
+Most Recent Hourly Average: 7.00
+Overall 24h Average: 12.43
+
+--- Glucose (mg/dL) ---
+Hourly Measurement Count: 4.00
+Mean Slope 24H: -1.03
+Mean Stddev 24H: 38.39
+Most Recent Hourly Average: 90.00
+Overall 24h Average: 132.25
+
+--- Heart Rate (bpm) ---
+Hourly Measurement Count: 23.00
+Hours with Measurements in 6h: 6.00
+Mean Max 24H: 119.00
+Mean Min 24H: 74.80
+Mean Slope 24H: -1.61
+Mean Slope 6H: -1.65
+Mean Stddev 24H: 12.25
+Most Recent Hourly Average: 74.80
+Overall 24h Average: 99.15
+
+--- Height (cm) ---
+Mean Value: 170.09
+
+--- Hematocrit (%) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.17
+Mean Stddev 24H: 2.06
+Most Recent Hourly Average: 31.10
+Overall 24h Average: 33.43
+
+--- Hemoglobin (g/dL) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: -0.03
+Mean Stddev 24H: 0.49
+Most Recent Hourly Average: 10.80
+Overall 24h Average: 11.15
+
+--- Insurance ---
+Value: Private
+
+--- Lactate (mmol/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.13
+Mean Stddev 24H: 1.26
+Most Recent Hourly Average: 2.60
+Overall 24h Average: 3.93
+
+--- Lactate Dehydrogenase (U/L) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 5.00
+Most Recent Hourly Average: 216.00
+Overall 24h Average: 203.50
+
+--- Lactic Acid (mmol/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.13
+Mean Stddev 24H: 1.26
+Most Recent Hourly Average: 2.60
+Overall 24h Average: 3.93
+
+--- Lymphocytes (x 10⁹/L) ---
+Hourly Measurement Count: 1.00
+Mean Slope 24H: 0.00
+Most Recent Hourly Average: 3.00
+Overall 24h Average: 3.00
+
+--- Magnesium (mg/dL) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.06
+Mean Stddev 24H: 0.65
+Most Recent Hourly Average: 2.50
+Overall 24h Average: 1.87
+
+--- Mean Blood Pressure (mmHg) ---
+Hourly Measurement Count: 23.00
+Hours with Measurements in 6h: 6.00
+Mean Max 24H: 132.00
+Mean Min 24H: 58.00
+Mean Slope 24H: 0.81
+Mean Slope 6H: 2.82
+Mean Stddev 24H: 14.37
+Most Recent Hourly Average: 83.80
+Overall 24h Average: 77.26
+
+--- Mean Corpuscular Hemoglobin (pg) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.00
+Mean Stddev 24H: 0.07
+Most Recent Hourly Average: 30.80
+Overall 24h Average: 30.75
+
+--- Mean Corpuscular Hemoglobin Concentration (g/dL) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.06
+Mean Stddev 24H: 0.92
+Most Recent Hourly Average: 34.80
+Overall 24h Average: 34.15
+
+--- Mean Corpuscular Volume (fL) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: -0.14
+Mean Stddev 24H: 2.12
+Most Recent Hourly Average: 89.00
+Overall 24h Average: 90.50
+
+--- Monocytes (x 10⁹/L) ---
+Hourly Measurement Count: 1.00
+Mean Slope 24H: 0.00
+Most Recent Hourly Average: 1.00
+Overall 24h Average: 1.00
+
+--- Neutrophils (x 10⁹/L) ---
+Hourly Measurement Count: 1.00
+Most Recent Hourly Average: 82.00
+
+--- Oxygen Saturation (%) ---
+Hourly Measurement Count: 23.00
+Hours with Measurements in 6h: 6.00
+Mean Max 24H: 98.00
+Mean Min 24H: 91.50
+Mean Slope 24H: 0.01
+Mean Slope 6H: -0.89
+Mean Stddev 24H: 1.84
+Most Recent Hourly Average: 97.40
+Overall 24h Average: 95.62
+
+--- Partial Pressure Of Carbon Dioxide (mmHg) ---
+Hourly Measurement Count: 4.00
+Mean Slope 24H: 0.49
+Mean Stddev 24H: 4.97
+Most Recent Hourly Average: 44.00
+Overall 24h Average: 37.00
+
+--- Partial Pressure Of Oxygen (mmHg) ---
+Hourly Measurement Count: 4.00
+Mean Slope 24H: 1.83
+Mean Stddev 24H: 13.76
+Most Recent Hourly Average: 118.50
+Overall 24h Average: 102.12
+
+--- Partial Thromboplastin Time (seconds) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.17
+Mean Stddev 24H: 1.89
+Most Recent Hourly Average: 29.30
+Overall 24h Average: 31.43
+
+--- Peak Inspiratory Pressure (cmH2O) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.00
+Mean Stddev 24H: 0.00
+Most Recent Hourly Average: 26.00
+Overall 24h Average: 26.00
+
+--- Ph (-) ---
+Hourly Measurement Count: 4.00
+Mean Slope 24H: 0.00
+Mean Stddev 24H: 0.04
+Most Recent Hourly Average: 7.40
+Overall 24h Average: 7.40
+
+--- Ph Urine (-) ---
+Hourly Measurement Count: 1.00
+Most Recent Hourly Average: 5.00
+
+--- Phosphate (mg/dL) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.04
+Mean Stddev 24H: 1.40
+Most Recent Hourly Average: 3.50
+Overall 24h Average: 3.37
+
+--- Phosphorous (mg/dL) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: -0.07
+Mean Stddev 24H: 0.85
+Most Recent Hourly Average: 3.50
+Overall 24h Average: 4.10
+
+--- Plateau Pressure (cmH2O) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 2.00
+Mean Stddev 24H: 2.12
+Most Recent Hourly Average: 22.00
+Overall 24h Average: 20.50
+
+--- Platelets (x 10⁹/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.58
+Mean Stddev 24H: 6.43
+Most Recent Hourly Average: 119.00
+Overall 24h Average: 111.67
+
+--- Positive End-Expiratory Pressure Set (cmH2O) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.59
+Mean Stddev 24H: 3.54
+Most Recent Hourly Average: 10.00
+Overall 24h Average: 7.50
+
+--- Potassium (mEq/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.00
+Mean Stddev 24H: 0.06
+Most Recent Hourly Average: 3.10
+Overall 24h Average: 3.13
+
+--- Prothrombin Time Inr (-) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.04
+Mean Stddev 24H: 0.50
+Most Recent Hourly Average: 1.30
+Overall 24h Average: 1.80
+
+--- Prothrombin Time Pt (seconds) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: -0.38
+Mean Stddev 24H: 4.35
+Most Recent Hourly Average: 14.20
+Overall 24h Average: 18.63
+
+--- Pulmonary Artery Pressure Mean (mmHg) ---
+Mean Max 24H: 35.00
+Mean Min 24H: 21.00
+
+--- Pulmonary Artery Pressure Systolic (mmHg) ---
+Mean Max 24H: 44.00
+Mean Min 24H: 26.00
+
+--- Red Blood Cell Count (x 10¹²/L) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: -0.01
+Mean Stddev 24H: 0.16
+Most Recent Hourly Average: 3.51
+Overall 24h Average: 3.62
+
+--- Respiratory Rate (breaths/min) ---
+Hourly Measurement Count: 23.00
+Hours with Measurements in 6h: 6.00
+Mean Max 24H: 38.00
+Mean Min 24H: 16.00
+Mean Slope 24H: -0.50
+Mean Slope 6H: -0.08
+Mean Stddev 24H: 6.36
+Most Recent Hourly Average: 16.29
+Overall 24h Average: 30.24
+
+--- Respiratory Rate Set (breaths/min) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.00
+Mean Stddev 24H: 0.00
+Most Recent Hourly Average: 14.00
+Overall 24h Average: 14.00
+
+--- Sodium (mEq/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 0.19
+Mean Stddev 24H: 2.08
+Most Recent Hourly Average: 144.00
+Overall 24h Average: 141.67
+
+--- Systemic Vascular Resistance (dynes·sec/cm⁵) ---
+Mean Max 24H: 1312.12
+Mean Min 24H: 712.61
+
+--- Systolic Blood Pressure (mmHg) ---
+Hourly Measurement Count: 23.00
+Hours with Measurements in 6h: 6.00
+Mean Max 24H: 116.00
+Mean Min 24H: 50.00
+Mean Slope 24H: 1.84
+Mean Slope 6H: 1.38
+Mean Stddev 24H: 22.20
+Most Recent Hourly Average: 113.60
+Overall 24h Average: 91.89
+
+--- Temperature (°F) ---
+Hourly Measurement Count: 11.00
+Mean Slope 24H: -0.03
+Mean Stddev 24H: 0.81
+Most Recent Hourly Average: 37.33
+Overall 24h Average: 37.33
+
+--- Tidal Volume Observed (mL/kg IBW) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 28.00
+Mean Stddev 24H: 19.80
+Most Recent Hourly Average: 610.00
+Overall 24h Average: 596.00
+
+--- Tidal Volume Set (mL/kg IBW) ---
+Hourly Measurement Count: 2.00
+Mean Slope 24H: 0.00
+Mean Stddev 24H: 0.00
+Most Recent Hourly Average: 600.00
+Overall 24h Average: 600.00
+
+--- Weight (kg) ---
+Mean Value: 79.70
+
+--- White Blood Cell Count (x 10⁹/L) ---
+Hourly Measurement Count: 3.00
+Mean Slope 24H: 1.10
+Mean Stddev 24H: 9.90
+Most Recent Hourly Average: 33.98
+Overall 24h Average: 32.97

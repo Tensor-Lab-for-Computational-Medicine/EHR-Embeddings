@@ -1,0 +1,63 @@
+The following is a summary of the first 24 hours of a patient's ICU stay. Generate a clinical embedding that is oriented around the patient's dominant pathophysiological process. Determine if the primary driver of risk appears to be cardiovascular, respiratory, septic, or metabolic in nature, and encode this assessment into the embedding.
+
+This is a 48-year-old male.
+
+Key abnormal findings from the first 24 hours include:
+* Alanine Aminotransferase: The overall 24h average was 58.33 (High > 55.00).
+* Albumin: The most recent hourly average was 2.80 (Low < 3.50).
+* Alkaline Phosphate: The most recent hourly average was 217.00 (High > 129.00).
+* Alkaline Phosphate: The overall 24h average was 256.33 (High > 129.00).
+* Anion Gap: The most recent hourly average was 15.00 (High > 12.00).
+* Anion Gap: The overall 24h average was 17.67 (High > 12.00).
+* Bilirubin: The most recent hourly average was 3.90 (High > 1.20).
+* Bilirubin: The overall 24h average was 2.99 (High > 1.20).
+* Calcium Ionized: The most recent hourly average was 1.05 (Low < 4.60).
+* Calcium Ionized: The overall 24h average was 1.05 (Low < 4.60).
+* Calcium: The most recent hourly average was 8.30 (Low < 8.50).
+* Calcium: The overall 24h average was 7.83 (Low < 8.50).
+* Central Venous Pressure: The most recent hourly average was 12.00 (High > 6.00).
+* Central Venous Pressure: The mean max 24h was 12.00 (High > 6.00).
+* Central Venous Pressure: The overall 24h average was 12.00 (High > 6.00).
+* Central Venous Pressure: The mean min 24h was 12.00 (High > 6.00).
+* Co2: The overall 24h average was 21.50 (Low < 22.00).
+* Creatinine: The most recent hourly average was 0.70 (Low < 0.74).
+* Diastolic Blood Pressure: The overall 24h average was 55.66 (Low < 60.00).
+* Diastolic Blood Pressure: The mean min 24h was 33.50 (Low < 60.00).
+* Glucose: The overall 24h average was 132.25 (High > 100.00).
+* Heart Rate: The mean max 24h was 119.00 (High > 100.00).
+* Hematocrit: The most recent hourly average was 31.10 (Low < 41.00).
+* Hematocrit: The overall 24h average was 33.43 (Low < 41.00).
+* Hemoglobin: The most recent hourly average was 10.80 (Low < 13.50).
+* Hemoglobin: The overall 24h average was 11.15 (Low < 13.50).
+* Lactate: The most recent hourly average was 2.60 (High > 1.00).
+* Lactate: The overall 24h average was 3.93 (High > 1.00).
+* Lactic Acid: The most recent hourly average was 2.60 (High > 1.00).
+* Lactic Acid: The overall 24h average was 3.93 (High > 1.00).
+* Magnesium: The most recent hourly average was 2.50 (High > 2.20).
+* Mean Blood Pressure: The mean max 24h was 132.00 (High > 100.00).
+* Mean Blood Pressure: The mean min 24h was 58.00 (Low < 70.00).
+* Monocytes: The most recent hourly average was 1.00 (High > 0.80).
+* Monocytes: The overall 24h average was 1.00 (High > 0.80).
+* Neutrophils: The most recent hourly average was 82.00 (High > 7.70).
+* Oxygen Saturation: The mean min 24h was 91.50 (Low < 95.00).
+* Partial Pressure Of Oxygen: The most recent hourly average was 118.50 (High > 100.00).
+* Partial Pressure Of Oxygen: The overall 24h average was 102.12 (High > 100.00).
+* Platelets: The most recent hourly average was 119.00 (Low < 150.00).
+* Platelets: The overall 24h average was 111.67 (Low < 150.00).
+* Potassium: The most recent hourly average was 3.10 (Low < 3.60).
+* Potassium: The overall 24h average was 3.13 (Low < 3.60).
+* Prothrombin Time Inr: The most recent hourly average was 1.30 (High > 1.10).
+* Prothrombin Time Inr: The overall 24h average was 1.80 (High > 1.10).
+* Prothrombin Time Pt: The most recent hourly average was 14.20 (High > 13.50).
+* Prothrombin Time Pt: The overall 24h average was 18.63 (High > 13.50).
+* Red Blood Cell Count: The most recent hourly average was 3.51 (Low < 4.30).
+* Red Blood Cell Count: The overall 24h average was 3.62 (Low < 4.30).
+* Respiratory Rate: The mean max 24h was 38.00 (High > 18.00).
+* Respiratory Rate: The overall 24h average was 30.24 (High > 18.00).
+* Systolic Blood Pressure: The mean min 24h was 50.00 (Low < 90.00).
+* Temperature: The most recent hourly average was 37.33 (Low < 97.00).
+* Temperature: The overall 24h average was 37.33 (Low < 97.00).
+* Tidal Volume Set: The most recent hourly average was 600.00 (High > 8.00).
+* Tidal Volume Set: The overall 24h average was 600.00 (High > 8.00).
+* White Blood Cell Count: The most recent hourly average was 33.98 (High > 11.00).
+* White Blood Cell Count: The overall 24h average was 32.97 (High > 11.00).
