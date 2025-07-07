@@ -1,74 +1,42 @@
-# Instructions for Parallel Embedding Generation
+Instructions for Running the Vertex AI Embedding Script
+This guide explains the one-time setup required to run the generate_embeddings_gemini.py script correctly. The script now uses your gcloud login (Application Default Credentials) and requires specific environment variables to target the Vertex AI backend.
 
-This guide explains how to split the work of generating ~400,000 embeddings across three people. Each person will be responsible for running the script for their assigned "worker ID".
+Prerequisites
+Google Cloud SDK: Ensure you have gcloud installed and authenticated. If you haven't already, run:
 
-### Prerequisites
+gcloud auth application-default login
 
-1.  **Python Environment**: Ensure you have Python installed.
-2.  **Required Libraries**: Install the necessary libraries by running:
-    ```bash
-    pip install -q google-generativeai numpy tqdm
-    ```
-3.  **API Key**: Have your personal Google AI Studio API key ready.
-4.  **Project Files**: Make sure you have the following files in the same directory:
-    * `generate_embeddings.py` (the main script)
-    * `config_embedding.py` (the configuration file)
+Project Files: Make sure you have generate_embeddings_gemini.py and config_embedding_gemini.py.
 
-### Step 1: Assign Worker IDs
+Step 1: Set Environment Variables
+Before running the script, you must set three environment variables in your terminal. This tells the Python library to use Vertex AI.
 
-Decide among the three of you who will be Worker 0, Worker 1, and Worker 2.
+Replace your-gcp-project-id with your actual Google Cloud Project ID.
 
-* **Person 1**: Worker ID `0`
-* **Person 2**: Worker ID `1`
-* **Person 3**: Worker ID `2`
+# Replace with your actual project ID
+export GOOGLE_CLOUD_PROJECT=nth-wording-462614-s0
 
-### Step 2: Perform a Dry Run (Highly Recommended)
+# The location for Vertex AI embeddings is typically 'global'
+export GOOGLE_CLOUD_LOCATION=global
 
-Before starting the full process, each person should perform a quick "dry run" to ensure their setup and API key are working correctly.
+# This is the magic variable that switches to the Vertex AI backend
+export GOOGLE_GENAI_USE_VERTEXAI=True
 
-1.  **Open `config_embedding.py`** and make sure `DRY_RUN` is set to `True`.
-    ```python
-    DRY_RUN = True
-    ```
-2.  **Open your terminal** or command prompt, navigate to the directory containing the scripts.
-3.  **Run the script with your assigned Worker ID.**
-    * **Person 1 (Worker 0) runs:**
-        ```bash
-        python generate_embeddings.py --worker-id 0
-        ```
-    * **Person 2 (Worker 1) runs:**
-        ```bash
-        python generate_embeddings.py --worker-id 1
-        ```
-    * **Person 3 (Worker 2) runs:**
-        ```bash
-        python generate_embeddings.py --worker-id 2
-        ```
-4.  **Enter your API Key** when prompted.
-5.  **Verify**: The script should process one file and exit. Check the `notebooks/Phase 4/phase_4_embeddings` directory to confirm that a single `.npy` file was created.
+Note: These variables are set for your current terminal session only. If you close your terminal, you will need to set them again.
 
-### Step 3: Run the Full Process
+Step 2: Run the Embedding Script
+Once the environment variables are set, you can run the script just as before. Each person should use their assigned worker ID.
 
-Once everyone has successfully completed a dry run, you are ready to process all the files.
+Person 1 (Worker 0) runs:
 
-1.  **Open `config_embedding.py`** and change `DRY_RUN` to `False`.
-    ```python
-    DRY_RUN = False
-    ```
-2.  **Save the file.**
-3.  **Run the script again** with your assigned worker ID, just like in the dry run.
-    * **Person 1 (Worker 0) runs:**
-        ```bash
-        python "notebooks/Phase 3/generate_embeddings.py" --worker-id 0
-        ```
-    * **Person 2 (Worker 1) runs:**
-        ```bash
-        python "notebooks/Phase 3/generate_embeddings.py" --worker-id 1
-        ```
-    * **Person 3 (Worker 2) runs:**
-        ```bash
-        python "notebooks/Phase 3/generate_embeddings.py" --worker-id 2
-        ```
-4.  The script will now start processing its assigned third of the files. A progress bar will show you how long it will take. You can let it run in the background.
+python "notebooks/Phase 3/generate_embeddings_gemini.py" --worker-id 0
 
-By following these steps, your team can efficiently and safely generate all the embeddings without duplicating work.
+Person 2 (Worker 1) runs:
+
+python "notebooks/Phase 3/generate_embeddings_gemini.py" --worker-id 1
+
+Person 3 (Worker 2) runs:
+
+python "notebooks/Phase 3/generate_embeddings_gemini.py" --worker-id 2
+
+The script will now use your gcloud credentials and correctly send requests to the Vertex AI API without asking for an API key.

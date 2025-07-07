@@ -69,7 +69,9 @@ venv.bak/
 cache/
 *.joblib
 *.pkl
-notebooks/Phase 3/phase_3_serialized_data
+*.npy
+notebooks/Phase 3/phase_3_serialized_data/
+notebooks/Phase 4/phase_4_embeddings/
 
 # Project specific - Large data files
 data/raw/*.h5

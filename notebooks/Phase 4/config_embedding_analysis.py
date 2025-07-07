@@ -18,7 +18,7 @@ class Config:
     # --- Experiment Setup ---
     # Set to True to run the analysis on only the FIRST experimental condition
     # on a SMALL SUBSET of the data.
-    DRY_RUN = True
+    DRY_RUN = False
     
     # FIX: Added the missing attribute
     # Number of samples to use from each split (train/val/test) during a dry run.
@@ -31,7 +31,7 @@ class Config:
     # --- XGBoost & Optuna Settings ---
     TARGET_VARIABLE = 'mort_hosp'
     SEED = 42
-    N_OPTUNA_TRIALS = 50
+    N_OPTUNA_TRIALS = 10
     OPTUNA_TIMEOUT = 3600
     REUSE_EXISTING_STUDY = True
 
