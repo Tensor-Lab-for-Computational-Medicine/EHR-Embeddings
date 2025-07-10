@@ -19,6 +19,7 @@ import os
 import pickle
 from sklearn.metrics import roc_auc_score, average_precision_score, classification_report, confusion_matrix
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold
 from scipy.stats import pearsonr
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -303,47 +304,66 @@ def build_early_fusion_hybrid(X_train_num, X_val_num, X_test_num,
     
     return early_fusion_model, early_fusion_results, y_pred_proba_early
 
-def build_late_fusion_hybrid(baseline_proba, champion_proba, y_train, y_val, y_test, config):
-    """H2c: Late fusion hybrid model (stacked predictions)"""
-    logging.info("=== H2c: LATE FUSION HYBRID MODEL ===")
+def build_late_fusion_hybrid(baseline_model, champion_model,
+                             X_train_num, X_val_num, X_test_num,
+                             X_train_emb, X_val_emb, X_test_emb,
+                             y_train, y_val, y_test, config):
+  
+    logging.info("=== H2c: LATE FUSION HYBRID MODEL (Corrected Methodology) ===")
+
+    # Combine the full training and validation sets for cross-validation
+    X_train_full_num = pd.concat([X_train_num, X_val_num])
+    X_train_full_emb = np.vstack([X_train_emb, X_val_emb])
+    y_train_full = pd.concat([y_train, y_val])
+
+    # --- Generate Out-of-Fold (OOF) predictions for the training data ---
+    n_splits = 5
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=config.SEED)
     
-    # We need train/val predictions for training the meta-learner
-    # For now, we'll use cross-validation or assume we have out-of-fold predictions
-    # Since we don't have train/val predictions readily available, we'll train a simple stacker
+    oof_baseline_preds = np.zeros(len(y_train_full))
+    oof_champion_preds = np.zeros(len(y_train_full))
+
+    logging.info(f"Generating out-of-fold predictions using {n_splits}-fold CV...")
+    for fold, (train_idx, val_idx) in enumerate(skf.split(X_train_full_num, y_train_full)):
+        logging.info(f"  Processing Fold {fold+1}/{n_splits}...")
+        
+        # Split data for this fold
+        X_train_fold_num, X_val_fold_num = X_train_full_num.iloc[train_idx], X_train_full_num.iloc[val_idx]
+        X_train_fold_emb, X_val_fold_emb = X_train_full_emb[train_idx], X_train_full_emb[val_idx]
+        y_train_fold, y_val_fold = y_train_full.iloc[train_idx], y_train_full.iloc[val_idx]
+
+        # Train temporary models on K-1 folds
+        temp_baseline_model = xgb.XGBClassifier(**baseline_model.get_params()).fit(X_train_fold_num, y_train_fold)
+        temp_champion_model = xgb.XGBClassifier(**champion_model.get_params()).fit(X_train_fold_emb, y_train_fold)
+
+        # Generate predictions on the held-out fold
+        oof_baseline_preds[val_idx] = temp_baseline_model.predict_proba(X_val_fold_num)[:, 1]
+        oof_champion_preds[val_idx] = temp_champion_model.predict_proba(X_val_fold_emb)[:, 1]
+
+    # --- Train the Meta-Learner on the OOF predictions ---
+    logging.info("Training the meta-learner on out-of-fold predictions...")
+    X_meta_train = np.column_stack([oof_baseline_preds, oof_champion_preds])
     
-    # Create training data for meta-learner using the test predictions as proof-of-concept
-    # In practice, you'd want to use out-of-fold predictions on train/val
-    X_meta = np.column_stack([baseline_proba, champion_proba])
-    y_test_array = y_test.values if hasattr(y_test, 'values') else y_test
-    
-    # For demonstration, we'll train on a portion and test on remainder
-    # In real implementation, use proper cross-validation
-    n_samples = len(X_meta)
-    n_train_meta = int(0.7 * n_samples)
-    
-    # Random split for meta-learner training
-    np.random.seed(config.SEED)
-    indices = np.random.permutation(n_samples)
-    train_meta_idx = indices[:n_train_meta]
-    test_meta_idx = indices[n_train_meta:]
-    
-    X_meta_train = X_meta[train_meta_idx]
-    y_meta_train = y_test_array[train_meta_idx]
-    X_meta_test = X_meta[test_meta_idx]
-    y_meta_test = y_test_array[test_meta_idx]
-    
-    # Train logistic regression meta-learner
     meta_learner = LogisticRegression(random_state=config.SEED, max_iter=1000)
-    meta_learner.fit(X_meta_train, y_meta_train)
-    
-    # Predict with meta-learner
-    y_pred_proba_late = meta_learner.predict_proba(X_meta_test)[:, 1]
-    
-    late_fusion_results = evaluate_model_with_ci(y_meta_test, y_pred_proba_late,
-                                                "Late Fusion Hybrid", config)
+    meta_learner.fit(X_meta_train, y_train_full)
     
     logging.info(f"Meta-learner coefficients: Baseline={meta_learner.coef_[0][0]:.4f}, Champion={meta_learner.coef_[0][1]:.4f}")
+
+    # --- Evaluate the Meta-Learner on the actual Test Set ---
+    # Get predictions for the full test set from the original models
+    baseline_test_preds = baseline_model.predict_proba(X_test_num)[:, 1]
+    champion_test_preds = champion_model.predict_proba(X_test_emb)[:, 1]
     
+    X_meta_test = np.column_stack([baseline_test_preds, champion_test_preds])
+    
+    # This is the final prediction probability for the entire test set
+    y_pred_proba_late = meta_learner.predict_proba(X_meta_test)[:, 1]
+    
+    # Evaluate the results
+    y_test_array = y_test.values if hasattr(y_test, 'values') else y_test
+    late_fusion_results = evaluate_model_with_ci(y_test_array, y_pred_proba_late,
+                                                "Late Fusion Hybrid", config)
+   
     return meta_learner, late_fusion_results, y_pred_proba_late
 
 # =============================================================================
@@ -458,9 +478,11 @@ def main():
         X_train_num, X_val_num, X_test_num, X_train_emb, X_val_emb, X_test_emb,
         y_train, y_val, y_test, config)
     
-    # H2c: Late fusion hybrid model  
+    # H2c: Late fusion (with corrected call signature)
     late_fusion_model, late_fusion_results, late_fusion_proba = build_late_fusion_hybrid(
-        predictions['baseline_proba'], predictions['champion_proba'], 
+        baseline_model, champion_model,
+        X_train_num, X_val_num, X_test_num,
+        X_train_emb, X_val_emb, X_test_emb,
         y_train, y_val, y_test, config)
     
     # H2d: Statistical significance testing
