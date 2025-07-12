@@ -1,7 +1,3 @@
----
-marp: true
----
-
 # Figure: End-to-End Experimental Workflow
 
 ```mermaid
