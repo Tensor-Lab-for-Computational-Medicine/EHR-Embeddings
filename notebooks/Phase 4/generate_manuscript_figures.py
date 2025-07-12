@@ -206,14 +206,45 @@ def generate_performance_lift_plot(df: pd.DataFrame, metric: str = 'AUROC', file
     df_copy = df.copy()
     lift_metric_name = f'{metric}_Lift'
     df_copy[lift_metric_name] = df_copy[metric] - best_baseline_score
+
+    # Calculate confidence intervals for the lift
+    lower_ci_col = f'{metric}_CI_Lower'
+    upper_ci_col = f'{metric}_CI_Upper'
+    error_bars = None
+    xlabel = f'Change in {metric} vs. Best Baseline'
+    if lower_ci_col in df_copy.columns and upper_ci_col in df_copy.columns:
+        valid_ci = df_copy[lower_ci_col].notna() & df_copy[upper_ci_col].notna()
+        
+        lower_error = pd.Series(np.nan, index=df_copy.index)
+        upper_error = pd.Series(np.nan, index=df_copy.index)
+        
+        lower_error[valid_ci] = df_copy.loc[valid_ci, lift_metric_name] - (df_copy.loc[valid_ci, lower_ci_col] - best_baseline_score)
+        upper_error[valid_ci] = (df_copy.loc[valid_ci, upper_ci_col] - best_baseline_score) - df_copy.loc[valid_ci, lift_metric_name]
+        
+        error_bars = [lower_error, upper_error]
+        xlabel += ' (with 95% CI)'
+
     df_copy['Arm'] = df_copy.apply(lambda row: f"{REP_LABELS.get(row['Representation'], row['Representation'])} - {PROMPT_LABELS.get(row['Prompt'], row['Prompt'])}", axis=1)
     df_copy = df_copy.sort_values(lift_metric_name, ascending=False)
     
     plt.figure(figsize=(12, 10))
     sns.set_theme(style="whitegrid")
     ax = sns.barplot(data=df_copy, x=lift_metric_name, y='Arm', palette='coolwarm', hue='Arm', legend=False)
+
+    if error_bars:
+        data_for_errorbars = df_copy[[lift_metric_name]].copy()
+        data_for_errorbars['lower'] = error_bars[0]
+        data_for_errorbars['upper'] = error_bars[1]
+        data_for_errorbars = data_for_errorbars.dropna()
+        
+        if not data_for_errorbars.empty:
+            y_coords = np.array([list(df_copy.index).index(i) for i in data_for_errorbars.index])
+            ax.errorbar(x=data_for_errorbars[lift_metric_name], y=y_coords, 
+                        xerr=[data_for_errorbars['lower'], data_for_errorbars['upper']], 
+                        fmt='none', ecolor='black', capsize=3)
+
     ax.set_title(f'{title_prefix}: {metric} Improvement Over Best Baseline Model', fontsize=16, pad=20)
-    ax.set_xlabel(f'Change in {metric} vs. Best Baseline', fontsize=12)
+    ax.set_xlabel(xlabel, fontsize=12)
     ax.set_ylabel('Experimental Arm', fontsize=12)
     ax.axvline(0, color='black', linewidth=0.8, linestyle='--')
     plt.tight_layout()
@@ -223,34 +254,91 @@ def generate_performance_lift_plot(df: pd.DataFrame, metric: str = 'AUROC', file
     logging.info(f"Performance lift plot saved to: {save_path}")
     plt.close()
 
+
 def generate_model_comparison_plot(df: pd.DataFrame, metric: str = 'AUROC', filename: str = 'figure_7_model_comparison_auroc.png', title_prefix: str = 'Figure 7') -> None:
-    """Generate a plot comparing the performance of different embedding models."""
+    """Generate a plot comparing the performance of different embedding models against baselines."""
     logging.info(f"Generating {metric} model comparison plot...")
     
     df_embedding_only = df[df['Representation'] != 'Baseline'].copy()
+    df_baselines = df[df['Representation'] == 'Baseline']
     
     if df_embedding_only.empty:
         logging.warning("No embedding model data to generate model comparison plot.")
         return
 
+    # Remove 'Baseline' from the categories to prevent it from showing up on the plot
+    embedding_reps = [rep for rep in REPRESENTATIONS if rep != 'Baseline']
+    df_embedding_only['Representation'] = pd.Categorical(
+        df_embedding_only['Representation'], categories=embedding_reps, ordered=True
+    )
+
     df_embedding_only['Model'] = df_embedding_only['Model'].str.replace('embedding_model_results_', '', regex=False)
+    
+    hue_order = sorted(df_embedding_only['Model'].unique())
 
     g = sns.catplot(
         data=df_embedding_only,
         x='Representation',
         y=metric,
         hue='Model',
+        hue_order=hue_order,
         col='Prompt',
         kind='bar',
         height=6,
         aspect=0.8,
         palette='viridis',
-        legend_out=True,
-        col_order=PROMPTS
+        legend=False,  # We will create a manual legend
+        col_order=PROMPTS,
+        errorbar=None # Turn off seaborn's error bars
     )
 
+    # Add our own error bars from pre-computed CIs
+    lower_ci_col = f'{metric}_CI_Lower'
+    upper_ci_col = f'{metric}_CI_Upper'
+    if lower_ci_col in df_embedding_only.columns and upper_ci_col in df_embedding_only.columns:
+        err_df = df_embedding_only.copy()
+        err_df['err_lower'] = err_df[metric] - err_df[lower_ci_col]
+        err_df['err_upper'] = err_df[upper_ci_col] - err_df[metric]
+        
+        for ax_idx, ax in enumerate(g.axes.flat):
+            prompt = g.col_names[ax_idx]
+
+            # Get models present in this facet's data, preserving the original hue_order
+            facet_data = df_embedding_only[df_embedding_only['Prompt'] == prompt]
+            models_in_facet = [m for m in hue_order if m in facet_data['Model'].unique()]
+            
+            for container_idx, container in enumerate(ax.containers):
+                if container_idx >= len(models_in_facet):
+                    continue
+                model = models_in_facet[container_idx]
+
+                for bar_idx, bar in enumerate(container):
+                    rep = embedding_reps[bar_idx]
+                    
+                    current_data = err_df[
+                        (err_df['Prompt'] == prompt) &
+                        (err_df['Representation'] == rep) &
+                        (err_df['Model'] == model)
+                    ]
+
+                    if not current_data.empty and current_data[[lower_ci_col, upper_ci_col]].notna().all().all():
+                        y = bar.get_height()
+                        x = bar.get_x() + bar.get_width() / 2
+                        err_lower = current_data['err_lower'].iloc[0]
+                        err_upper = current_data['err_upper'].iloc[0]
+                        ax.errorbar(x, y, yerr=[[err_lower], [err_upper]], fmt='none', ecolor='black', capsize=2)
+
+    # Add baseline lines to all subplots
+    if not df_baselines.empty:
+        baseline_colors = {'XGBoost': 'crimson', 'ElasticNet': 'darkgreen'}
+        for _, baseline_row in df_baselines.iterrows():
+            score = baseline_row[metric]
+            color = baseline_colors.get(baseline_row['Prompt'], 'gray')
+            for ax in g.axes.flat:
+                ax.axhline(y=score, color=color, linestyle='--')
+
     g.fig.suptitle(f'{title_prefix}: {metric} Comparison of Embedding Models Across Representations and Prompts', y=1.03, fontsize=16)
-    g.set_axis_labels("Representation", f"Test Set {metric}")
+    g.set_axis_labels("Representation", f"Test Set {metric} (with 95% CI)")
     g.set_titles("Prompt: {col_name}")
     g.despine(left=True)
 
@@ -258,11 +346,34 @@ def generate_model_comparison_plot(df: pd.DataFrame, metric: str = 'AUROC', file
         labels = [REP_LABELS.get(x.get_text(), x.get_text()) for x in ax.get_xticklabels()]
         ax.set_xticklabels(labels, rotation=45, ha='right')
 
-    g.add_legend(title='Embedding Model')
-    g.fig.tight_layout(rect=(0, 0, 1, 0.97))
+    # Manually create a combined legend
+    import matplotlib.patches as mpatches
+    from matplotlib.lines import Line2D
+    
+    handles = []
+    
+    # Create handles for embedding models (bars)
+    palette = sns.color_palette('viridis', n_colors=len(hue_order))
+    for i, level in enumerate(hue_order):
+        handles.append(mpatches.Patch(color=palette[i], label=level))
+        
+    # Create handles for baseline models (lines)
+    if not df_baselines.empty:
+        baseline_colors = {'XGBoost': 'crimson', 'ElasticNet': 'darkgreen'}
+        for _, baseline_row in df_baselines.iterrows():
+            model_name_key = baseline_row['Prompt']
+            model_name_label = PROMPT_LABELS.get(model_name_key, model_name_key)
+            score = baseline_row[metric]
+            color = baseline_colors.get(model_name_key, 'gray')
+            label = f'{model_name_label} Baseline ({score:.4f})'
+            handles.append(Line2D([0], [0], color=color, linestyle='--', label=label))
+            
+    g.fig.legend(handles=handles, title='Model Type', bbox_to_anchor=(1.02, 0.5), loc='center left')
+
+    g.fig.tight_layout(rect=(0, 0, 0.9, 0.97))  # Adjust for legend
 
     save_path = os.path.join(OUTPUT_DIR, filename)
-    plt.savefig(save_path, dpi=300)
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
     logging.info(f"Model comparison plot saved to: {save_path}")
     plt.close('all')
 
