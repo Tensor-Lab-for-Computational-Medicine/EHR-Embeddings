@@ -78,9 +78,7 @@ data/raw/*.h5
 data/raw/*.hdf5
 data/processed/
 outputs/models/
-outputs/figures/*.png
-outputs/figures/*.jpg
-outputs/figures/*.pdf
+
 
 # Data files (may contain sensitive information)
 *.csv

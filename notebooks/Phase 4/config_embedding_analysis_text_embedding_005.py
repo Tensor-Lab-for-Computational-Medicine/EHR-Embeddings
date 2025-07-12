@@ -7,13 +7,13 @@ import os
 class Config:
     # --- Paths ---
     # Input directory for the embeddings generated in Phase 4
-    EMBEDDING_DIR = 'notebooks/Phase 4/phase_4_embeddings'
+    EMBEDDING_DIR = 'notebooks/Phase 4/embeddings_text-embedding-005'
     
     # Input directory for the label files (.csv) generated in Phase 3
     LABEL_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
     
     # Output directory for models, results, and logs from this analysis
-    OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results'
+    OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/text-embedding-005'
 
     # --- Experiment Setup ---
     # Set to True to run the analysis on only the FIRST experimental condition

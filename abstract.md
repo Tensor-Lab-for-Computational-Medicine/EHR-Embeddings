@@ -1,0 +1,11 @@
+# Research Abstract: The Complementary Value of Semantic and Numerical Representations in Clinical Risk Prediction
+
+**Background**: While large language models (LLMs) excel at natural language understanding, their effectiveness for clinical risk prediction compared to traditional numerical approaches remains unclear. We investigated whether semantic representations of clinical data offer complementary or superior predictive information to numerical features for in-hospital mortality prediction.
+
+**Methods**: Using MIMIC-III data from 22,591 ICU patients, we compared semantic text embeddings against a strong XGBoost numerical baseline. We systematically evaluated three data serialization formats: uninterpreted clinical values (F1), interpreted clinical values (F2), and narrative clinical summaries (F3), each tested with six prompting strategies (P0-P5) across three Google text embedding models. The numerical baseline used 458 engineered features from the first 24 hours of ICU stay.
+
+**Results**: The XGBoost numerical baseline achieved superior performance (AUROC: 0.9080, 95% CI: 0.8968-0.9193; AUPRC: 0.6193). Among semantic approaches, narrative summaries consistently outperformed structured formats, with the best embedding model (F3+P2, text-embedding-004) achieving AUROC: 0.8384 (95% CI: 0.8217-0.8541), representing a performance gap of 0.07 AUROC points. Prompt engineering showed modest but consistent effects, with persona-driven prompts (P2) generally optimal. Performance varied significantly across embedding models: text-embedding-004 > embedding-001 > text-embedding-005.
+
+**Conclusions**: Despite sophisticated prompt engineering and multiple representation formats, semantic embeddings underperformed traditional numerical features for clinical risk prediction. However, the systematic evaluation reveals that data serialization format significantly impacts embedding quality, with narrative representations showing the most promise. These findings suggest complementary rather than replacement roles for semantic approaches in clinical prediction systems.
+
+**Word count**: 250 words 
