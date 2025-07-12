@@ -35,7 +35,7 @@ Our study has two primary aims:
     *   **Data Serialization:** We experimented with three formats to convert patient data into text:
         *   **F1: Uninterpreted Values:** Just the raw numbers and labels.
         *   **F2: Interpreted Values:** Adding clinical context, like "High" or "Low" to values.
-        *   **F3: Narrative Summaries:** Generating a paragraph-style clinical summary.
+        *   **F3: Abnormal Findings Only:** Highlighting only the abnormal findings from F2.
     *   **Prompt Engineering:** For each serialization format, we used six different prompting strategies (P0-P5) to guide the embedding model. This included zero-shot prompts and persona-driven prompts (e.g., asking the model to act as a clinician).
     *   **Embedding Models:** We tested three of Google's text embedding models (`text-embedding-004`, `embedding-001`, and `text-embedding-005`) to generate the final semantic representations.
 *   **Evaluation:** Our primary performance metrics were AUROC (Area Under the Receiver Operating Characteristic curve) and AUPRC (Area Under the Precision-Recall curve).
