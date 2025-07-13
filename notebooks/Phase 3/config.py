@@ -7,7 +7,7 @@ import os
 
 # --- Core Paths ---
 # Directory where the preprocessed pickle files from Phase 1 are stored.
-PREPROCESSED_DATA_DIR = 'notebooks/Phase 1 and 2/phase_1_outputs'
+PREPROCESSED_DATA_DIR = 'notebooks\Phase 1 and 2\phase_1_outputs'
 
 # Directory where the reference ranges file is located.
 REFERENCE_RANGES_PATH = 'data/Lab_reference_ranges.csv'
@@ -64,18 +64,22 @@ FEATURE_LABEL_MAP = {
     'value': 'Value'
 }
 
+# Define all target variables used in the project
+TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso']
+
 # --- Cache Prefix ---
 def get_cache_prefix(
-    target_variable='mort_hosp',
-    dry_run=True,
+    dry_run=False,
     dry_run_patients=1000,
     calculate_trends=True,
     window_size=24,
     gap_time=6,
     seed=42
 ):
-    """Generates the cache filename prefix consistent with the preprocessing script."""
-    prefix = f"preprocessed_{target_variable}"
+    """
+    Generates the cache filename prefix consistent with the preprocessing script.
+    """
+    prefix = f"preprocessed_{'_'.join(TARGET_VARIABLES)}"
     if dry_run:
         prefix += f"_dryrun_{dry_run_patients}"
     prefix += f"_trends_{calculate_trends}_window_{window_size}_gap_{gap_time}_seed_{seed}"

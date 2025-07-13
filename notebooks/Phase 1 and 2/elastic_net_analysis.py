@@ -20,15 +20,18 @@ class Config:
         config = config_dict if config_dict else {}
         
         # Explicitly define all attributes to avoid linter errors
-        self.OUTPUT_DIR = config.get('OUTPUT_DIR', 'phase_1_outputs')
-        self.DRY_RUN = config.get('DRY_RUN', True)
+        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'mort_hosp')  # This is the variable we are predicting
+        self.INPUT_DIR = config.get('INPUT_DIR', 'notebooks\Phase 1 and 2\phase_1_outputs')  # Where to load data from
+        self.OUTPUT_DIR = os.path.join(self.INPUT_DIR, self.TARGET_VARIABLE)  # Where to save results
+
+        self.DRY_RUN = config.get('DRY_RUN', False)
         self.DRY_RUN_PATIENTS = config.get('DRY_RUN_PATIENTS', 1000)
         self.CALCULATE_TRENDS = config.get('CALCULATE_TRENDS', True)
         self.WINDOW_SIZE = config.get('WINDOW_SIZE', 24)
         self.GAP_TIME = config.get('GAP_TIME', 6)
-        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'mort_hosp')
+        self.TARGET_VARIABLES = config.get('TARGET_VARIABLES', ['mort_hosp', 'los_3', 'los_7'])
         self.SEED = config.get('SEED', 42)
-        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 15)
+        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 30)
         self.OPTUNA_TIMEOUT = config.get('OPTUNA_TIMEOUT', 1800)
         self.REUSE_EXISTING_STUDY = config.get('REUSE_EXISTING_STUDY', True)
         self.MAX_ITER = config.get('MAX_ITER', 10000)
@@ -41,7 +44,7 @@ class Config:
 
 def get_cache_prefix(config):
     """Generate cache filename prefix."""
-    prefix = f"preprocessed_{config.TARGET_VARIABLE}"
+    prefix = f"preprocessed_{'_'.join(config.TARGET_VARIABLES)}"
     if config.DRY_RUN:
         prefix += f"_dryrun_{config.DRY_RUN_PATIENTS}"
     prefix += f"_trends_{config.CALCULATE_TRENDS}_window_{config.WINDOW_SIZE}_gap_{config.GAP_TIME}_seed_{config.SEED}"
@@ -51,7 +54,7 @@ def load_preprocessed_data(config):
     """Load preprocessed data from cache files."""
     prefix = get_cache_prefix(config)
     cache_files = {
-        key: os.path.join(config.OUTPUT_DIR, f'{prefix}_{key}.pkl')
+        key: os.path.join(config.INPUT_DIR, f'{prefix}_{key}.pkl')
         for key in ['X_train', 'X_val', 'X_test', 'y_train', 'y_val', 'y_test', 'scaler', 'imputation_values']
     }
     
@@ -247,9 +250,14 @@ def main(config_dict=None):
     start_time = time.time()
     
     # Load preprocessed data (no additional cleaning needed)
-    X_train, X_val, X_test, y_train, y_val, y_test, scaler, imputation_values = load_preprocessed_data(config)
+    X_train, X_val, X_test, y_train_df, y_val_df, y_test_df, scaler, imputation_values = load_preprocessed_data(config)
     logging.info("Using preprocessed data directly - no additional cleaning required")
     
+    # Select the target variable for this analysis run
+    y_train = y_train_df[config.TARGET_VARIABLE]
+    y_val = y_val_df[config.TARGET_VARIABLE]
+    y_test = y_test_df[config.TARGET_VARIABLE]
+
     # Tune hyperparameters
     best_params = tune_elastic_net(X_train, y_train, X_val, y_val, config)
     

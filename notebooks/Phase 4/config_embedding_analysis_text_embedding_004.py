@@ -5,6 +5,8 @@ Configuration for Phase V: Training XGBoost on Text Embeddings.
 import os
 
 class Config:
+    TARGET_VARIABLE = 'intervention_vent'
+    TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso']
     # --- Paths ---
     # Input directory for the embeddings generated in Phase 4
     EMBEDDING_DIR = 'notebooks/Phase 4/phase_4_embeddings'
@@ -13,7 +15,7 @@ class Config:
     LABEL_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
     
     # Output directory for models, results, and logs from this analysis
-    OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/text-embedding-004'
+    OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/text-embedding-004/' + TARGET_VARIABLE
 
     # --- Experiment Setup ---
     # Set to True to run the analysis on only the FIRST experimental condition
@@ -29,9 +31,10 @@ class Config:
     PROMPTS = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5']
     
     # --- XGBoost & Optuna Settings ---
-    TARGET_VARIABLE = 'mort_hosp'
+    USE_GPU = True
+
     SEED = 42
-    N_OPTUNA_TRIALS = 10
+    N_OPTUNA_TRIALS = 30
     OPTUNA_TIMEOUT = 3600
     REUSE_EXISTING_STUDY = True
 

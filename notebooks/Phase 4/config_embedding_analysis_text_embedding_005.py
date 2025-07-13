@@ -29,7 +29,9 @@ class Config:
     PROMPTS = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5']
     
     # --- XGBoost & Optuna Settings ---
-    TARGET_VARIABLE = 'mort_hosp'
+    USE_GPU = True
+    TARGET_VARIABLE = 'los_3'
+    TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7']
     SEED = 42
     N_OPTUNA_TRIALS = 10
     OPTUNA_TIMEOUT = 3600

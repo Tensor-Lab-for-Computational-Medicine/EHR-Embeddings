@@ -1,0 +1,19 @@
+2025-07-13 16:10:56,776 [INFO] - Attempting to use GPU for XGBoost.
+2025-07-13 16:10:56,776 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_readmission_30_discharge_location_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42
+2025-07-13 16:10:56,825 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-13 16:10:56,825 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-07-13 16:10:56,826 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-13 16:10:56,863 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-13 16:10:56,870 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-13 16:10:56,889 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-13 16:10:56,889 [INFO] - Creating new Optuna study with 30 trials...
+2025-07-13 16:11:55,576 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\preprocessed_mort_hosp_los_3_los_7_readmission_30_discharge_location_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
+2025-07-13 16:11:55,576 [INFO] - Best validation AUROC: 0.7750
+2025-07-13 16:11:55,576 [INFO] - Training final model on combined train+validation data...
+2025-07-13 16:11:58,814 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-13 16:11:58,900 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-07-13 16:12:00,536 [INFO] - Test AUROC: 0.7724 (95% CI: 0.7405-0.8025)
+2025-07-13 16:12:00,536 [INFO] - Test AUPRC: 0.2166 (95% CI: 0.1748-0.2748)
+2025-07-13 16:12:00,546 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\model_1_xgboost_baseline.pkl
+2025-07-13 16:12:00,546 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\results_xgboost_baseline.pkl
+2025-07-13 16:12:00,546 [INFO] - Analysis completed in 1.06 minutes
