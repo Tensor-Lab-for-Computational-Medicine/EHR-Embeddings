@@ -1,0 +1,15 @@
+2025-07-13 10:26:47,813 [INFO] - Attempting to use GPU for XGBoost.
+2025-07-13 10:26:47,814 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42
+2025-07-13 10:26:47,869 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-13 10:26:47,869 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-07-13 10:26:47,870 [INFO] - Creating new Optuna study with 30 trials...
+2025-07-13 10:47:15,125 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\mort_hosp\preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
+2025-07-13 10:47:15,126 [INFO] - Best validation AUROC: 0.8864
+2025-07-13 10:47:15,127 [INFO] - Training final model on combined train+validation data...
+2025-07-13 10:48:29,934 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-13 10:48:30,330 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-07-13 10:48:32,575 [INFO] - Test AUROC: 0.9107 (95% CI: 0.8998-0.9213)
+2025-07-13 10:48:32,575 [INFO] - Test AUPRC: 0.6143 (95% CI: 0.5802-0.6484)
+2025-07-13 10:48:32,601 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\mort_hosp\model_1_xgboost_baseline.pkl
+2025-07-13 10:48:32,601 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\mort_hosp\results_xgboost_baseline.pkl
+2025-07-13 10:48:32,602 [INFO] - Analysis completed in 21.75 minutes

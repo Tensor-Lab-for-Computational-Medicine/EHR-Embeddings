@@ -12,8 +12,8 @@ class Config:
     # Input directory for the label files (.csv) generated in Phase 3
     LABEL_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
     
-    # Output directory for models, results, and logs from this analysis
-    OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/embedding-001'
+    # Base output directory
+    BASE_OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/embedding-001'
 
     # --- Experiment Setup ---
     # Set to True to run the analysis on only the FIRST experimental condition
@@ -29,11 +29,15 @@ class Config:
     PROMPTS = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5']
     
     # --- XGBoost & Optuna Settings ---
-    TARGET_VARIABLE = 'mort_hosp'
+    USE_GPU = True
+    TARGET_VARIABLE = 'los_3'
+    TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7']
     SEED = 42
     N_OPTUNA_TRIALS = 10
     OPTUNA_TIMEOUT = 3600
     REUSE_EXISTING_STUDY = True
 
     def __init__(self):
+        # The output directory is now specific to the target variable
+        self.OUTPUT_DIR = os.path.join(self.BASE_OUTPUT_DIR, self.TARGET_VARIABLE)
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
