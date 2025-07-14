@@ -12,11 +12,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.lines import Line2D
+import matplotlib.patches as mpatches
+
 
 # --- Configuration ---
 
 # Directories for input results and output figures.
-RESULTS_DIR = 'notebooks/Phase 5'
+RESULTS_DIR = 'notebooks/Phase 5/embedding_model_results'
 BASELINE_RESULTS_DIR = 'notebooks/Phase 1 and 2/phase_1_outputs'
 OUTPUT_DIR = 'manuscript_figures'
 
@@ -31,6 +34,14 @@ PROMPT_LABELS = {
 REP_LABELS = {
     'F1': 'F1 (Uninterpreted)', 'F2': 'F2 (Interpreted)',
     'F3': 'F3 (Narrative Summary)', 'Baseline': 'Baseline (Numeric)'
+}
+TASK_LABELS = {
+    'mort_hosp': 'Hospital Mortality',
+    'los_3': 'Length-of-Stay > 3 Days',
+    'los_7': 'Length-of-Stay > 7 Days',
+    'readmission_30': '30-Day Readmission',
+    'intervention_vent': 'Mechanical Ventilation',
+    'intervention_vaso': 'Vasopressor Administration'
 }
 
 
@@ -51,40 +62,48 @@ def load_all_results(results_dir: str, baseline_dir: str) -> Optional[List[Dict[
         logging.error(f"Results directory not found: {results_dir}")
         return None
     
-    for root, _, files in os.walk(results_dir):
-        for filename in files:
-            if filename.endswith('.pkl'):
-                try:
-                    filepath = os.path.join(root, filename)
-                    with open(filepath, 'rb') as f:
-                        data = pickle.load(f)
-                        data['model_name'] = os.path.basename(root)  # Inject model name from dir
-                        all_results.append(data)
-                except Exception as e:
-                    logging.warning(f"Could not load file {filepath}: {e}")
+    for model_dir in os.listdir(results_dir):
+        model_path = os.path.join(results_dir, model_dir)
+        if os.path.isdir(model_path):
+            for task_dir in os.listdir(model_path):
+                task_path = os.path.join(model_path, task_dir)
+                if os.path.isdir(task_path):
+                    for filename in os.listdir(task_path):
+                        if filename.startswith('results_') and filename.endswith('.pkl'):
+                            try:
+                                filepath = os.path.join(task_path, filename)
+                                with open(filepath, 'rb') as f:
+                                    data = pickle.load(f)
+                                    data['model_name'] = model_dir
+                                    data['task'] = task_dir
+                                    all_results.append(data)
+                            except Exception as e:
+                                logging.warning(f"Could not load file {filepath}: {e}")
 
-    # Load baseline model results
-    baseline_files = {
-        'results_xgboost_baseline.pkl': 'Baseline_XGBoost',
-        'results_elastic_net_baseline.pkl': 'Baseline_ElasticNet'
-    }
-    for filename, arm_name in baseline_files.items():
-        filepath = os.path.join(baseline_dir, filename)
-        if os.path.exists(filepath):
-            try:
-                with open(filepath, 'rb') as f:
-                    data = pickle.load(f)
-                    data['experimental_arm'] = arm_name
-                    if 'XGBoost' in arm_name:
-                        data['model_name'] = 'XGBoost'
-                    elif 'ElasticNet' in arm_name:
-                        data['model_name'] = 'ElasticNet'
-                    all_results.append(data)
-            except Exception as e:
-                logging.warning(f"Could not load baseline file {filepath}: {e}")
-        else:
-            logging.warning(f"Baseline result file not found: {filepath}")
-
+    # Load baseline model results from task-specific pickle files
+    for task_dir in os.listdir(baseline_dir):
+        task_path = os.path.join(baseline_dir, task_dir)
+        if os.path.isdir(task_path):
+            baseline_files = {
+                'results_xgboost_baseline.pkl': 'Baseline_XGBoost',
+                'results_elastic_net_baseline.pkl': 'Baseline_ElasticNet'
+            }
+            for filename, arm_name in baseline_files.items():
+                filepath = os.path.join(task_path, filename)
+                if os.path.exists(filepath):
+                    try:
+                        with open(filepath, 'rb') as f:
+                            data = pickle.load(f)
+                            new_record = data.copy()
+                            new_record['experimental_arm'] = arm_name
+                            if 'XGBoost' in arm_name:
+                                new_record['model_name'] = 'XGBoost'
+                            elif 'ElasticNet' in arm_name:
+                                new_record['model_name'] = 'ElasticNet'
+                            new_record['task'] = task_dir 
+                            all_results.append(new_record)
+                    except Exception as e:
+                        logging.warning(f"Could not load baseline file {filepath}: {e}")
     if not all_results:
         logging.error("No result files were found. Cannot proceed.")
         return None
@@ -105,9 +124,10 @@ def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
         auprc_ci_upper = eval_data.get('auprc', {}).get('ci_upper')
 
         records.append({
+            'Task': res.get('task', 'Unknown'),
             'Representation': rep,
             'Prompt': prompt,
-            'Model': res.get('model_name', 'Unknown'),  # Use injected model name
+            'Model': res.get('model_name', 'Unknown'),
             'AUROC': eval_data.get('auroc', {}).get('point_estimate'),
             'AUROC_CI_Lower': eval_data.get('auroc', {}).get('ci_lower'),
             'AUROC_CI_Upper': eval_data.get('auroc', {}).get('ci_upper'),
@@ -121,8 +141,9 @@ def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
 
     df = pd.DataFrame(records).dropna(subset=['AUROC', 'AUPRC'])
     
+    df['Task'] = pd.Categorical(df['Task'], categories=TASK_LABELS.keys(), ordered=True)
     df['Representation'] = pd.Categorical(df['Representation'], categories=REPRESENTATIONS, ordered=True)
-    return df.sort_values(by=['Representation', 'Prompt', 'Model'])
+    return df.sort_values(by=['Task', 'Representation', 'Prompt', 'Model'])
 
 def generate_heatmap(df: pd.DataFrame, metric: str = 'AUROC', filename: str = 'figure_1_auroc_heatmap.png', title_prefix: str = 'Figure 1') -> None:
     """Generate and save a heatmap of AUROC or AUPRC values for embedding models only."""
@@ -229,7 +250,9 @@ def generate_performance_lift_plot(df: pd.DataFrame, metric: str = 'AUROC', file
     
     plt.figure(figsize=(12, 10))
     sns.set_theme(style="whitegrid")
-    ax = sns.barplot(data=df_copy, x=lift_metric_name, y='Arm', palette='coolwarm', hue='Arm', legend=False)
+    ax = sns.barplot(data=df_copy, x=lift_metric_name, y='Arm', palette='coolwarm', hue='Arm')
+    if ax.get_legend():
+        ax.get_legend().remove()
 
     if error_bars:
         data_for_errorbars = df_copy[[lift_metric_name]].copy()
@@ -377,6 +400,187 @@ def generate_model_comparison_plot(df: pd.DataFrame, metric: str = 'AUROC', file
     logging.info(f"Model comparison plot saved to: {save_path}")
     plt.close('all')
 
+def generate_task_comparison_plot(df: pd.DataFrame, metric: str = 'AUROC', filename: str = 'figure_9_task_comparison.png', title_prefix: str = 'Figure 9'):
+    """Generate a bar plot comparing representation performance across all prediction tasks."""
+    logging.info(f"Generating {metric} comparison plot across tasks...")
+    
+    # Use the best performing model for each (Task, Representation) pair
+    best_indices = df.groupby(['Task', 'Representation'], observed=True)[metric].idxmax()
+    plot_df = df.loc[best_indices].copy()
+    
+    plot_df['Task'] = plot_df['Task'].map(TASK_LABELS)
+    plot_df['Representation'] = plot_df['Representation'].map(REP_LABELS)
+
+    # Re-order categories based on the mapped labels for correct plotting
+    plot_df['Task'] = pd.Categorical(plot_df['Task'], categories=TASK_LABELS.values(), ordered=True)
+    plot_df['Representation'] = pd.Categorical(plot_df['Representation'], categories=REP_LABELS.values(), ordered=True)
+
+    plt.figure(figsize=(16, 9))
+    sns.set_theme(style="whitegrid")
+    
+    ax = sns.barplot(data=plot_df, x='Task', y=metric, hue='Representation', palette='viridis')
+
+    # Add error bars for confidence intervals
+    lower_ci_col = f'{metric}_CI_Lower'
+    upper_ci_col = f'{metric}_CI_Upper'
+    if lower_ci_col in plot_df.columns and upper_ci_col in plot_df.columns:
+        # Get the positions of the bars
+        hue_order = [h.get_label() for h in ax.legend_.get_texts()]
+        x_ticks = [t.get_text() for t in ax.get_xticklabels()]
+        
+        # Calculate errors
+        err_data = plot_df.copy()
+        err_data['err_lower'] = err_data[metric] - err_data[lower_ci_col]
+        err_data['err_upper'] = err_data[upper_ci_col] - err_data[metric]
+
+        for i, bar in enumerate(ax.patches):
+            # Find the corresponding data
+            task_idx = i // len(hue_order)
+            hue_idx = i % len(hue_order)
+            task_label = x_ticks[task_idx]
+            hue_label = hue_order[hue_idx]
+
+            current_data = err_data[(err_data['Task'] == task_label) & (err_data['Representation'] == hue_label)]
+            
+            if not current_data.empty and current_data[[lower_ci_col, upper_ci_col]].notna().all().all():
+                x = bar.get_x() + bar.get_width() / 2
+                y = bar.get_height()
+                err_lower = current_data['err_lower'].iloc[0]
+                err_upper = current_data['err_upper'].iloc[0]
+                ax.errorbar(x, y, yerr=[[err_lower], [err_upper]], fmt='none', ecolor='black', capsize=2)
+
+    ax.set_title(f'{title_prefix}: Best Model {metric} by Representation and Prediction Task (with 95% CI)', fontsize=16, pad=20)
+    ax.set_xlabel('Prediction Task', fontsize=12)
+    ax.set_ylabel(f'Test Set {metric}', fontsize=12)
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(title='Data Representation')
+    plt.tight_layout()
+
+    save_path = os.path.join(OUTPUT_DIR, filename)
+    plt.savefig(save_path, dpi=300)
+    logging.info(f"Task comparison plot saved to: {save_path}")
+    plt.close()
+
+def generate_task_heatmaps(df: pd.DataFrame, metric: str = 'AUROC', filename_prefix: str = 'figure_10', title_prefix: str = 'Figure 10'):
+    """Generate a separate heatmap for each prediction task."""
+    logging.info(f"Generating {metric} heatmaps for each task...")
+    
+    tasks = df['Task'].unique()
+    df_embedding_only = df[df['Representation'] != 'Baseline'].copy()
+
+    for i, task in enumerate(tasks):
+        task_df = df_embedding_only[df_embedding_only['Task'] == task]
+        if task_df.empty:
+            continue
+
+        heatmap_data = task_df.pivot_table(index='Representation', columns='Prompt', values=metric, aggfunc='max') # Use max to handle multiple models
+        heatmap_data.index = heatmap_data.index.map(REP_LABELS)
+        heatmap_data.columns = heatmap_data.columns.map(PROMPT_LABELS)
+        
+        plt.figure(figsize=(12, 7))
+        sns.set_theme(style="white")
+        ax = sns.heatmap(heatmap_data, annot=True, fmt=".4f", cmap="viridis", linewidths=.5, cbar_kws={'label': f'{metric} Score'})
+        
+        task_title = TASK_LABELS.get(task, task)
+        ax.set_title(f'{title_prefix}.{i+1}: Test Set {metric} for {task_title}', fontsize=16, pad=20)
+        ax.set_xlabel('Prompting Strategy', fontsize=12)
+        ax.set_ylabel('Data Representation', fontsize=12)
+        plt.xticks(rotation=45, ha='right')
+        plt.yticks(rotation=0)
+        plt.tight_layout()
+
+        filename = f"{filename_prefix}_{task}_{metric.lower()}_heatmap.png"
+        save_path = os.path.join(OUTPUT_DIR, filename)
+        plt.savefig(save_path, dpi=300)
+        logging.info(f"Task heatmap saved to: {save_path}")
+        plt.close()
+
+def generate_champion_model_plot(df: pd.DataFrame, metric: str = 'AUROC', filename: str = 'figure_11_champion_models_auroc.png', title_prefix: str = 'Figure 11'):
+    """Generate a plot showing the best performing model for each task."""
+    logging.info(f"Generating champion model plot for {metric}...")
+
+    # Find the best overall SEMANTIC model for each task
+    semantic_df = df[df['Representation'] != 'Baseline']
+    if semantic_df.empty:
+        logging.warning("No semantic models found to generate champion plot.")
+        return
+        
+    best_indices = semantic_df.groupby('Task')[metric].idxmax()
+    champion_df = semantic_df.loc[best_indices].copy()
+
+    champion_df['TaskLabel'] = champion_df['Task'].map(TASK_LABELS)
+    champion_df['ChampionLabel'] = champion_df.apply(
+        lambda row: f"{REP_LABELS.get(row['Representation'])} - {PROMPT_LABELS.get(row['Prompt'], row['Prompt'])} ({row['Model']})", axis=1
+    )
+
+    # Find the XGBoost baseline model for each task for comparison
+    baseline_df = df[(df['Representation'] == 'Baseline') & (df['Prompt'] == 'XGBoost')].copy()
+    if not baseline_df.empty:
+        # Each task has one XGBoost baseline model
+        xgboost_baselines = baseline_df[['Task', metric]].rename(columns={metric: 'XGBoost_Baseline_Metric'})
+        champion_df = pd.merge(champion_df, xgboost_baselines, on='Task', how='left')
+
+    plt.figure(figsize=(14, 8))
+    sns.set_theme(style="whitegrid")
+    
+    ax = sns.barplot(data=champion_df, x=metric, y='TaskLabel', hue='ChampionLabel', palette='magma', dodge=False)
+
+    # Add error bars for the champion semantic model
+    lower_ci_col = f'{metric}_CI_Lower'
+    upper_ci_col = f'{metric}_CI_Upper'
+    if lower_ci_col in champion_df.columns and upper_ci_col in champion_df.columns:
+        # Create a map from y-tick labels to their numerical position
+        y_tick_labels = [label.get_text() for label in ax.get_yticklabels()]
+        y_coords_map = {label: i for i, label in enumerate(y_tick_labels)}
+
+        err_data = champion_df.copy()
+        err_data['err_lower'] = err_data[metric] - err_data[lower_ci_col]
+        err_data['err_upper'] = err_data[upper_ci_col] - err_data[metric]
+        
+        for _, row in err_data.iterrows():
+            if pd.notna(row[lower_ci_col]) and pd.notna(row[upper_ci_col]):
+                task_label = row['TaskLabel']
+                if task_label in y_coords_map:
+                    y_coord = y_coords_map[task_label]
+                    ax.errorbar(x=row[metric], y=y_coord, 
+                                xerr=[[row['err_lower']], [row['err_upper']]], 
+                                fmt='none', ecolor='black', capsize=3)
+
+    # The 'hue' argument automatically creates a legend. We remove it as it's too cluttered.
+    if ax.get_legend():
+        ax.get_legend().remove()
+
+    # Add baseline markers
+    if 'XGBoost_Baseline_Metric' in champion_df.columns:
+        # Create a map from y-tick labels to their numerical position again for safety
+        y_tick_labels = [label.get_text() for label in ax.get_yticklabels()]
+        y_coords_map = {label: i for i, label in enumerate(y_tick_labels)}
+
+        for _, row in champion_df.iterrows():
+            if pd.notna(row['XGBoost_Baseline_Metric']):
+                task_label = row['TaskLabel']
+                if task_label in y_coords_map:
+                    y_coord = y_coords_map[task_label]
+                    ax.plot(row['XGBoost_Baseline_Metric'], y_coord, 'D', color='blue', markersize=8, label='XGBoost Baseline' if not y_coords_map else "")
+
+
+    ax.set_title(f'{title_prefix}: Champion Semantic Model vs. XGBoost Baseline by {metric} (with 95% CI)', fontsize=16, pad=20)
+    ax.set_xlabel(f'Best Test Set {metric}', fontsize=12)
+    ax.set_ylabel('Prediction Task', fontsize=12)
+    
+    # Create a clean legend for the baseline marker
+    if 'XGBoost_Baseline_Metric' in champion_df.columns:
+        from matplotlib.lines import Line2D
+        legend_elements = [Line2D([0], [0], marker='D', color='w', label='XGBoost Baseline', markerfacecolor='blue', markersize=10)]
+        ax.legend(handles=legend_elements, title="Reference")
+
+    plt.tight_layout()
+    
+    save_path = os.path.join(OUTPUT_DIR, filename)
+    plt.savefig(save_path, dpi=300)
+    logging.info(f"Champion model plot saved to: {save_path}")
+    plt.close()
+
 def generate_results_table(df: pd.DataFrame) -> None:
     """Generate and save a formatted Markdown table of all results."""
     logging.info("Generating Markdown results table...")
@@ -396,8 +600,8 @@ def generate_results_table(df: pd.DataFrame) -> None:
     df_copy['Model'] = df_copy['Model'].str.replace('embedding_model_results_', '', regex=False)
 
     
-    table_df = df_copy[['Representation', 'Prompt', 'Model', 'AUROC_Formatted', 'AUPRC_Formatted']]
-    table_df.columns = ['Representation', 'Prompt', 'Model', 'AUROC (95% CI)', 'AUPRC (95% CI)']
+    table_df = df_copy[['Task', 'Representation', 'Prompt', 'Model', 'AUROC_Formatted', 'AUPRC_Formatted']]
+    table_df.columns = ['Task', 'Representation', 'Prompt', 'Model', 'AUROC (95% CI)', 'AUPRC (95% CI)']
     
     markdown_table = table_df.to_markdown(index=False)
     full_table_text = "## Table 1: Full Experimental Results\n\n" + markdown_table
@@ -422,11 +626,11 @@ def main():
         logging.error("Full dataframe is empty, cannot generate figures.")
         return
 
-    # Create a summary df with only the best performing model for each (Rep, Prompt) pair
+    # Create a summary df with only the best performing model for each (Task, Rep, Prompt) triplet
     embedding_df = full_df[full_df['Representation'] != 'Baseline']
     best_embedding_df = pd.DataFrame()
     if not embedding_df.empty:
-        best_embedding_indices = embedding_df.groupby(['Representation', 'Prompt'], observed=True)['AUROC'].idxmax()
+        best_embedding_indices = embedding_df.groupby(['Task', 'Representation', 'Prompt'], observed=True)['AUROC'].idxmax()
         best_embedding_df = embedding_df.loc[best_embedding_indices]
     
     baseline_df = full_df[full_df['Representation'] == 'Baseline']
@@ -436,24 +640,51 @@ def main():
     champion = summary_df.loc[summary_df['AUROC'].idxmax()]
     logging.info("\n" + "="*50)
     logging.info("🏆 Champion Semantic System Identified (based on best model per configuration) 🏆")
+    logging.info(f"   Task: {TASK_LABELS.get(champion['Task'], champion['Task'])}")
     logging.info(f"   Best Representation: {REP_LABELS.get(champion['Representation'], champion['Representation'])}")
     logging.info(f"   Best Prompt: {PROMPT_LABELS.get(champion['Prompt'], champion['Prompt'])}")
     logging.info(f"   Best Test AUROC: {champion['AUROC']:.4f} (Model: {champion['Model']})")
     logging.info("="*50 + "\n")
     
-    # Generate all outputs
-    generate_heatmap(summary_df, metric='AUROC', filename='figure_1_auroc_heatmap.png', title_prefix='Figure 1')
-    generate_heatmap(summary_df, metric='AUPRC', filename='figure_2_auprc_heatmap.png', title_prefix='Figure 2')
-    
-    generate_interaction_plot(summary_df, metric='AUROC', filename='figure_3_auroc_interaction_plot.png', title_prefix='Figure 3')
-    generate_interaction_plot(summary_df, metric='AUPRC', filename='figure_4_auprc_interaction_plot.png', title_prefix='Figure 4')
-    
-    generate_performance_lift_plot(summary_df, metric='AUROC', filename='figure_5_auroc_performance_lift.png', title_prefix='Figure 5')
-    generate_performance_lift_plot(summary_df, metric='AUPRC', filename='figure_6_auprc_performance_lift.png', title_prefix='Figure 6')
-    
-    generate_model_comparison_plot(full_df, metric='AUROC', filename='figure_7_model_comparison_auroc.png', title_prefix='Figure 7')
-    generate_model_comparison_plot(full_df, metric='AUPRC', filename='figure_8_model_comparison_auprc.png', title_prefix='Figure 8')
+    # --- Handle incomplete baselines for aggregated plots ---
+    tasks = full_df['Task'].unique()
+    df_for_agg = summary_df.copy()
+    full_df_for_agg = full_df.copy()
 
+    elastic_net_task_count = full_df[full_df['Prompt'] == 'ElasticNet']['Task'].nunique()
+    if 0 < elastic_net_task_count < len(tasks):
+        logging.warning("ElasticNet results found for only a subset of tasks. Excluding from aggregated plots.")
+        df_for_agg = df_for_agg[df_for_agg['Prompt'] != 'ElasticNet']
+        full_df_for_agg = full_df_for_agg[full_df_for_agg['Prompt'] != 'ElasticNet']
+    
+    # Generate original outputs using the summary dataframe (best model per config)
+    # To generate the original figures, we need a dataframe that averages over tasks.
+    agg_df_groups = df_for_agg.groupby(['Representation', 'Prompt', 'Model'], observed=True)
+    agg_summary_df = agg_df_groups[['AUROC', 'AUPRC']].mean().reset_index()
+
+    generate_heatmap(agg_summary_df, metric='AUROC', filename='figure_1_auroc_heatmap.png', title_prefix='Figure 1')
+    generate_heatmap(agg_summary_df, metric='AUPRC', filename='figure_2_auprc_heatmap.png', title_prefix='Figure 2')
+    
+    generate_interaction_plot(agg_summary_df, metric='AUROC', filename='figure_3_auroc_interaction_plot.png', title_prefix='Figure 3')
+    generate_interaction_plot(agg_summary_df, metric='AUPRC', filename='figure_4_auprc_interaction_plot.png', title_prefix='Figure 4')
+    
+    generate_performance_lift_plot(agg_summary_df, metric='AUROC', filename='figure_5_auroc_performance_lift.png', title_prefix='Figure 5')
+    generate_performance_lift_plot(agg_summary_df, metric='AUPRC', filename='figure_6_auprc_performance_lift.png', title_prefix='Figure 6')
+    
+    # This plot requires CIs, so we should aggregate the full_df instead
+    agg_full_df_groups = full_df_for_agg.groupby(['Representation', 'Prompt', 'Model'], observed=True)
+    agg_full_df = agg_full_df_groups.agg({
+        'AUROC': 'mean', 'AUROC_CI_Lower': 'mean', 'AUROC_CI_Upper': 'mean',
+        'AUPRC': 'mean', 'AUPRC_CI_Lower': 'mean', 'AUPRC_CI_Upper': 'mean'
+    }).reset_index()
+    generate_model_comparison_plot(agg_full_df, metric='AUROC', filename='figure_7_model_comparison_auroc.png', title_prefix='Figure 7')
+    generate_model_comparison_plot(agg_full_df, metric='AUPRC', filename='figure_8_model_comparison_auprc.png', title_prefix='Figure 8')
+
+    # --- Generate New Task-Based Figures ---
+    generate_task_comparison_plot(summary_df, metric='AUROC', filename='figure_9_task_comparison_auroc.png', title_prefix='Figure 9')
+    generate_task_heatmaps(summary_df, metric='AUROC', filename_prefix='figure_10', title_prefix='Figure 10')
+    generate_champion_model_plot(summary_df, metric='AUROC', filename='figure_11_champion_models_auroc.png', title_prefix='Figure 11')
+    
     generate_results_table(full_df)
     
     logging.info("All manuscript figures and tables have been generated successfully.")
