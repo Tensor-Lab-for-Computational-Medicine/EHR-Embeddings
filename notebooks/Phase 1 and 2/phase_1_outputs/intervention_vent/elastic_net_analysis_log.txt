@@ -1,0 +1,18 @@
+2025-07-13 23:32:59,250 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42
+2025-07-13 23:32:59,299 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-13 23:32:59,299 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-07-13 23:32:59,300 [INFO] - Handling prevalent cases for target: intervention_vent
+2025-07-13 23:32:59,337 [INFO] - Train set: Dropped 5954 prevalent cases. New size: 8871
+2025-07-13 23:32:59,344 [INFO] - Validation set: Dropped 869 prevalent cases. New size: 1249
+2025-07-13 23:32:59,359 [INFO] - Test set: Dropped 2275 prevalent cases. New size: 3373
+2025-07-13 23:32:59,360 [INFO] - Loading existing Optuna study from notebooks\Phase 1 and 2\phase_1_outputs\intervention_vent\preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study_elastic_net.pkl
+2025-07-13 23:32:59,390 [INFO] - Loaded study with 15 completed trials, best AUROC: 0.6923
+2025-07-13 23:32:59,390 [INFO] - Reusing existing study results without additional optimization
+2025-07-13 23:32:59,390 [INFO] - Training final model on combined train+validation data...
+2025-07-13 23:33:10,745 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-13 23:33:10,754 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-07-13 23:33:12,439 [INFO] - Test AUROC: 0.6714 (95% CI: 0.6357-0.7063)
+2025-07-13 23:33:12,439 [INFO] - Test AUPRC: 0.1507 (95% CI: 0.1263-0.1846)
+2025-07-13 23:33:12,463 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vent\model_2_elastic_net_baseline.pkl
+2025-07-13 23:33:12,464 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vent\results_elastic_net_baseline.pkl
+2025-07-13 23:33:12,464 [INFO] - Analysis completed in 0.22 minutes

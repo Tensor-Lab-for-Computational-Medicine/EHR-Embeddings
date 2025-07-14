@@ -20,7 +20,7 @@ class Config:
         config = config_dict if config_dict else {}
         
         # Explicitly define all attributes to avoid linter errors
-        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'mort_hosp')  # This is the variable we are predicting
+        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'intervention_vent')  # This is the variable we are predicting
         self.INPUT_DIR = config.get('INPUT_DIR', 'notebooks\Phase 1 and 2\phase_1_outputs')  # Where to load data from
         self.OUTPUT_DIR = os.path.join(self.INPUT_DIR, self.TARGET_VARIABLE)  # Where to save results
 
@@ -29,7 +29,7 @@ class Config:
         self.CALCULATE_TRENDS = config.get('CALCULATE_TRENDS', True)
         self.WINDOW_SIZE = config.get('WINDOW_SIZE', 24)
         self.GAP_TIME = config.get('GAP_TIME', 6)
-        self.TARGET_VARIABLES = config.get('TARGET_VARIABLES', ['mort_hosp', 'los_3', 'los_7'])
+        self.TARGET_VARIABLES = config.get('TARGET_VARIABLES', ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso'])
         self.SEED = config.get('SEED', 42)
         self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 30)
         self.OPTUNA_TIMEOUT = config.get('OPTUNA_TIMEOUT', 1800)
@@ -257,6 +257,39 @@ def main(config_dict=None):
     y_train = y_train_df[config.TARGET_VARIABLE]
     y_val = y_val_df[config.TARGET_VARIABLE]
     y_test = y_test_df[config.TARGET_VARIABLE]
+
+    # Handle prevalent cases for intervention targets by dropping NaNs
+    if config.TARGET_VARIABLE in ['intervention_vent', 'intervention_vaso']:
+        logging.info(f"Handling prevalent cases for target: {config.TARGET_VARIABLE}")
+        
+        # Align indices before dropping NaNs
+        X_train_df = pd.DataFrame(X_train, index=y_train.index)
+        X_val_df = pd.DataFrame(X_val, index=y_val.index)
+        X_test_df = pd.DataFrame(X_test, index=y_test.index)
+
+        # Train set
+        train_original_count = len(y_train)
+        train_valid_indices = y_train.dropna().index
+        X_train_df = X_train_df.loc[train_valid_indices]
+        y_train = y_train.loc[train_valid_indices]
+        X_train = X_train_df
+        logging.info(f"Train set: Dropped {train_original_count - len(y_train)} prevalent cases. New size: {len(y_train)}")
+        
+        # Validation set
+        val_original_count = len(y_val)
+        val_valid_indices = y_val.dropna().index
+        X_val_df = X_val_df.loc[val_valid_indices]
+        y_val = y_val.loc[val_valid_indices]
+        X_val = X_val_df
+        logging.info(f"Validation set: Dropped {val_original_count - len(y_val)} prevalent cases. New size: {len(y_val)}")
+        
+        # Test set
+        test_original_count = len(y_test)
+        test_valid_indices = y_test.dropna().index
+        X_test_df = X_test_df.loc[test_valid_indices]
+        y_test = y_test.loc[test_valid_indices]
+        X_test = X_test_df
+        logging.info(f"Test set: Dropped {test_original_count - len(y_test)} prevalent cases. New size: {len(y_test)}")
 
     # Tune hyperparameters
     best_params = tune_elastic_net(X_train, y_train, X_val, y_val, config)
