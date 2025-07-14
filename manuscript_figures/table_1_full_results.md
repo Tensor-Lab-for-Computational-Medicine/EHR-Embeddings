@@ -61,6 +61,7 @@
 | los_7             | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-004      | 0.6967 (0.6702 - 0.7239) | 0.1441 (0.1248 - 0.1720) |
 | los_7             | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-004      | 0.6953 (0.6686 - 0.7228) | 0.1456 (0.1247 - 0.1732) |
 | readmission_30    | Baseline (Numeric)     | XGBoost                       | XGBoost                 | 0.5973 (0.5636 - 0.6305) | 0.0657 (0.0579 - 0.0779) |
+| readmission_30    | Baseline (Numeric)     | Elastic Net                   | ElasticNet              | 0.5759 (0.5419 - 0.6097) | 0.0565 (0.0511 - 0.0648) |
 | readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-004      | 0.5674 (0.5315 - 0.6013) | 0.0570 (0.0478 - 0.0690) |
 | readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-004      | 0.5540 (0.5200 - 0.5860) | 0.0569 (0.0481 - 0.0708) |
 | readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-004      | 0.5656 (0.5316 - 0.5994) | 0.0579 (0.0491 - 0.0738) |
@@ -80,6 +81,7 @@
 | readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-004      | 0.5599 (0.5269 - 0.5940) | 0.0558 (0.0484 - 0.0690) |
 | readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-004      | 0.5800 (0.5453 - 0.6147) | 0.0632 (0.0539 - 0.0766) |
 | intervention_vent | Baseline (Numeric)     | XGBoost                       | XGBoost                 | 0.6939 (0.6602 - 0.7271) | 0.1995 (0.1624 - 0.2486) |
+| intervention_vent | Baseline (Numeric)     | Elastic Net                   | ElasticNet              | 0.6714 (0.6357 - 0.7063) | 0.1507 (0.1263 - 0.1846) |
 | intervention_vent | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-004      | 0.5579 (0.5194 - 0.5987) | 0.0917 (0.0764 - 0.1132) |
 | intervention_vent | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-004      | 0.5830 (0.5488 - 0.6197) | 0.0878 (0.0743 - 0.1047) |
 | intervention_vent | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-004      | 0.5960 (0.5629 - 0.6321) | 0.0948 (0.0810 - 0.1174) |
@@ -99,6 +101,7 @@
 | intervention_vent | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-004      | 0.6109 (0.5726 - 0.6448) | 0.1038 (0.0871 - 0.1278) |
 | intervention_vent | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-004      | 0.6133 (0.5760 - 0.6488) | 0.1033 (0.0878 - 0.1264) |
 | intervention_vaso | Baseline (Numeric)     | XGBoost                       | XGBoost                 | 0.7724 (0.7405 - 0.8025) | 0.2166 (0.1748 - 0.2748) |
+| intervention_vaso | Baseline (Numeric)     | Elastic Net                   | ElasticNet              | 0.7719 (0.7394 - 0.8035) | 0.2331 (0.1878 - 0.2902) |
 | intervention_vaso | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-004      | 0.6754 (0.6386 - 0.7143) | 0.1131 (0.0912 - 0.1504) |
 | intervention_vaso | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-004      | 0.6717 (0.6355 - 0.7091) | 0.1025 (0.0836 - 0.1330) |
 | intervention_vaso | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-004      | 0.6740 (0.6342 - 0.7116) | 0.1013 (0.0839 - 0.1270) |
