@@ -10,7 +10,7 @@ BASE_OUTPUT_DIR = 'notebooks/Phase 4'
 
 
 # --- Google Cloud Vertex AI Settings ---
-PROJECT_ID = "nth-wording-462614-s0"
+PROJECT_ID = "expanded-aria-465718-d1"
 LOCATION = "us-central1"
 MODEL_NAME = 'text-embedding-large-exp-03-07'
 

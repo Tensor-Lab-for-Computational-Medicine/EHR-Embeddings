@@ -87,6 +87,7 @@ outputs/models/
 *.json
 *.xlsx
 *.xls
+*.zip
 
 # Logs
 logs/
