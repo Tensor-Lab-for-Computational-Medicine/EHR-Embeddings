@@ -27,7 +27,7 @@ BASE_OUTPUT_DIR = 'notebooks/Phase 4'
 # Simply change this line to switch models.
 # Example 1: 'models/text-embedding-004' (Latest Stable)
 # Example 2: 'models/gemini-embedding-exp-03-07' (Experimental)
-MODEL_NAME = 'models/text-embedding-004'
+MODEL_NAME = 'models/gemini-embedding-001'
 
 # The task type helps the model produce optimized embeddings.
 # 'RETRIEVAL_DOCUMENT' is ideal for document representation.
@@ -38,7 +38,7 @@ TASK_TYPE = 'RETRIEVAL_DOCUMENT'
 
 # The number of documents to send in a single API request.
 # 100 is a safe and efficient value for current models.
-BATCH_SIZE = 1000
+BATCH_SIZE = 1
 
 # Set to True to run the script on only ONE BATCH to test the full process.
 # Set to False to run on all files.
@@ -52,4 +52,4 @@ RATE_LIMIT_DELAY = 0
 
 # The total number of workers you plan to run in parallel.
 # Ensure this matches the number of terminals you open to run the script.
-TOTAL_WORKERS = 1
+TOTAL_WORKERS = 3

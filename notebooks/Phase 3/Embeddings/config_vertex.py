@@ -14,18 +14,18 @@ BASE_OUTPUT_DIR = 'notebooks/Phase 4'
 # --- Google Cloud Vertex AI Settings ---
 
 # Your Google Cloud project ID.
-PROJECT_ID = "nth-wording-462614-s0"
+PROJECT_ID = "expanded-aria-465718-d1"
 
 # The location of your project (e.g., "us-central1").
 LOCATION = "us-central1"
 
 # The embedding model to use.
-MODEL_NAME = 'gemini-embedding-001'
+MODEL_NAME = 'google/gemini-embedding-001'
 
 
 # --- NEW: Token-based Rate Limit ---
 # The total number of tokens allowed per minute for the entire project.
-TOKEN_LIMIT_PER_MINUTE = 200000
+TOKEN_LIMIT_PER_MINUTE = 400000
 
 
 # --- Script Settings ---
@@ -37,5 +37,5 @@ TOTAL_WORKERS = 1
 
 
 # --- Retry Settings ---
-MAX_RETRIES = 5
-BACKOFF_SECONDS = 15
+MAX_RETRIES = 10
+BACKOFF_SECONDS = 10

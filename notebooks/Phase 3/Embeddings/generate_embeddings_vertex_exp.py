@@ -1,131 +1,110 @@
-# generate_embeddings_batched.py
+# generate_embeddings_vertex_exp.py
 """
-Generates embeddings for train, test, and validation sets using a
-Hugging Face SentenceTransformer model.
-
-This script reads text files, processes them in batches, and saves the
-resulting embeddings as .npy files, mirroring the input directory structure.
-It will automatically use a CUDA-enabled GPU if available.
-All configurations are hardcoded at the top of the file.
+Main script to generate embeddings in parallel using the Vertex AI SDK.
+This script is adapted for single-request models like 'text-embedding-large-exp-03-07'
+and uses a reactive retry mechanism to handle rate limits.
 """
 import os
+import time
 import logging
-import torch
+import argparse
 import numpy as np
-from pathlib import Path
 from tqdm import tqdm
-from sentence_transformers import SentenceTransformer
 
-# --- Configuration ---
-# EDIT THESE VARIABLES TO MATCH YOUR SETUP
+import vertexai
+from vertexai.language_models import TextEmbeddingModel
 
-# Model: The Hugging Face SentenceTransformer model to use.
-MODEL_NAME = "abhinand/MedEmbed-small-v0.1"
-
-# --- Path Configuration ---
-# These paths are relative to the project's root directory (e.g., where you run the python command from).
-# The base input directory containing all serialized text files (including train/test/val subfolders).
-BASE_INPUT_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
-# The base output directory where the embeddings will be saved.
-BASE_OUTPUT_DIR = 'notebooks/Phase 4'
-
-
-# Processing: The number of text files to process in a single batch.
-BATCH_SIZE = 1000
-
-# --- End of Configuration ---
-
-
-# --- Logging Setup ---
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] - %(message)s'
+from config_vertex_exp import (
+    SERIALIZED_DATA_DIR,
+    BASE_OUTPUT_DIR,
+    PROJECT_ID,
+    LOCATION,
+    MODEL_NAME,
+    DRY_RUN,
+    TOTAL_WORKERS,
+    MAX_RETRIES,
+    BACKOFF_SECONDS
 )
-# ---
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [Worker %(worker_id)s] [%(levelname)s] - %(message)s')
+
+def setup_vertex_ai(worker_id: int):
+    try:
+        vertexai.init(project=PROJECT_ID, location=LOCATION)
+        logging.info("Successfully initialized Vertex AI SDK.", extra={'worker_id': worker_id})
+    except Exception as e:
+        logging.error(f"Vertex AI initialization failed. Error: {e}", extra={'worker_id': worker_id})
+        exit(1)
+
+def find_files_to_process(worker_id: int, total_workers: int):
+    all_files = [os.path.join(root, filename) for root, _, files in os.walk(SERIALIZED_DATA_DIR) for filename in files if filename.endswith('.txt')]
+    all_files.sort()
+    return [filepath for i, filepath in enumerate(all_files) if i % total_workers == worker_id]
 
 def main():
-    """
-    Main function to find all text files, load the model, and process the files in batches.
-    """
-    logging.info("--- Starting Embedding Generation ---")
+    parser = argparse.ArgumentParser(description="Generate embeddings in parallel using Vertex AI.")
+    parser.add_argument('--worker-id', type=int, required=True, help='The unique ID for this worker.')
+    args = parser.parse_args()
 
-    # --- GPU/Device Setup ---
-    # Check for CUDA-enabled GPU and set the device accordingly
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    logging.info(f"Using device: {device}")
+    worker_id = args.worker_id
+    total_workers = TOTAL_WORKERS
+    extra_dict = {'worker_id': worker_id}
     
-    # Load the SentenceTransformer model from Hugging Face onto the selected device
-    try:
-        logging.info(f"Loading model: {MODEL_NAME}...")
-        model = SentenceTransformer(MODEL_NAME, device=device)
-        logging.info("Model loaded successfully.")
-    except Exception as e:
-        logging.error(f"Fatal: Failed to load Hugging Face model. Error: {e}")
-        return
+    logger = logging.getLogger()
+    for handler in logger.handlers:
+        handler.setFormatter(logging.Formatter('%(asctime)s [Worker %(worker_id)s] [%(levelname)s] - %(message)s'))
+    
+    model_name_sanitized = MODEL_NAME.replace('/', '_')
+    EMBEDDING_OUTPUT_DIR = os.path.join(BASE_OUTPUT_DIR, f"embeddings_{model_name_sanitized}")
+    
+    setup_vertex_ai(worker_id=worker_id)
+    
+    model = TextEmbeddingModel.from_pretrained(MODEL_NAME)
+    files_to_process = find_files_to_process(worker_id, total_workers)
 
-    # --- File Discovery ---
-    # Define the main output directory for this model's embeddings
-    embedding_output_dir = os.path.join(BASE_OUTPUT_DIR, f"embeddings_{MODEL_NAME.replace('/', '_')}")
-    logging.info(f"Output will be saved in: {embedding_output_dir}")
+    if DRY_RUN:
+        logging.warning("DRY RUN ENABLED. Processing only the first 5 files.", extra=extra_dict)
+        files_to_process = files_to_process[:5]
 
-    # Recursively find all .txt files and check if their embeddings already exist
-    filepaths_to_process = []
-    if not os.path.isdir(BASE_INPUT_DIR):
-        logging.error(f"Base input directory not found: {BASE_INPUT_DIR}. Exiting.")
-        return
+    logging.info(f"--- Starting Embedding Generation (Worker {worker_id}/{total_workers - 1}) ---", extra=extra_dict)
+    logging.info(f"Worker {worker_id} assigned {len(files_to_process)} files to process.", extra=extra_dict)
+    logging.info(f"Proactive rate limit delays are disabled. Using reactive retries on error.", extra=extra_dict)
 
-    logging.info(f"Scanning for text files in {BASE_INPUT_DIR}...")
-    for root, _, files in os.walk(BASE_INPUT_DIR):
-        for filename in files:
-            if filename.endswith('.txt'):
-                input_path = os.path.join(root, filename)
-                
-                # Construct the corresponding output path, preserving the directory structure
-                relative_path = os.path.relpath(input_path, BASE_INPUT_DIR)
-                output_path = os.path.join(embedding_output_dir, os.path.splitext(relative_path)[0] + '.npy')
+    # --- MODIFIED: Loop processes one file at a time ---
+    for input_filepath in tqdm(files_to_process, desc=f"Worker {worker_id} Files"):
+        relative_path = os.path.relpath(input_filepath, SERIALIZED_DATA_DIR)
+        output_filepath = os.path.join(EMBEDDING_OUTPUT_DIR, os.path.splitext(relative_path)[0] + '.npy')
 
-                # Only add the file to the list if its embedding doesn't already exist
-                if not os.path.exists(output_path):
-                    filepaths_to_process.append(input_path)
+        if os.path.exists(output_filepath):
+            continue
 
-    if not filepaths_to_process:
-        logging.info("All embeddings are already generated. Nothing to do.")
-        return
-
-    logging.info(f"Found {len(filepaths_to_process)} new text files to process.")
-
-    # --- Batch Processing ---
-    for i in tqdm(range(0, len(filepaths_to_process), BATCH_SIZE), desc="Generating Embeddings"):
-        batch_paths = filepaths_to_process[i:i + BATCH_SIZE]
-        batch_texts = []
-        
-        # Read the content of each file in the batch
-        for path in batch_paths:
+        retries = 0
+        success = False
+        while retries < MAX_RETRIES and not success:
             try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    batch_texts.append(f.read())
+                with open(input_filepath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                # --- MODIFIED: API call with a single text string in a list ---
+                embeddings = model.get_embeddings([content])
+                vector = embeddings[0].values
+
+                os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
+                np.save(output_filepath, np.array(vector))
+
+                success = True
+                # --- MODIFIED: Proactive time.sleep() after success is removed ---
+
             except Exception as e:
-                logging.error(f"Could not read file {path}. Skipping. Error: {e}")
-                batch_texts.append("") # Add empty string as a placeholder to maintain batch alignment
-
-        # Generate embeddings for the entire batch of texts
-        try:
-            batch_embeddings = model.encode(batch_texts, show_progress_bar=False)
-
-            # Save each embedding to its corresponding .npy file
-            for path, embedding in zip(batch_paths, batch_embeddings):
-                relative_path = os.path.relpath(path, BASE_INPUT_DIR)
-                output_path = os.path.join(embedding_output_dir, os.path.splitext(relative_path)[0] + '.npy')
-                
-                # Ensure the output directory exists before saving
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                np.save(output_path, embedding)
-
-        except Exception as e:
-            logging.error(f"Failed to process batch starting with file {batch_paths[0]}. Error: {e}")
-
-    logging.info("--- All files processed. Embedding generation complete. ---")
-
+                retries += 1
+                logging.error(f"Attempt {retries}/{MAX_RETRIES} failed for file {input_filepath}. Error: {e}", extra=extra_dict)
+                if retries < MAX_RETRIES:
+                    logging.warning(f"Sleeping for {BACKOFF_SECONDS}s before retrying...", extra=extra_dict)
+                    time.sleep(BACKOFF_SECONDS)
+                else:
+                    logging.error(f"All {MAX_RETRIES} retries failed for {input_filepath}. Skipping permanently.", extra=extra_dict)
+    
+    logging.info(f"--- Worker {worker_id} has completed its assigned files. ---", extra=extra_dict)
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,24 @@
+2025-07-15 12:17:53,324 [INFO] - === STARTING H2 HYPOTHESIS TESTING ===
+2025-07-15 12:17:53,324 [INFO] - Champion model: F3_P2
+2025-07-15 12:17:53,328 [INFO] - Loading numerical features and labels...
+2025-07-15 12:17:53,412 [INFO] - Numerical data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-15 12:17:53,412 [INFO] - Loading champion model embeddings for F3_P2...
+2025-07-15 12:17:57,049 [INFO] - Loaded train embeddings: (14825, 768)
+2025-07-15 12:17:57,544 [INFO] - Loaded val embeddings: (2118, 768)
+2025-07-15 12:17:59,006 [INFO] - Loaded test embeddings: (5648, 768)
+2025-07-15 12:17:59,009 [INFO] - Loading pre-trained models...
+2025-07-15 12:17:59,050 [INFO] - ✅ Models loaded successfully
+2025-07-15 12:17:59,050 [INFO] - Generating test set predictions...
+2025-07-15 12:17:59,266 [INFO] - ✅ Predictions generated
+2025-07-15 12:17:59,266 [INFO] - === H2a: ERROR CORRELATION ANALYSIS ===
+2025-07-15 12:17:59,267 [INFO] - Error correlation: 0.3417 (p=0.0000)
+2025-07-15 12:17:59,267 [INFO] - H2 threshold: 0.4
+2025-07-15 12:17:59,267 [INFO] - H2 satisfied: True - Errors are weakly correlated
+2025-07-15 12:18:02,730 [INFO] - Baseline XGBoost:
+2025-07-15 12:18:02,730 [INFO] -   AUROC: 0.9080 (95% CI: 0.8963-0.9197)
+2025-07-15 12:18:02,730 [INFO] -   AUPRC: 0.6193 (95% CI: 0.5815-0.6586)
+2025-07-15 12:18:04,753 [INFO] - Champion F3_P2:
+2025-07-15 12:18:04,753 [INFO] -   AUROC: 0.8384 (95% CI: 0.8217-0.8541)
+2025-07-15 12:18:04,753 [INFO] -   AUPRC: 0.4043 (95% CI: 0.3657-0.4480)
+2025-07-15 12:18:04,753 [INFO] - === H2b: EARLY FUSION HYBRID MODEL ===
+2025-07-15 12:18:04,934 [INFO] - Hybrid feature shapes: train=(14825, 1226), val=(2118, 1226), test=(5648, 1226)

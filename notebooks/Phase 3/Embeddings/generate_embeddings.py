@@ -95,6 +95,9 @@ def main():
     effective_delay = RATE_LIMIT_DELAY * total_workers
     logging.info(f"Base delay is {RATE_LIMIT_DELAY}s. With {total_workers} workers, effective delay is {effective_delay:.2f}s.", extra=extra_dict)
 
+    MAX_RETRIES = 10
+    RETRY_DELAY = 10
+
     for batch_of_files in tqdm(file_batches, desc=f"Worker {worker_id} Batches"):
         
         # --- START: New Robustness Logic ---
@@ -111,27 +114,30 @@ def main():
             continue # Skip this entire batch, as it's already done
             
         # --- END: New Robustness Logic ---
+        
+        for attempt in range(MAX_RETRIES):
+            try:
+                batch_content = [open(f, 'r', encoding='utf-8').read() for f in batch_of_files]
+                
+                result = genai.embed_content(model=MODEL_NAME, content=batch_content, task_type=TASK_TYPE)
+                embeddings = result['embedding']
 
-        try:
-            batch_content = [open(f, 'r', encoding='utf-8').read() for f in batch_of_files]
-            
-            result = genai.embed_content(model=MODEL_NAME, content=batch_content, task_type=TASK_TYPE)
-            embeddings = result['embedding']
+                for i, embedding_vector in enumerate(embeddings):
+                    output_filepath = expected_output_paths[i] # Use path generated above
+                    os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
+                    np.save(output_filepath, np.array(embedding_vector))
+                
+                time.sleep(effective_delay)
+                break  # Success, exit retry loop
 
-            for i, embedding_vector in enumerate(embeddings):
-                output_filepath = expected_output_paths[i] # Use path generated above
-                os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
-                np.save(output_filepath, np.array(embedding_vector))
-            
-            time.sleep(effective_delay)
+            except Exception as e:
+                logging.warning(f"Attempt {attempt + 1}/{MAX_RETRIES} failed for batch. Error: {e}", extra=extra_dict)
+                if attempt < MAX_RETRIES - 1:
+                    logging.info(f"Retrying in {RETRY_DELAY} seconds...", extra=extra_dict)
+                    time.sleep(RETRY_DELAY)
+                else:
+                    logging.error(f"All {MAX_RETRIES} retries failed for batch. It will be skipped.", extra=extra_dict)
 
-        except Exception as e:
-            logging.error(f"Failed to process batch. Files will be retried on next run. Error: {e}", extra=extra_dict)
-            if "429" in str(e) or "500" in str(e) or "503" in str(e):
-                logging.warning("API error hit. Sleeping for 15 seconds.", extra=extra_dict)
-                time.sleep(15)
-            continue
-            
     if DRY_RUN:
         logging.info("--- Dry run complete. ---", extra=extra_dict)
     else:

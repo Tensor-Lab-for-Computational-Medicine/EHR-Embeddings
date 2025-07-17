@@ -71,31 +71,44 @@ def load_and_preprocess_data(hdf_path: str) -> Dict[str, pd.DataFrame]:
     return all_data
 
 def filter_by_time_window(all_data: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
-    """Filters data based on the observation window and gap time."""
+    """
+    Filters data to include only the first `WINDOW_SIZE` hours of ICU stays
+    that last longer than `WINDOW_SIZE + GAP_TIME`.
+    """
     print("\nStep 2: Applying time-window filtering...")
+    
+    # 1. Identify valid ICU stays based on length
     patient_max_hours = all_data['vitals'].reset_index().groupby('icustay_id')['hours_in'].max()
     min_required_hours = TIME_WINDOW_CONFIG['WINDOW_SIZE'] + TIME_WINDOW_CONFIG['GAP_TIME']
     valid_icustays = patient_max_hours[patient_max_hours > min_required_hours].index
-
+    
+    # 2. Filter patients to only include valid ICU stays
     patients_df = all_data['patients']
     original_patient_count = patients_df.index.get_level_values('subject_id').nunique()
     
-    filtered_data = {}
     filtered_patients = patients_df[patients_df.index.get_level_values('icustay_id').isin(valid_icustays)]
+    
+    # Get the unique admission IDs (hadm_id) associated with our valid ICU stays
     valid_hadm_ids = filtered_patients.index.get_level_values('hadm_id').unique()
-    filtered_data['patients'] = filtered_patients
 
+    # 3. Filter all data tables based on the valid ICU stays and time window
+    filtered_data = {'patients': filtered_patients}
+
+    # Filter codes to only include those from the relevant hospital admissions
     filtered_data['codes'] = all_data['codes'][all_data['codes'].index.get_level_values('hadm_id').isin(valid_hadm_ids)]
 
+    # Filter time-series data to the first `WINDOW_SIZE` hours for valid ICU stays
     for key in ['interventions', 'vitals']:
         df = all_data[key]
-        filtered_data[key] = df[
+        time_window_mask = (
             (df.index.get_level_values('icustay_id').isin(valid_icustays)) &
             (df.index.get_level_values('hours_in') < TIME_WINDOW_CONFIG['WINDOW_SIZE'])
-        ]
+        )
+        filtered_data[key] = df[time_window_mask]
 
-    filtered_patient_count = filtered_data['patients'].index.get_level_values('subject_id').nunique()
+    filtered_patient_count = filtered_patients.index.get_level_values('subject_id').nunique()
     print(f"  --> Time window filtered: {original_patient_count} -> {filtered_patient_count} patients remaining.")
+    print(f"  --> Found {len(valid_icustays)} valid ICU stays.")
     return filtered_data
 
 def create_splits(df_patients: pd.DataFrame) -> Dict[str, np.ndarray]:

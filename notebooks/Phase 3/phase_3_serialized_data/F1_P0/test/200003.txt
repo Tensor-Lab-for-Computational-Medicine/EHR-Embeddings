@@ -8,7 +8,7 @@ Most Recent Hourly Average: 48.00
 Overall 24h Average: 58.33
 
 --- Albumin (g/dL) ---
-Hourly Measurement Count: 2.00
+Hourly Mea$surement Count: 2.00
 Most Recent Hourly Average: 2.80
 
 --- Alkaline Phosphate (U/L) ---
