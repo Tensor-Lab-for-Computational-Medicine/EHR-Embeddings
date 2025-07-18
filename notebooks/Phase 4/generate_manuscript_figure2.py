@@ -5,6 +5,7 @@ publication-quality figures and tables for a manuscript.
 
 Refactored for improved readability, modularity, and maintainability.
 This version incorporates user feedback for plotting corrections, including confidence intervals on Figure 2.
+This version also adds a new figure (Figure 6) to compare different models within a task.
 """
 import os
 import pickle
@@ -167,6 +168,9 @@ def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
 
     df = pd.DataFrame(records).dropna(subset=['AUROC', 'AUPRC'])
     
+    # Clean up model names for better plot labels
+    df['Model'] = df['Model'].str.replace('embedding_model_results_', '', regex=False)
+    
     df['Task'] = pd.Categorical(df['Task'], categories=TASK_LABELS.keys(), ordered=True)
     df['Representation'] = pd.Categorical(df['Representation'], categories=REPRESENTATIONS, ordered=True)
     df['Prompt'] = pd.Categorical(df['Prompt'], categories=PROMPTS, ordered=True)
@@ -296,6 +300,85 @@ def generate_performance_lift_plot(df: pd.DataFrame, metric: str, filename: str,
     
     save_figure(fig, filename)
 
+def generate_model_comparison_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
+    """
+    Generate a faceted bar plot comparing underlying embedding model performance for a single task,
+    broken down by representation and prompt.
+    """
+    logging.info(f"Generating detailed model comparison plot for {metric}: {title}")
+    
+    plot_df = df.copy()
+    if plot_df.empty:
+        logging.warning("No embedding model data available for the detailed comparison plot.")
+        return
+
+    plot_df['RepresentationLabel'] = plot_df['Representation'].map(REP_LABELS)
+    plot_df['PromptLabel'] = plot_df['Prompt'].map(PROMPT_LABELS)
+
+    # Ensure categorical ordering for consistent plots
+    rep_cats = [REP_LABELS[r] for r in REPRESENTATIONS if r in plot_df['Representation'].unique()]
+    prompt_cats = [PROMPT_LABELS[p] for p in PROMPTS if p in plot_df['Prompt'].unique()]
+    model_names = sorted(plot_df['Model'].unique())
+    
+    plot_df['RepresentationLabel'] = pd.Categorical(plot_df['RepresentationLabel'], categories=rep_cats, ordered=True)
+    plot_df['PromptLabel'] = pd.Categorical(plot_df['PromptLabel'], categories=prompt_cats, ordered=True)
+    plot_df = plot_df.dropna(subset=['PromptLabel', 'RepresentationLabel'])
+
+    # Use a specific palette for the models
+    palette = sns.color_palette('cubehelix', n_colors=len(model_names))
+    color_map = dict(zip(model_names, palette))
+
+    g = sns.catplot(
+        data=plot_df, x='PromptLabel', y=metric, hue='Model', col='RepresentationLabel',
+        kind='bar', palette=color_map, height=6, aspect=1.2, legend=False,
+        col_wrap=3
+    )
+
+    # Manually add confidence intervals to each facet
+    for ax in g.axes.flatten():
+        if not ax.patches: continue
+
+        current_rep_label = ax.get_title().split(' = ')[-1]
+        ax_df = plot_df[plot_df['RepresentationLabel'] == current_rep_label]
+
+        hue_order = sorted(ax_df['Model'].unique())
+        num_hues = len(hue_order)
+        bar_width = ax.patches[0].get_width()
+        
+        x_labels = [label.get_text() for label in ax.get_xticklabels()]
+        x_pos_map = {label: i for i, label in enumerate(x_labels)}
+
+        for _, row in ax_df.iterrows():
+            prompt_label, model_name = row['PromptLabel'], row['Model']
+            if prompt_label in x_pos_map and model_name in hue_order:
+                x_pos_group = x_pos_map[prompt_label]
+                hue_index = hue_order.index(model_name)
+                
+                bar_offset = (hue_index - (num_hues - 1) / 2) * bar_width
+                x_coord = x_pos_group + bar_offset
+                
+                y_val = row[metric]
+                y_err = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
+                
+                ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=2, zorder=10)
+        
+        if ax_df[metric].min() > 0.4:
+            ax.set_ylim(0.5, max(1.0, ax_df[f'{metric}_CI_Upper'].max() * 1.05))
+
+    # Final plot adjustments
+    g.fig.suptitle(title, fontsize=18, y=1.03)
+    g.set_axis_labels("Prompting Strategy", f'Test Set {metric} (with 95% CI)')
+    g.set_titles("Representation: {col_name}")
+    g.set_xticklabels(rotation=45, ha='right')
+
+    # Add a single, figure-level legend
+    legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in model_names]
+    g.fig.legend(handles=legend_handles, title="Embedding Model", bbox_to_anchor=(1.0, 0.5), loc="center left")
+    g.fig.tight_layout(rect=[0, 0, 0.92, 1]) # Adjust for suptitle and legend
+
+    save_figure(g.fig, filename)
+
+
 def generate_task_comparison_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
     """Generate a bar plot comparing representation performance across all prediction tasks."""
     logging.info(f"Generating {metric} comparison plot across tasks: {title}")
@@ -423,7 +506,6 @@ def generate_results_table(df: pd.DataFrame, filename: str) -> None:
     
     df_table['Representation'] = df_table['Representation'].map(REP_LABELS)
     df_table['Prompt'] = df_table['Prompt'].map(PROMPT_LABELS)
-    df_table['Model'] = df_table['Model'].str.replace('embedding_model_results_', '', regex=False)
     
     table_cols = ['Task', 'Representation', 'Prompt', 'Model', 'AUROC (95% CI)', 'AUPRC (95% CI)']
     df_table = df_table[table_cols]
@@ -450,11 +532,13 @@ def main():
     if full_df.empty:
         logging.error("DataFrame is empty after processing results. Cannot generate figures.")
         return
-
-    embedding_df = full_df[full_df['Representation'] != 'Baseline']
-    # Correctly find the best embedding model for each Rep-Prompt-Task combination
-    best_indices = embedding_df.loc[embedding_df.groupby(['Task', 'Representation', 'Prompt'], observed=True)['AUROC'].idxmax()]
     
+    # This dataframe contains all embedding model results, before picking the 'best'
+    embedding_df_full = full_df[full_df['Representation'] != 'Baseline']
+
+    # Create a summary dataframe that picks the single best model for each Rep-Prompt-Task combo
+    # This is used for the higher-level summary plots (Figs 2-5)
+    best_indices = embedding_df_full.loc[embedding_df_full.groupby(['Task', 'Representation', 'Prompt'], observed=True)['AUROC'].idxmax()]
     baseline_df = full_df[full_df['Representation'] == 'Baseline']
     summary_df = pd.concat([best_indices, baseline_df], ignore_index=True)
 
@@ -462,26 +546,36 @@ def main():
     logging.info("Generating per-task performance plots...")
     tasks = summary_df['Task'].unique()
     for task in tasks:
-        task_df = summary_df[summary_df['Task'] == task]
+        task_df_summary = summary_df[summary_df['Task'] == task]
         task_label = TASK_LABELS.get(task, task)
         
-        # Updated Title for Figure 2 to reflect confidence intervals
+        # Figure 2: Compares representation types (using best model for each)
         generate_representation_barplot(
-            task_df, 'AUROC', f'figure_2_auroc_representation_barplot_{task}.png',
+            task_df_summary, 'AUROC', f'figure_2_auroc_representation_barplot_{task}.png',
             f'Figure 2: AUROC by Representation for {task_label} (with 95% CI)'
         )
         
+        # Figure 3: Shows performance lift over baseline
         generate_performance_lift_plot(
-            task_df, 'AUROC', f'figure_3_auroc_lift_{task}.png',
+            task_df_summary, 'AUROC', f'figure_3_auroc_lift_{task}.png',
             f'Figure 3: AUROC Improvement Over Best Baseline for {task_label}'
+        )
+
+        # **NEW** Figure 6: Detailed comparison of all embedding models for the task
+        task_df_full_embeddings = embedding_df_full[embedding_df_full['Task'] == task]
+        generate_model_comparison_plot(
+            task_df_full_embeddings, 'AUROC', f'figure_6_auroc_model_comparison_{task}.png',
+            f'Figure 6: Detailed Embedding Model Comparison for {task_label}'
         )
 
     # --- Generate Cross-Task Summary Plots ---
     logging.info("Generating cross-task summary plots...")
+    # Figure 4: Compares best representations across all tasks
     generate_task_comparison_plot(
         summary_df, 'AUROC', 'figure_4_task_comparison_auroc.png',
         'Figure 4: Best Model AUROC by Representation and Task (with 95% CI)'
     )
+    # Figure 5: Shows the single champion model for each task vs. baseline
     generate_champion_model_plot(
         summary_df, 'AUROC', 'figure_5_champion_models_auroc.png',
         'Figure 5: Champion Semantic Model vs. XGBoost Baseline by AUROC (with 95% CI)'
