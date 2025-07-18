@@ -37,7 +37,12 @@ class Config:
     OPTUNA_TIMEOUT = 3600
     REUSE_EXISTING_STUDY = True
 
-    def __init__(self):
-        # The output directory is now specific to the target variable
+    def __init__(self, target_variable: str = None):
+
+        # Override the default only when the caller supplies a meaningful value
+        if target_variable:
+            self.TARGET_VARIABLE = target_variable
+
+        # Build an OUTPUT_DIR that is specific to the selected target variable
         self.OUTPUT_DIR = os.path.join(self.BASE_OUTPUT_DIR, self.TARGET_VARIABLE)
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)

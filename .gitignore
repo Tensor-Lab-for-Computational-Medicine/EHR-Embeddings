@@ -4,6 +4,13 @@
 .env.*.local
 __MACOSX/
 cache/
+*.ckpt
+checkpoint
+checkpoint/*
+checkpoints/
+*.checkpoint
+
+
 
 # Python
 __pycache__/

@@ -7,13 +7,14 @@ import os
 class Config:
     # --- Paths ---
     # Input directory for the embeddings generated in Phase 4
-    EMBEDDING_DIR = 'notebooks/Phase 4/embeddings_text-embedding-large-exp-03-07'
+    EMBEDDING_DIR = "C:/Users/aaron/Downloads/embeddings_text-embedding-large-exp-03-07/embeddings_text-embedding-large-exp-03-07"
     
     # Input directory for the label files (.csv) generated in Phase 3
     LABEL_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
     
-    # Output directory for models, results, and logs from this analysis
-    OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/text-embedding-large-exp-03-07'
+    # Base output directory for models, results, and logs. A sub-directory
+    # for the specific target variable will be created at runtime.
+    BASE_OUTPUT_DIR = 'notebooks/Phase 5/embedding_model_results/text-embedding-large-exp-03-07'
 
     # --- Experiment Setup ---
     # Set to True to run the analysis on only the FIRST experimental condition
@@ -30,12 +31,18 @@ class Config:
     
     # --- XGBoost & Optuna Settings ---
     USE_GPU = True
-    TARGET_VARIABLE = 'los_3'
-    TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7']
+    TARGET_VARIABLE = 'mort_hosp'
+    TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso']
     SEED = 42
-    N_OPTUNA_TRIALS = 10
+    N_OPTUNA_TRIALS = 15
     OPTUNA_TIMEOUT = 3600
     REUSE_EXISTING_STUDY = True
 
-    def __init__(self):
+    def __init__(self, target_variable: str = None):
+        # Override the default only when the caller supplies a meaningful value
+        if target_variable:
+            self.TARGET_VARIABLE = target_variable
+
+        # Build an OUTPUT_DIR that is specific to the selected target variable
+        self.OUTPUT_DIR = os.path.join(self.BASE_OUTPUT_DIR, self.TARGET_VARIABLE)
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
