@@ -9,7 +9,9 @@ checkpoint
 checkpoint/*
 checkpoints/
 *.checkpoint
+*.checkpoint.index
 
+notebooks/Phase 5/embedding_model_results/text-embedding-large-exp-03-07/mort_hosp/tuner/
 
 
 # Python
