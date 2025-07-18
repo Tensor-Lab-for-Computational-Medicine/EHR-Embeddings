@@ -20,15 +20,18 @@ class Config:
         config = config_dict if config_dict else {}
         
         # Explicitly define all attributes to avoid linter errors
-        self.OUTPUT_DIR = config.get('OUTPUT_DIR', 'phase_1_outputs')
-        self.DRY_RUN = config.get('DRY_RUN', True)
+        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'mort_hosp')  # This is the variable we are predicting
+        self.INPUT_DIR = config.get('INPUT_DIR', 'notebooks\Phase 1 and 2\phase_1_outputs')  # Where to load data from
+        self.OUTPUT_DIR = os.path.join(self.INPUT_DIR, self.TARGET_VARIABLE)  # Where to save results
+
+        self.DRY_RUN = config.get('DRY_RUN', False)
         self.DRY_RUN_PATIENTS = config.get('DRY_RUN_PATIENTS', 1000)
         self.CALCULATE_TRENDS = config.get('CALCULATE_TRENDS', True)
         self.WINDOW_SIZE = config.get('WINDOW_SIZE', 24)
         self.GAP_TIME = config.get('GAP_TIME', 6)
-        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'mort_hosp')
+        self.TARGET_VARIABLES = config.get('TARGET_VARIABLES', ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso'])
         self.SEED = config.get('SEED', 42)
-        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 15)
+        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 30)
         self.OPTUNA_TIMEOUT = config.get('OPTUNA_TIMEOUT', 1800)
         self.REUSE_EXISTING_STUDY = config.get('REUSE_EXISTING_STUDY', True)
         

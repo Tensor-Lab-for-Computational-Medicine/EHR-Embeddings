@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+__MACOSX/
+cache/
 
 # Python
 __pycache__/
@@ -78,15 +80,14 @@ data/raw/*.h5
 data/raw/*.hdf5
 data/processed/
 outputs/models/
-outputs/figures/*.png
-outputs/figures/*.jpg
-outputs/figures/*.pdf
+
 
 # Data files (may contain sensitive information)
 *.csv
 *.json
 *.xlsx
 *.xls
+*.zip
 
 # Logs
 logs/

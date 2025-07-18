@@ -25,9 +25,10 @@ class ConfigH2:
         self.Y_VAL_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_y_val.pkl')
         self.Y_TEST_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_y_test.pkl')
         
-        # Champion embedding model (identified as F3_P2)
+        # Champion embedding model (identified as F3_P2 from text-embedding-004)
+        self.CHAMPION_EMBEDDING_MODEL = 'text-embedding-004'
         self.CHAMPION_ARM = 'F3_P2'
-        self.EMBEDDING_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 5', 'embedding_model_results')
+        self.EMBEDDING_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 5', 'embedding_model_results', self.CHAMPION_EMBEDDING_MODEL)
         self.CHAMPION_MODEL_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'model_{self.CHAMPION_ARM}.pkl')
         self.CHAMPION_RESULTS_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'results_{self.CHAMPION_ARM}.pkl')
         

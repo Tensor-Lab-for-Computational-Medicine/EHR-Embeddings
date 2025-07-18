@@ -1,0 +1,14 @@
+2025-07-13 10:27:49,217 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42
+2025-07-13 10:27:49,265 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-07-13 10:27:49,265 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-07-13 10:27:49,266 [INFO] - Loading existing Optuna study from notebooks\Phase 1 and 2\phase_1_outputs\los_3\preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42_optuna_study_elastic_net.pkl
+2025-07-13 10:27:49,296 [INFO] - Loaded study with 15 completed trials, best AUROC: 0.7140
+2025-07-13 10:27:49,297 [INFO] - Reusing existing study results without additional optimization
+2025-07-13 10:27:49,297 [INFO] - Training final model on combined train+validation data...
+2025-07-13 10:28:02,964 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-07-13 10:28:02,989 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-07-13 10:28:05,103 [INFO] - Test AUROC: 0.7187 (95% CI: 0.7056-0.7327)
+2025-07-13 10:28:05,104 [INFO] - Test AUPRC: 0.6561 (95% CI: 0.6390-0.6738)
+2025-07-13 10:28:05,113 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\los_3\model_2_elastic_net_baseline.pkl
+2025-07-13 10:28:05,113 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\los_3\results_elastic_net_baseline.pkl
+2025-07-13 10:28:05,113 [INFO] - Analysis completed in 0.26 minutes
