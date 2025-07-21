@@ -17,7 +17,7 @@ class ConfigH2:
         self.BASELINE_RESULTS_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'results_xgboost_baseline.pkl')
         
         # Numerical feature data paths
-        self.NUMERICAL_DATA_PREFIX = 'preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42'
+        self.NUMERICAL_DATA_PREFIX = 'preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42'
         self.X_TRAIN_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_train.pkl')
         self.X_VAL_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_val.pkl')
         self.X_TEST_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_test.pkl')

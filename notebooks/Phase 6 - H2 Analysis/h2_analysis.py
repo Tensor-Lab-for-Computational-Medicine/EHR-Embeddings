@@ -384,7 +384,7 @@ def main():
     logging.info("Training candidate hybrid models on the training set for champion selection...")
     candidate_early_fusion_model = build_early_fusion_model(data['X_train_num'].values, data['X_train_emb'], data['y_train'], config)
     # Note: For Late Fusion OOF, we pass the training data twice. The function's internal CV will split it.
-    candidate_late_fusion_model = build_late_fusion_model(nm_model, sm_model, data['X_train_num'], data['X_train_num'], data['X_train_emb'], data['X_train_emb'], data['y_train'], data['y_train'], config)
+    candidate_late_fusion_model = build_late_fusion_model(nm_model, sm_model, data['X_train_num'], data['X_val_num'], data['X_train_emb'], data['X_val_emb'], data['y_train'], data['y_val'], config)
 
     # Step 2: Evaluate candidates on the UNSEEN validation set
     logging.info("Evaluating candidate models on the validation set...")
