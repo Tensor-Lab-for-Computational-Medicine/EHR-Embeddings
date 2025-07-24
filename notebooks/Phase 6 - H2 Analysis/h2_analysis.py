@@ -1,14 +1,12 @@
 # h2_analysis.py
 """
-H2 Hypothesis Testing: Model Discordance, Failure Mode, and Synergy Analysis (Definitive Final Version)
+H2 Hypothesis Testing: Model Discordance, Failure Mode, and Synergy Analysis (Updated for Histogram-Based Plan)
 
-This script provides a complete and definitive implementation of the H2 analysis plan. It includes:
-- The full sensitivity analysis loop for three thresholding schemes.
-- Correct application of statistical tests (Mann-Whitney U and Chi-squared).
-- Explicit confounder analysis and robustness checks.
-- Complete hybrid model selection and synergy analysis workflow.
-- Generation of all specified tables (H2-1 through H2-5) and figures.
-- Final logging of key results for easy review.
+This script provides a complete and definitive implementation of the updated H2 analysis plan. It includes:
+- The new Histogram Drop-Off analysis as the primary method for cohort definition.
+- The full sensitivity analysis loop for the two alternative thresholding schemes.
+- The de-correlation step using Elastic Net to identify primary drivers (H2b).
+- All other required analyses, tables, and figures.
 """
 
 import pandas as pd
@@ -20,7 +18,7 @@ import os
 import pickle
 from sklearn.metrics import roc_auc_score, average_precision_score, brier_score_loss, f1_score, cohen_kappa_score
 from sklearn.model_selection import StratifiedKFold
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 from scipy.stats import pearsonr, mannwhitneyu, chi2_contingency
 from statsmodels.stats.contingency_tables import mcnemar
 from statsmodels.stats.multitest import fdrcorrection
@@ -28,6 +26,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
 from itertools import combinations
+from sklearn.preprocessing import StandardScaler
 
 # Assuming config_h2.py is in the same directory.
 from config_h2 import ConfigH2
@@ -104,20 +103,58 @@ def evaluate_model_performance(y_true, y_pred_proba, model_name, config):
     return results
 
 # =============================================================================
-# H2a: MODEL DISCORDANCE ANALYSIS
+# H2a: MODEL DISCORDANCE ANALYSIS (UPDATED METHODOLOGY)
 # =============================================================================
 
+def determine_histogram_threshold(y_true, y_probas, n_bins=100):
+    """(Primary Method) Determine the Error Tolerance Threshold (T) via histogram drop-off analysis."""
+    errors = np.abs(y_true.values - y_probas)
+    counts, bin_edges = np.histogram(errors, bins=n_bins, range=(0,1))
+    
+    drop_off_scores = np.zeros(len(counts) - 1)
+    for i in range(1, len(counts)):
+        if counts[i-1] > 0 and counts[i] < counts[i-1]:
+            score = (counts[i-1] - counts[i]) / counts[i-1]
+            drop_off_scores[i-1] = score
+            
+    max_drop_off_index = np.argmax(drop_off_scores) + 1
+    threshold_T = bin_edges[max_drop_off_index]
+    
+    return threshold_T
+
 def determine_f1_threshold(y_true, y_probas):
-    """Determine the optimal probability threshold by maximizing the F1-score."""
+    """(For Sensitivity Analysis) Determine threshold by maximizing F1-score."""
     thresholds = np.linspace(0.01, 0.99, 99)
     f1_scores = [f1_score(y_true, y_probas >= t) for t in thresholds]
     optimal_idx = np.argmax(f1_scores)
-    # Now returns both the threshold and the score
     return thresholds[optimal_idx], f1_scores[optimal_idx]
 
-def define_analysis_cohorts(nm_proba, sm_proba, y_true, nm_thresh, sm_thresh):
-    """Define the eight granular analysis cohorts based on model predictions and true outcomes."""
-    nm_pred, sm_pred, y_true_arr = (nm_proba >= nm_thresh).astype(int), (sm_proba >= sm_thresh).astype(int), y_true.astype(int)
+def define_analysis_cohorts(nm_proba, sm_proba, y_true, threshold_T):
+    """(Primary Method) Define the eight cohorts using the Error Tolerance Threshold T."""
+    y_true_arr = y_true.values.astype(int)
+    
+    def classify(proba, y_true_arr):
+        return np.where(y_true_arr == 0, 
+                        np.where(proba < threshold_T, "TN", "FP"),
+                        np.where(proba > (1 - threshold_T), "TP", "FN"))
+
+    nm_class = classify(nm_proba, y_true_arr)
+    sm_class = classify(sm_proba, y_true_arr)
+
+    return {
+        'TP_concordant': (nm_class == "TP") & (sm_class == "TP"),
+        'TN_concordant': (nm_class == "TN") & (sm_class == "TN"),
+        'FN_concordant': (nm_class == "FN") & (sm_class == "FN"),
+        'FP_concordant': (nm_class == "FP") & (sm_class == "FP"),
+        'FN_SM': (sm_class == "FN") & (nm_class == "TP"),
+        'FP_SM': (sm_class == "FP") & (nm_class == "TN"),
+        'FN_NM': (nm_class == "FN") & (sm_class == "TP"),
+        'FP_NM': (nm_class == "FP") & (sm_class == "TN"),
+    }
+
+def define_analysis_cohorts_by_prob(nm_proba, sm_proba, y_true, prob_thresh):
+    """(For Sensitivity Analysis) Define cohorts using a simple probability threshold."""
+    nm_pred, sm_pred, y_true_arr = (nm_proba >= prob_thresh).astype(int), (sm_proba >= prob_thresh).astype(int), y_true.astype(int)
     return {
         'TP_concordant': (nm_pred == 1) & (sm_pred == 1) & (y_true_arr == 1),
         'TN_concordant': (nm_pred == 0) & (sm_pred == 0) & (y_true_arr == 0),
@@ -125,16 +162,16 @@ def define_analysis_cohorts(nm_proba, sm_proba, y_true, nm_thresh, sm_thresh):
         'FP_concordant': (nm_pred == 1) & (sm_pred == 1) & (y_true_arr == 0),
         'FN_SM': (sm_pred == 0) & (nm_pred == 1) & (y_true_arr == 1),
         'FP_SM': (sm_pred == 1) & (nm_pred == 0) & (y_true_arr == 0),
-        'FN_NM': (sm_pred == 1) & (nm_pred == 0) & (y_true_arr == 1),
-        'FP_NM': (sm_pred == 0) & (nm_pred == 1) & (y_true_arr == 0),
+        'FN_NM': (nm_pred == 0) & (sm_pred == 1) & (y_true_arr == 1),
+        'FP_NM': (nm_pred == 1) & (sm_pred == 0) & (y_true_arr == 0),
     }
 
-def analyze_model_discordance(nm_proba, sm_proba, y_true, nm_thresh, sm_thresh):
-    """H2a: Quantify overall model discordance."""
+def analyze_model_discordance(nm_proba, sm_proba, cohorts):
+    """H2a: Quantify overall model discordance based on cohort definitions."""
     logging.info("=== H2a: QUANTIFYING MODEL DISCORDANCE ===")
-    nm_pred = (nm_proba >= nm_thresh).astype(int)
-    sm_pred = (sm_proba >= sm_thresh).astype(int)
-
+    nm_pred = (cohorts['TP_concordant'] | cohorts['FP_concordant'] | cohorts['FN_SM'] | cohorts['FP_NM']).astype(int)
+    sm_pred = (cohorts['TP_concordant'] | cohorts['FP_concordant'] | cohorts['FN_NM'] | cohorts['FP_SM']).astype(int)
+    
     kappa = cohen_kappa_score(nm_pred, sm_pred)
     contingency_table = pd.crosstab(nm_pred, sm_pred)
     
@@ -161,15 +198,15 @@ def analyze_model_discordance(nm_proba, sm_proba, y_true, nm_thresh, sm_thresh):
     return discordance_metrics
 
 # =============================================================================
-# H2b: FAILURE MODE, CONFOUNDER, and ROBUSTNESS ANALYSIS
+# H2b: FAILURE MODE, CONFOUNDER, AND ROBUSTNESS ANALYSIS
 # =============================================================================
 def is_binary(series):
     """Check if a pandas Series is binary (contains only 0s and 1s)."""
     return series.dropna().isin([0, 1]).all()
 
-def analyze_differential_failure_modes(cohorts, X_test_num):
-    """H2b: Identify features driving model discordance using appropriate statistical tests."""
-    logging.info("=== H2b: DIFFERENTIAL FAILURE MODE ANALYSIS ===")
+def analyze_differential_failure_modes(cohorts, X_test_num, config):
+    """H2b: Identify features driving model discordance and de-correlate them."""
+    logging.info("=== H2b: DIFFERENTIAL FAILURE MODE ANALYSIS (Steps 1-3) ===")
     comparisons = {
         "FP_SM_vs_TN_concordant": ('FP_SM', 'TN_concordant'), 
         "FN_SM_vs_TP_concordant": ('FN_SM', 'TP_concordant'),
@@ -181,74 +218,90 @@ def analyze_differential_failure_modes(cohorts, X_test_num):
     for comp_name, (c1_name, c2_name) in comparisons.items():
         c1_mask, c2_mask = cohorts[c1_name], cohorts[c2_name]
         if c1_mask.sum() < 3 or c2_mask.sum() < 3:
-            logging.warning(f"Skipping comparison {comp_name} due to insufficient samples.")
             continue
-            
         g1, g2 = X_test_num[c1_mask], X_test_num[c2_mask]
-        
         for feature in X_test_num.columns:
-            series = X_test_num[feature]
             p_val, effect = 1.0, 0.0
-            
-            if is_binary(series):
-                contingency = pd.crosstab(series[c1_mask | c2_mask], [c1_name]*c1_mask.sum() + [c2_name]*c2_mask.sum())
-                if contingency.shape == (2, 2) and contingency.sum().sum() > 0 and 0 not in contingency.sum(axis=1) and 0 not in contingency.sum(axis=0):
-                    _, p_val, _, _ = chi2_contingency(contingency, correction=False)
+            if is_binary(X_test_num[feature]):
+                contingency = pd.crosstab(X_test_num[feature][c1_mask | c2_mask], [c1_name]*c1_mask.sum() + [c2_name]*c2_mask.sum())
+                if contingency.shape == (2, 2) and 0 not in contingency.sum(axis=1) and 0 not in contingency.sum(axis=0):
+                    _, p_val, _, _ = chi2_contingency(contingency)
                     effect = g1[feature].mean() - g2[feature].mean()
-                else: p_val = 1.0
             else:
-                if g1[feature].dropna().empty or g2[feature].dropna().empty:
-                    p_val = 1.0
-                else:
+                if not g1[feature].dropna().empty and not g2[feature].dropna().empty:
                     _, p_val = mannwhitneyu(g1[feature].dropna(), g2[feature].dropna(), alternative='two-sided')
                 effect = g1[feature].median() - g2[feature].median()
-            
             all_results.append({"comparison": comp_name, "feature": feature, "p_value": p_val, "effect_size": effect})
 
     if not all_results: return pd.DataFrame()
+    
     results_df = pd.DataFrame(all_results)
     results_df['q_value'] = fdrcorrection(results_df['p_value'].fillna(1.0), alpha=0.05)[1]
+    
+    logging.info("--- H2b Step 4: Interpretation & De-correlation using Elastic Net ---")
+    significant_features_df = results_df[results_df['q_value'] < 0.05]
+    primary_drivers = []
+    
+    for comp_name, (c1_name, c2_name) in comparisons.items():
+        comp_features_df = significant_features_df[significant_features_df['comparison'] == comp_name]
+        if comp_features_df.empty:
+            continue
+        
+        c1_mask, c2_mask = cohorts[c1_name], cohorts[c2_name]
+        if c1_mask.sum() < 10 or c2_mask.sum() < 10:
+             logging.warning(f"Skipping Elastic Net for {comp_name} due to small cohort size.")
+             continue
+        
+        feature_subset = comp_features_df['feature'].unique()
+        X_comp = X_test_num.loc[c1_mask | c2_mask, feature_subset].fillna(0)
+        y_comp = np.array([1]*c1_mask.sum() + [0]*c2_mask.sum())
+        
+        scaler = StandardScaler().fit(X_comp)
+        X_comp_scaled = scaler.transform(X_comp)
+
+        l1_ratios = [0.1, 0.5, 0.9, 1.0]
+        model = LogisticRegressionCV(
+            Cs=10, penalty='elasticnet', l1_ratios=l1_ratios, solver='saga', 
+            max_iter=100000, random_state=config.SEED, cv=3, n_jobs=-1
+        ).fit(X_comp_scaled, y_comp)
+        
+        non_zero_coeffs = feature_subset[model.coef_[0] != 0]
+        for feature in non_zero_coeffs:
+            primary_drivers.append((comp_name, feature))
+        logging.info(f"  Found {len(non_zero_coeffs)} primary drivers for {comp_name} from {len(feature_subset)} candidates.")
+
+    results_df['is_primary_driver'] = results_df.apply(lambda row: (row['comparison'], row['feature']) in primary_drivers, axis=1)
     return results_df
 
 def analyze_confounders(cohorts, X_test_num):
     """H2b Addendum: Analyze potential confounders."""
     logging.info("=== H2b: CONFOUNDER ANALYSIS ===")
     confounder_features = ['gcs_last_derived_feature']
-    
-    comparisons = {
-        'FP_SM vs FP_NM': (cohorts['FP_SM'], cohorts['FP_NM']),
-        'FN_SM vs FN_NM': (cohorts['FN_SM'], cohorts['FN_NM'])
-    }
+    comparisons = {'FP_SM vs FP_NM': (cohorts['FP_SM'], cohorts['FP_NM']), 'FN_SM vs FN_NM': (cohorts['FN_SM'], cohorts['FN_NM'])}
     results = []
-    
     for comp_name, (c1_mask, c2_mask) in comparisons.items():
         if c1_mask.sum() < 3 or c2_mask.sum() < 3: continue
         for feature in confounder_features:
             if feature in X_test_num.columns:
                 stat, p_val = mannwhitneyu(X_test_num.loc[c1_mask, feature].dropna(), X_test_num.loc[c2_mask, feature].dropna())
                 results.append({'Comparison': comp_name, 'Confounder': feature, 'Statistic': stat, 'p-value': p_val})
-    
     return pd.DataFrame(results)
 
 def check_robustness(output_dir):
     """H2b Addendum: Check feature robustness across sensitivity runs."""
     logging.info("=== H2b: ROBUSTNESS CHECK ACROSS THRESHOLDS ===")
     strategies = [d for d in os.listdir(output_dir) if d.startswith('sensitivity_')]
-    if len(strategies) < 2: 
-        logging.warning("Not enough sensitivity runs to check robustness.")
-        return
-    
+    if len(strategies) < 2: return
     top_features = {}
     for strategy in strategies:
         path = os.path.join(output_dir, strategy, 'table_h2_3_failure_modes.csv')
         if not os.path.exists(path): continue
         df = pd.read_csv(path)
-        top_features[strategy] = set(df[df['q_value'] < 0.05].sort_values('q_value').head(10)['feature'])
-        
+        top_features[strategy] = set(df[df['is_primary_driver']].sort_values('q_value').head(10)['feature'])
     for s1, s2 in combinations(strategies, 2):
         if s1 in top_features and s2 in top_features and top_features[s1] and top_features[s2]:
             jaccard_sim = len(top_features[s1].intersection(top_features[s2])) / len(top_features[s1].union(top_features[s2]))
-            logging.info(f"  Jaccard similarity of top 10 features between '{s1}' and '{s2}': {jaccard_sim:.2f}")
+            logging.info(f"  Jaccard similarity of top 10 primary drivers between '{s1}' and '{s2}': {jaccard_sim:.2f}")
 
 # =============================================================================
 # H2c: HYBRID MODELING AND SYNERGY ANALYSIS
@@ -276,49 +329,41 @@ def build_late_fusion_model(nm_model, sm_model, X_train_num, X_val_num, X_train_
 def analyze_hybrid_synergy(hybrid_proba, nm_proba, sm_proba, cohorts, y_true, config):
     """H2c: Rigorously evaluate if the hybrid model's value comes from resolving disagreements."""
     logging.info("=== H2c: HYBRID SYNERGY ANALYSIS ===")
-    
     discordant_mask = cohorts['FP_SM'] | cohorts['FN_SM'] | cohorts['FP_NM'] | cohorts['FN_NM']
     concordant_mask = cohorts['TP_concordant'] | cohorts['TN_concordant']
     logging.info(f"  Discordant Cohort Size: {discordant_mask.sum()}, Concordant (Correct) Cohort Size: {concordant_mask.sum()}")
     
     synergy_results = []
     y_true_np = y_true.values if hasattr(y_true, 'values') else y_true
+    all_lift_samples = {}
     
     for pop_name, mask in {'Discordant': discordant_mask, 'Concordant_Correct': concordant_mask}.items():
-        # ** THIS SECTION IS FIXED **
-        # The incorrect check against N_BOOTSTRAP is removed. We only check if the cohort is too small
-        # to produce a meaningful result (e.g., less than 2 samples).
         if mask.sum() < 2: 
              logging.warning(f"Skipping synergy analysis for {pop_name} due to empty or single-member cohort ({mask.sum()})")
              continue
-
         y_sub, nm_sub, sm_sub, hyb_sub = y_true_np[mask], nm_proba[mask], sm_proba[mask], hybrid_proba[mask]
-        
         lift = min(brier_score_loss(y_sub, nm_sub), brier_score_loss(y_sub, sm_sub)) - brier_score_loss(y_sub, hyb_sub)
         lift_samples = []
         for _ in range(config.N_BOOTSTRAP):
             indices = np.random.choice(len(y_sub), len(y_sub), replace=True)
-            # Ensure bootstrap sample is not degenerate
-            if len(np.unique(y_sub[indices])) < 2:
-                continue
+            if len(np.unique(y_sub[indices])) < 2: continue
             lift_samples.append(min(brier_score_loss(y_sub[indices], nm_sub[indices]), brier_score_loss(y_sub[indices], sm_sub[indices])) - brier_score_loss(y_sub[indices], hyb_sub[indices]))
         
-        if not lift_samples:
-            logging.warning(f"Could not generate valid bootstrap samples for {pop_name}. Skipping CI calculation.")
-            ci_low, ci_high = np.nan, np.nan
-        else:
-            ci_low, ci_high = np.percentile(lift_samples, [2.5, 97.5])
-        
-        synergy_results.append({
-            'Cohort': pop_name, 'N': len(y_sub), 'Brier_Lift': lift, 
-            'Lift_CI_Lower': ci_low, 'Lift_CI_Upper': ci_high
-        })
+        all_lift_samples[pop_name] = lift_samples
+        if not lift_samples: ci_low, ci_high = np.nan, np.nan
+        else: ci_low, ci_high = np.percentile(lift_samples, [2.5, 97.5])
+        synergy_results.append({'Cohort': pop_name, 'N': len(y_sub), 'Brier_Lift': lift, 'Lift_CI_Lower': ci_low, 'Lift_CI_Upper': ci_high})
 
     synergy_df = pd.DataFrame(synergy_results)
+    
     h2c_supported = False
-    if len(synergy_df) == 2 and not synergy_df.isnull().values.any():
-        if synergy_df.loc[0, 'Lift_CI_Lower'] > synergy_df.loc[1, 'Lift_CI_Upper']:
-            h2c_supported = True
+    if 'Discordant' in all_lift_samples and 'Concordant_Correct' in all_lift_samples:
+        diff_samples = np.array(all_lift_samples['Discordant']) - np.array(all_lift_samples['Concordant_Correct'])
+        diff_pe = np.median(diff_samples)
+        diff_ci_low, diff_ci_high = np.percentile(diff_samples, [2.5, 97.5])
+        diff_row = pd.DataFrame([{'Cohort': 'Difference in Lifts', 'N': np.nan, 'Brier_Lift': diff_pe, 'Lift_CI_Lower': diff_ci_low, 'Lift_CI_Upper': diff_ci_high}])
+        synergy_df = pd.concat([synergy_df, diff_row], ignore_index=True)
+        if diff_ci_low > 0: h2c_supported = True
             
     logging.info(f"✅ H2c Synergy Supported: {h2c_supported}")
     return synergy_df, h2c_supported
@@ -335,43 +380,43 @@ def main():
     data = load_data(config)
     nm_model, sm_model = load_trained_models(config)
     
-    nm_val_proba = nm_model.predict_proba(data['X_val_num'])[:, 1]
-    sm_val_proba = sm_model.predict_proba(data['X_val_emb'])[:, 1]
-    nm_test_proba = nm_model.predict_proba(data['X_test_num'])[:, 1]
-    sm_test_proba = sm_model.predict_proba(data['X_test_emb'])[:, 1]
+    nm_val_proba, sm_val_proba = nm_model.predict_proba(data['X_val_num'])[:, 1], sm_model.predict_proba(data['X_val_emb'])[:, 1]
+    nm_test_proba, sm_test_proba = nm_model.predict_proba(data['X_test_num'])[:, 1], sm_model.predict_proba(data['X_test_emb'])[:, 1]
 
     nm_perf = evaluate_model_performance(data['y_test'], nm_test_proba, "Numerical Model", config)
     sm_perf = evaluate_model_performance(data['y_test'], sm_test_proba, "Semantic Model", config)
 
-    # --- SENSITIVITY ANALYSIS LOOP ---
-    threshold_strategies = {'optimal_sm_f1': 'Primary', 'fixed_0.5': 'Fixed 0.5', 'model_specific_f1': 'Model-Specific'}
+    # --- SENSITIVITY ANALYSIS LOOP (UPDATED STRUCTURE) ---
+    threshold_strategies = {
+        'histogram_dropoff': 'Primary', 
+        'optimal_f1': 'Scheme A (F1-Optimized)', 
+        'fixed_0.5': 'Scheme B (Fixed 0.5)'
+    }
+    
     for strategy_code, strategy_name in threshold_strategies.items():
         run_dir = os.path.join(config.OUTPUT_DIR, f'sensitivity_{strategy_code}')
         os.makedirs(run_dir, exist_ok=True)
-        logging.info(f"\n{'='*20} RUNNING SENSITIVITY ANALYSIS: {strategy_name} {'='*20}")
+        logging.info(f"\n{'='*20} RUNNING ANALYSIS: {strategy_name} {'='*20}")
         
-        if strategy_code == 'optimal_sm_f1':
-            primary_thresh, optimal_f1 = determine_f1_threshold(data['y_val'], sm_val_proba)
-            logging.info(f"Primary classification threshold set to: {primary_thresh:.4f} (with F1-score: {optimal_f1:.4f})")
-            nm_thresh, sm_thresh = primary_thresh, primary_thresh
-        elif strategy_code == 'fixed_0.5':
-            nm_thresh, sm_thresh = 0.5, 0.5
-        else: # model_specific_f1
-            nm_thresh, nm_f1 = determine_f1_threshold(data['y_val'], nm_val_proba)
-            sm_thresh, sm_f1 = determine_f1_threshold(data['y_val'], sm_val_proba)
-            logging.info(f"Model-Specific NM threshold: {nm_thresh:.4f} (F1: {nm_f1:.4f})")
-            logging.info(f"Model-Specific SM threshold: {sm_thresh:.4f} (F1: {sm_f1:.4f})")
+        if strategy_code == 'histogram_dropoff':
+            threshold_T = determine_histogram_threshold(data['y_val'], nm_val_proba)
+            logging.info(f"Primary Error Tolerance Threshold (T) set to: {threshold_T:.4f}")
+            cohorts = define_analysis_cohorts(nm_test_proba, sm_test_proba, data['y_test'], threshold_T)
         
-        # --- H2a & H2b Analyses ---
-        discordance_metrics = analyze_model_discordance(nm_test_proba, sm_test_proba, data['y_test'], nm_thresh, sm_thresh)
-        pd.DataFrame(list(discordance_metrics.items()), columns=['Metric', 'Value']).to_csv(os.path.join(run_dir, 'table_h2_2_discordance_metrics.csv'), index=False)
+        else: # Sensitivity runs using probability thresholds
+            if strategy_code == 'optimal_f1':
+                prob_thresh, f1 = determine_f1_threshold(data['y_val'], sm_val_proba)
+                logging.info(f"Scheme A: F1-optimized probability threshold: {prob_thresh:.4f} (F1: {f1:.4f})")
+            else: # fixed_0.5
+                prob_thresh = 0.5
+                logging.info(f"Scheme B: Fixed probability threshold: {prob_thresh}")
+            cohorts = define_analysis_cohorts_by_prob(nm_test_proba, sm_test_proba, data['y_test'], prob_thresh)
 
-        cohorts = define_analysis_cohorts(nm_test_proba, sm_test_proba, data['y_test'], nm_thresh, sm_thresh)
+        discordance_metrics = analyze_model_discordance(nm_test_proba, sm_test_proba, cohorts)
+        pd.DataFrame(list(discordance_metrics.items()), columns=['Metric', 'Value']).to_csv(os.path.join(run_dir, 'table_h2_2_discordance_metrics.csv'), index=False)
         pd.DataFrame(list({k: v.sum() for k, v in cohorts.items()}.items()), columns=['Cohort', 'N']).to_csv(os.path.join(run_dir, 'table_h2_1_concordance.csv'), index=False)
-        
-        failure_df = analyze_differential_failure_modes(cohorts, data['X_test_num'])
+        failure_df = analyze_differential_failure_modes(cohorts, data['X_test_num'], config)
         failure_df.to_csv(os.path.join(run_dir, 'table_h2_3_failure_modes.csv'), index=False)
-        
         confounder_df = analyze_confounders(cohorts, data['X_test_num'])
         confounder_df.to_csv(os.path.join(run_dir, 'table_h2_4_confounders.csv'), index=False)
     
@@ -379,31 +424,21 @@ def main():
     
     # --- HYBRID MODELING & SYNERGY (LEAK-FREE WORKFLOW) ---
     logging.info(f"\n{'='*20} PERFORMING HYBRID MODELING & SYNERGY ANALYSIS {'='*20}")
-
-    # Step 1: Train candidate models ONLY on the training set
+    
     logging.info("Training candidate hybrid models on the training set for champion selection...")
     candidate_early_fusion_model = build_early_fusion_model(data['X_train_num'].values, data['X_train_emb'], data['y_train'], config)
-    # Note: For Late Fusion OOF, we pass the training data twice. The function's internal CV will split it.
-    candidate_late_fusion_model = build_late_fusion_model(nm_model, sm_model, data['X_train_num'], data['X_val_num'], data['X_train_emb'], data['X_val_emb'], data['y_train'], data['y_val'], config)
+    candidate_late_fusion_model = build_late_fusion_model(nm_model, sm_model, data['X_train_num'], data['X_train_num'], data['X_train_emb'], data['X_train_emb'], data['y_train'], data['y_train'], config)
 
-    # Step 2: Evaluate candidates on the UNSEEN validation set
     logging.info("Evaluating candidate models on the validation set...")
     early_val_proba = candidate_early_fusion_model.predict_proba(np.hstack([data['X_val_num'].values, data['X_val_emb']]))[:, 1]
     late_val_proba = candidate_late_fusion_model.predict_proba(np.column_stack([nm_val_proba, sm_val_proba]))[:, 1]
-    
-    early_val_auroc = roc_auc_score(data['y_val'], early_val_proba)
-    late_val_auroc = roc_auc_score(data['y_val'], late_val_proba)
+    early_val_auroc, late_val_auroc = roc_auc_score(data['y_val'], early_val_proba), roc_auc_score(data['y_val'], late_val_proba)
     logging.info(f"Validation AUROC -> Early Fusion: {early_val_auroc:.4f}, Late Fusion: {late_val_auroc:.4f}")
-
-    # Step 3: Select champion and RETRAIN on combined train+val data
-    X_train_full_num = pd.concat([data['X_train_num'], data['X_val_num']])
-    X_train_full_emb = np.vstack([data['X_train_emb'], data['X_val_emb']])
-    y_train_full = pd.concat([data['y_train'], data['y_val']])
 
     if early_val_auroc >= late_val_auroc:
         champion_name = "Early Fusion"
         logging.info(f"Champion Hybrid Model selected: {champion_name}. Retraining on full train+val data...")
-        final_champion_model = build_early_fusion_model(X_train_full_num.values, X_train_full_emb, y_train_full, config)
+        final_champion_model = build_early_fusion_model(pd.concat([data['X_train_num'], data['X_val_num']]).values, np.vstack([data['X_train_emb'], data['X_val_emb']]), pd.concat([data['y_train'], data['y_val']]), config)
         hybrid_test_proba = final_champion_model.predict_proba(np.hstack([data['X_test_num'].values, data['X_test_emb']]))[:, 1]
     else:
         champion_name = "Late Fusion"
@@ -411,11 +446,10 @@ def main():
         final_champion_model = build_late_fusion_model(nm_model, sm_model, data['X_train_num'], data['X_val_num'], data['X_train_emb'], data['X_val_emb'], data['y_train'], data['y_val'], config)
         hybrid_test_proba = final_champion_model.predict_proba(np.column_stack([nm_test_proba, sm_test_proba]))[:, 1]
 
-    # Step 4: Evaluate final model on test set and perform synergy analysis
     hybrid_perf = evaluate_model_performance(data['y_test'], hybrid_test_proba, f"Champion Hybrid ({champion_name})", config)
     
-    primary_thresh, _ = determine_f1_threshold(data['y_val'], sm_val_proba)
-    primary_cohorts = define_analysis_cohorts(nm_test_proba, sm_test_proba, data['y_test'], primary_thresh, primary_thresh)
+    primary_T = determine_histogram_threshold(data['y_val'], nm_val_proba)
+    primary_cohorts = define_analysis_cohorts(nm_test_proba, sm_test_proba, data['y_test'], primary_T)
     synergy_df, _ = analyze_hybrid_synergy(hybrid_test_proba, nm_test_proba, sm_test_proba, primary_cohorts, data['y_test'], config)
     synergy_df.to_csv(os.path.join(config.OUTPUT_DIR, 'table_h2_5_synergy_analysis.csv'), index=False)
     
@@ -423,13 +457,11 @@ def main():
     logging.info("\n" + "="*80 + "\nFINAL RESULTS SUMMARY\n" + "="*80)
     master_perf_df = pd.DataFrame([nm_perf, sm_perf, hybrid_perf])
     logging.info(f"\n--- Master Performance Table (Test Set) ---\n{master_perf_df.to_string(index=False)}")
-    
-    primary_run_dir = os.path.join(config.OUTPUT_DIR, 'sensitivity_optimal_sm_f1')
+    primary_run_dir = os.path.join(config.OUTPUT_DIR, 'sensitivity_histogram_dropoff')
     table_h2_1_path = os.path.join(primary_run_dir, 'table_h2_1_concordance.csv')
     if os.path.exists(table_h2_1_path):
         table_h2_1 = pd.read_csv(table_h2_1_path)
         logging.info(f"\n--- Primary Cohort Sizes (Table H2-1) ---\n{table_h2_1.to_string(index=False)}")
-    
     table_h2_5_path = os.path.join(config.OUTPUT_DIR, 'table_h2_5_synergy_analysis.csv')
     if os.path.exists(table_h2_5_path):
         table_h2_5 = pd.read_csv(table_h2_5_path)
