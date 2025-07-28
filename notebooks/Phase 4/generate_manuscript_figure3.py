@@ -482,21 +482,10 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
 
     save_figure(fig, filename)
 
-# --- NEW PLOTTING FUNCTION ---
-import pandas as pd
-import seaborn as sns
-import matplotlib.patches as mpatches
-import logging
-
-# Assume these are defined elsewhere in your code
-# TASK_LABELS = {'task1': 'Task One', 'task2': 'Task Two', ...}
-# REP_LABELS = {'repA': 'Representation A', 'repB': 'Representation B', ...}
-# REPRESENTATIONS = ['repA', 'repB', ...]
-# def save_figure(fig, filename): ...
-
 def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
     """
     Generate a faceted bar plot comparing task performance for each embedding model.
+    This version correctly plots confidence intervals on all subplots.
     """
     logging.info(f"Generating per-model task comparison plot for {metric}: {title}")
     
@@ -508,26 +497,18 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filena
     best_prompt_indices = df.groupby(['Model', 'Task', 'Representation'], observed=True)[metric].idxmax()
     plot_df = df.loc[best_prompt_indices].copy()
 
-    # Create dummy labels if they are not defined, for the code to be runnable
-    global TASK_LABELS, REP_LABELS, REPRESENTATIONS
-    if 'TASK_LABELS' not in globals():
-        TASK_LABELS = {t: t.replace('_', ' ').title() for t in df['Task'].unique()}
-    if 'REP_LABELS' not in globals():
-        REP_LABELS = {r: r.replace('_', ' ').title() for r in df['Representation'].unique()}
-    if 'REPRESENTATIONS' not in globals():
-        REPRESENTATIONS = sorted(df['Representation'].unique())
-
-
     plot_df['TaskLabel'] = plot_df['Task'].map(TASK_LABELS)
     plot_df['RepresentationLabel'] = plot_df['Representation'].map(REP_LABELS)
 
     # Ensure categorical ordering for consistent plots
     model_names = sorted(plot_df['Model'].unique())
-    task_cats = [TASK_LABELS[t] for t in sorted(plot_df['Task'].unique()) if t in TASK_LABELS]
+    task_cats = [TASK_LABELS[t] for t in TASK_LABELS if t in plot_df['Task'].unique()]
     rep_cats = [REP_LABELS[r] for r in REPRESENTATIONS if r in plot_df['Representation'].unique()]
     
     plot_df['TaskLabel'] = pd.Categorical(plot_df['TaskLabel'], categories=task_cats, ordered=True)
     plot_df['RepresentationLabel'] = pd.Categorical(plot_df['RepresentationLabel'], categories=rep_cats, ordered=True)
+    plot_df = plot_df.sort_values(['Model', 'TaskLabel', 'RepresentationLabel'])
+
 
     # Use a specific palette for the representations
     palette = sns.color_palette('viridis', n_colors=len(rep_cats))
@@ -536,52 +517,56 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filena
     g = sns.catplot(
         data=plot_df, x='TaskLabel', y=metric, hue='RepresentationLabel', col='Model',
         kind='bar', palette=color_map, height=5, aspect=1.8, legend=False,
-        col_wrap=2, sharey=False, col_order=model_names
+        col_wrap=2, sharey=False, col_order=model_names,
+        hue_order=rep_cats # Explicitly set hue order
     )
 
-    # --- START OF FIX ---
-    # Manually add confidence intervals to each facet
-    # Iterate through the model names and the axes together. This is more robust
-    # than parsing the title of each subplot.
+    # --- CORRECTED CONFIDENCE INTERVAL PLOTTING ---
+    # Iterate through each subplot (facet) to add error bars.
     for model_name, ax in zip(g.col_names, g.axes.flat):
         if not ax.patches: continue
 
-        # Filter the dataframe for the current model being plotted on the axis
         ax_df = plot_df[plot_df['Model'] == model_name]
-        
-        # If for some reason there's no data, skip to the next axis
-        if ax_df.empty:
-            continue
+        if ax_df.empty: continue
 
-        hue_order = [h for h in rep_cats if h in ax_df['RepresentationLabel'].unique()]
+        hue_order = rep_cats # Use the same hue order as the plot
         num_hues = len(hue_order)
         bar_width = ax.patches[0].get_width()
         
-        x_labels = [label.get_text() for label in ax.get_xticklabels()]
+        # --- FIX ---
+        # The 'g.x_names' attribute was incorrect. The most reliable way to get the
+        # x-axis categories in the correct order is to use the 'task_cats' list
+        # that we used to define the pd.Categorical type for the x-axis.
+        x_labels = task_cats
         x_pos_map = {label: i for i, label in enumerate(x_labels)}
 
+        # Iterate through the data for this facet and draw the error bars
         for _, row in ax_df.iterrows():
             task_label, rep_label = row['TaskLabel'], row['RepresentationLabel']
             if task_label in x_pos_map and rep_label in hue_order:
                 x_pos_group = x_pos_map[task_label]
                 hue_index = hue_order.index(rep_label)
                 
-                # Calculate the exact x-coordinate of the bar's center
                 bar_offset = (hue_index - (num_hues - 1) / 2) * bar_width
                 x_coord = x_pos_group + bar_offset
                 
                 y_val = row[metric]
-                # Matplotlib's errorbar function expects error values relative to the data point
-                y_err = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
-                
-                ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=3, elinewidth=1, zorder=10)
+                ci_lower, ci_upper = row[f'{metric}_CI_Lower'], row[f'{metric}_CI_Upper']
+
+                if pd.notna(ci_lower) and pd.notna(ci_upper):
+                    y_err = [[y_val - ci_lower], [ci_upper - y_val]]
+                    ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=3, elinewidth=1, zorder=10)
         
-        # Set y-axis limits to zoom in on the relevant performance range
+        # Adjust aesthetics for each subplot
         if not ax_df.empty and ax_df[metric].min() > 0.4:
-            ax.set_ylim(0.5, max(1.0, ax_df[f'{metric}_CI_Upper'].max() * 1.05))
-        ax.tick_params(axis='x', rotation=45, labelsize=12)
-        ax.tick_params(axis='y', labelsize=12)
-    # --- END OF FIX ---
+            y_max_ci = ax_df[f'{metric}_CI_Upper'].max()
+            ax.set_ylim(0.5, max(1.0, y_max_ci * 1.05) if pd.notna(y_max_ci) else 1.0)
+        
+        # Rotate all x-tick labels for consistency
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+        ax.tick_params(axis='x', labelsize=10)
+        ax.tick_params(axis='y', labelsize=10)
+
 
     g.fig.suptitle(title, fontsize=18, y=1.03)
     g.set_axis_labels("Prediction Task", f'Test Set {metric} (with 95% CI)')
@@ -590,7 +575,6 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filena
     legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in rep_cats]
     g.fig.legend(handles=legend_handles, title="Representation", bbox_to_anchor=(1.0, 0.5), loc="center left")
     g.fig.tight_layout(rect=[0, 0, 0.92, 1]) 
-    
 
     save_figure(g.fig, filename)
 

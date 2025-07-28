@@ -31,7 +31,7 @@ class Config:
     
     # --- XGBoost & Optuna Settings ---
     USE_GPU = True
-    TARGET_VARIABLE = 'mort_hosp'
+    TARGET_VARIABLE = 'intervention_vaso'
     TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso']
     SEED = 42
     N_OPTUNA_TRIALS = 15

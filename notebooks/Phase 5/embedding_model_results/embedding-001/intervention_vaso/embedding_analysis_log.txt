@@ -1,0 +1,363 @@
+2025-07-26 18:34:32,587 [INFO] - Starting analysis for TARGET_VARIABLE: intervention_vaso
+2025-07-26 18:34:32,587 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P0
+================================================================================
+2025-07-26 18:34:32,588 [INFO] - Loading data for experimental arm: F1_P0...
+2025-07-26 18:34:32,771 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 18:36:00,795 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 18:36:22,076 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 18:37:21,960 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 18:37:21,966 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 18:37:22,019 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 18:37:22,048 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 18:37:22,069 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 18:37:22,073 [INFO] - Creating new Optuna study for F1_P0...
+2025-07-26 18:39:56,135 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F1_P0.pkl
+2025-07-26 18:39:56,136 [INFO] - Training final model on combined train+validation data...
+2025-07-26 18:40:29,836 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P0 ---
+2025-07-26 18:40:32,069 [INFO] - Test AUROC for F1_P0: 0.6630 (95% CI: 0.6249-0.6986)
+2025-07-26 18:40:32,469 [INFO] - Model for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F1_P0.pkl
+2025-07-26 18:40:32,469 [INFO] - Results for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F1_P0.pkl
+2025-07-26 18:40:32,469 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P1
+================================================================================
+2025-07-26 18:40:32,469 [INFO] - Loading data for experimental arm: F1_P1...
+2025-07-26 18:40:32,680 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 18:44:23,055 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 18:44:46,901 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 18:45:36,219 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 18:45:36,224 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 18:45:36,282 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 18:45:36,328 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 18:45:36,383 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 18:45:36,403 [INFO] - Creating new Optuna study for F1_P1...
+2025-07-26 18:48:27,476 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F1_P1.pkl
+2025-07-26 18:48:27,477 [INFO] - Training final model on combined train+validation data...
+2025-07-26 18:48:32,363 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P1 ---
+2025-07-26 18:48:34,410 [INFO] - Test AUROC for F1_P1: 0.6579 (95% CI: 0.6200-0.6973)
+2025-07-26 18:48:34,429 [INFO] - Model for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F1_P1.pkl
+2025-07-26 18:48:34,430 [INFO] - Results for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F1_P1.pkl
+2025-07-26 18:48:34,430 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P2
+================================================================================
+2025-07-26 18:48:34,430 [INFO] - Loading data for experimental arm: F1_P2...
+2025-07-26 18:48:34,505 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 18:50:28,634 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 18:50:45,729 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 18:51:29,886 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 18:51:29,891 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 18:51:29,950 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 18:51:29,969 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 18:51:29,994 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 18:51:29,996 [INFO] - Creating new Optuna study for F1_P2...
+2025-07-26 18:54:07,382 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F1_P2.pkl
+2025-07-26 18:54:07,383 [INFO] - Training final model on combined train+validation data...
+2025-07-26 18:54:16,838 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P2 ---
+2025-07-26 18:54:18,813 [INFO] - Test AUROC for F1_P2: 0.6805 (95% CI: 0.6432-0.7205)
+2025-07-26 18:54:18,835 [INFO] - Model for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F1_P2.pkl
+2025-07-26 18:54:18,836 [INFO] - Results for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F1_P2.pkl
+2025-07-26 18:54:18,836 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P3
+================================================================================
+2025-07-26 18:54:18,836 [INFO] - Loading data for experimental arm: F1_P3...
+2025-07-26 18:54:18,846 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 18:55:37,664 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 18:55:57,484 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 18:56:46,403 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 18:56:46,409 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 18:56:46,446 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 18:56:46,472 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 18:56:46,499 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 18:56:46,509 [INFO] - Creating new Optuna study for F1_P3...
+2025-07-26 18:59:03,636 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F1_P3.pkl
+2025-07-26 18:59:03,637 [INFO] - Training final model on combined train+validation data...
+2025-07-26 18:59:17,109 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P3 ---
+2025-07-26 18:59:19,023 [INFO] - Test AUROC for F1_P3: 0.6430 (95% CI: 0.6038-0.6808)
+2025-07-26 18:59:19,072 [INFO] - Model for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F1_P3.pkl
+2025-07-26 18:59:19,072 [INFO] - Results for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F1_P3.pkl
+2025-07-26 18:59:19,072 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P4
+================================================================================
+2025-07-26 18:59:19,072 [INFO] - Loading data for experimental arm: F1_P4...
+2025-07-26 18:59:19,083 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:00:37,529 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:00:56,861 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:01:47,250 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:01:47,257 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:01:47,339 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:01:47,369 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:01:47,401 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:01:47,412 [INFO] - Creating new Optuna study for F1_P4...
+2025-07-26 19:04:14,421 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F1_P4.pkl
+2025-07-26 19:04:14,421 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:04:41,649 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P4 ---
+2025-07-26 19:04:43,882 [INFO] - Test AUROC for F1_P4: 0.6653 (95% CI: 0.6281-0.7040)
+2025-07-26 19:04:43,888 [INFO] - Model for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F1_P4.pkl
+2025-07-26 19:04:43,888 [INFO] - Results for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F1_P4.pkl
+2025-07-26 19:04:43,888 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F1_P5
+================================================================================
+2025-07-26 19:04:43,888 [INFO] - Loading data for experimental arm: F1_P5...
+2025-07-26 19:04:43,900 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:06:57,808 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:07:29,650 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:08:14,695 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:08:14,700 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:08:14,742 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:08:14,780 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:08:14,836 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:08:14,838 [INFO] - Creating new Optuna study for F1_P5...
+2025-07-26 19:10:29,025 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F1_P5.pkl
+2025-07-26 19:10:29,026 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:10:58,025 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P5 ---
+2025-07-26 19:11:00,052 [INFO] - Test AUROC for F1_P5: 0.6878 (95% CI: 0.6524-0.7237)
+2025-07-26 19:11:00,091 [INFO] - Model for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F1_P5.pkl
+2025-07-26 19:11:00,091 [INFO] - Results for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F1_P5.pkl
+2025-07-26 19:11:00,091 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F2_P0
+================================================================================
+2025-07-26 19:11:00,091 [INFO] - Loading data for experimental arm: F2_P0...
+2025-07-26 19:11:00,106 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:13:04,651 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:13:21,277 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:14:11,426 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:14:11,431 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:14:11,501 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:14:11,517 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:14:11,530 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:14:11,531 [INFO] - Creating new Optuna study for F2_P0...
+2025-07-26 19:16:52,522 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F2_P0.pkl
+2025-07-26 19:16:52,523 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:16:59,300 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P0 ---
+2025-07-26 19:17:01,350 [INFO] - Test AUROC for F2_P0: 0.6418 (95% CI: 0.6039-0.6815)
+2025-07-26 19:17:01,389 [INFO] - Model for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F2_P0.pkl
+2025-07-26 19:17:01,389 [INFO] - Results for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F2_P0.pkl
+2025-07-26 19:17:01,390 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F2_P1
+================================================================================
+2025-07-26 19:17:01,390 [INFO] - Loading data for experimental arm: F2_P1...
+2025-07-26 19:17:01,403 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:19:23,349 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:19:38,878 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:20:25,234 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:20:25,239 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:20:25,275 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:20:25,321 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:20:25,350 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:20:25,350 [INFO] - Creating new Optuna study for F2_P1...
+2025-07-26 19:22:17,892 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F2_P1.pkl
+2025-07-26 19:22:17,893 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:22:47,676 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P1 ---
+2025-07-26 19:22:50,005 [INFO] - Test AUROC for F2_P1: 0.6767 (95% CI: 0.6398-0.7129)
+2025-07-26 19:22:50,012 [INFO] - Model for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F2_P1.pkl
+2025-07-26 19:22:50,013 [INFO] - Results for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F2_P1.pkl
+2025-07-26 19:22:50,013 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F2_P2
+================================================================================
+2025-07-26 19:22:50,013 [INFO] - Loading data for experimental arm: F2_P2...
+2025-07-26 19:22:50,024 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:25:28,797 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:25:50,174 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:26:34,197 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:26:34,203 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:26:34,237 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:26:34,247 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:26:34,267 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:26:34,304 [INFO] - Creating new Optuna study for F2_P2...
+2025-07-26 19:29:20,289 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F2_P2.pkl
+2025-07-26 19:29:20,289 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:29:44,678 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P2 ---
+2025-07-26 19:29:46,795 [INFO] - Test AUROC for F2_P2: 0.6597 (95% CI: 0.6219-0.7002)
+2025-07-26 19:29:46,817 [INFO] - Model for F2_P2 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F2_P2.pkl
+2025-07-26 19:29:46,817 [INFO] - Results for F2_P2 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F2_P2.pkl
+2025-07-26 19:29:46,817 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F2_P3
+================================================================================
+2025-07-26 19:29:46,818 [INFO] - Loading data for experimental arm: F2_P3...
+2025-07-26 19:29:46,833 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:31:07,531 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:31:41,278 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:32:27,105 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:32:27,110 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:32:27,193 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:32:27,224 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:32:27,292 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:32:27,319 [INFO] - Creating new Optuna study for F2_P3...
+2025-07-26 19:34:34,922 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F2_P3.pkl
+2025-07-26 19:34:34,922 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:35:08,838 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P3 ---
+2025-07-26 19:35:10,908 [INFO] - Test AUROC for F2_P3: 0.6805 (95% CI: 0.6411-0.7186)
+2025-07-26 19:35:10,914 [INFO] - Model for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F2_P3.pkl
+2025-07-26 19:35:10,914 [INFO] - Results for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F2_P3.pkl
+2025-07-26 19:35:10,915 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F2_P4
+================================================================================
+2025-07-26 19:35:10,915 [INFO] - Loading data for experimental arm: F2_P4...
+2025-07-26 19:35:10,950 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:39:31,020 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:39:48,021 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:40:37,069 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:40:37,075 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:40:37,164 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:40:37,208 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:40:37,225 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:40:37,237 [INFO] - Creating new Optuna study for F2_P4...
+2025-07-26 19:43:45,511 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F2_P4.pkl
+2025-07-26 19:43:45,512 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:44:08,628 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P4 ---
+2025-07-26 19:44:10,599 [INFO] - Test AUROC for F2_P4: 0.6848 (95% CI: 0.6462-0.7230)
+2025-07-26 19:44:10,623 [INFO] - Model for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F2_P4.pkl
+2025-07-26 19:44:10,623 [INFO] - Results for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F2_P4.pkl
+2025-07-26 19:44:10,623 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F2_P5
+================================================================================
+2025-07-26 19:44:10,623 [INFO] - Loading data for experimental arm: F2_P5...
+2025-07-26 19:44:10,687 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:45:51,916 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:46:10,722 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:46:55,500 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:46:55,505 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:46:55,579 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:46:55,601 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:46:55,623 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:46:55,623 [INFO] - Creating new Optuna study for F2_P5...
+2025-07-26 19:49:53,607 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F2_P5.pkl
+2025-07-26 19:49:53,607 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:50:23,832 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P5 ---
+2025-07-26 19:50:25,830 [INFO] - Test AUROC for F2_P5: 0.6561 (95% CI: 0.6177-0.6961)
+2025-07-26 19:50:25,880 [INFO] - Model for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F2_P5.pkl
+2025-07-26 19:50:25,881 [INFO] - Results for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F2_P5.pkl
+2025-07-26 19:50:25,881 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F3_P0
+================================================================================
+2025-07-26 19:50:25,881 [INFO] - Loading data for experimental arm: F3_P0...
+2025-07-26 19:50:25,892 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:52:34,485 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:52:51,600 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:53:36,460 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:53:36,466 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:53:36,523 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:53:36,560 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:53:36,597 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:53:36,606 [INFO] - Creating new Optuna study for F3_P0...
+2025-07-26 19:56:23,041 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F3_P0.pkl
+2025-07-26 19:56:23,041 [INFO] - Training final model on combined train+validation data...
+2025-07-26 19:56:28,665 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P0 ---
+2025-07-26 19:56:30,815 [INFO] - Test AUROC for F3_P0: 0.6750 (95% CI: 0.6403-0.7100)
+2025-07-26 19:56:30,879 [INFO] - Model for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F3_P0.pkl
+2025-07-26 19:56:30,879 [INFO] - Results for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F3_P0.pkl
+2025-07-26 19:56:30,879 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F3_P1
+================================================================================
+2025-07-26 19:56:30,879 [INFO] - Loading data for experimental arm: F3_P1...
+2025-07-26 19:56:30,890 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 19:57:47,098 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 19:58:07,261 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 19:58:52,102 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 19:58:52,113 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 19:58:52,167 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 19:58:52,177 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 19:58:52,219 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 19:58:52,240 [INFO] - Creating new Optuna study for F3_P1...
+2025-07-26 20:00:35,237 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F3_P1.pkl
+2025-07-26 20:00:35,238 [INFO] - Training final model on combined train+validation data...
+2025-07-26 20:01:06,744 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P1 ---
+2025-07-26 20:01:08,894 [INFO] - Test AUROC for F3_P1: 0.6695 (95% CI: 0.6336-0.7041)
+2025-07-26 20:01:08,901 [INFO] - Model for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F3_P1.pkl
+2025-07-26 20:01:08,901 [INFO] - Results for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F3_P1.pkl
+2025-07-26 20:01:08,901 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F3_P2
+================================================================================
+2025-07-26 20:01:08,901 [INFO] - Loading data for experimental arm: F3_P2...
+2025-07-26 20:01:08,912 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 20:03:12,802 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 20:03:53,164 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 20:04:42,026 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 20:04:42,032 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 20:04:42,106 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 20:04:42,140 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 20:04:42,164 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 20:04:42,192 [INFO] - Creating new Optuna study for F3_P2...
+2025-07-26 20:06:07,738 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F3_P2.pkl
+2025-07-26 20:06:07,738 [INFO] - Training final model on combined train+validation data...
+2025-07-26 20:06:13,769 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P2 ---
+2025-07-26 20:06:15,853 [INFO] - Test AUROC for F3_P2: 0.6501 (95% CI: 0.6117-0.6879)
+2025-07-26 20:06:15,856 [INFO] - Model for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F3_P2.pkl
+2025-07-26 20:06:15,856 [INFO] - Results for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F3_P2.pkl
+2025-07-26 20:06:15,857 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F3_P3
+================================================================================
+2025-07-26 20:06:15,857 [INFO] - Loading data for experimental arm: F3_P3...
+2025-07-26 20:06:15,869 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 20:08:47,037 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 20:09:06,413 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 20:10:00,344 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 20:10:00,349 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 20:10:00,405 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 20:10:00,446 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 20:10:00,503 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 20:10:00,503 [INFO] - Creating new Optuna study for F3_P3...
+2025-07-26 20:13:26,196 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F3_P3.pkl
+2025-07-26 20:13:26,196 [INFO] - Training final model on combined train+validation data...
+2025-07-26 20:13:37,186 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P3 ---
+2025-07-26 20:13:39,458 [INFO] - Test AUROC for F3_P3: 0.6729 (95% CI: 0.6364-0.7071)
+2025-07-26 20:13:39,495 [INFO] - Model for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F3_P3.pkl
+2025-07-26 20:13:39,495 [INFO] - Results for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F3_P3.pkl
+2025-07-26 20:13:39,495 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F3_P4
+================================================================================
+2025-07-26 20:13:39,496 [INFO] - Loading data for experimental arm: F3_P4...
+2025-07-26 20:13:39,507 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 20:14:49,413 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 20:15:08,630 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 20:15:54,926 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 20:15:54,935 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 20:15:55,007 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 20:15:55,049 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 20:15:55,076 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 20:15:55,100 [INFO] - Creating new Optuna study for F3_P4...
+2025-07-26 20:19:25,263 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F3_P4.pkl
+2025-07-26 20:19:25,264 [INFO] - Training final model on combined train+validation data...
+2025-07-26 20:19:46,860 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P4 ---
+2025-07-26 20:19:49,200 [INFO] - Test AUROC for F3_P4: 0.6598 (95% CI: 0.6233-0.6972)
+2025-07-26 20:19:49,216 [INFO] - Model for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F3_P4.pkl
+2025-07-26 20:19:49,216 [INFO] - Results for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F3_P4.pkl
+2025-07-26 20:19:49,217 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: F3_P5
+================================================================================
+2025-07-26 20:19:49,217 [INFO] - Loading data for experimental arm: F3_P5...
+2025-07-26 20:19:49,228 [INFO] - Loading train embeddings for 14825 samples...
+2025-07-26 20:20:40,987 [INFO] - Loading val embeddings for 2118 samples...
+2025-07-26 20:21:00,509 [INFO] - Loading test embeddings for 5648 samples...
+2025-07-26 20:21:45,005 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
+2025-07-26 20:21:45,012 [INFO] - Handling prevalent cases for target: intervention_vaso
+2025-07-26 20:21:45,041 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
+2025-07-26 20:21:45,060 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
+2025-07-26 20:21:45,087 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
+2025-07-26 20:21:45,127 [INFO] - Creating new Optuna study for F3_P5...
+2025-07-26 20:23:01,883 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\optuna_study_F3_P5.pkl
+2025-07-26 20:23:01,883 [INFO] - Training final model on combined train+validation data...
+2025-07-26 20:23:05,709 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P5 ---
+2025-07-26 20:23:07,757 [INFO] - Test AUROC for F3_P5: 0.6719 (95% CI: 0.6368-0.7069)
+2025-07-26 20:23:07,765 [INFO] - Model for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\model_F3_P5.pkl
+2025-07-26 20:23:07,765 [INFO] - Results for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/embedding-001\intervention_vaso\results_F3_P5.pkl
+2025-07-26 20:23:07,765 [INFO] - 
+Full analysis completed in 1.81 hours

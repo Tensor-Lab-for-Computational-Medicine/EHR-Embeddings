@@ -5,7 +5,7 @@ Configuration for Phase V: Training XGBoost on Text Embeddings.
 import os
 
 class Config:
-    TARGET_VARIABLE = 'intervention_vaso'
+    TARGET_VARIABLE = 'los_7'
     TARGET_VARIABLES = ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso']
     # --- Paths ---
     # Input directory for the embeddings generated in Phase 4
