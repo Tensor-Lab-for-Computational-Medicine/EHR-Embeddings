@@ -15,11 +15,15 @@ Core Features:
 - XGBoost-compatible output with zero missing values
 """
 
+# Configure NumExpr to use maximum cores available before any imports
+import os
+os.environ['NUMEXPR_MAX_THREADS'] = str(os.cpu_count())
+print(f"Setting NUMEXPR_MAX_THREADS to {os.cpu_count()} cores")
+
 import pandas as pd
 import numpy as np
 import logging
 import time
-import os
 import pickle
 from scipy.stats import linregress
 from sklearn.preprocessing import StandardScaler, LabelEncoder

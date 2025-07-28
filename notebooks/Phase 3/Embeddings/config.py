@@ -18,7 +18,7 @@ SERIALIZED_DATA_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
 
 # The base output directory. The script will create a model-specific
 # sub-folder inside this directory (e.g., 'embeddings_models_text-embedding-004').
-BASE_OUTPUT_DIR = 'notebooks/Phase 4'
+BASE_OUTPUT_DIR = 'notebooks/Phase 4/Classification_Embeddings'
 
 
 # --- Google AI Studio API Settings ---
@@ -27,18 +27,18 @@ BASE_OUTPUT_DIR = 'notebooks/Phase 4'
 # Simply change this line to switch models.
 # Example 1: 'models/text-embedding-004' (Latest Stable)
 # Example 2: 'models/gemini-embedding-exp-03-07' (Experimental)
-MODEL_NAME = 'models/gemini-embedding-001'
+MODEL_NAME = 'models/text-embedding-004'
 
 # The task type helps the model produce optimized embeddings.
 # 'RETRIEVAL_DOCUMENT' is ideal for document representation.
-TASK_TYPE = 'RETRIEVAL_DOCUMENT'
+TASK_TYPE = 'CLASSIFICATION'
 
 
 # --- Script Settings ---
 
 # The number of documents to send in a single API request.
 # 100 is a safe and efficient value for current models.
-BATCH_SIZE = 1
+BATCH_SIZE = 128
 
 # Set to True to run the script on only ONE BATCH to test the full process.
 # Set to False to run on all files.
@@ -52,4 +52,4 @@ RATE_LIMIT_DELAY = 0
 
 # The total number of workers you plan to run in parallel.
 # Ensure this matches the number of terminals you open to run the script.
-TOTAL_WORKERS = 3
+TOTAL_WORKERS = 1

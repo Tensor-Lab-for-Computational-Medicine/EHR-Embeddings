@@ -1,23 +1,30 @@
-# config_h2.py
 """
 Configuration for H2 Analysis: Hybrid Models and Orthogonality Testing
+Updated to use text-embedding-005 model with minimal structure changes
 """
 import os
 
 class ConfigH2:
     def __init__(self):
-        # Get the root directory (go up from Phase 6 to root)
+        # Get the root directory - we're in Phase 6, go up to notebooks
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.ROOT_DIR = os.path.abspath(os.path.join(current_dir, '..', '..'))
+        # Assuming this file is in /notebooks/Phase 6 - H2 Analysis/
+        self.NOTEBOOKS_DIR = os.path.abspath(os.path.join(current_dir, '..'))
+        self.ROOT_DIR = os.path.abspath(os.path.join(self.NOTEBOOKS_DIR, '..'))
         
-        # --- Paths (all relative to root directory) ---
+        # --- Paths (keeping same structure as before) ---
         # Baseline numerical model outputs (Phase 1-2)
-        self.BASELINE_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 1 and 2', 'phase_1_outputs')
-        self.BASELINE_MODEL_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'model_1_xgboost_baseline.pkl')
-        self.BASELINE_RESULTS_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'results_xgboost_baseline.pkl')
+        self.BASELINE_MODEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 1 and 2', 'phase_1_outputs')
+        # Check if there's a readmission-specific baseline model, otherwise use generic one
+        self.BASELINE_MODEL_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'readmission_30', 'model_1_xgboost_baseline.pkl')
+        self.BASELINE_RESULTS_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'readmission_30', 'results_xgboost_baseline.pkl')
+        # Fallback to generic model if readmission-specific doesn't exist
+        if not os.path.exists(self.BASELINE_MODEL_PATH):
+            self.BASELINE_MODEL_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'model_1_xgboost_baseline.pkl')
+            self.BASELINE_RESULTS_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'results_xgboost_baseline.pkl')
         
-        # Numerical feature data paths
-        self.NUMERICAL_DATA_PREFIX = 'preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42'
+        # Numerical feature data paths - using readmission_30 files
+        self.NUMERICAL_DATA_PREFIX = 'preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42'
         self.X_TRAIN_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_train.pkl')
         self.X_VAL_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_val.pkl')
         self.X_TEST_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_test.pkl')
@@ -25,25 +32,28 @@ class ConfigH2:
         self.Y_VAL_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_y_val.pkl')
         self.Y_TEST_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_y_test.pkl')
         
-        # Champion embedding model (identified as F3_P2 from text-embedding-004)
-        self.CHAMPION_EMBEDDING_MODEL = 'text-embedding-004'
-        self.CHAMPION_ARM = 'F3_P2'
-        self.EMBEDDING_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 5', 'embedding_model_results')
+        # --- Champion embedding model using text-embedding-005 ---
+        self.CHAMPION_EMBEDDING_MODEL = 'text-embedding-005'
+        self.CHAMPION_ARM = 'F2_P5'  # Best performing arm for readmission_30
+        
+        # --- Embedding model paths - text-embedding-005 models in Phase 5 ---
+        self.EMBEDDING_MODEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 5', 'embedding_model_results', 'text-embedding-005', 'readmission_30')
         self.CHAMPION_MODEL_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'model_{self.CHAMPION_ARM}.pkl')
         self.CHAMPION_RESULTS_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'results_{self.CHAMPION_ARM}.pkl')
         
-        # Embedding data paths for champion model
-        self.EMBEDDING_DATA_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 4', 'phase_4_embeddings', self.CHAMPION_ARM)
+        # --- Embedding data paths - text-embedding-005 embeddings in Phase 4 ---
+        self.EMBEDDING_DATA_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 4', 'embeddings_text-embedding-005', 'F2_P5')
         
-        # Label data paths
-        self.LABEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 3', 'phase_3_serialized_data')
+        # Label data paths (unchanged - same labels for both 004 and 005)
+        self.LABEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 3', 'phase_3_serialized_data')
         
-        # Output directory for H2 analysis (local to current directory)
-        self.OUTPUT_DIR = 'h2_results'
+        # Output directory for H2 analysis (separate for 005)
+        self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results_005_readmission')
         
         # --- Experiment Settings ---
-        self.TARGET_VARIABLE = 'mort_hosp'
+        self.TARGET_VARIABLE = 'readmission_30'
         self.SEED = 42
+        self.CLASSIFICATION_THRESHOLD = 0.5
         
         # Hyperparameter tuning settings
         self.N_OPTUNA_TRIALS = 20
@@ -53,6 +63,27 @@ class ConfigH2:
         self.CORRELATION_THRESHOLD = 0.4  # H2 threshold for "weakly correlated"
         self.N_BOOTSTRAP = 1000
         self.CONFIDENCE_LEVEL = 0.95
+        
+        # =============================================================================
+        # SUBGROUP DISCOVERY SETTINGS (NEW FOR H2b ANALYSIS)
+        # =============================================================================
+        # Enable/disable subgroup discovery
+        self.USE_SUBGROUP_DISCOVERY = True
+        
+        # Subgroup Discovery Algorithm Parameters
+        self.SUBGROUP_MIN_SUPPORT = 0.05
+        self.SUBGROUP_MAX_DEPTH = 3
+        self.SUBGROUP_TOP_K = 10
+        
+        # Quality thresholds for H2b hypothesis evaluation
+        self.SUBGROUP_MIN_QUALITY = 0.1
+        self.SUBGROUP_MIN_COVERAGE_PCT = 5
+        self.SUBGROUP_MIN_LIFT = 1.5
+        
+        # Number of analyses that must yield meaningful patterns to support H2b
+        self.SUBGROUP_MIN_MEANINGFUL_ANALYSES = 2
+        
+        # =============================================================================
         
         # Debugging/testing
         self.DRY_RUN = False
@@ -76,19 +107,14 @@ class ConfigH2:
             self.CHAMPION_RESULTS_PATH
         ]
         
-        print(f"🔍 Checking files from root directory: {self.ROOT_DIR}")
+        print(f"[INFO] Checking files from notebooks directory: {self.NOTEBOOKS_DIR}")
         missing_files = []
         for file_path in required_files:
             if not os.path.exists(file_path):
                 missing_files.append(file_path)
+                print(f"[ERROR] Missing: {os.path.relpath(file_path, self.NOTEBOOKS_DIR)}")
             else:
-                print(f"✅ Found: {os.path.relpath(file_path, self.ROOT_DIR)}")
-        
-        if missing_files:
-            print(f"❌ Missing files:")
-            for file_path in missing_files:
-                print(f"   - {os.path.relpath(file_path, self.ROOT_DIR)}")
-            raise FileNotFoundError(f"Missing required files: {[os.path.relpath(f, self.ROOT_DIR) for f in missing_files]}")
+                print(f"[SUCCESS] Found: {os.path.relpath(file_path, self.NOTEBOOKS_DIR)}")
         
         # Check embedding directories exist
         embedding_dirs = [
@@ -99,14 +125,152 @@ class ConfigH2:
         for dir_path in embedding_dirs:
             if not os.path.isdir(dir_path):
                 missing_dirs.append(dir_path)
+                print(f"[ERROR] Missing directory: {os.path.relpath(dir_path, self.NOTEBOOKS_DIR)}")
             else:
-                print(f"✅ Found directory: {os.path.relpath(dir_path, self.ROOT_DIR)}")
+                # Count files in directory
+                num_files = len([f for f in os.listdir(dir_path) if f.endswith('.npy')])
+                print(f"[SUCCESS] Found directory: {os.path.relpath(dir_path, self.NOTEBOOKS_DIR)} ({num_files} embeddings)")
+        
+        # Check label files
+        label_files = ['train_labels.csv', 'val_labels.csv', 'test_labels.csv']
+        for label_file in label_files:
+            label_path = os.path.join(self.LABEL_DIR, label_file)
+            if os.path.exists(label_path):
+                print(f"[SUCCESS] Found label file: {label_file}")
+            else:
+                print(f"[ERROR] Missing label file: {label_file}")
+                missing_files.append(label_path)
         
         if missing_dirs:
-            print(f"❌ Missing directories:")
-            for dir_path in missing_dirs:
-                print(f"   - {os.path.relpath(dir_path, self.ROOT_DIR)}")
-            raise FileNotFoundError(f"Missing embedding directories: {[os.path.relpath(d, self.ROOT_DIR) for d in missing_dirs]}")
+            raise FileNotFoundError(f"Missing embedding directories: {[os.path.relpath(d, self.NOTEBOOKS_DIR) for d in missing_dirs]}")
         
-        print("✅ All required files and directories found!")
-        return True
+        if missing_files:
+            print(f"\n[WARNING]  Warning: {len(missing_files)} files are missing.")
+            print("The analysis may fail if these are required.")
+        else:
+            print("\n[SUCCESS] All required files and directories found!")
+        
+        return len(missing_files) == 0
+    
+    def check_data_leakage(self):
+        """Check for potential data leakage by examining file sizes and dates"""
+        import datetime
+        
+        print("\n[INFO] Checking for potential data leakage indicators...")
+        
+        # Check if X_train exists
+        if not os.path.exists(self.X_TRAIN_NUM_PATH):
+            print("[WARNING]  WARNING: X_train file not found!")
+            return True
+        
+        # Check file sizes to see if they make sense
+        try:
+            train_size = os.path.getsize(self.X_TRAIN_NUM_PATH) / (1024*1024)  # MB
+            val_size = os.path.getsize(self.X_VAL_NUM_PATH) / (1024*1024)
+            test_size = os.path.getsize(self.X_TEST_NUM_PATH) / (1024*1024)
+            
+            print(f"[DATA] Data file sizes:")
+            print(f"   X_train: {train_size:.1f} MB")
+            print(f"   X_val: {val_size:.1f} MB")
+            print(f"   X_test: {test_size:.1f} MB")
+            
+            # Check modification times
+            train_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.X_TRAIN_NUM_PATH))
+            val_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.X_VAL_NUM_PATH))
+            model_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.BASELINE_MODEL_PATH))
+            
+            print(f"\n[TIME] File modification times:")
+            print(f"   X_train: {train_time}")
+            print(f"   X_val: {val_time}")
+            print(f"   Model: {model_time}")
+            
+            # If model was modified after data files, it might be OK
+            if model_time > max(train_time, val_time):
+                print("\n[SUCCESS] Model was trained after data files were created")
+            else:
+                print("\n[WARNING]  WARNING: Model file is older than data files!")
+                
+        except Exception as e:
+            print(f"Error checking files: {e}")
+            
+        print("\n[NOTE] Note: The 100% validation AUROC suggests the model may have been:")
+        print("   1. Trained on combined train+val data")
+        print("   2. Evaluated on data it was trained on")
+        print("   3. Subject to target leakage through feature engineering")
+        
+        return False
+    
+    def validate_subgroup_discovery(self):
+        """Check if subgroup discovery can be used"""
+        try:
+            import pysubgroup
+            print("\n[SUCCESS] pysubgroup is installed - Subgroup Discovery analysis available")
+            
+            if self.USE_SUBGROUP_DISCOVERY:
+                print("   Subgroup Discovery is ENABLED")
+                print(f"   - Min support: {self.SUBGROUP_MIN_SUPPORT*100:.0f}% of population")
+                print(f"   - Max rule depth: {self.SUBGROUP_MAX_DEPTH} conditions")
+                print(f"   - Top K patterns: {self.SUBGROUP_TOP_K}")
+                print(f"   - Min quality (WRAcc): {self.SUBGROUP_MIN_QUALITY}")
+                print(f"   - Min lift: {self.SUBGROUP_MIN_LIFT}x baseline")
+            else:
+                print("   Subgroup Discovery is DISABLED in config (using univariate analysis)")
+            
+            return True
+            
+        except ImportError:
+            print("\n[WARNING]  pysubgroup not installed - will fall back to univariate analysis")
+            print("   To enable Subgroup Discovery: pip install pysubgroup")
+            return False
+
+# Main function for testing/debugging
+if __name__ == "__main__":
+    print("="*60)
+    print("H2 CONFIGURATION DEBUG")
+    print("="*60)
+    
+    config = ConfigH2()
+    
+    print("\n📁 KEY PATHS:")
+    print(f"   Notebooks dir: {config.NOTEBOOKS_DIR}")
+    print(f"   Target variable: {config.TARGET_VARIABLE}")
+    print(f"   Champion arm: {config.CHAMPION_ARM}")
+    print(f"   Embedding model: {config.CHAMPION_EMBEDDING_MODEL}")
+    
+    print("\n" + "="*60)
+    print("PATH VALIDATION")
+    print("="*60)
+    all_valid = config.validate_paths()
+    
+    if all_valid:
+        print("\n" + "="*60)
+        print("DATA LEAKAGE CHECK")
+        print("="*60)
+        config.check_data_leakage()
+        
+        print("\n" + "="*60)
+        print("SUBGROUP DISCOVERY CHECK")
+        print("="*60)
+        config.validate_subgroup_discovery()
+    else:
+        print("\n[WARNING]  Fix missing files before proceeding with analysis")
+    
+    # Additional debugging: check if we need to load labels separately
+    print("\n" + "="*60)
+    print("LABEL EXTRACTION INFO")
+    print("="*60)
+    print("[INFO] Note: Since TARGET_VARIABLE is 'readmission_30' but numerical data is from 'mort_hosp',")
+    print("   you'll need to extract readmission_30 labels from the CSV files in your analysis script:")
+    print("\n   import pandas as pd")
+    print("   train_labels = pd.read_csv(os.path.join(config.LABEL_DIR, 'train_labels.csv'))")
+    print("   y_train = train_labels['readmission_30'].values")
+    print("   # Repeat for val and test sets")
+    
+    print("\n" + "="*60)
+    print("READY STATUS")
+    print("="*60)
+    if all_valid:
+        print("[SUCCESS] Configuration is ready for H2 analysis!")
+        print(f"   Output will be saved to: {config.OUTPUT_DIR}")
+    else:
+        print("[ERROR] Configuration has issues that need to be resolved")

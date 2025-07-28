@@ -12,8 +12,10 @@ import time
 import os
 import pickle
 from sklearn.metrics import roc_auc_score, average_precision_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.calibration import CalibratedClassifierCV
 from tqdm import tqdm
-from config_embedding_analysis_text_embedding_large import Config
+from config_embedding_analysis_text_embedding_005 import Config
 
 # =============================================================================
 # DATA HANDLING
@@ -90,9 +92,10 @@ def evaluate_with_uncertainty(y_true, y_pred_proba, y_pred=None):
 # MODEL TRAINING (Adapted for multiple arms)
 # =============================================================================
 
-def tune_xgboost(X_train, y_train, X_val, y_val, config, exp_arm):
+def tune_xgboost(X_train, y_train, X_val, y_val, config, exp_arm, val_cal_fraction):
     """Tune XGBoost hyperparameters using Optuna for a specific experimental arm."""
-    study_path = os.path.join(config.OUTPUT_DIR, f'optuna_study_{exp_arm}.pkl')
+    # Include validation tuning size and calibration fraction in the study path to avoid cross-run mixing
+    study_path = os.path.join(config.OUTPUT_DIR, f'optuna_study_{exp_arm}_valtune_{len(X_val)}_calfrac_{val_cal_fraction}.pkl')
     study = None  # Initialize study to None
 
     if os.path.exists(study_path) and config.REUSE_EXISTING_STUDY:
@@ -137,10 +140,10 @@ def tune_xgboost(X_train, y_train, X_val, y_val, config, exp_arm):
     
     return study.best_params
 
-def train_final_model(X_train, X_val, y_train, y_val, best_params, config):
-    logging.info("Training final model on combined train+validation data...")
-    X_full = np.vstack([X_train, X_val])
-    y_full = pd.concat([y_train, y_val])
+def train_final_model(X_train, X_val_tune, y_train, y_val_tune, best_params, config):
+    logging.info("Training final model on combined train+val_tune data...")
+    X_full = np.vstack([X_train, X_val_tune])
+    y_full = pd.concat([y_train, y_val_tune])
     final_params = best_params.copy()
     final_params['scale_pos_weight'] = (y_full == 0).sum() / (y_full == 1).sum() if (y_full == 1).sum() > 0 else 1
     if config.USE_GPU:
@@ -150,21 +153,82 @@ def train_final_model(X_train, X_val, y_train, y_val, best_params, config):
     model.fit(X_full, y_full, verbose=False)
     return model
 
-def save_results(model, results, best_params, config, exp_arm):
+def split_validation_set(X_val, y_val, seed, val_cal_fraction):
+    """Split validation set into tuning and calibration subsets (stratified)."""
+    logging.info(f"Splitting validation set: tune={(1 - val_cal_fraction):.2f}, cal={val_cal_fraction:.2f}")
+    X_val_tune, X_val_cal, y_val_tune, y_val_cal = train_test_split(
+        X_val,
+        y_val,
+        test_size=val_cal_fraction,
+        random_state=seed,
+        stratify=y_val
+    )
+    logging.info(f"val_tune shape: {X_val_tune.shape}, val_cal shape: {X_val_cal.shape}")
+    return X_val_tune, X_val_cal, y_val_tune, y_val_cal
+
+def calibrate_model(fitted_model, X_val_cal, y_val_cal, method, enabled):
+    """Calibrate a pre-fitted classifier using held-out calibration data."""
+    if not enabled:
+        logging.info("Calibration disabled. Skipping calibration step.")
+        return fitted_model
+    logging.info(f"Calibrating model using method='{method}' on val_cal...")
+    try:
+        # Newer scikit-learn uses 'estimator'
+        calibrator = CalibratedClassifierCV(estimator=fitted_model, method=method, cv='prefit')
+    except TypeError:
+        # Older scikit-learn uses 'base_estimator'
+        calibrator = CalibratedClassifierCV(base_estimator=fitted_model, method=method, cv='prefit')
+    calibrator.fit(X_val_cal, y_val_cal)
+    logging.info("Calibration complete.")
+    return calibrator
+
+def save_results(model, results, best_params, config, exp_arm, is_calibrated=False, calibration_method=None, val_cal_fraction=None):
     """Save model and results for a specific experimental arm."""
-    model_path = os.path.join(config.OUTPUT_DIR, f'model_{exp_arm}.pkl')
-    with open(model_path, 'wb') as f: pickle.dump(model, f)
+    # Save model in multiple formats for compatibility
+    model_suffix = '_calibrated' if is_calibrated else ''
+    model_path_pkl = os.path.join(config.OUTPUT_DIR, f'model_{exp_arm}{model_suffix}.pkl')
+    model_path_json = os.path.join(config.OUTPUT_DIR, f'model_{exp_arm}{model_suffix}.json')
+    
+    # Try to save in pickle format first
+    try:
+        with open(model_path_pkl, 'wb') as f: 
+            pickle.dump(model, f)
+        logging.info(f"Model for {exp_arm} saved to: {model_path_pkl}")
+    except Exception as e:
+        logging.warning(f"Failed to save pickle format for {exp_arm}: {e}")
+    
+    # Save in XGBoost native JSON format (more compatible)
+    try:
+        # Only attempt XGBoost native JSON save if the model exposes save_model (i.e., not CalibratedClassifierCV)
+        if hasattr(model, 'save_model'):
+            model.save_model(model_path_json)
+            logging.info(f"Model for {exp_arm} saved to: {model_path_json}")
+        else:
+            logging.info(f"Skipping JSON save for {exp_arm} (not an XGBoost estimator).")
+    except Exception as e:
+        logging.warning(f"Failed to save JSON format for {exp_arm}: {e}")
+    
+    # Also save hyperparameters separately for easy access
+    params_path = os.path.join(config.OUTPUT_DIR, f'params_{exp_arm}.pkl')
+    try:
+        with open(params_path, 'wb') as f:
+            pickle.dump(best_params, f)
+        logging.info(f"Parameters for {exp_arm} saved to: {params_path}")
+    except Exception as e:
+        logging.warning(f"Failed to save parameters for {exp_arm}: {e}")
     
     results_dict = {
         'experimental_arm': exp_arm,
         'model_name': f'XGBoost on Embedding ({exp_arm})',
-        **results
+        **results,
+        'calibration_enabled': is_calibrated,
+        'calibration_method': calibration_method if is_calibrated else None,
+        'val_cal_fraction': val_cal_fraction
     }
     
     results_path = os.path.join(config.OUTPUT_DIR, f'results_{exp_arm}.pkl')
     with open(results_path, 'wb') as f: pickle.dump(results_dict, f)
     
-    logging.info(f"Model for {exp_arm} saved to: {model_path}")
     logging.info(f"Results for {exp_arm} saved to: {results_path}")
 
 # =============================================================================
@@ -174,6 +238,10 @@ def save_results(model, results, best_params, config, exp_arm):
 def main():
     """Main function to run the analysis across all experimental arms."""
     config = Config()
+    # Backward-compatible calibration config fallbacks
+    CALIBRATION_ENABLED = getattr(config, 'CALIBRATION_ENABLED', True)
+    CALIBRATION_METHOD = getattr(config, 'CALIBRATION_METHOD', 'isotonic')  # 'isotonic' or 'sigmoid'
+    VAL_CAL_FRACTION = getattr(config, 'VAL_CAL_FRACTION', 0.5)
     
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] - %(message)s',
                         handlers=[logging.FileHandler(os.path.join(config.OUTPUT_DIR, 'embedding_analysis_log.txt'), mode='w'),
@@ -235,9 +303,29 @@ def main():
                 X_test = X_test_df.values
                 logging.info(f"Test set: Dropped {test_original_count - len(y_test)} prevalent cases. New size: {len(y_test)}")
 
-            best_params = tune_xgboost(X_train, y_train, X_val, y_val, config, arm)
-            
-            model = train_final_model(X_train, X_val, y_train, y_val, best_params, config)
+            # Split validation into tuning and calibration subsets only if calibration is enabled
+            if CALIBRATION_ENABLED:
+                X_val_tune, X_val_cal, y_val_tune, y_val_cal = split_validation_set(X_val, y_val, config.SEED, VAL_CAL_FRACTION)
+            else:
+                X_val_tune, y_val_tune = X_val, y_val
+                X_val_cal, y_val_cal = None, None
+
+            # Tune on val_tune
+            best_params = tune_xgboost(
+                X_train,
+                y_train,
+                X_val_tune,
+                y_val_tune,
+                config,
+                arm,
+                VAL_CAL_FRACTION if CALIBRATION_ENABLED else 'nocal'
+            )
+
+            # Train on train + val_tune
+            base_model = train_final_model(X_train, X_val_tune, y_train, y_val_tune, best_params, config)
+
+            # Calibrate on val_cal
+            model = calibrate_model(base_model, X_val_cal, y_val_cal, CALIBRATION_METHOD, CALIBRATION_ENABLED) if CALIBRATION_ENABLED else base_model
             
             logging.info(f"--- FINAL EVALUATION ON TEST SET FOR {arm} ---")
             y_pred_proba = model.predict_proba(X_test)[:, 1]
@@ -246,7 +334,16 @@ def main():
             auroc = results['auroc']
             logging.info(f"Test AUROC for {arm}: {auroc['point_estimate']:.4f} (95% CI: {auroc['ci_lower']:.4f}-{auroc['ci_upper']:.4f})")
             
-            save_results(model, results, best_params, config, arm)
+            save_results(
+                model,
+                results,
+                best_params,
+                config,
+                arm,
+                is_calibrated=CALIBRATION_ENABLED,
+                calibration_method=CALIBRATION_METHOD if CALIBRATION_ENABLED else None,
+                val_cal_fraction=VAL_CAL_FRACTION
+            )
         except Exception as e:
             logging.error(f"!!! An error occurred while processing arm {arm}: {e}")
             logging.error(f"Skipping arm {arm} and continuing to the next one.")

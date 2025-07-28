@@ -429,7 +429,7 @@ def generate_task_comparison_plot(df: pd.DataFrame, metric: str, filename: str, 
 def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
     """
     Generate a plot showing the best performing semantic model for each task vs. baseline.
-    Now includes a confidence interval for the baseline model marker.
+    Now includes a confidence interval for the baseline model marker and shows champion model details.
     """
     logging.info(f"Generating champion model plot for {metric}: {title}")
     
@@ -445,6 +445,11 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
     champion_df['ChampionLabel'] = champion_df.apply(
         lambda r: f"{REP_LABELS.get(r['Representation'])} - {PROMPT_LABELS.get(r['Prompt'], r['Prompt'])} ({r['Model']})", axis=1
     )
+    
+    # Create shorter labels for annotations
+    champion_df['ChampionShort'] = champion_df.apply(
+        lambda r: f"{r['Representation']}-{r['Prompt']} ({r['Model'].split('_')[-1] if '_' in r['Model'] else r['Model']})", axis=1
+    )
 
     baseline_cols = ['Task', metric, f'{metric}_CI_Lower', f'{metric}_CI_Upper']
     baseline_data = df[df['Prompt'] == 'XGBoost'][baseline_cols].set_index('Task')
@@ -454,13 +459,26 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
         f'{metric}_CI_Upper': 'Baseline_CI_Upper'
     }), on='Task')
 
-    fig, ax = plt.subplots(figsize=(14, 10))
+    fig, ax = plt.subplots(figsize=(16, 10))
     sns.set_theme(style="whitegrid")
-    sns.barplot(data=champion_df, x=metric, y='TaskLabel', hue='ChampionLabel', palette='magma', dodge=False, ax=ax)
+    
+    # Use a single color for all bars since we'll annotate with champion details
+    bars = sns.barplot(data=champion_df, x=metric, y='TaskLabel', 
+                       palette=['skyblue'], ax=ax)
 
     x_err = [champion_df[metric] - champion_df[f'{metric}_CI_Lower'], champion_df[f'{metric}_CI_Upper'] - champion_df[metric]]
     ax.errorbar(x=champion_df[metric], y=np.arange(len(champion_df)), xerr=x_err,
                 fmt='none', ecolor='black', capsize=3)
+    
+    # Add text annotations showing champion model details
+    x_min, x_max = ax.get_xlim()
+    text_x_pos = x_min + (x_max - x_min) * 0.05  # Position at 5% from left edge
+    
+    for i, (_, row) in enumerate(champion_df.iterrows()):
+        champion_text = row['ChampionShort']
+        ax.text(text_x_pos, i, champion_text, va='center', ha='left', fontsize=9, 
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', alpha=0.8),
+                zorder=10)
     
     y_coords_map = {label.get_text(): i for i, label in enumerate(ax.get_yticklabels())}
     for _, row in champion_df.iterrows():
@@ -475,11 +493,13 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
     ax.set_title(title, fontsize=16, pad=20)
     ax.set_xlabel(f'Best Test Set {metric} (with 95% CI)', fontsize=12)
     ax.set_ylabel('Prediction Task', fontsize=12)
-    if ax.get_legend(): ax.get_legend().remove()
 
-    legend_elements = [Line2D([0], [0], marker='D', color='w', label='XGBoost Baseline (with 95% CI)',
-                              markerfacecolor='blue', markersize=10)]
-    ax.legend(handles=legend_elements, title="Reference")
+    legend_elements = [
+        Line2D([0], [0], marker='D', color='w', label='XGBoost Baseline (with 95% CI)',
+               markerfacecolor='blue', markersize=10),
+        Line2D([0], [0], color='skyblue', linewidth=6, label='Champion Semantic Model')
+    ]
+    ax.legend(handles=legend_elements, title="Model Type", loc='lower right')
 
     save_figure(fig, filename)
 

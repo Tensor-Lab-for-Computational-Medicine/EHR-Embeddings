@@ -330,115 +330,115 @@
 | los_7             | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-004               | 0.6953 (0.6686 - 0.7228) | 0.1456 (0.1247 - 0.1732) |
 | los_7             | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6874 (0.6615 - 0.7131) | 0.1395 (0.1204 - 0.1658) |
 | los_7             | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-large-exp-03-07   | 0.6775 (0.6500 - 0.7034) | 0.1300 (0.1143 - 0.1531) |
-| readmission_30    | Baseline (Numeric)     | XGBoost                       | XGBoost                          | 0.5973 (0.5636 - 0.6305) | 0.0657 (0.0579 - 0.0779) |
+| readmission_30    | Baseline (Numeric)     | XGBoost                       | XGBoost                          | 0.5961 (0.5609 - 0.6297) | 0.0632 (0.0563 - 0.0735) |
 | readmission_30    | Baseline (Numeric)     | Elastic Net                   | ElasticNet                       | 0.5759 (0.5419 - 0.6097) | 0.0565 (0.0511 - 0.0648) |
 | readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | MedEmbed-small                   | 0.5513 (0.5177 - 0.5833) | 0.0583 (0.0491 - 0.0755) |
 | readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | NeuML_pubmedbert-base-embeddings | 0.5694 (0.5357 - 0.6036) | 0.0593 (0.0504 - 0.0725) |
 | readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | embedding-001                    | 0.5500 (0.5164 - 0.5830) | 0.0539 (0.0457 - 0.0658) |
 | readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-004               | 0.5674 (0.5315 - 0.6013) | 0.0570 (0.0478 - 0.0690) |
-| readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-005               | 0.6512 (0.6217 - 0.6819) | 0.0750 (0.0615 - 0.0925) |
+| readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-005               | 0.6507 (0.6207 - 0.6811) | 0.0776 (0.0638 - 0.0978) |
 | readmission_30    | F1 (Uninterpreted)     | P0 (Control)                  | text-embedding-large-exp-03-07   | 0.5588 (0.5242 - 0.5932) | 0.0584 (0.0491 - 0.0729) |
 | readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | MedEmbed-small                   | 0.5748 (0.5407 - 0.6090) | 0.0582 (0.0502 - 0.0720) |
 | readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | NeuML_pubmedbert-base-embeddings | 0.5347 (0.4997 - 0.5669) | 0.0513 (0.0439 - 0.0612) |
 | readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | embedding-001                    | 0.5713 (0.5364 - 0.6022) | 0.0597 (0.0503 - 0.0752) |
 | readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-004               | 0.5540 (0.5200 - 0.5860) | 0.0569 (0.0481 - 0.0708) |
-| readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-005               | 0.6725 (0.6409 - 0.7033) | 0.0812 (0.0684 - 0.0994) |
+| readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-005               | 0.6712 (0.6411 - 0.7019) | 0.0810 (0.0682 - 0.1000) |
 | readmission_30    | F1 (Uninterpreted)     | P1 (Task-Specific)            | text-embedding-large-exp-03-07   | 0.5525 (0.5176 - 0.5876) | 0.0635 (0.0526 - 0.0831) |
 | readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | MedEmbed-small                   | 0.5604 (0.5249 - 0.5956) | 0.0581 (0.0491 - 0.0709) |
 | readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | NeuML_pubmedbert-base-embeddings | 0.5296 (0.4989 - 0.5606) | 0.0488 (0.0425 - 0.0579) |
 | readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | embedding-001                    | 0.5659 (0.5300 - 0.6009) | 0.0636 (0.0510 - 0.0857) |
 | readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-004               | 0.5656 (0.5316 - 0.5994) | 0.0579 (0.0491 - 0.0738) |
-| readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-005               | 0.6626 (0.6326 - 0.6920) | 0.0780 (0.0659 - 0.0967) |
+| readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-005               | 0.6630 (0.6316 - 0.6945) | 0.0766 (0.0648 - 0.0923) |
 | readmission_30    | F1 (Uninterpreted)     | P2 (Persona-Driven)           | text-embedding-large-exp-03-07   | 0.5551 (0.5205 - 0.5907) | 0.0627 (0.0517 - 0.0801) |
 | readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | MedEmbed-small                   | 0.5616 (0.5264 - 0.5941) | 0.0534 (0.0458 - 0.0630) |
 | readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | NeuML_pubmedbert-base-embeddings | 0.5445 (0.5101 - 0.5777) | 0.0564 (0.0467 - 0.0721) |
 | readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | embedding-001                    | 0.5644 (0.5275 - 0.5966) | 0.0583 (0.0494 - 0.0718) |
 | readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | text-embedding-004               | 0.5654 (0.5327 - 0.5974) | 0.0601 (0.0487 - 0.0752) |
-| readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | text-embedding-005               | 0.6642 (0.6344 - 0.6944) | 0.0807 (0.0670 - 0.1026) |
+| readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | text-embedding-005               | 0.6623 (0.6310 - 0.6929) | 0.0817 (0.0673 - 0.1054) |
 | readmission_30    | F1 (Uninterpreted)     | P3 (Relational-Focus)         | text-embedding-large-exp-03-07   | 0.5434 (0.5082 - 0.5797) | 0.0592 (0.0485 - 0.0784) |
 | readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | MedEmbed-small                   | 0.5717 (0.5387 - 0.6056) | 0.0635 (0.0528 - 0.0837) |
 | readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | NeuML_pubmedbert-base-embeddings | 0.5519 (0.5208 - 0.5853) | 0.0549 (0.0469 - 0.0665) |
 | readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | embedding-001                    | 0.5438 (0.5115 - 0.5757) | 0.0538 (0.0459 - 0.0666) |
 | readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | text-embedding-004               | 0.5625 (0.5297 - 0.5945) | 0.0590 (0.0485 - 0.0741) |
-| readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | text-embedding-005               | 0.6677 (0.6382 - 0.6983) | 0.0809 (0.0673 - 0.1006) |
+| readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | text-embedding-005               | 0.6651 (0.6353 - 0.6955) | 0.0808 (0.0674 - 0.1005) |
 | readmission_30    | F1 (Uninterpreted)     | P4 (Acute Dysregulation)      | text-embedding-large-exp-03-07   | 0.5563 (0.5222 - 0.5906) | 0.0585 (0.0491 - 0.0718) |
 | readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | MedEmbed-small                   | 0.5429 (0.5092 - 0.5738) | 0.0543 (0.0460 - 0.0698) |
 | readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | NeuML_pubmedbert-base-embeddings | 0.5661 (0.5331 - 0.5977) | 0.0560 (0.0482 - 0.0674) |
 | readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | embedding-001                    | 0.5522 (0.5149 - 0.5848) | 0.0665 (0.0515 - 0.0902) |
 | readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | text-embedding-004               | 0.5601 (0.5234 - 0.5935) | 0.0632 (0.0511 - 0.0840) |
-| readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6568 (0.6251 - 0.6890) | 0.0782 (0.0649 - 0.0992) |
+| readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6488 (0.6184 - 0.6817) | 0.0783 (0.0641 - 0.1010) |
 | readmission_30    | F1 (Uninterpreted)     | P5 (Dominant Pathophysiology) | text-embedding-large-exp-03-07   | 0.5504 (0.5168 - 0.5849) | 0.0596 (0.0495 - 0.0771) |
 | readmission_30    | F2 (Interpreted)       | P0 (Control)                  | MedEmbed-small                   | 0.5519 (0.5200 - 0.5861) | 0.0543 (0.0466 - 0.0645) |
 | readmission_30    | F2 (Interpreted)       | P0 (Control)                  | NeuML_pubmedbert-base-embeddings | 0.5264 (0.4911 - 0.5612) | 0.0511 (0.0442 - 0.0610) |
 | readmission_30    | F2 (Interpreted)       | P0 (Control)                  | embedding-001                    | 0.5506 (0.5173 - 0.5819) | 0.0523 (0.0449 - 0.0620) |
 | readmission_30    | F2 (Interpreted)       | P0 (Control)                  | text-embedding-004               | 0.5572 (0.5208 - 0.5911) | 0.0563 (0.0480 - 0.0684) |
-| readmission_30    | F2 (Interpreted)       | P0 (Control)                  | text-embedding-005               | 0.6727 (0.6428 - 0.7023) | 0.0835 (0.0687 - 0.1058) |
+| readmission_30    | F2 (Interpreted)       | P0 (Control)                  | text-embedding-005               | 0.6731 (0.6429 - 0.7033) | 0.0821 (0.0687 - 0.1015) |
 | readmission_30    | F2 (Interpreted)       | P0 (Control)                  | text-embedding-large-exp-03-07   | 0.5558 (0.5185 - 0.5912) | 0.0626 (0.0508 - 0.0793) |
 | readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | MedEmbed-small                   | 0.5187 (0.4833 - 0.5526) | 0.0497 (0.0428 - 0.0600) |
 | readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | NeuML_pubmedbert-base-embeddings | 0.5329 (0.4962 - 0.5668) | 0.0528 (0.0450 - 0.0639) |
 | readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | embedding-001                    | 0.5468 (0.5094 - 0.5810) | 0.0549 (0.0464 - 0.0686) |
 | readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | text-embedding-004               | 0.5178 (0.4824 - 0.5517) | 0.0498 (0.0427 - 0.0608) |
-| readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | text-embedding-005               | 0.6664 (0.6333 - 0.6979) | 0.0835 (0.0694 - 0.1028) |
+| readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | text-embedding-005               | 0.6699 (0.6376 - 0.7007) | 0.0832 (0.0694 - 0.1023) |
 | readmission_30    | F2 (Interpreted)       | P1 (Task-Specific)            | text-embedding-large-exp-03-07   | 0.5650 (0.5297 - 0.6027) | 0.0584 (0.0497 - 0.0713) |
 | readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | MedEmbed-small                   | 0.5361 (0.5037 - 0.5707) | 0.0511 (0.0442 - 0.0604) |
 | readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | NeuML_pubmedbert-base-embeddings | 0.5455 (0.5096 - 0.5793) | 0.0529 (0.0453 - 0.0652) |
 | readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | embedding-001                    | 0.5282 (0.4942 - 0.5610) | 0.0521 (0.0435 - 0.0628) |
 | readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | text-embedding-004               | 0.5406 (0.5045 - 0.5766) | 0.0550 (0.0467 - 0.0679) |
-| readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | text-embedding-005               | 0.6765 (0.6455 - 0.7086) | 0.0868 (0.0716 - 0.1072) |
+| readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | text-embedding-005               | 0.6717 (0.6400 - 0.7028) | 0.0888 (0.0729 - 0.1128) |
 | readmission_30    | F2 (Interpreted)       | P2 (Persona-Driven)           | text-embedding-large-exp-03-07   | 0.5219 (0.4838 - 0.5593) | 0.0531 (0.0443 - 0.0665) |
 | readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | MedEmbed-small                   | 0.5111 (0.4780 - 0.5449) | 0.0511 (0.0437 - 0.0635) |
 | readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | NeuML_pubmedbert-base-embeddings | 0.5176 (0.4830 - 0.5521) | 0.0509 (0.0440 - 0.0628) |
 | readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | embedding-001                    | 0.5745 (0.5425 - 0.6082) | 0.0635 (0.0520 - 0.0804) |
 | readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | text-embedding-004               | 0.5785 (0.5468 - 0.6124) | 0.0597 (0.0508 - 0.0727) |
-| readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | text-embedding-005               | 0.6442 (0.6097 - 0.6758) | 0.0803 (0.0664 - 0.1023) |
+| readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | text-embedding-005               | 0.6470 (0.6129 - 0.6776) | 0.0795 (0.0656 - 0.1007) |
 | readmission_30    | F2 (Interpreted)       | P3 (Relational-Focus)         | text-embedding-large-exp-03-07   | 0.5327 (0.4993 - 0.5685) | 0.0502 (0.0437 - 0.0608) |
 | readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | MedEmbed-small                   | 0.5444 (0.5115 - 0.5765) | 0.0527 (0.0454 - 0.0633) |
 | readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | NeuML_pubmedbert-base-embeddings | 0.5459 (0.5117 - 0.5772) | 0.0531 (0.0453 - 0.0637) |
 | readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | embedding-001                    | 0.5686 (0.5333 - 0.6006) | 0.0614 (0.0517 - 0.0761) |
 | readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | text-embedding-004               | 0.5736 (0.5373 - 0.6045) | 0.0586 (0.0501 - 0.0705) |
-| readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | text-embedding-005               | 0.6651 (0.6328 - 0.6958) | 0.0830 (0.0693 - 0.1054) |
+| readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | text-embedding-005               | 0.6642 (0.6312 - 0.6963) | 0.0843 (0.0699 - 0.1074) |
 | readmission_30    | F2 (Interpreted)       | P4 (Acute Dysregulation)      | text-embedding-large-exp-03-07   | 0.5366 (0.4985 - 0.5735) | 0.0530 (0.0454 - 0.0634) |
 | readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | MedEmbed-small                   | 0.5573 (0.5223 - 0.5910) | 0.0536 (0.0464 - 0.0635) |
 | readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | NeuML_pubmedbert-base-embeddings | 0.5594 (0.5245 - 0.5931) | 0.0538 (0.0463 - 0.0639) |
 | readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | embedding-001                    | 0.5673 (0.5324 - 0.6008) | 0.0655 (0.0517 - 0.0839) |
 | readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | text-embedding-004               | 0.5287 (0.4941 - 0.5633) | 0.0496 (0.0429 - 0.0594) |
-| readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6776 (0.6454 - 0.7093) | 0.0859 (0.0715 - 0.1069) |
+| readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6671 (0.6342 - 0.6991) | 0.0813 (0.0686 - 0.0996) |
 | readmission_30    | F2 (Interpreted)       | P5 (Dominant Pathophysiology) | text-embedding-large-exp-03-07   | 0.5694 (0.5346 - 0.6044) | 0.0632 (0.0514 - 0.0801) |
 | readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | MedEmbed-small                   | 0.5649 (0.5300 - 0.6004) | 0.0613 (0.0508 - 0.0766) |
 | readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | NeuML_pubmedbert-base-embeddings | 0.5564 (0.5172 - 0.5924) | 0.0581 (0.0489 - 0.0706) |
 | readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | embedding-001                    | 0.5776 (0.5411 - 0.6137) | 0.0617 (0.0529 - 0.0753) |
 | readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | text-embedding-004               | 0.5626 (0.5285 - 0.5990) | 0.0553 (0.0477 - 0.0667) |
-| readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | text-embedding-005               | 0.6609 (0.6253 - 0.6934) | 0.0871 (0.0716 - 0.1108) |
+| readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | text-embedding-005               | 0.6585 (0.6249 - 0.6916) | 0.0863 (0.0710 - 0.1098) |
 | readmission_30    | F3 (Narrative Summary) | P0 (Control)                  | text-embedding-large-exp-03-07   | 0.5797 (0.5446 - 0.6178) | 0.0626 (0.0528 - 0.0776) |
 | readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | MedEmbed-small                   | 0.5380 (0.5015 - 0.5724) | 0.0650 (0.0497 - 0.0865) |
 | readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | NeuML_pubmedbert-base-embeddings | 0.5485 (0.5086 - 0.5838) | 0.0607 (0.0511 - 0.0759) |
 | readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | embedding-001                    | 0.5585 (0.5246 - 0.5938) | 0.0578 (0.0493 - 0.0725) |
 | readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | text-embedding-004               | 0.5813 (0.5472 - 0.6157) | 0.0645 (0.0542 - 0.0792) |
-| readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | text-embedding-005               | 0.6523 (0.6157 - 0.6852) | 0.0890 (0.0717 - 0.1149) |
+| readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | text-embedding-005               | 0.6497 (0.6124 - 0.6840) | 0.0896 (0.0720 - 0.1145) |
 | readmission_30    | F3 (Narrative Summary) | P1 (Task-Specific)            | text-embedding-large-exp-03-07   | 0.5860 (0.5500 - 0.6227) | 0.0699 (0.0578 - 0.0880) |
 | readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | MedEmbed-small                   | 0.5492 (0.5144 - 0.5846) | 0.0594 (0.0478 - 0.0777) |
 | readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | NeuML_pubmedbert-base-embeddings | 0.5499 (0.5120 - 0.5850) | 0.0617 (0.0516 - 0.0803) |
 | readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | embedding-001                    | 0.5684 (0.5350 - 0.6027) | 0.0610 (0.0515 - 0.0787) |
 | readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | text-embedding-004               | 0.5774 (0.5430 - 0.6122) | 0.0631 (0.0533 - 0.0781) |
-| readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | text-embedding-005               | 0.6555 (0.6185 - 0.6896) | 0.0879 (0.0718 - 0.1127) |
+| readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | text-embedding-005               | 0.6594 (0.6249 - 0.6909) | 0.0886 (0.0720 - 0.1155) |
 | readmission_30    | F3 (Narrative Summary) | P2 (Persona-Driven)           | text-embedding-large-exp-03-07   | 0.5729 (0.5384 - 0.6100) | 0.0652 (0.0543 - 0.0836) |
 | readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | MedEmbed-small                   | 0.5611 (0.5259 - 0.5943) | 0.0607 (0.0505 - 0.0752) |
 | readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | NeuML_pubmedbert-base-embeddings | 0.5346 (0.4957 - 0.5702) | 0.0541 (0.0459 - 0.0667) |
 | readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | embedding-001                    | 0.5776 (0.5435 - 0.6136) | 0.0626 (0.0531 - 0.0789) |
 | readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | text-embedding-004               | 0.5672 (0.5330 - 0.6007) | 0.0584 (0.0503 - 0.0715) |
-| readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | text-embedding-005               | 0.6477 (0.6104 - 0.6807) | 0.0846 (0.0686 - 0.1106) |
+| readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | text-embedding-005               | 0.6562 (0.6202 - 0.6875) | 0.0881 (0.0714 - 0.1120) |
 | readmission_30    | F3 (Narrative Summary) | P3 (Relational-Focus)         | text-embedding-large-exp-03-07   | 0.5864 (0.5503 - 0.6236) | 0.0645 (0.0544 - 0.0785) |
 | readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | MedEmbed-small                   | 0.5215 (0.4868 - 0.5583) | 0.0528 (0.0452 - 0.0639) |
 | readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | NeuML_pubmedbert-base-embeddings | 0.5181 (0.4831 - 0.5539) | 0.0564 (0.0456 - 0.0738) |
 | readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | embedding-001                    | 0.5424 (0.5079 - 0.5775) | 0.0535 (0.0458 - 0.0645) |
 | readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-004               | 0.5599 (0.5269 - 0.5940) | 0.0558 (0.0484 - 0.0690) |
-| readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-005               | 0.6536 (0.6167 - 0.6863) | 0.0837 (0.0682 - 0.1053) |
+| readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-005               | 0.6606 (0.6258 - 0.6934) | 0.0904 (0.0740 - 0.1161) |
 | readmission_30    | F3 (Narrative Summary) | P4 (Acute Dysregulation)      | text-embedding-large-exp-03-07   | 0.5861 (0.5506 - 0.6228) | 0.0656 (0.0555 - 0.0802) |
 | readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | MedEmbed-small                   | 0.5470 (0.5121 - 0.5835) | 0.0570 (0.0485 - 0.0719) |
 | readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | NeuML_pubmedbert-base-embeddings | 0.5553 (0.5165 - 0.5919) | 0.0644 (0.0533 - 0.0827) |
 | readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | embedding-001                    | 0.5681 (0.5346 - 0.6028) | 0.0581 (0.0497 - 0.0701) |
 | readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-004               | 0.5800 (0.5453 - 0.6147) | 0.0632 (0.0539 - 0.0766) |
-| readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6557 (0.6203 - 0.6874) | 0.0855 (0.0700 - 0.1100) |
+| readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-005               | 0.6604 (0.6245 - 0.6928) | 0.0960 (0.0770 - 0.1230) |
 | readmission_30    | F3 (Narrative Summary) | P5 (Dominant Pathophysiology) | text-embedding-large-exp-03-07   | 0.5929 (0.5594 - 0.6292) | 0.0663 (0.0558 - 0.0817) |
 | intervention_vent | Baseline (Numeric)     | XGBoost                       | XGBoost                          | 0.6939 (0.6602 - 0.7271) | 0.1995 (0.1624 - 0.2486) |
 | intervention_vent | Baseline (Numeric)     | Elastic Net                   | ElasticNet                       | 0.6714 (0.6357 - 0.7063) | 0.1507 (0.1263 - 0.1846) |

@@ -32,9 +32,8 @@ logging.basicConfig(
 def setup_api_key(worker_id: int):
     """Securely prompts for and configures the Google AI API key."""
     try:
-        api_key = os.environ.get('GOOGLE_API_KEY')
-        if not api_key:
-            api_key = getpass.getpass('Please enter your Google AI Studio API key: ')
+        
+        api_key = getpass.getpass('Please enter your Google AI Studio API key: ')
         genai.configure(api_key=api_key)
         logging.info("Successfully configured Google AI API key.", extra={'worker_id': worker_id})
     except Exception as e:
