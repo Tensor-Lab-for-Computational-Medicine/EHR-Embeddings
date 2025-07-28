@@ -7,6 +7,7 @@ Refactored for improved readability, modularity, and maintainability.
 This version incorporates user feedback for plotting corrections, including confidence intervals on Figure 2.
 This version also adds a new figure (Figure 6) to compare different models within a task.
 This version includes baseline models in Figure 6 and adds a new plot to compare task performance by model.
+This version adds baseline performance markers to Figure 7 for direct comparison.
 """
 import os
 import pickle
@@ -482,10 +483,10 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
 
     save_figure(fig, filename)
 
-def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
+def generate_task_comparison_by_model_plot(df: pd.DataFrame, baseline_df: pd.DataFrame, metric: str, filename: str, title: str):
     """
     Generate a faceted bar plot comparing task performance for each embedding model.
-    This version correctly plots confidence intervals on all subplots.
+    Includes baseline model performance as reference markers on each subplot.
     """
     logging.info(f"Generating per-model task comparison plot for {metric}: {title}")
     
@@ -509,8 +510,6 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filena
     plot_df['RepresentationLabel'] = pd.Categorical(plot_df['RepresentationLabel'], categories=rep_cats, ordered=True)
     plot_df = plot_df.sort_values(['Model', 'TaskLabel', 'RepresentationLabel'])
 
-
-    # Use a specific palette for the representations
     palette = sns.color_palette('viridis', n_colors=len(rep_cats))
     color_map = dict(zip(rep_cats, palette))
 
@@ -518,63 +517,88 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, metric: str, filena
         data=plot_df, x='TaskLabel', y=metric, hue='RepresentationLabel', col='Model',
         kind='bar', palette=color_map, height=5, aspect=1.8, legend=False,
         col_wrap=2, sharey=False, col_order=model_names,
-        hue_order=rep_cats # Explicitly set hue order
+        hue_order=rep_cats
     )
 
-    # --- CORRECTED CONFIDENCE INTERVAL PLOTTING ---
-    # Iterate through each subplot (facet) to add error bars.
+    # --- ADDING CONFIDENCE INTERVALS AND BASELINE MARKERS ---
+    baseline_styles = {
+        'XGBoost': {'marker': 'D', 'color': 'crimson', 'label': 'XGBoost Baseline'},
+        'ElasticNet': {'marker': 's', 'color': '#663399', 'label': 'ElasticNet Baseline'} # rebeccapurple
+    }
+    task_key_map = {v: k for k, v in TASK_LABELS.items()}
+
     for model_name, ax in zip(g.col_names, g.axes.flat):
         if not ax.patches: continue
-
+        
         ax_df = plot_df[plot_df['Model'] == model_name]
         if ax_df.empty: continue
 
-        hue_order = rep_cats # Use the same hue order as the plot
+        hue_order = rep_cats
         num_hues = len(hue_order)
         bar_width = ax.patches[0].get_width()
-        
-        # --- FIX ---
-        # The 'g.x_names' attribute was incorrect. The most reliable way to get the
-        # x-axis categories in the correct order is to use the 'task_cats' list
-        # that we used to define the pd.Categorical type for the x-axis.
         x_labels = task_cats
         x_pos_map = {label: i for i, label in enumerate(x_labels)}
 
-        # Iterate through the data for this facet and draw the error bars
+        # Plot CIs for embedding model bars
         for _, row in ax_df.iterrows():
             task_label, rep_label = row['TaskLabel'], row['RepresentationLabel']
             if task_label in x_pos_map and rep_label in hue_order:
                 x_pos_group = x_pos_map[task_label]
                 hue_index = hue_order.index(rep_label)
-                
                 bar_offset = (hue_index - (num_hues - 1) / 2) * bar_width
                 x_coord = x_pos_group + bar_offset
                 
                 y_val = row[metric]
-                ci_lower, ci_upper = row[f'{metric}_CI_Lower'], row[f'{metric}_CI_Upper']
+                y_err = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
+                ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=3, elinewidth=1, zorder=10)
 
-                if pd.notna(ci_lower) and pd.notna(ci_upper):
-                    y_err = [[y_val - ci_lower], [ci_upper - y_val]]
-                    ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=3, elinewidth=1, zorder=10)
-        
-        # Adjust aesthetics for each subplot
+        # Plot baseline markers for each task
+        for task_label, x_pos in x_pos_map.items():
+            task_key = task_key_map.get(task_label)
+            if not task_key: continue
+            
+            task_baselines = baseline_df[baseline_df['Task'] == task_key]
+            if task_baselines.empty: continue
+            
+            for b_model_name, style in baseline_styles.items():
+                baseline_data = task_baselines[task_baselines['Prompt'] == b_model_name]
+                if not baseline_data.empty:
+                    row = baseline_data.iloc[0]
+                    y_val = row[metric]
+                    y_err_data = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
+                    ax.errorbar(x=x_pos, y=y_val, yerr=y_err_data, fmt=style['marker'],
+                                color=style['color'], markersize=7, capsize=4,
+                                elinewidth=1.5, zorder=12, markeredgewidth=1.5,
+                                markerfacecolor='none')
+
         if not ax_df.empty and ax_df[metric].min() > 0.4:
             y_max_ci = ax_df[f'{metric}_CI_Upper'].max()
             ax.set_ylim(0.5, max(1.0, y_max_ci * 1.05) if pd.notna(y_max_ci) else 1.0)
         
-        # Rotate all x-tick labels for consistency
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
         ax.tick_params(axis='x', labelsize=10)
         ax.tick_params(axis='y', labelsize=10)
 
-
     g.fig.suptitle(title, fontsize=18, y=1.03)
     g.set_axis_labels("Prediction Task", f'Test Set {metric} (with 95% CI)')
     g.set_titles("Model: {col_name}")
+    
+    # --- Create Combined Legend ---
+    rep_legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in rep_cats]
+    legend1 = g.fig.legend(handles=rep_legend_handles, title="Representation",
+                           bbox_to_anchor=(1.02, 0.6), loc="center left", frameon=True)
 
-    legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in rep_cats]
-    g.fig.legend(handles=legend_handles, title="Representation", bbox_to_anchor=(1.0, 0.5), loc="center left")
-    g.fig.tight_layout(rect=[0, 0, 0.92, 1]) 
+    baseline_legend_handles = [
+        Line2D([0], [0], marker=style['marker'], color='w', label=style['label'],
+               markerfacecolor='none', markeredgecolor=style['color'], 
+               markeredgewidth=1.5, markersize=8)
+        for _, style in baseline_styles.items()
+    ]
+    g.fig.add_artist(legend1)
+    g.fig.legend(handles=baseline_legend_handles, title="Baselines",
+                 bbox_to_anchor=(1.02, 0.35), loc="center left", frameon=True)
+
+    g.fig.tight_layout(rect=[0, 0, 0.90, 1]) 
 
     save_figure(g.fig, filename)
 
@@ -665,10 +689,13 @@ def main():
         'Figure 5: Champion Semantic Model vs. XGBoost Baseline by AUROC (with 95% CI)'
     )
     
-    # --- Generate NEW Plot: Per-Model Task Comparison ---
+    # --- Generate NEW Plot: Per-Model Task Comparison with Baselines ---
     generate_task_comparison_by_model_plot(
-        embedding_df_full, 'AUROC', 'figure_7_task_comparison_by_model_auroc.png',
-        'Figure 7: Comparing Task Performance for each Embedding Model'
+        embedding_df_full, 
+        baseline_df_full,
+        'AUROC', 
+        'figure_7_task_comparison_by_model_auroc_with_baselines.png',
+        'Figure 7: Comparing Task Performance for each Embedding Model with Baselines'
     )
     
     # --- Generate Final Table ---
