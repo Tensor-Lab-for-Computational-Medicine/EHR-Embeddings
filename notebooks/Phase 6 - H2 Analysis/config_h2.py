@@ -17,7 +17,7 @@ class ConfigH2:
         self.BASELINE_RESULTS_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'results_xgboost_baseline.pkl')
         
         # Numerical feature data paths
-        self.NUMERICAL_DATA_PREFIX = 'preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42'
+        self.NUMERICAL_DATA_PREFIX = 'preprocessed_mort_hosp_trends_True_window_24_gap_6_seed_42'
         self.X_TRAIN_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_train.pkl')
         self.X_VAL_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_val.pkl')
         self.X_TEST_NUM_PATH = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_test.pkl')
@@ -28,7 +28,7 @@ class ConfigH2:
         # Champion embedding model (identified as F3_P2 from text-embedding-004)
         self.CHAMPION_EMBEDDING_MODEL = 'text-embedding-004'
         self.CHAMPION_ARM = 'F3_P2'
-        self.EMBEDDING_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 5', 'embedding_model_results', self.CHAMPION_EMBEDDING_MODEL)
+        self.EMBEDDING_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 5', 'embedding_model_results')
         self.CHAMPION_MODEL_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'model_{self.CHAMPION_ARM}.pkl')
         self.CHAMPION_RESULTS_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'results_{self.CHAMPION_ARM}.pkl')
         
