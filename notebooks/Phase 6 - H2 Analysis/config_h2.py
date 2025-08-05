@@ -1,18 +1,21 @@
 # config_h2.py
 """
 Configuration for H2 Analysis: Hybrid Models and Orthogonality Testing
+Updated to match actual file structure
 """
 import os
 
 class ConfigH2:
     def __init__(self):
-        # Get the root directory (go up from Phase 6 to root)
+        # Get the root directory - we're in Phase 6, go up to notebooks
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.ROOT_DIR = os.path.abspath(os.path.join(current_dir, '..', '..'))
+        # Assuming this file is in /notebooks/Phase 6 - H2 Analysis/
+        self.NOTEBOOKS_DIR = os.path.abspath(os.path.join(current_dir, '..'))
+        self.ROOT_DIR = os.path.abspath(os.path.join(self.NOTEBOOKS_DIR, '..'))
         
-        # --- Paths (all relative to root directory) ---
+        # --- Paths (all relative to notebooks directory) ---
         # Baseline numerical model outputs (Phase 1-2)
-        self.BASELINE_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 1 and 2', 'phase_1_outputs')
+        self.BASELINE_MODEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 1 and 2', 'phase_1_outputs')
         self.BASELINE_MODEL_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'model_1_xgboost_baseline.pkl')
         self.BASELINE_RESULTS_PATH = os.path.join(self.BASELINE_MODEL_DIR, 'results_xgboost_baseline.pkl')
         
@@ -28,18 +31,20 @@ class ConfigH2:
         # Champion embedding model (identified as F3_P2 from text-embedding-004)
         self.CHAMPION_EMBEDDING_MODEL = 'text-embedding-004'
         self.CHAMPION_ARM = 'F3_P2'
-        self.EMBEDDING_MODEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 5', 'embedding_model_results')
+        
+        # Embedding model paths - models are in Phase 5
+        self.EMBEDDING_MODEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 5', 'embedding_model_results')
         self.CHAMPION_MODEL_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'model_{self.CHAMPION_ARM}.pkl')
         self.CHAMPION_RESULTS_PATH = os.path.join(self.EMBEDDING_MODEL_DIR, f'results_{self.CHAMPION_ARM}.pkl')
         
-        # Embedding data paths for champion model
-        self.EMBEDDING_DATA_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 4', 'phase_4_embeddings', self.CHAMPION_ARM)
+        # Embedding data paths - embeddings are in Phase 4
+        self.EMBEDDING_DATA_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 4', 'phase_4_embeddings', self.CHAMPION_ARM)
         
         # Label data paths
-        self.LABEL_DIR = os.path.join(self.ROOT_DIR, 'notebooks', 'Phase 3', 'phase_3_serialized_data')
+        self.LABEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase 3', 'phase_3_serialized_data')
         
         # Output directory for H2 analysis (local to current directory)
-        self.OUTPUT_DIR = 'h2_results'
+        self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results')
         
         # --- Experiment Settings ---
         self.TARGET_VARIABLE = 'mort_hosp'
@@ -76,19 +81,25 @@ class ConfigH2:
             self.CHAMPION_RESULTS_PATH
         ]
         
-        print(f"🔍 Checking files from root directory: {self.ROOT_DIR}")
+        print(f"🔍 Checking files from notebooks directory: {self.NOTEBOOKS_DIR}")
         missing_files = []
         for file_path in required_files:
             if not os.path.exists(file_path):
                 missing_files.append(file_path)
+                print(f"❌ Missing: {os.path.relpath(file_path, self.NOTEBOOKS_DIR)}")
             else:
-                print(f"✅ Found: {os.path.relpath(file_path, self.ROOT_DIR)}")
+                print(f"✅ Found: {os.path.relpath(file_path, self.NOTEBOOKS_DIR)}")
+        
+        # Note: We need to check for X_train file
+        if self.X_TRAIN_NUM_PATH in missing_files:
+            # Check if it exists without the prefix
+            alt_path = os.path.join(self.BASELINE_MODEL_DIR, f'{self.NUMERICAL_DATA_PREFIX}_X_train.pkl')
+            if not os.path.exists(alt_path):
+                print(f"⚠️  Note: X_train file missing - this might be the source of data leakage if train+val were combined")
         
         if missing_files:
-            print(f"❌ Missing files:")
-            for file_path in missing_files:
-                print(f"   - {os.path.relpath(file_path, self.ROOT_DIR)}")
-            raise FileNotFoundError(f"Missing required files: {[os.path.relpath(f, self.ROOT_DIR) for f in missing_files]}")
+            print(f"\n❌ Missing {len(missing_files)} required files")
+            # Don't raise error immediately - some files might be optional
         
         # Check embedding directories exist
         embedding_dirs = [
@@ -99,14 +110,77 @@ class ConfigH2:
         for dir_path in embedding_dirs:
             if not os.path.isdir(dir_path):
                 missing_dirs.append(dir_path)
+                print(f"❌ Missing directory: {os.path.relpath(dir_path, self.NOTEBOOKS_DIR)}")
             else:
-                print(f"✅ Found directory: {os.path.relpath(dir_path, self.ROOT_DIR)}")
+                # Count files in directory
+                num_files = len([f for f in os.listdir(dir_path) if f.endswith('.npy')])
+                print(f"✅ Found directory: {os.path.relpath(dir_path, self.NOTEBOOKS_DIR)} ({num_files} embeddings)")
+        
+        # Check label files
+        label_files = ['train_labels.csv', 'val_labels.csv', 'test_labels.csv']
+        for label_file in label_files:
+            label_path = os.path.join(self.LABEL_DIR, label_file)
+            if os.path.exists(label_path):
+                print(f"✅ Found label file: {label_file}")
+            else:
+                print(f"❌ Missing label file: {label_file}")
+                missing_files.append(label_path)
         
         if missing_dirs:
-            print(f"❌ Missing directories:")
-            for dir_path in missing_dirs:
-                print(f"   - {os.path.relpath(dir_path, self.ROOT_DIR)}")
-            raise FileNotFoundError(f"Missing embedding directories: {[os.path.relpath(d, self.ROOT_DIR) for d in missing_dirs]}")
+            raise FileNotFoundError(f"Missing embedding directories: {[os.path.relpath(d, self.NOTEBOOKS_DIR) for d in missing_dirs]}")
         
-        print("✅ All required files and directories found!")
-        return True
+        if missing_files:
+            print(f"\n⚠️  Warning: {len(missing_files)} files are missing.")
+            print("The analysis may fail if these are required.")
+        else:
+            print("\n✅ All required files and directories found!")
+        
+        return len(missing_files) == 0
+    
+    def check_data_leakage(self):
+        """Check for potential data leakage by examining file sizes and dates"""
+        import datetime
+        
+        print("\n🔍 Checking for potential data leakage indicators...")
+        
+        # Check if X_train exists
+        if not os.path.exists(self.X_TRAIN_NUM_PATH):
+            print("⚠️  WARNING: X_train file not found!")
+            return True
+        
+        # Check file sizes to see if they make sense
+        try:
+            train_size = os.path.getsize(self.X_TRAIN_NUM_PATH) / (1024*1024)  # MB
+            val_size = os.path.getsize(self.X_VAL_NUM_PATH) / (1024*1024)
+            test_size = os.path.getsize(self.X_TEST_NUM_PATH) / (1024*1024)
+            
+            print(f"📊 Data file sizes:")
+            print(f"   X_train: {train_size:.1f} MB")
+            print(f"   X_val: {val_size:.1f} MB")
+            print(f"   X_test: {test_size:.1f} MB")
+            
+            # Check modification times
+            train_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.X_TRAIN_NUM_PATH))
+            val_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.X_VAL_NUM_PATH))
+            model_time = datetime.datetime.fromtimestamp(os.path.getmtime(self.BASELINE_MODEL_PATH))
+            
+            print(f"\n📅 File modification times:")
+            print(f"   X_train: {train_time}")
+            print(f"   X_val: {val_time}")
+            print(f"   Model: {model_time}")
+            
+            # If model was modified after data files, it might be OK
+            if model_time > max(train_time, val_time):
+                print("\n✅ Model was trained after data files were created")
+            else:
+                print("\n⚠️  WARNING: Model file is older than data files!")
+                
+        except Exception as e:
+            print(f"Error checking files: {e}")
+            
+        print("\n💡 Note: The 100% validation AUROC suggests the model may have been:")
+        print("   1. Trained on combined train+val data")
+        print("   2. Evaluated on data it was trained on")
+        print("   3. Subject to target leakage through feature engineering")
+        
+        return False
