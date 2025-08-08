@@ -11,20 +11,22 @@ class Config:
     BASE_DIR = Path("./notebooks/Phase 7")
     EMBEDDING_DIR = BASE_DIR / "model_4b_text-embedding-004"  # Adjust model name as needed
     LABEL_DIR = EMBEDDING_DIR / "labels"
-    OUTPUT_DIR = BASE_DIR / "xgboost_results_model4b"
+    
+    # === TARGET VARIABLE ===
+    # Change this to run analysis for different tasks
+    TARGET_VARIABLE = 'intervention_vent'  # Options: 'mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso'
+    
+    # OUTPUT_DIR now includes the target variable
+    OUTPUT_DIR = BASE_DIR / f"xgboost_results_model4b_{TARGET_VARIABLE}"
     
     # === EXPERIMENTAL SETUP ===
     # For Model 4B, we typically have one experimental arm
     REPRESENTATIONS = ["MODEL4B"]  # Single representation type
     PROMPTS = ["P0"]  # Single prompt/parameter setting
     
-    # === TARGET VARIABLE ===
-    # Change this to run analysis for different tasks
-    TARGET_VARIABLE = 'mort_hosp'  # Options: 'mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso'
-    
     # === MODEL HYPERPARAMETERS ===
     SEED = 42
-    N_OPTUNA_TRIALS = 100
+    N_OPTUNA_TRIALS = 30
     OPTUNA_TIMEOUT = 3600  # 1 hour timeout for hyperparameter optimization
     REUSE_EXISTING_STUDY = True
     USE_GPU = True  # Set to False if no GPU available

@@ -1,0 +1,23 @@
+2025-07-28 23:04:02,340 [INFO] - Starting analysis for TARGET_VARIABLE: intervention_vent
+2025-07-28 23:04:02,341 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: MODEL4B_P0
+================================================================================
+2025-07-28 23:04:02,341 [INFO] - Loading data for experimental arm: MODEL4B_P0...
+2025-07-28 23:04:02,379 [INFO] - Loading train embeddings for 15713 samples...
+2025-07-28 23:07:34,351 [INFO] - Loading val embeddings for 2245 samples...
+2025-07-28 23:07:59,451 [INFO] - Loading test embeddings for 5986 samples...
+2025-07-28 23:09:08,162 [INFO] - Data shapes: X_train=(15713, 768), X_val=(2245, 768), X_test=(5986, 768)
+2025-07-28 23:09:08,167 [INFO] - Handling prevalent cases for target: intervention_vent
+2025-07-28 23:09:08,201 [INFO] - Train set: Dropped 6258 prevalent cases. New size: 9455
+2025-07-28 23:09:08,210 [INFO] - Validation set: Dropped 898 prevalent cases. New size: 1347
+2025-07-28 23:09:08,222 [INFO] - Test set: Dropped 2319 prevalent cases. New size: 3667
+2025-07-28 23:09:08,222 [INFO] - Creating new Optuna study for MODEL4B_P0...
+2025-07-29 05:10:07,010 [INFO] - Study saved to notebooks\Phase 7\xgboost_results_model4b_intervention_vent\optuna_study_MODEL4B_P0.pkl
+2025-07-29 05:10:07,011 [INFO] - Training final model on combined train+validation data...
+2025-07-29 05:10:31,708 [INFO] - --- FINAL EVALUATION ON TEST SET FOR MODEL4B_P0 ---
+2025-07-29 05:10:33,640 [INFO] - Test AUROC for MODEL4B_P0: 0.6013 (95% CI: 0.5674-0.6300)
+2025-07-29 05:10:33,645 [INFO] - Model for MODEL4B_P0 saved to: notebooks\Phase 7\xgboost_results_model4b_intervention_vent\model_MODEL4B_P0.pkl
+2025-07-29 05:10:33,645 [INFO] - Results for MODEL4B_P0 saved to: notebooks\Phase 7\xgboost_results_model4b_intervention_vent\results_MODEL4B_P0.pkl
+2025-07-29 05:10:33,645 [INFO] - 
+Full analysis completed in 6.11 hours

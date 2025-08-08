@@ -13,7 +13,7 @@ import os
 import pickle
 from sklearn.metrics import roc_auc_score, average_precision_score, classification_report, confusion_matrix
 from tqdm import tqdm
-from xgboost_config_model4b import Config
+from config_embedding_analysis_text_embedding_004_classification import Config
 
 # =============================================================================
 # DATA HANDLING

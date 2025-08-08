@@ -1,0 +1,19 @@
+2025-07-28 22:34:23,021 [INFO] - Starting analysis for TARGET_VARIABLE: mort_hosp
+2025-07-28 22:34:23,022 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: MODEL4B_P0
+================================================================================
+2025-07-28 22:34:23,022 [INFO] - Loading data for experimental arm: MODEL4B_P0...
+2025-07-28 22:34:23,105 [INFO] - Loading train embeddings for 15713 samples...
+2025-07-28 22:39:23,828 [INFO] - Loading val embeddings for 2245 samples...
+2025-07-28 22:39:50,522 [INFO] - Loading test embeddings for 5986 samples...
+2025-07-28 22:41:02,812 [INFO] - Data shapes: X_train=(15713, 768), X_val=(2245, 768), X_test=(5986, 768)
+2025-07-28 22:41:02,821 [INFO] - Creating new Optuna study for MODEL4B_P0...
+2025-07-29 05:10:14,985 [INFO] - Study saved to notebooks\Phase 7\xgboost_results_model4b_mort_hosp\optuna_study_MODEL4B_P0.pkl
+2025-07-29 05:10:14,987 [INFO] - Training final model on combined train+validation data...
+2025-07-29 05:10:42,107 [INFO] - --- FINAL EVALUATION ON TEST SET FOR MODEL4B_P0 ---
+2025-07-29 05:10:44,557 [INFO] - Test AUROC for MODEL4B_P0: 0.7079 (95% CI: 0.6883-0.7276)
+2025-07-29 05:10:44,565 [INFO] - Model for MODEL4B_P0 saved to: notebooks\Phase 7\xgboost_results_model4b_mort_hosp\model_MODEL4B_P0.pkl
+2025-07-29 05:10:44,565 [INFO] - Results for MODEL4B_P0 saved to: notebooks\Phase 7\xgboost_results_model4b_mort_hosp\results_MODEL4B_P0.pkl
+2025-07-29 05:10:44,566 [INFO] - 
+Full analysis completed in 6.61 hours

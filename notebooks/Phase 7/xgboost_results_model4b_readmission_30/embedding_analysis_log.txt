@@ -1,0 +1,19 @@
+2025-07-28 22:35:33,470 [INFO] - Starting analysis for TARGET_VARIABLE: readmission_30
+2025-07-28 22:35:33,471 [INFO] - 
+================================================================================
+STARTING ANALYSIS FOR ARM: MODEL4B_P0
+================================================================================
+2025-07-28 22:35:33,471 [INFO] - Loading data for experimental arm: MODEL4B_P0...
+2025-07-28 22:35:33,605 [INFO] - Loading train embeddings for 15713 samples...
+2025-07-28 22:39:23,832 [INFO] - Loading val embeddings for 2245 samples...
+2025-07-28 22:39:50,521 [INFO] - Loading test embeddings for 5986 samples...
+2025-07-28 22:41:02,812 [INFO] - Data shapes: X_train=(15713, 768), X_val=(2245, 768), X_test=(5986, 768)
+2025-07-28 22:41:02,819 [INFO] - Creating new Optuna study for MODEL4B_P0...
+2025-07-29 05:09:58,559 [INFO] - Study saved to notebooks\Phase 7\xgboost_results_model4b_readmission_30\optuna_study_MODEL4B_P0.pkl
+2025-07-29 05:09:58,563 [INFO] - Training final model on combined train+validation data...
+2025-07-29 05:10:20,048 [INFO] - --- FINAL EVALUATION ON TEST SET FOR MODEL4B_P0 ---
+2025-07-29 05:10:22,491 [INFO] - Test AUROC for MODEL4B_P0: 0.5893 (95% CI: 0.5563-0.6210)
+2025-07-29 05:10:22,505 [INFO] - Model for MODEL4B_P0 saved to: notebooks\Phase 7\xgboost_results_model4b_readmission_30\model_MODEL4B_P0.pkl
+2025-07-29 05:10:22,505 [INFO] - Results for MODEL4B_P0 saved to: notebooks\Phase 7\xgboost_results_model4b_readmission_30\results_MODEL4B_P0.pkl
+2025-07-29 05:10:22,506 [INFO] - 
+Full analysis completed in 6.58 hours
