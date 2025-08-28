@@ -59,6 +59,27 @@ class ConfigH2:
         self.N_BOOTSTRAP = 1000
         self.CONFIDENCE_LEVEL = 0.95
         
+        # =============================================================================
+        # SUBGROUP DISCOVERY SETTINGS (NEW FOR H2b ANALYSIS)
+        # =============================================================================
+        # Enable/disable subgroup discovery (will fall back to univariate if False or if pysubgroup not installed)
+        self.USE_SUBGROUP_DISCOVERY = True
+        
+        # Subgroup Discovery Algorithm Parameters
+        self.SUBGROUP_MIN_SUPPORT = 0.05    # Minimum support: subgroup must cover at least 5% of population
+        self.SUBGROUP_MAX_DEPTH = 3         # Maximum depth of conjunctive rules (e.g., depth 3 = up to 3 ANDed conditions)
+        self.SUBGROUP_TOP_K = 10            # Number of top subgroups to discover per analysis
+        
+        # Quality thresholds for H2b hypothesis evaluation
+        self.SUBGROUP_MIN_QUALITY = 0.1     # Minimum WRAcc quality score to consider a pattern meaningful
+        self.SUBGROUP_MIN_COVERAGE_PCT = 5  # Minimum coverage percentage for a meaningful pattern
+        self.SUBGROUP_MIN_LIFT = 1.5        # Minimum lift (ratio to baseline) for a meaningful pattern
+        
+        # Number of analyses that must yield meaningful patterns to support H2b
+        self.SUBGROUP_MIN_MEANINGFUL_ANALYSES = 2
+        
+        # =============================================================================
+        
         # Debugging/testing
         self.DRY_RUN = False
         self.DRY_RUN_SAMPLES = 1000
@@ -184,3 +205,26 @@ class ConfigH2:
         print("   3. Subject to target leakage through feature engineering")
         
         return False
+    
+    def validate_subgroup_discovery(self):
+        """Check if subgroup discovery can be used"""
+        try:
+            import pysubgroup
+            print("\n✅ pysubgroup is installed - Subgroup Discovery analysis available")
+            
+            if self.USE_SUBGROUP_DISCOVERY:
+                print("   Subgroup Discovery is ENABLED")
+                print(f"   - Min support: {self.SUBGROUP_MIN_SUPPORT*100:.0f}% of population")
+                print(f"   - Max rule depth: {self.SUBGROUP_MAX_DEPTH} conditions")
+                print(f"   - Top K patterns: {self.SUBGROUP_TOP_K}")
+                print(f"   - Min quality (WRAcc): {self.SUBGROUP_MIN_QUALITY}")
+                print(f"   - Min lift: {self.SUBGROUP_MIN_LIFT}x baseline")
+            else:
+                print("   Subgroup Discovery is DISABLED in config (using univariate analysis)")
+            
+            return True
+            
+        except ImportError:
+            print("\n⚠️  pysubgroup not installed - will fall back to univariate analysis")
+            print("   To enable Subgroup Discovery: pip install pysubgroup")
+            return False

@@ -10,35 +10,5 @@ Validation mortality rate: 0.101
 VALIDATION PREDICTIONS:
 Mean prediction: 0.107
 Std prediction: 0.297
-Min prediction: 0.000010
-Max prediction: 0.999978
-Predictions = 0: 0
-Predictions = 1: 0
-Predictions < 0.001: 687
-Predictions > 0.999: 8
-
-TOP 20 FEATURE IMPORTANCES:
-tidal volume observed_mean_count                   0.024769
-glascow coma scale total_mean_last                 0.021916
-respiratory rate set_mean_count                    0.018276
-lactate dehydrogenase pleural_mean_count           0.018119
-blood urea nitrogen_mean_last                      0.017403
-red blood cell count pleural_mean_count            0.014717
-pulmonary artery pressure systolic_mean_count_6h   0.012661
-red blood cell count pleural_mean_last             0.011884
-pulmonary artery pressure systolic_mean_count      0.011634
-tidal volume set_mean_count                        0.011054
-cardiac output thermodilution_mean_stddev_24h      0.009715
-total protein_mean_last                            0.007965
-blood urea nitrogen_mean_mean                      0.007855
-fraction inspired oxygen_mean_count                0.007288
-basophils_mean_slope_24h                           0.007274
-anion gap_mean_last                                0.007224
-prothrombin time inr_mean_last                     0.007013
-peak inspiratory pressure_mean_count               0.006443
-positive end-expiratory pressure set_mean_last     0.006416
-prothrombin time pt_mean_last                      0.006375
-
-Number of features with zero importance: 45
 
 Report saved at: /Users/varunnautiyal/Downloads/EHR Embeddings/notebooks/Phase 6 - H2 Analysis/h2_results/data_leakage_diagnostic_report.txt

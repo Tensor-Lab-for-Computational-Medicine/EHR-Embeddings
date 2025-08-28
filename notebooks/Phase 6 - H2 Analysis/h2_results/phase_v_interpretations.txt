@@ -1,0 +1,5 @@
+PHASE V: META-ANALYSIS INTERPRETATIONS
+==================================================
+
+SM_false_alarm: Volatility metrics significantly differ in failure cases.
+
