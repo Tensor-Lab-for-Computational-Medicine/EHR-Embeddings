@@ -82,6 +82,7 @@ def load_data(config):
     
     for key, path in tqdm(numerical_paths.items(), desc="Loading numerical data & labels"):
         with open(path, 'rb') as f:
+<<<<<<< HEAD
             loaded_data = pickle.load(f)
             
             # Validate numerical data for NaN/inf values
@@ -104,6 +105,9 @@ def load_data(config):
                     loaded_data = np.nan_to_num(loaded_data, posinf=0.0, neginf=0.0)
             
             data[key] = loaded_data
+=======
+            data[key] = pickle.load(f)
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     
     # Load label files and embeddings
     label_files = {
@@ -118,6 +122,7 @@ def load_data(config):
         
         embedding_dir = os.path.join(config.EMBEDDING_DATA_DIR, split)
         embedding_vectors = []
+<<<<<<< HEAD
         missing_count = 0
         
         for icustay_id in tqdm(icustay_ids, desc=f"Loading {split} embeddings"):
@@ -147,6 +152,21 @@ def load_data(config):
             data[f'X_{split}_emb'] = np.nan_to_num(data[f'X_{split}_emb'], nan=0.0)
     
     logging.info("[SUCCESS] All data loaded successfully.")
+=======
+        
+        for icustay_id in tqdm(icustay_ids, desc=f"Loading {split} embeddings"):
+            emb_path = os.path.join(embedding_dir, f"{icustay_id}.npy")
+            if os.path.exists(emb_path):
+                embedding_vectors.append(np.load(emb_path))
+            else:
+                logging.warning(f"Missing embedding for icustay_id {icustay_id}")
+                # Use zero vector as placeholder
+                embedding_vectors.append(np.zeros(768))  # Assuming embedding dimension
+        
+        data[f'X_{split}_emb'] = np.vstack(embedding_vectors)
+    
+    logging.info("✅ All data loaded successfully.")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     return data
 
 def load_or_create_model_4_embeddings(data, config):
@@ -201,6 +221,7 @@ def load_or_create_model_4_embeddings(data, config):
 def load_trained_models(config):
     """Load pre-trained Numerical Model (NM) and Semantic Model (SM)."""
     logging.info("Loading pre-trained Numerical (NM) and Semantic (SM) models...")
+<<<<<<< HEAD
 
     def load_model_safe(file_path, model_name):
         """Safely load a model with XGBoost native format prioritized over pickle."""
@@ -300,6 +321,16 @@ def load_trained_models(config):
     semantic_model = load_model_safe(config.CHAMPION_MODEL_PATH, "Semantic Model")
 
     logging.info(f"[SUCCESS] NM: {type(numerical_model).__name__}, SM: {type(semantic_model).__name__}")
+=======
+    
+    with open(config.BASELINE_MODEL_PATH, 'rb') as f:
+        numerical_model = pickle.load(f)
+    
+    with open(config.CHAMPION_MODEL_PATH, 'rb') as f:
+        semantic_model = pickle.load(f)
+    
+    logging.info(f"✅ NM: {type(numerical_model).__name__}, SM: {type(semantic_model).__name__}")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     return numerical_model, semantic_model
 
 def get_feature_importance(model, X_data, top_n=20):
@@ -324,6 +355,7 @@ def evaluate_model_performance(y_true, y_pred_proba, model_name, config):
     logging.info(f"--- Evaluating Performance for: {model_name} ---")
     results = {'model_name': model_name}
     
+<<<<<<< HEAD
     # Validate inputs before proceeding
     if len(y_true) != len(y_pred_proba):
         raise ValueError(f"Mismatch in lengths: y_true={len(y_true)}, y_pred_proba={len(y_pred_proba)}")
@@ -341,6 +373,8 @@ def evaluate_model_performance(y_true, y_pred_proba, model_name, config):
         logging.warning(f"Only one class found in y_true: {unique_labels}. Cannot compute AUROC/AUPRC.")
         return {"AUROC": (np.nan, np.nan, np.nan), "AUPRC": (np.nan, np.nan, np.nan), "Brier": (np.nan, np.nan, np.nan)}
     
+=======
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     # Define metrics
     metrics = {
         'AUROC': roc_auc_score, 
@@ -349,6 +383,7 @@ def evaluate_model_performance(y_true, y_pred_proba, model_name, config):
     }
     
     for metric_name, metric_func in metrics.items():
+<<<<<<< HEAD
         try:
             # Calculate point estimate
             point_estimate = metric_func(y_true, y_pred_proba)
@@ -357,6 +392,10 @@ def evaluate_model_performance(y_true, y_pred_proba, model_name, config):
             logging.error(f"y_true stats: min={np.min(y_true)}, max={np.max(y_true)}, unique={np.unique(y_true)}")
             logging.error(f"y_pred_proba stats: min={np.min(y_pred_proba)}, max={np.max(y_pred_proba)}, nan_count={np.isnan(y_pred_proba).sum()}")
             raise
+=======
+        # Calculate point estimate
+        point_estimate = metric_func(y_true, y_pred_proba)
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
         
         # Bootstrap for confidence intervals
         metric_samples = []
@@ -1044,7 +1083,11 @@ def analyze_meta_features_for_subgroups(subgroup_results, X_test_num, cohorts, m
                     # Log significant findings
                     if p_value < 0.05:
                         direction = "higher" if effect_size > 0 else "lower"
+<<<<<<< HEAD
                         logging.info(f"  [DATA] {meta_feature}: {direction} in failure group")
+=======
+                        logging.info(f"  📊 {meta_feature}: {direction} in failure group")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
                         logging.info(f"     Failure median: {failure_values.median():.2f}")
                         logging.info(f"     Success median: {success_values.median():.2f}")
                         logging.info(f"     p-value: {p_value:.4f}")
@@ -1418,7 +1461,11 @@ def train_hybrid_models_safe(X_train_num, X_val_num, X_test_num,
         verbose=False
     )
     
+<<<<<<< HEAD
     logging.info("[SUCCESS] Early Fusion model trained.")
+=======
+    logging.info("✅ Early Fusion model trained.")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     
     # Late Fusion (Stacking)
     logging.info("Building Late Fusion (Stacking) Hybrid Model...")
@@ -1437,7 +1484,11 @@ def train_hybrid_models_safe(X_train_num, X_val_num, X_test_num,
     late_fusion = LogisticRegression(random_state=config.SEED, max_iter=1000)
     late_fusion.fit(X_train_stack, y_train)
     
+<<<<<<< HEAD
     logging.info(f"[SUCCESS] Late Fusion model trained. Coeffs: NM={late_fusion.coef_[0][0]:.2f}, SM={late_fusion.coef_[0][1]:.2f}")
+=======
+    logging.info(f"✅ Late Fusion model trained. Coeffs: NM={late_fusion.coef_[0][0]:.2f}, SM={late_fusion.coef_[0][1]:.2f}")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     
     # Evaluate on validation set
     logging.info("Evaluating candidate models on the validation set...")
@@ -1669,7 +1720,11 @@ def analyze_hybrid_synergy(nm_proba, sm_proba, hybrid_proba, y_test, cohorts, co
     # This means the difference should be negative and CI should not include 0
     h2c_supported = (diff_lift < 0) and (diff_ci_high < 0)
     
+<<<<<<< HEAD
     logging.info(f"[SUCCESS] H2c Synergy Supported: {h2c_supported}")
+=======
+    logging.info(f"✅ H2c Synergy Supported: {h2c_supported}")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     
     return lift_df, h2c_supported
 
@@ -1689,7 +1744,11 @@ def run_sensitivity_analysis(data, nm_model, sm_model, strategy_name, threshold,
     strategy_dir = os.path.join(output_dir, f"sensitivity_{strategy_name.lower().replace(' ', '_').replace('(', '').replace(')', '')}")
     os.makedirs(strategy_dir, exist_ok=True)
     
+<<<<<<< HEAD
     # Get predictions ON TEST SET (not validation)
+=======
+    # Get predictions
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     nm_proba_test = pd.Series(
         nm_model.predict_proba(data['X_test_num'])[:, 1],
         index=data['y_test'].index
@@ -1701,16 +1760,24 @@ def run_sensitivity_analysis(data, nm_model, sm_model, strategy_name, threshold,
     
     # Define cohorts based on strategy
     if strategy_name == "Primary":
+<<<<<<< HEAD
         # Use fixed 0.5 threshold as per calibrated probability interpretation
         threshold = 0.5
         cohorts = define_analysis_cohorts(nm_proba_test, sm_proba_test, data['y_test'], threshold)
         logging.info(f"Primary threshold set to: {threshold:.4f}")
+=======
+        cohorts = define_analysis_cohorts(nm_proba_test, sm_proba_test, data['y_test'], threshold)
+        logging.info(f"Primary Error Tolerance Threshold (T) set to: {threshold:.4f}")
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     else:
         # For other strategies, use probability threshold
         cohorts = define_analysis_cohorts_by_prob(nm_proba_test, sm_proba_test, data['y_test'], threshold)
         if "F1" in strategy_name:
+<<<<<<< HEAD
             # CHANGE: Determine F1 threshold on TEST set
             threshold, _ = determine_f1_threshold(data['y_test'], nm_proba_test)
+=======
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
             logging.info(f"{strategy_name}: F1-optimized probability threshold: {threshold:.4f}")
         else:
             logging.info(f"{strategy_name}: Fixed probability threshold: {threshold}")
@@ -1821,6 +1888,7 @@ def main():
     data = load_data(config)
     
     # Load pre-trained models
+<<<<<<< HEAD
     nm_model, sm_model = load_trained_models(config)
     
     # Just log the models loaded
@@ -1928,6 +1996,36 @@ def main():
         index=data['y_test'].index
     )
     
+=======
+    # Load pre-trained models
+    nm_model, sm_model = load_trained_models(config)
+
+    # Optionally analyze feature importance
+    logging.info("\n--- Feature Importance Analysis ---")
+    nm_importances = get_feature_importance(nm_model, data['X_test_num'], top_n=20)
+    if nm_importances is not None:
+        # Save to file
+        nm_importances.to_csv(
+            os.path.join(config.OUTPUT_DIR, 'nm_feature_importances.csv'), 
+            index=False
+        )
+
+    # Verify model performance and check for data leakage
+    # Log model types
+    logging.info(f"Models loaded - NM: {type(nm_model).__name__}, SM: {type(sm_model).__name__}")
+
+    # Generate test predictions
+    logging.info("Generating model predictions...")
+    nm_proba_test = pd.Series(
+        nm_model.predict_proba(data['X_test_num'])[:, 1],
+        index=data['y_test'].index
+    )
+    sm_proba_test = pd.Series(
+        sm_model.predict_proba(data['X_test_emb'])[:, 1],
+        index=data['y_test'].index
+    )
+    
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     # Evaluate models on test set
     nm_perf = evaluate_model_performance(data['y_test'], nm_proba_test, "Numerical Model", config)
     sm_perf = evaluate_model_performance(data['y_test'], sm_proba_test, "Semantic Model", config)
@@ -1941,9 +2039,13 @@ def main():
         nm_model.predict_proba(data['X_val_num'])[:, 1],
         index=data['y_val'].index
     )
+<<<<<<< HEAD
     # NEW CODE - USE FIXED 0.5 THRESHOLD
     primary_threshold = 0.5
 
+=======
+    primary_threshold = determine_histogram_threshold(data['y_val'], nm_proba_val)
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     primary_cohorts, _, _ = run_sensitivity_analysis(
         data, nm_model, sm_model, "Primary", primary_threshold, config, config.OUTPUT_DIR
     )

@@ -12,9 +12,12 @@ import pyarrow.parquet as pq
 import jsonschema
 from sklearn.model_selection import train_test_split
 import tqdm
+<<<<<<< HEAD
 from difflib import SequenceMatcher
 import warnings
 warnings.filterwarnings('ignore', category=pd.errors.DtypeWarning)
+=======
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
 
 from meds import (
     CodeMetadataSchema,
@@ -474,12 +477,45 @@ def load_and_preprocess_data(hdf_path: str) -> Dict[str, pd.DataFrame]:
     patients_df['los_7'] = (patients_df['los_icu'] > 7).astype(int)
     print("  --> Derived LOS labels (los_3, los_7).")
 
+    # Create intervention labels with proper prevalent case handling
     interventions_df = all_data['interventions']
+    
+    # 1. Create labels from full ICU stay data (for patients who eventually need interventions)
     intervention_labels = interventions_df.groupby('subject_id')[['vent', 'vaso']].max()
     intervention_labels = intervention_labels.rename(columns={'vent': 'intervention_vent', 'vaso': 'intervention_vaso'})
     patients_df = patients_df.join(intervention_labels, on='subject_id')
     patients_df[['intervention_vent', 'intervention_vaso']] = patients_df[['intervention_vent', 'intervention_vaso']].fillna(0).astype(int)
-    print("  --> Derived intervention labels.")
+    print("  --> Derived intervention labels from full ICU stay.")
+    
+    # 2. Identify prevalent cases (patients already on interventions in first 24 hours)
+    print("  --> Identifying and excluding prevalent cases for intervention predictions...")
+    window_size = TIME_WINDOW_CONFIG['WINDOW_SIZE']  # 24 hours
+    prevalent_interventions = interventions_df[
+        interventions_df.index.get_level_values('hours_in') < window_size
+    ]
+    
+    # Find patients with interventions in the first 24 hours
+    prevalent_vent_subjects = set(
+        prevalent_interventions[prevalent_interventions['vent'] > 0]
+        .index.get_level_values('subject_id').unique()
+    )
+    prevalent_vaso_subjects = set(
+        prevalent_interventions[prevalent_interventions['vaso'] > 0]
+        .index.get_level_values('subject_id').unique()
+    )
+    
+    # 3. Set prevalent cases to NaN (exclude from prediction task)
+    if prevalent_vent_subjects:
+        vent_prevalent_mask = patients_df.index.get_level_values('subject_id').isin(prevalent_vent_subjects)
+        patients_df.loc[vent_prevalent_mask, 'intervention_vent'] = np.nan
+        print(f"    --> Excluded {vent_prevalent_mask.sum()} prevalent cases for 'intervention_vent' (already on ventilation in first {window_size}h)")
+    
+    if prevalent_vaso_subjects:
+        vaso_prevalent_mask = patients_df.index.get_level_values('subject_id').isin(prevalent_vaso_subjects)
+        patients_df.loc[vaso_prevalent_mask, 'intervention_vaso'] = np.nan
+        print(f"    --> Excluded {vaso_prevalent_mask.sum()} prevalent cases for 'intervention_vaso' (already on vasopressors in first {window_size}h)")
+    
+    print("  --> Intervention labels created with proper prevalent case exclusion.")
 
     all_data['patients'] = patients_df
     print("  --> All tables loaded and preprocessed.")
@@ -550,7 +586,10 @@ def _process_event_data(df: pd.DataFrame, admission_info: pd.DataFrame, mapper: 
     else:
         df['time'] = df['admittime']
 
+<<<<<<< HEAD
     # OMOP Concept Mapping (replaces hardcoded prefixes)
+=======
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     if 'icd9_codes' in df.columns:
         df = df.explode('icd9_codes').dropna(subset=['icd9_codes'])
         # Map each ICD9 code to OMOP standard concept
@@ -581,7 +620,23 @@ def generate_and_save_labels(patients_df: pd.DataFrame, target: str, output_dir:
     labels_df = pd.merge(subject_labels, prediction_times[['subject_id', 'admittime']], on='subject_id')
     labels_df['prediction_time'] = labels_df['admittime'] + timedelta(hours=TIME_WINDOW_CONFIG['WINDOW_SIZE'])
     labels_df = labels_df.rename(columns={target: 'boolean_value'})
-    labels_df['boolean_value'] = labels_df['boolean_value'].astype(bool)
+    
+    # Handle intervention tasks: preserve NaN values for prevalent cases
+    if target in ['intervention_vent', 'intervention_vaso']:
+        # Keep NaN values as they represent excluded prevalent cases
+        # Only convert non-NaN values to boolean
+        labels_df['boolean_value'] = labels_df['boolean_value'].apply(
+            lambda x: bool(x) if pd.notna(x) else None
+        )
+        print(f"    --> Preserved {labels_df['boolean_value'].isna().sum()} prevalent cases as NaN for {target}")
+    else:
+        # For non-intervention tasks, convert to boolean as before
+        labels_df['boolean_value'] = labels_df['boolean_value'].astype(bool)
+
+    # Use the correct null type for each column
+    labels_df['integer_value'] = pd.NA
+    labels_df['float_value'] = np.nan
+    labels_df['categorical_value'] = pd.NA
 
     # Use the correct null type for each column
     labels_df['integer_value'] = pd.NA
@@ -593,6 +648,16 @@ def generate_and_save_labels(patients_df: pd.DataFrame, target: str, output_dir:
     labels_path = os.path.join(task_dir, 'labels.parquet')
     
     # Ensure the DataFrame being saved matches the full schema and has correct dtypes
+<<<<<<< HEAD
+=======
+    # Handle boolean_value column carefully to preserve NaN for intervention tasks
+    if target in ['intervention_vent', 'intervention_vaso']:
+        # Use nullable boolean type that can handle NaN
+        labels_df['boolean_value'] = labels_df['boolean_value'].astype('boolean')
+    else:
+        labels_df['boolean_value'] = labels_df['boolean_value'].astype(bool)
+    
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     final_labels_df = labels_df[LABEL_SCHEMA.schema().names].astype({
         'integer_value': 'Int64',
         'float_value': 'float32',
@@ -608,6 +673,7 @@ def main():
         sys.exit(f"--- CRITICAL ERROR: File not found at '{HDF_FILE_PATH}' ---")
 
     print("--- Starting HDF5 to MEDS Conversion ---")
+    print("--- NOTE: Intervention predictions properly exclude prevalent cases (patients already on interventions in first 24h) ---")
 
     # Create base directories
     os.makedirs(MEDS_OUTPUT_DIR, exist_ok=True)
@@ -676,6 +742,7 @@ def main():
     pq.write_table(pa.Table.from_pandas(all_splits_df, schema=SUBJECT_SPLIT_SCHEMA.schema()), splits_path)
     print(f"  --> Wrote {len(all_splits_df)} subject splits to: {splits_path}")
 
+<<<<<<< HEAD
     # Step 5: Process all event data into a single dataframe with OMOP concept mapping
     print("\nStep 5: Processing all events with OMOP concept mapping...")
     admission_info = filtered_data['patients'].reset_index()[['subject_id', 'hadm_id', 'icustay_id', 'admittime']]
@@ -688,6 +755,17 @@ def main():
         _process_event_data(filtered_data['interventions'], admission_info, mapper, 'procedure', 
                             value_col='val', needs_melting=True),
         _process_event_data(filtered_data['vitals'], admission_info, mapper, 'measurement', 
+=======
+    # Step 5: Process all event data into a single dataframe
+    print("\nStep 5: Processing all events...")
+    admission_info = filtered_data['patients'].reset_index()[['subject_id', 'hadm_id', 'icustay_id', 'admittime']]
+    
+    processed_events = [
+        _process_event_data(filtered_data['codes'], admission_info, "DIAGNOSIS/ICD9CM/"),
+        _process_event_data(filtered_data['interventions'], admission_info, "PROCEDURE/intervention/", 
+                            value_col='val', needs_melting=True),
+        _process_event_data(filtered_data['vitals'], admission_info, "MEASUREMENT/vitals_labs/", 
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
                             value_col='numeric_value', needs_melting=True)
     ]
     
@@ -764,5 +842,18 @@ def main():
 
     print("\n--- MEDS Conversion Completed Successfully! ---")
     
+<<<<<<< HEAD
+=======
+    print("\nRunning meds_reader to confirm MEDS extract is valid...")
+    print("--- NOTE: This validation may fail due to the new split-directory structure, which is expected. ---")
+    print("--- The new structure is required by the `generate_climbr_embeddings.py` script. ---")
+    db_path = os.path.join(MEDS_OUTPUT_DIR, "processed_db")
+    status = os.system(f"meds_reader_convert {MEDS_OUTPUT_DIR} {db_path} --num_threads 5")
+    if status == 0:
+        print(f"--- meds_reader validation successful! DB created at {db_path} ---")
+    else:
+        print("--- WARNING: meds_reader_convert failed as expected. The output directory is still likely valid for the embedding script. ---")
+
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
 if __name__ == '__main__':
     main()

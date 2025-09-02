@@ -59,11 +59,17 @@ def get_args() -> argparse.Namespace:
 def setup_api_key():
     """Securely prompts for and configures the Google AI API key."""
     try:
+<<<<<<< HEAD
         api_key = os.environ.get('GOOGLE_API_KEY')
         print(f"api_key: {api_key}")
         if not api_key:
             logging.info("GOOGLE_API_KEY environment variable not found.")
             api_key = getpass.getpass('Please enter your Google AI Studio API key: ')
+=======
+    
+        logging.info("GOOGLE_API_KEY environment variable not found.")
+        api_key = getpass.getpass('Please enter your Google AI Studio API key: ')
+>>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
         genai.configure(api_key=api_key)
         logging.info("Successfully configured Google AI API key.")
     except Exception as e:

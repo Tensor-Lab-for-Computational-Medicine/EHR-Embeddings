@@ -1,0 +1,14 @@
+DATA LEAKAGE DIAGNOSTIC REPORT
+================================================================================
+
+MODEL INFORMATION:
+Model type: XGBClassifier
+Number of features: 458
+Validation set size: 2118
+Validation mortality rate: 0.101
+
+VALIDATION PREDICTIONS:
+Mean prediction: 0.107
+Std prediction: 0.297
+
+Report saved at: /Users/varunnautiyal/Downloads/EHR Embeddings/notebooks/Phase 6 - H2 Analysis/h2_results/data_leakage_diagnostic_report.txt
