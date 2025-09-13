@@ -1,5 +1,0 @@
-H2b Hypothesis Evaluation
-=========================
-
-Supported: False
-Explanation: H2b is NOT SUPPORTED: Only 0 analyses yielded meaningful patterns. Models do not show sufficiently distinct failure modes.

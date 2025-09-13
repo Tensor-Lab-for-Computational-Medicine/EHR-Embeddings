@@ -25,7 +25,7 @@ def main():
     parser.add_argument(
         "--config",
         type=str,
-        default="config_h2_intervention_vaso",
+        default="config_h2_morthosp",
         help="Python module path (importable) exposing ConfigH2 (e.g., config_h2_morthosp)",
     )
     args = parser.parse_args()
