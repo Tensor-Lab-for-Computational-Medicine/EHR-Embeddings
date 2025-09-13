@@ -1,0 +1,40 @@
+============================================================
+H2a ANALYSIS REPORT: ERROR DISCORDANCE QUANTIFICATION
+============================================================
+
+MCNEMAR'S TEST
+------------------------------
+Test Statistic: 254.0000
+P-value: 0.0000
+Result: Models disagree significantly
+NM-only correct: 626 cases
+SM-only correct: 254 cases
+
+COHEN'S KAPPA
+------------------------------
+Kappa: 0.4899
+95% CI: [0.4615, 0.5186]
+Interpretation: Moderate agreement
+
+PEARSON CORRELATION
+------------------------------
+Correlation: 0.6326
+95% CI: [0.6076, 0.6573]
+P-value: 0.0000
+Interpretation: Moderate positive correlation
+
+DISAGREEMENT MATRIX SUMMARY
+------------------------------
+NM Correct & SM Correct: 4364 (77.3%)
+NM Correct & SM Incorrect: 626 (11.1%)
+NM Incorrect & SM Correct: 254 (4.5%)
+NM Incorrect & SM Incorrect: 404 (7.2%)
+
+Total concordant predictions: 4768 (84.4%)
+Total discordant predictions: 880 (15.6%)
+
+THRESHOLDING
+------------------------------
+Strategy: youden
+NM threshold: 0.1957
+SM threshold: 0.2157

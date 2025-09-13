@@ -1,0 +1,53 @@
+"""
+H2a Analysis (Refactored): Quantifying Error Discordance Between NM and SM Models
+This script now delegates to reusable functional modules under lib/ for reusability.
+"""
+
+import os
+import logging
+import argparse
+import importlib
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib.runner import run_h2a_analysis
+
+
+def _resolve_config(config_module: str):
+    module = importlib.import_module(config_module)
+    if hasattr(module, 'ConfigH2'):
+        return module.ConfigH2()
+    raise AttributeError(f"Config module '{config_module}' does not expose ConfigH2")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run H2a analysis with a given config module.")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="config_h2_intervention_vaso",
+        help="Python module path (importable) exposing ConfigH2 (e.g., config_h2_morthosp)",
+    )
+    args = parser.parse_args()
+
+    config = _resolve_config(args.config)
+
+    os.makedirs(config.OUTPUT_DIR, exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        handlers=[
+            logging.FileHandler(os.path.join(config.OUTPUT_DIR, 'h2a_analysis.log')),
+            logging.StreamHandler()
+        ]
+    )
+    
+    logging.info("="*60)
+    logging.info("H2a ANALYSIS: QUANTIFYING ERROR DISCORDANCE (Refactored)")
+    logging.info("="*60)
+    
+    run_h2a_analysis(config)
+
+
+if __name__ == "__main__":
+    main()

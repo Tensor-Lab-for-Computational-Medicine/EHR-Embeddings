@@ -48,6 +48,9 @@ DEFAULT_CONFIG = {
     'SEED': 42,
     'HANDLE_OUTLIERS': True,
     'OUTLIER_PERCENTILES': (1, 99)  # (lower, upper) percentiles for clipping
+    ,
+    # When False, write fixed filenames (override existing) without dynamic prefixes
+    'USE_PREFIXED_FILENAMES': False
 }
 
 def set_config(config_dict=None):
@@ -451,25 +454,48 @@ def get_cache_prefix():
 
 def save_data(datasets, label_encoders=None):
     """Save all datasets and label encoders."""
-    prefix = get_cache_prefix()
+    use_prefix = CONFIG.get('USE_PREFIXED_FILENAMES', True)
+    prefix = get_cache_prefix() if use_prefix else None
     
     for name, data in datasets.items():
-        with open(os.path.join(CONFIG['OUTPUT_DIR'], f'{prefix}_{name}.pkl'), 'wb') as f:
+        filename = f"{prefix}_{name}.pkl" if prefix else f"{name}.pkl"
+        with open(os.path.join(CONFIG['OUTPUT_DIR'], filename), 'wb') as f:
             pickle.dump(data, f)
     
     if label_encoders:
-        with open(os.path.join(CONFIG['OUTPUT_DIR'], f'{prefix}_label_encoders.pkl'), 'wb') as f:
+        label_filename = f"{prefix}_label_encoders.pkl" if prefix else "label_encoders.pkl"
+        with open(os.path.join(CONFIG['OUTPUT_DIR'], label_filename), 'wb') as f:
             pickle.dump(label_encoders, f)
         logging.info(f"Saved label encoders for: {list(label_encoders.keys())}")
     
-    logging.info(f"Data saved with prefix: {prefix}")
+    if prefix:
+        logging.info(f"Data saved with prefix: {prefix}")
+    else:
+        logging.info("Data saved with fixed filenames (overwritten)")
     if 'outlier_bounds' in datasets:
         logging.info("Outlier bounds saved for reproducibility")
 
 def load_cached_data():
     """Check if cached data exists."""
-    prefix = get_cache_prefix()
-    required_files = [f'{prefix}_{name}.pkl' for name in ['X_train', 'X_val', 'X_test', 'y_train', 'y_val', 'y_test']]
+    use_prefix = CONFIG.get('USE_PREFIXED_FILENAMES', True)
+    if use_prefix:
+        prefix = get_cache_prefix()
+        required_files = [
+            f'{prefix}_{name}.pkl' for name in [
+                'X_train', 'X_val', 'X_test',
+                'y_train', 'y_val', 'y_test',
+                # Ensure alignment artifacts exist alongside targets
+                'icustay_ids_train', 'icustay_ids_val', 'icustay_ids_test'
+            ]
+        ]
+    else:
+        required_files = [
+            f'{name}.pkl' for name in [
+                'X_train', 'X_val', 'X_test',
+                'y_train', 'y_val', 'y_test',
+                'icustay_ids_train', 'icustay_ids_val', 'icustay_ids_test'
+            ]
+        ]
     return all(os.path.exists(os.path.join(CONFIG['OUTPUT_DIR'], f)) for f in required_files)
 
 def create_splits(df_patients):
@@ -511,9 +537,13 @@ def process_split_data(df_ts_raw, df_patients, df_demographics, feature_categori
         # Prepare targets
         y = df_patients.loc[df_patients.index.get_level_values('icustay_id').isin(df_final.index), CONFIG['TARGET_VARIABLES']]
         y = y.groupby('icustay_id').first().reindex(df_final.index)
+        # Ensure target index is explicitly named for downstream alignment
+        y.index.name = 'icustay_id'
         
         datasets[f'X_{split_name}'] = df_final
         datasets[f'y_{split_name}'] = y
+        # Persist icustay_id list for this split to guarantee future alignment
+        datasets[f'icustay_ids_{split_name}'] = pd.Index(df_final.index, name='icustay_id')
     
     # Align feature columns across splits
     all_features = sorted(set().union(*(datasets[f'X_{name}'].columns for name in ['train', 'val', 'test'])))

@@ -1,0 +1,80 @@
+================================================================================
+H2b ANALYSIS REPORT: DIFFERENTIAL COHORT PROFILES
+================================================================================
+
+METHOD: Subgroup Discovery with pysubgroup
+  - Max depth: 3
+  - Min support: 5%
+  - Quality measure: WRAcc
+
+COHORT SIZES
+----------------------------------------
+  TP_concordant: 15 patients
+  TN_concordant: 4070 patients
+  FN_concordant: 164 patients
+  FP_concordant: 122 patients
+  FN_SM: 29 patients
+  FP_SM: 584 patients
+  FN_NM: 57 patients
+  FP_NM: 607 patients
+
+================================================================================
+ANALYSIS: SM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 29
+Success cohort size: 15
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: positive end-expiratory pressure_mean_count==0.0 AND red blood cell count ascites_mean_last==1090.0
+  WRAcc: 0.10382231404958676
+  Coverage: 31 patients (70.5%)
+  Target share: 80.6%
+  Lift: 1.22x
+
+================================================================================
+ANALYSIS: SM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 584
+Success cohort size: 4070
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: bilirubin_mean_last>=0.70 AND cardiac output fick_mean_mean: [5.75:5.76[ AND cholesterol_mean_last: [160.0:161.0[
+  WRAcc: 0.02011042065371494
+  Coverage: 840 patients (18.0%)
+  Target share: 23.7%
+  Lift: 1.89x
+
+================================================================================
+ANALYSIS: NM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 57
+Success cohort size: 15
+
+No significant patterns discovered
+
+================================================================================
+ANALYSIS: NM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 607
+Success cohort size: 4070
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: blood urea nitrogen_mean_last>=30.0 AND cardiac output fick_mean_mean: [5.75:5.76[ AND pulmonary artery pressure mean_mean_count_6h: [0.0:1.0[
+  WRAcc: 0.025284569871834705
+  Coverage: 861 patients (18.4%)
+  Target share: 26.7%
+  Lift: 2.06x
+
+================================================================================
+SUMMARY
+================================================================================
+See discovered patterns above; interpret strength, lift, and clinical meaning.

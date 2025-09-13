@@ -1,15 +1,20 @@
-2025-07-12 22:56:27,226 [INFO] - Attempting to use GPU for XGBoost.
-2025-07-12 22:56:27,227 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42
-2025-07-12 22:56:27,332 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
-2025-07-12 22:56:27,333 [INFO] - Using preprocessed data directly - no additional cleaning required
-2025-07-12 22:56:27,333 [INFO] - Creating new Optuna study with 15 trials...
-2025-07-12 22:57:21,483 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\los_3\preprocessed_mort_hosp_los_3_los_7_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
-2025-07-12 22:57:21,484 [INFO] - Best validation AUROC: 0.7283
-2025-07-12 22:57:21,486 [INFO] - Training final model on combined train+validation data...
-2025-07-12 22:57:23,288 [INFO] - --- FINAL EVALUATION ON TEST SET ---
-2025-07-12 22:57:23,343 [INFO] - Calculating bootstrap CIs with 1000 samples...
-2025-07-12 22:57:25,301 [INFO] - Test AUROC: 0.7265 (95% CI: 0.7140-0.7397)
-2025-07-12 22:57:25,302 [INFO] - Test AUPRC: 0.6627 (95% CI: 0.6461-0.6808)
-2025-07-12 22:57:25,430 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\los_3\model_1_xgboost_baseline.pkl
-2025-07-12 22:57:25,430 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\los_3\results_xgboost_baseline.pkl
-2025-07-12 22:57:25,430 [INFO] - Analysis completed in 0.97 minutes
+2025-09-13 10:53:25,050 [INFO] - Loading preprocessed data from fixed filenames (override mode)
+2025-09-13 10:53:25,075 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-09-13 10:53:25,075 [INFO] - Target variable: los_3, y_train shape: (14825,)
+2025-09-13 10:53:25,084 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-09-13 10:53:25,084 [INFO] - Splitting validation set: 0.50 for tuning, 0.50 for calibration
+2025-09-13 10:53:25,092 [INFO] - val_tune shape: (1059, 458), val_cal shape: (1059, 458)
+2025-09-13 10:53:25,092 [INFO] - Creating new Optuna study with 15 trials...
+2025-09-13 10:54:11,840 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\los_3\preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study_valtune_1059_calfrac_0.5.pkl
+2025-09-13 10:54:11,840 [INFO] - Best validation AUROC: 0.7276
+2025-09-13 10:54:11,840 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 10:54:23,924 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-09-13 10:54:23,975 [INFO] - Calibration done using method='isotonic'.
+2025-09-13 10:54:24,030 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-09-13 10:54:25,682 [INFO] - Calibration: ECE 0.0345->0.0261 (delta 0.0083); MCE 0.0936->0.2285 (delta -0.1349); Brier 0.2064->0.2072 (delta -0.0008); Slope 0.888->0.802; Intercept -0.186->-0.018
+2025-09-13 10:54:25,682 [INFO] - Test AUROC: 0.7272 (95% CI: 0.7146-0.7401)
+2025-09-13 10:54:25,682 [INFO] - Test AUPRC: 0.6470 (95% CI: 0.6321-0.6626)
+2025-09-13 10:54:25,682 [INFO] - Test Brier: 0.2072 (95% CI: 0.2026-0.2117); Calibration used: isotonic
+2025-09-13 10:54:25,729 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\los_3\model_1_xgboost_baseline_calibrated.pkl
+2025-09-13 10:54:25,729 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\los_3\results_xgboost_baseline.pkl
+2025-09-13 10:54:25,729 [INFO] - Analysis completed in 1.01 minutes

@@ -1,19 +1,21 @@
-2025-07-13 16:10:56,776 [INFO] - Attempting to use GPU for XGBoost.
-2025-07-13 16:10:56,776 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_readmission_30_discharge_location_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42
-2025-07-13 16:10:56,825 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
-2025-07-13 16:10:56,825 [INFO] - Using preprocessed data directly - no additional cleaning required
-2025-07-13 16:10:56,826 [INFO] - Handling prevalent cases for target: intervention_vaso
-2025-07-13 16:10:56,863 [INFO] - Train set: Dropped 4486 prevalent cases. New size: 10339
-2025-07-13 16:10:56,870 [INFO] - Validation set: Dropped 672 prevalent cases. New size: 1446
-2025-07-13 16:10:56,889 [INFO] - Test set: Dropped 1742 prevalent cases. New size: 3906
-2025-07-13 16:10:56,889 [INFO] - Creating new Optuna study with 30 trials...
-2025-07-13 16:11:55,576 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\preprocessed_mort_hosp_los_3_los_7_readmission_30_discharge_location_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
-2025-07-13 16:11:55,576 [INFO] - Best validation AUROC: 0.7750
-2025-07-13 16:11:55,576 [INFO] - Training final model on combined train+validation data...
-2025-07-13 16:11:58,814 [INFO] - --- FINAL EVALUATION ON TEST SET ---
-2025-07-13 16:11:58,900 [INFO] - Calculating bootstrap CIs with 1000 samples...
-2025-07-13 16:12:00,536 [INFO] - Test AUROC: 0.7724 (95% CI: 0.7405-0.8025)
-2025-07-13 16:12:00,536 [INFO] - Test AUPRC: 0.2166 (95% CI: 0.1748-0.2748)
-2025-07-13 16:12:00,546 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\model_1_xgboost_baseline.pkl
-2025-07-13 16:12:00,546 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\results_xgboost_baseline.pkl
-2025-07-13 16:12:00,546 [INFO] - Analysis completed in 1.06 minutes
+2025-09-13 12:48:51,772 [INFO] - Loading preprocessed data from fixed filenames (override mode)
+2025-09-13 12:48:51,821 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-09-13 12:48:51,823 [INFO] - Target variable: intervention_vaso, y_train shape: (14825,)
+2025-09-13 12:48:51,955 [INFO] - Cleaned labels and aligned features for train/val/test; proceeding to splits
+2025-09-13 12:48:51,955 [INFO] - Splitting validation set: 0.50 for tuning, 0.50 for calibration
+2025-09-13 12:48:51,961 [INFO] - val_tune shape: (723, 458), val_cal shape: (723, 458)
+2025-09-13 12:48:51,961 [INFO] - Creating new Optuna study with 15 trials...
+2025-09-13 12:49:24,281 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study_valtune_723_calfrac_0.5.pkl
+2025-09-13 12:49:24,283 [INFO] - Best validation AUROC: 0.7924
+2025-09-13 12:49:24,283 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 12:49:29,903 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-09-13 12:49:29,948 [INFO] - Calibration done using method='isotonic'.
+2025-09-13 12:49:29,972 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-09-13 12:49:31,342 [INFO] - Calibration: ECE 0.0342->0.0093 (delta 0.0249); MCE 0.6937->0.5069 (delta 0.1869); Brier 0.0511->0.0495 (delta 0.0016); Slope 0.443->0.360; Intercept -0.998->-1.705
+2025-09-13 12:49:31,342 [INFO] - Test AUROC: 0.7550 (95% CI: 0.7177-0.7849)
+2025-09-13 12:49:31,342 [INFO] - Test AUPRC: 0.1889 (95% CI: 0.1511-0.2378)
+2025-09-13 12:49:31,342 [INFO] - Test Brier: 0.0495 (95% CI: 0.0472-0.0521); Calibration used: isotonic
+2025-09-13 12:49:31,372 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\model_1_xgboost_baseline_calibrated.pkl
+2025-09-13 12:49:31,372 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\intervention_vaso\results_xgboost_baseline.pkl
+2025-09-13 12:49:31,372 [INFO] - Analysis completed in 0.66 minutes
+

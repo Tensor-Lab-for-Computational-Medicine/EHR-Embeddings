@@ -7,7 +7,7 @@ import os
 class Config:
     # --- Paths ---
     # Input directory for the embeddings generated in Phase 4
-    EMBEDDING_DIR = "C:/Users/aaron/Downloads/embeddings_text-embedding-large-exp-03-07/embeddings_text-embedding-large-exp-03-07"
+    EMBEDDING_DIR = "D:/Projects/EHR Embeddings/notebooks/Phase 4/embeddings_text-embedding-large-exp-03-07"
     
     # Input directory for the label files (.csv) generated in Phase 3
     LABEL_DIR = 'notebooks/Phase 3/phase_3_serialized_data'
@@ -26,8 +26,8 @@ class Config:
     DRY_RUN_SUBSET_SIZE = 100 
     
     # Define all experimental arms to be tested.
-    REPRESENTATIONS = ['F1', 'F2', 'F3']
-    PROMPTS = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5']
+    REPRESENTATIONS = ['F3']
+    PROMPTS = ['P0']
     
     # --- XGBoost & Optuna Settings ---
     USE_GPU = True

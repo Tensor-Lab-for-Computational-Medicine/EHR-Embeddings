@@ -1,289 +1,417 @@
-2025-07-13 10:24:39,881 [INFO] - Starting analysis for TARGET_VARIABLE: mort_hosp
-2025-07-13 10:24:39,882 [INFO] - 
+2025-09-13 11:11:20,054 [INFO] - Starting analysis for TARGET_VARIABLE: mort_hosp
+2025-09-13 11:11:20,054 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F1_P0
 ================================================================================
-2025-07-13 10:24:39,882 [INFO] - Loading data for experimental arm: F1_P0...
-2025-07-13 10:24:39,891 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 10:24:43,378 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 10:24:43,882 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 10:24:45,190 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 10:24:45,195 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P0.pkl
-2025-07-13 10:24:45,197 [INFO] - Study has 10 trials, but 30 are required. Continuing study.
-2025-07-13 10:36:09,126 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P0.pkl
-2025-07-13 10:36:09,126 [INFO] - Training final model on combined train+validation data...
-2025-07-13 10:36:41,279 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P0 ---
-2025-07-13 10:36:43,941 [INFO] - Test AUROC for F1_P0: 0.7780 (95% CI: 0.7589-0.7968)
-2025-07-13 10:36:43,948 [INFO] - Model for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P0.pkl
-2025-07-13 10:36:43,948 [INFO] - Results for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P0.pkl
-2025-07-13 10:36:43,948 [INFO] - 
+2025-09-13 11:11:20,057 [INFO] - Loading data for arm: F1_P0...
+2025-09-13 11:11:20,058 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:12:19,676 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:12:29,676 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:12:57,110 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:12:57,127 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:12:57,130 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:12:57,130 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P0_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:12:57,139 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:12:57,139 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:12:58,343 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P0 ---
+2025-09-13 11:12:58,343 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:12:58,355 [INFO] - Calibration done.
+2025-09-13 11:12:59,975 [INFO] - Calibration alignment for F1_P0: ECE 0.2230->0.0109 (delta 0.2121); MCE 0.4874->0.5644 (delta -0.0770); Brier 0.1519->0.0832 (delta 0.0686); Slope 0.877->0.600 (delta toward 1 -0.277); Intercept -1.794->-0.746 (delta toward 0 1.048)
+2025-09-13 11:12:59,976 [INFO] - Test AUROC for F1_P0: 0.7694 (95% CI: 0.7510-0.7881)
+2025-09-13 11:12:59,980 [INFO] - Model for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P0_calibrated.pkl
+2025-09-13 11:12:59,980 [INFO] - Skipping JSON save for F1_P0 (not an XGBoost estimator).
+2025-09-13 11:12:59,981 [INFO] - Parameters for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F1_P0.pkl
+2025-09-13 11:12:59,981 [INFO] - Results for F1_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P0.pkl
+2025-09-13 11:12:59,981 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F1_P1
 ================================================================================
-2025-07-13 10:36:43,948 [INFO] - Loading data for experimental arm: F1_P1...
-2025-07-13 10:36:43,959 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 10:36:47,634 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 10:36:48,146 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 10:36:49,476 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 10:36:49,487 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P1.pkl
-2025-07-13 10:36:49,505 [INFO] - Study has 10 trials, but 30 are required. Continuing study.
-2025-07-13 10:43:21,754 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P1.pkl
-2025-07-13 10:43:21,754 [INFO] - Training final model on combined train+validation data...
-2025-07-13 10:43:24,705 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P1 ---
-2025-07-13 10:43:27,395 [INFO] - Test AUROC for F1_P1: 0.7743 (95% CI: 0.7570-0.7941)
-2025-07-13 10:43:27,399 [INFO] - Model for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P1.pkl
-2025-07-13 10:43:27,399 [INFO] - Results for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P1.pkl
-2025-07-13 10:43:27,399 [INFO] - 
+2025-09-13 11:12:59,981 [INFO] - Loading data for arm: F1_P1...
+2025-09-13 11:12:59,988 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:14:15,355 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:14:25,782 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:14:53,543 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:14:53,550 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:14:53,554 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:14:53,554 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P1_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:14:53,562 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:14:53,562 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:15:01,008 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P1 ---
+2025-09-13 11:15:01,008 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:15:01,022 [INFO] - Calibration done.
+2025-09-13 11:15:02,780 [INFO] - Calibration alignment for F1_P1: ECE 0.1127->0.0140 (delta 0.0987); MCE 0.4552->0.5330 (delta -0.0779); Brier 0.1038->0.0822 (delta 0.0217); Slope 0.832->0.671 (delta toward 1 -0.161); Intercept -1.204->-0.587 (delta toward 0 0.618)
+2025-09-13 11:15:02,780 [INFO] - Test AUROC for F1_P1: 0.7810 (95% CI: 0.7625-0.7985)
+2025-09-13 11:15:02,785 [INFO] - Model for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P1_calibrated.pkl
+2025-09-13 11:15:02,785 [INFO] - Skipping JSON save for F1_P1 (not an XGBoost estimator).
+2025-09-13 11:15:02,785 [INFO] - Parameters for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F1_P1.pkl
+2025-09-13 11:15:02,787 [INFO] - Results for F1_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P1.pkl
+2025-09-13 11:15:02,787 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F1_P2
 ================================================================================
-2025-07-13 10:43:27,399 [INFO] - Loading data for experimental arm: F1_P2...
-2025-07-13 10:43:27,413 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 10:43:31,225 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 10:43:31,741 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 10:43:33,149 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 10:43:33,160 [INFO] - Creating new Optuna study for F1_P2...
-2025-07-13 10:49:18,882 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P2.pkl
-2025-07-13 10:49:18,882 [INFO] - Training final model on combined train+validation data...
-2025-07-13 10:49:24,189 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P2 ---
-2025-07-13 10:49:26,764 [INFO] - Test AUROC for F1_P2: 0.7823 (95% CI: 0.7640-0.8005)
-2025-07-13 10:49:26,767 [INFO] - Model for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P2.pkl
-2025-07-13 10:49:26,768 [INFO] - Results for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P2.pkl
-2025-07-13 10:49:26,768 [INFO] - 
+2025-09-13 11:15:02,788 [INFO] - Loading data for arm: F1_P2...
+2025-09-13 11:15:02,795 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:16:22,143 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:16:33,325 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:17:03,494 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:17:03,502 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:17:03,505 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:17:03,506 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P2_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:17:03,514 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:17:03,514 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:17:05,747 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P2 ---
+2025-09-13 11:17:05,747 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:17:05,764 [INFO] - Calibration done.
+2025-09-13 11:17:07,324 [INFO] - Calibration alignment for F1_P2: ECE 0.1927->0.0194 (delta 0.1734); MCE 0.4759->0.5025 (delta -0.0266); Brier 0.1338->0.0831 (delta 0.0507); Slope 0.913->0.541 (delta toward 1 -0.372); Intercept -1.611->-0.870 (delta toward 0 0.741)
+2025-09-13 11:17:07,324 [INFO] - Test AUROC for F1_P2: 0.7780 (95% CI: 0.7603-0.7964)
+2025-09-13 11:17:07,331 [INFO] - Model for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P2_calibrated.pkl
+2025-09-13 11:17:07,331 [INFO] - Skipping JSON save for F1_P2 (not an XGBoost estimator).
+2025-09-13 11:17:07,331 [INFO] - Parameters for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F1_P2.pkl
+2025-09-13 11:17:07,332 [INFO] - Results for F1_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P2.pkl
+2025-09-13 11:17:07,332 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F1_P3
 ================================================================================
-2025-07-13 10:49:26,768 [INFO] - Loading data for experimental arm: F1_P3...
-2025-07-13 10:49:26,779 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 10:49:30,449 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 10:49:30,947 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 10:49:32,338 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 10:49:32,350 [INFO] - Creating new Optuna study for F1_P3...
-2025-07-13 10:53:30,860 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P3.pkl
-2025-07-13 10:53:30,860 [INFO] - Training final model on combined train+validation data...
-2025-07-13 10:53:31,821 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P3 ---
-2025-07-13 10:53:34,229 [INFO] - Test AUROC for F1_P3: 0.7745 (95% CI: 0.7575-0.7929)
-2025-07-13 10:53:34,232 [INFO] - Model for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P3.pkl
-2025-07-13 10:53:34,232 [INFO] - Results for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P3.pkl
-2025-07-13 10:53:34,232 [INFO] - 
+2025-09-13 11:17:07,332 [INFO] - Loading data for arm: F1_P3...
+2025-09-13 11:17:07,340 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:18:21,594 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:18:31,992 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:18:59,952 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:18:59,967 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:18:59,970 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:18:59,970 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P3_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:18:59,981 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:18:59,981 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:19:05,913 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P3 ---
+2025-09-13 11:19:05,914 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:19:05,926 [INFO] - Calibration done.
+2025-09-13 11:19:07,599 [INFO] - Calibration alignment for F1_P3: ECE 0.1287->0.0136 (delta 0.1151); MCE 0.4409->0.7081 (delta -0.2672); Brier 0.1098->0.0825 (delta 0.0274); Slope 0.827->0.761 (delta toward 1 -0.065); Intercept -1.305->-0.428 (delta toward 0 0.877)
+2025-09-13 11:19:07,599 [INFO] - Test AUROC for F1_P3: 0.7772 (95% CI: 0.7589-0.7945)
+2025-09-13 11:19:07,605 [INFO] - Model for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P3_calibrated.pkl
+2025-09-13 11:19:07,605 [INFO] - Skipping JSON save for F1_P3 (not an XGBoost estimator).
+2025-09-13 11:19:07,605 [INFO] - Parameters for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F1_P3.pkl
+2025-09-13 11:19:07,606 [INFO] - Results for F1_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P3.pkl
+2025-09-13 11:19:07,606 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F1_P4
 ================================================================================
-2025-07-13 10:53:34,232 [INFO] - Loading data for experimental arm: F1_P4...
-2025-07-13 10:53:34,242 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 10:54:17,052 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 10:54:35,471 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 10:55:24,907 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 10:55:24,972 [INFO] - Creating new Optuna study for F1_P4...
-2025-07-13 11:05:05,938 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P4.pkl
-2025-07-13 11:05:05,938 [INFO] - Training final model on combined train+validation data...
-2025-07-13 11:05:13,611 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P4 ---
-2025-07-13 11:05:15,944 [INFO] - Test AUROC for F1_P4: 0.7759 (95% CI: 0.7575-0.7934)
-2025-07-13 11:05:15,950 [INFO] - Model for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P4.pkl
-2025-07-13 11:05:15,950 [INFO] - Results for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P4.pkl
-2025-07-13 11:05:15,950 [INFO] - 
+2025-09-13 11:19:07,606 [INFO] - Loading data for arm: F1_P4...
+2025-09-13 11:19:07,614 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:20:24,553 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:20:35,209 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:21:03,638 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:21:03,647 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:21:03,652 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:21:03,653 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P4_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:21:03,661 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:21:03,661 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:21:12,079 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P4 ---
+2025-09-13 11:21:12,079 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:21:12,092 [INFO] - Calibration done.
+2025-09-13 11:21:13,874 [INFO] - Calibration alignment for F1_P4: ECE 0.1028->0.0171 (delta 0.0857); MCE 0.3901->0.7027 (delta -0.3125); Brier 0.1020->0.0844 (delta 0.0177); Slope 0.794->0.328 (delta toward 1 -0.466); Intercept -1.174->-1.373 (delta toward 0 -0.199)
+2025-09-13 11:21:13,874 [INFO] - Test AUROC for F1_P4: 0.7747 (95% CI: 0.7553-0.7930)
+2025-09-13 11:21:13,885 [INFO] - Model for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P4_calibrated.pkl
+2025-09-13 11:21:13,885 [INFO] - Skipping JSON save for F1_P4 (not an XGBoost estimator).
+2025-09-13 11:21:13,886 [INFO] - Parameters for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F1_P4.pkl
+2025-09-13 11:21:13,886 [INFO] - Results for F1_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P4.pkl
+2025-09-13 11:21:13,887 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F1_P5
 ================================================================================
-2025-07-13 11:05:15,950 [INFO] - Loading data for experimental arm: F1_P5...
-2025-07-13 11:05:15,962 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 11:05:19,376 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 11:05:19,878 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 11:06:11,612 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 11:06:11,622 [INFO] - Creating new Optuna study for F1_P5...
-2025-07-13 11:15:34,671 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P5.pkl
-2025-07-13 11:15:34,672 [INFO] - Training final model on combined train+validation data...
-2025-07-13 11:15:39,901 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P5 ---
-2025-07-13 11:15:42,515 [INFO] - Test AUROC for F1_P5: 0.7752 (95% CI: 0.7566-0.7930)
-2025-07-13 11:15:42,840 [INFO] - Model for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P5.pkl
-2025-07-13 11:15:42,840 [INFO] - Results for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P5.pkl
-2025-07-13 11:15:42,841 [INFO] - 
+2025-09-13 11:21:13,887 [INFO] - Loading data for arm: F1_P5...
+2025-09-13 11:21:13,897 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:22:41,436 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:22:52,195 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:23:21,685 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:23:21,693 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:23:21,696 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:23:21,698 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F1_P5_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:23:21,707 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:23:21,708 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:23:22,939 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F1_P5 ---
+2025-09-13 11:23:22,939 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:23:22,953 [INFO] - Calibration done.
+2025-09-13 11:23:24,611 [INFO] - Calibration alignment for F1_P5: ECE 0.1930->0.0169 (delta 0.1761); MCE 0.5003->0.7656 (delta -0.2653); Brier 0.1363->0.0833 (delta 0.0530); Slope 0.857->0.530 (delta toward 1 -0.327); Intercept -1.642->-0.938 (delta toward 0 0.704)
+2025-09-13 11:23:24,611 [INFO] - Test AUROC for F1_P5: 0.7744 (95% CI: 0.7551-0.7930)
+2025-09-13 11:23:24,615 [INFO] - Model for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F1_P5_calibrated.pkl
+2025-09-13 11:23:24,615 [INFO] - Skipping JSON save for F1_P5 (not an XGBoost estimator).
+2025-09-13 11:23:24,615 [INFO] - Parameters for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F1_P5.pkl
+2025-09-13 11:23:24,616 [INFO] - Results for F1_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F1_P5.pkl
+2025-09-13 11:23:24,616 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F2_P0
 ================================================================================
-2025-07-13 11:15:42,841 [INFO] - Loading data for experimental arm: F2_P0...
-2025-07-13 11:15:42,986 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 11:16:23,547 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 11:16:43,019 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 11:17:37,426 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 11:17:37,437 [INFO] - Creating new Optuna study for F2_P0...
-2025-07-13 11:26:28,463 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P0.pkl
-2025-07-13 11:26:28,463 [INFO] - Training final model on combined train+validation data...
-2025-07-13 11:26:29,157 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P0 ---
-2025-07-13 11:26:31,808 [INFO] - Test AUROC for F2_P0: 0.7998 (95% CI: 0.7822-0.8176)
-2025-07-13 11:26:31,811 [INFO] - Model for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P0.pkl
-2025-07-13 11:26:31,812 [INFO] - Results for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P0.pkl
-2025-07-13 11:26:31,812 [INFO] - 
+2025-09-13 11:23:24,616 [INFO] - Loading data for arm: F2_P0...
+2025-09-13 11:23:24,625 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:24:45,590 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:24:56,408 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:25:25,533 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:25:25,541 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:25:25,545 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:25:25,546 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P0_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:25:25,555 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:25:25,556 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:25:32,594 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P0 ---
+2025-09-13 11:25:32,594 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:25:32,605 [INFO] - Calibration done.
+2025-09-13 11:25:34,166 [INFO] - Calibration alignment for F2_P0: ECE 0.1567->0.0122 (delta 0.1445); MCE 0.3900->0.3704 (delta 0.0196); Brier 0.1111->0.0793 (delta 0.0317); Slope 1.049->0.645 (delta toward 1 -0.306); Intercept -1.334->-0.623 (delta toward 0 0.711)
+2025-09-13 11:25:34,166 [INFO] - Test AUROC for F2_P0: 0.7990 (95% CI: 0.7817-0.8174)
+2025-09-13 11:25:34,171 [INFO] - Model for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P0_calibrated.pkl
+2025-09-13 11:25:34,171 [INFO] - Skipping JSON save for F2_P0 (not an XGBoost estimator).
+2025-09-13 11:25:34,172 [INFO] - Parameters for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F2_P0.pkl
+2025-09-13 11:25:34,172 [INFO] - Results for F2_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P0.pkl
+2025-09-13 11:25:34,172 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F2_P1
 ================================================================================
-2025-07-13 11:26:31,812 [INFO] - Loading data for experimental arm: F2_P1...
-2025-07-13 11:26:31,953 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 11:27:00,405 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 11:27:21,249 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 11:30:28,317 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 11:30:28,331 [INFO] - Creating new Optuna study for F2_P1...
-2025-07-13 11:38:47,929 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P1.pkl
-2025-07-13 11:38:47,929 [INFO] - Training final model on combined train+validation data...
-2025-07-13 11:38:50,459 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P1 ---
-2025-07-13 11:38:52,927 [INFO] - Test AUROC for F2_P1: 0.7887 (95% CI: 0.7700-0.8070)
-2025-07-13 11:38:52,937 [INFO] - Model for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P1.pkl
-2025-07-13 11:38:52,937 [INFO] - Results for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P1.pkl
-2025-07-13 11:38:52,937 [INFO] - 
+2025-09-13 11:25:34,172 [INFO] - Loading data for arm: F2_P1...
+2025-09-13 11:25:34,181 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:26:49,198 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:26:59,716 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:27:28,250 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:27:28,258 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:27:28,263 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:27:28,263 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P1_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:27:28,271 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:27:28,271 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:27:29,143 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P1 ---
+2025-09-13 11:27:29,143 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:27:29,157 [INFO] - Calibration done.
+2025-09-13 11:27:30,667 [INFO] - Calibration alignment for F2_P1: ECE 0.2846->0.0143 (delta 0.2704); MCE 0.4248->0.4699 (delta -0.0450); Brier 0.1703->0.0816 (delta 0.0888); Slope 1.360->0.400 (delta toward 1 -0.240); Intercept -1.976->-1.170 (delta toward 0 0.806)
+2025-09-13 11:27:30,667 [INFO] - Test AUROC for F2_P1: 0.7901 (95% CI: 0.7720-0.8089)
+2025-09-13 11:27:30,671 [INFO] - Model for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P1_calibrated.pkl
+2025-09-13 11:27:30,672 [INFO] - Skipping JSON save for F2_P1 (not an XGBoost estimator).
+2025-09-13 11:27:30,672 [INFO] - Parameters for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F2_P1.pkl
+2025-09-13 11:27:30,673 [INFO] - Results for F2_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P1.pkl
+2025-09-13 11:27:30,673 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F2_P2
 ================================================================================
-2025-07-13 11:38:52,937 [INFO] - Loading data for experimental arm: F2_P2...
-2025-07-13 11:38:53,016 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 11:39:05,444 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 11:39:05,986 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 11:39:07,348 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 11:39:07,359 [INFO] - Creating new Optuna study for F2_P2...
-2025-07-13 11:48:27,854 [ERROR] - !!! An error occurred while processing arm F2_P2: bad allocation
-2025-07-13 11:48:27,854 [ERROR] - Skipping arm F2_P2 and continuing to the next one.
-2025-07-13 11:48:27,855 [INFO] - 
+2025-09-13 11:27:30,673 [INFO] - Loading data for arm: F2_P2...
+2025-09-13 11:27:30,682 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:28:47,156 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:28:57,783 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:29:24,579 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:29:24,586 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:29:24,591 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:29:24,591 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P2_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:29:24,600 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:29:24,600 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:29:25,627 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P2 ---
+2025-09-13 11:29:25,627 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:29:25,638 [INFO] - Calibration done.
+2025-09-13 11:29:27,112 [INFO] - Calibration alignment for F2_P2: ECE 0.2182->0.0104 (delta 0.2078); MCE 0.4579->0.7882 (delta -0.3303); Brier 0.1441->0.0794 (delta 0.0647); Slope 0.987->0.740 (delta toward 1 -0.247); Intercept -1.776->-0.442 (delta toward 0 1.334)
+2025-09-13 11:29:27,112 [INFO] - Test AUROC for F2_P2: 0.7991 (95% CI: 0.7811-0.8178)
+2025-09-13 11:29:27,118 [INFO] - Model for F2_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P2_calibrated.pkl
+2025-09-13 11:29:27,118 [INFO] - Skipping JSON save for F2_P2 (not an XGBoost estimator).
+2025-09-13 11:29:27,118 [INFO] - Parameters for F2_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F2_P2.pkl
+2025-09-13 11:29:27,120 [INFO] - Results for F2_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P2.pkl
+2025-09-13 11:29:27,120 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F2_P3
 ================================================================================
-2025-07-13 11:48:27,855 [INFO] - Loading data for experimental arm: F2_P3...
-2025-07-13 11:48:28,423 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 11:51:55,149 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 11:52:03,502 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 11:52:11,121 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 11:52:11,134 [INFO] - Creating new Optuna study for F2_P3...
-2025-07-13 11:59:49,568 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P3.pkl
-2025-07-13 11:59:49,568 [INFO] - Training final model on combined train+validation data...
-2025-07-13 11:59:52,330 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P3 ---
-2025-07-13 11:59:54,787 [INFO] - Test AUROC for F2_P3: 0.7905 (95% CI: 0.7721-0.8086)
-2025-07-13 11:59:54,947 [INFO] - Model for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P3.pkl
-2025-07-13 11:59:54,947 [INFO] - Results for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P3.pkl
-2025-07-13 11:59:54,947 [INFO] - 
+2025-09-13 11:29:27,120 [INFO] - Loading data for arm: F2_P3...
+2025-09-13 11:29:27,128 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:30:41,543 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:30:51,572 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:31:19,136 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:31:19,150 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:31:19,154 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:31:19,154 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P3_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:31:19,164 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:31:19,164 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:31:23,030 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P3 ---
+2025-09-13 11:31:23,030 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:31:23,043 [INFO] - Calibration done.
+2025-09-13 11:31:24,508 [INFO] - Calibration alignment for F2_P3: ECE 0.1976->0.0161 (delta 0.1815); MCE 0.3904->0.5847 (delta -0.1943); Brier 0.1282->0.0810 (delta 0.0472); Slope 1.112->0.735 (delta toward 1 -0.152); Intercept -1.530->-0.430 (delta toward 0 1.100)
+2025-09-13 11:31:24,508 [INFO] - Test AUROC for F2_P3: 0.7847 (95% CI: 0.7665-0.8033)
+2025-09-13 11:31:24,523 [INFO] - Model for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P3_calibrated.pkl
+2025-09-13 11:31:24,523 [INFO] - Skipping JSON save for F2_P3 (not an XGBoost estimator).
+2025-09-13 11:31:24,523 [INFO] - Parameters for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F2_P3.pkl
+2025-09-13 11:31:24,525 [INFO] - Results for F2_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P3.pkl
+2025-09-13 11:31:24,525 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F2_P4
 ================================================================================
-2025-07-13 11:59:54,948 [INFO] - Loading data for experimental arm: F2_P4...
-2025-07-13 11:59:55,047 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 11:59:58,551 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 11:59:59,075 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 12:00:00,383 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 12:00:00,398 [INFO] - Creating new Optuna study for F2_P4...
-2025-07-13 12:04:21,984 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P4.pkl
-2025-07-13 12:04:21,984 [INFO] - Training final model on combined train+validation data...
-2025-07-13 12:04:25,191 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P4 ---
-2025-07-13 12:04:27,824 [INFO] - Test AUROC for F2_P4: 0.7814 (95% CI: 0.7635-0.8001)
-2025-07-13 12:04:27,827 [INFO] - Model for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P4.pkl
-2025-07-13 12:04:27,828 [INFO] - Results for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P4.pkl
-2025-07-13 12:04:27,828 [INFO] - 
+2025-09-13 11:31:24,525 [INFO] - Loading data for arm: F2_P4...
+2025-09-13 11:31:24,533 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:32:39,767 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:32:50,664 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:33:20,204 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:33:20,208 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:33:20,215 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:33:20,215 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P4_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:33:20,225 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:33:20,226 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:33:21,332 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P4 ---
+2025-09-13 11:33:21,332 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:33:21,348 [INFO] - Calibration done.
+2025-09-13 11:33:22,849 [INFO] - Calibration alignment for F2_P4: ECE 0.2470->0.0210 (delta 0.2259); MCE 0.4373->0.7533 (delta -0.3161); Brier 0.1551->0.0812 (delta 0.0739); Slope 1.106->0.648 (delta toward 1 -0.246); Intercept -1.872->-0.615 (delta toward 0 1.257)
+2025-09-13 11:33:22,849 [INFO] - Test AUROC for F2_P4: 0.7928 (95% CI: 0.7744-0.8118)
+2025-09-13 11:33:22,853 [INFO] - Model for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P4_calibrated.pkl
+2025-09-13 11:33:22,853 [INFO] - Skipping JSON save for F2_P4 (not an XGBoost estimator).
+2025-09-13 11:33:22,853 [INFO] - Parameters for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F2_P4.pkl
+2025-09-13 11:33:22,853 [INFO] - Results for F2_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P4.pkl
+2025-09-13 11:33:22,853 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F2_P5
 ================================================================================
-2025-07-13 12:04:27,828 [INFO] - Loading data for experimental arm: F2_P5...
-2025-07-13 12:04:27,840 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 12:04:31,363 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 12:04:31,876 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 12:04:33,227 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 12:04:33,238 [INFO] - Creating new Optuna study for F2_P5...
-2025-07-13 12:12:11,072 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P5.pkl
-2025-07-13 12:12:11,073 [INFO] - Training final model on combined train+validation data...
-2025-07-13 12:12:12,544 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P5 ---
-2025-07-13 12:12:15,131 [INFO] - Test AUROC for F2_P5: 0.7928 (95% CI: 0.7734-0.8102)
-2025-07-13 12:12:15,190 [INFO] - Model for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P5.pkl
-2025-07-13 12:12:15,190 [INFO] - Results for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P5.pkl
-2025-07-13 12:12:15,190 [INFO] - 
+2025-09-13 11:33:22,853 [INFO] - Loading data for arm: F2_P5...
+2025-09-13 11:33:22,863 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:34:44,265 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:34:55,091 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:35:24,796 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:35:24,804 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:35:24,811 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:35:24,811 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F2_P5_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:35:24,819 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:35:24,819 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:35:26,353 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F2_P5 ---
+2025-09-13 11:35:26,353 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:35:26,366 [INFO] - Calibration done.
+2025-09-13 11:35:27,859 [INFO] - Calibration alignment for F2_P5: ECE 0.1701->0.0129 (delta 0.1572); MCE 0.4013->0.9167 (delta -0.5154); Brier 0.1251->0.0813 (delta 0.0438); Slope 0.856->0.447 (delta toward 1 -0.409); Intercept -1.542->-1.018 (delta toward 0 0.524)
+2025-09-13 11:35:27,859 [INFO] - Test AUROC for F2_P5: 0.7839 (95% CI: 0.7640-0.8028)
+2025-09-13 11:35:27,864 [INFO] - Model for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F2_P5_calibrated.pkl
+2025-09-13 11:35:27,864 [INFO] - Skipping JSON save for F2_P5 (not an XGBoost estimator).
+2025-09-13 11:35:27,864 [INFO] - Parameters for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F2_P5.pkl
+2025-09-13 11:35:27,866 [INFO] - Results for F2_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F2_P5.pkl
+2025-09-13 11:35:27,866 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F3_P0
 ================================================================================
-2025-07-13 12:12:15,190 [INFO] - Loading data for experimental arm: F3_P0...
-2025-07-13 12:12:15,202 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 12:14:39,129 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 12:14:57,019 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 12:15:46,637 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 12:15:46,646 [INFO] - Creating new Optuna study for F3_P0...
-2025-07-13 12:27:38,255 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P0.pkl
-2025-07-13 12:27:38,256 [INFO] - Training final model on combined train+validation data...
-2025-07-13 12:28:01,770 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P0 ---
-2025-07-13 12:28:04,283 [INFO] - Test AUROC for F3_P0: 0.8379 (95% CI: 0.8225-0.8538)
-2025-07-13 12:28:04,315 [INFO] - Model for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P0.pkl
-2025-07-13 12:28:04,315 [INFO] - Results for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P0.pkl
-2025-07-13 12:28:04,316 [INFO] - 
+2025-09-13 11:35:27,866 [INFO] - Loading data for arm: F3_P0...
+2025-09-13 11:35:27,873 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:36:44,763 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:36:55,745 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:37:25,129 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:37:25,137 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:37:25,140 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:37:25,141 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P0_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:37:25,150 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:37:25,151 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:37:30,362 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P0 ---
+2025-09-13 11:37:30,362 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:37:30,377 [INFO] - Calibration done.
+2025-09-13 11:37:31,862 [INFO] - Calibration alignment for F3_P0: ECE 0.0558->0.0089 (delta 0.0469); MCE 0.4699->0.3555 (delta 0.1144); Brier 0.0827->0.0771 (delta 0.0055); Slope 0.471->0.817 (delta toward 1 0.346); Intercept -0.492->-0.219 (delta toward 0 0.273)
+2025-09-13 11:37:31,862 [INFO] - Test AUROC for F3_P0: 0.8168 (95% CI: 0.7992-0.8336)
+2025-09-13 11:37:31,870 [INFO] - Model for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P0_calibrated.pkl
+2025-09-13 11:37:31,870 [INFO] - Skipping JSON save for F3_P0 (not an XGBoost estimator).
+2025-09-13 11:37:31,870 [INFO] - Parameters for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F3_P0.pkl
+2025-09-13 11:37:31,871 [INFO] - Results for F3_P0 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P0.pkl
+2025-09-13 11:37:31,871 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F3_P1
 ================================================================================
-2025-07-13 12:28:04,316 [INFO] - Loading data for experimental arm: F3_P1...
-2025-07-13 12:28:04,327 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 12:29:44,370 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 12:30:05,225 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 12:30:53,862 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 12:30:53,868 [INFO] - Creating new Optuna study for F3_P1...
-2025-07-13 12:43:33,548 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P1.pkl
-2025-07-13 12:43:33,548 [INFO] - Training final model on combined train+validation data...
-2025-07-13 12:43:50,552 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P1 ---
-2025-07-13 12:43:52,965 [INFO] - Test AUROC for F3_P1: 0.8350 (95% CI: 0.8184-0.8508)
-2025-07-13 12:43:53,248 [INFO] - Model for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P1.pkl
-2025-07-13 12:43:53,248 [INFO] - Results for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P1.pkl
-2025-07-13 12:43:53,248 [INFO] - 
+2025-09-13 11:37:31,871 [INFO] - Loading data for arm: F3_P1...
+2025-09-13 11:37:31,879 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:38:47,232 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:38:58,794 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:39:28,221 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:39:28,234 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:39:28,236 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:39:28,239 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P1_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:39:28,247 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:39:28,247 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:39:33,717 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P1 ---
+2025-09-13 11:39:33,717 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:39:33,729 [INFO] - Calibration done.
+2025-09-13 11:39:35,211 [INFO] - Calibration alignment for F3_P1: ECE 0.0417->0.0106 (delta 0.0310); MCE 0.3994->0.6788 (delta -0.2794); Brier 0.0829->0.0766 (delta 0.0063); Slope 0.641->0.913 (delta toward 1 0.272); Intercept -0.773->-0.033 (delta toward 0 0.739)
+2025-09-13 11:39:35,221 [INFO] - Test AUROC for F3_P1: 0.8186 (95% CI: 0.8014-0.8350)
+2025-09-13 11:39:35,226 [INFO] - Model for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P1_calibrated.pkl
+2025-09-13 11:39:35,226 [INFO] - Skipping JSON save for F3_P1 (not an XGBoost estimator).
+2025-09-13 11:39:35,226 [INFO] - Parameters for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F3_P1.pkl
+2025-09-13 11:39:35,227 [INFO] - Results for F3_P1 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P1.pkl
+2025-09-13 11:39:35,227 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F3_P2
 ================================================================================
-2025-07-13 12:43:53,249 [INFO] - Loading data for experimental arm: F3_P2...
-2025-07-13 12:43:53,257 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 12:43:56,645 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 12:43:57,130 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 12:43:58,410 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 12:43:58,419 [INFO] - Creating new Optuna study for F3_P2...
-2025-07-13 12:55:23,821 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P2.pkl
-2025-07-13 12:55:23,821 [INFO] - Training final model on combined train+validation data...
-2025-07-13 12:55:25,889 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P2 ---
-2025-07-13 12:55:28,505 [INFO] - Test AUROC for F3_P2: 0.8220 (95% CI: 0.8049-0.8385)
-2025-07-13 12:55:28,509 [INFO] - Model for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P2.pkl
-2025-07-13 12:55:28,509 [INFO] - Results for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P2.pkl
-2025-07-13 12:55:28,509 [INFO] - 
+2025-09-13 11:39:35,227 [INFO] - Loading data for arm: F3_P2...
+2025-09-13 11:39:35,233 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:40:51,466 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:41:03,051 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:41:32,143 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:41:32,148 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:41:32,153 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:41:32,153 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P2_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:41:32,156 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:41:32,156 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:41:38,589 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P2 ---
+2025-09-13 11:41:38,589 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:41:38,602 [INFO] - Calibration done.
+2025-09-13 11:41:40,122 [INFO] - Calibration alignment for F3_P2: ECE 0.1365->0.0154 (delta 0.1211); MCE 0.4050->0.8076 (delta -0.4027); Brier 0.1044->0.0760 (delta 0.0284); Slope 0.994->0.898 (delta toward 1 -0.096); Intercept -1.324->-0.101 (delta toward 0 1.223)
+2025-09-13 11:41:40,122 [INFO] - Test AUROC for F3_P2: 0.8299 (95% CI: 0.8129-0.8461)
+2025-09-13 11:41:40,128 [INFO] - Model for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P2_calibrated.pkl
+2025-09-13 11:41:40,128 [INFO] - Skipping JSON save for F3_P2 (not an XGBoost estimator).
+2025-09-13 11:41:40,128 [INFO] - Parameters for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F3_P2.pkl
+2025-09-13 11:41:40,129 [INFO] - Results for F3_P2 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P2.pkl
+2025-09-13 11:41:40,129 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F3_P3
 ================================================================================
-2025-07-13 12:55:28,509 [INFO] - Loading data for experimental arm: F3_P3...
-2025-07-13 12:55:28,521 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 12:55:32,060 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 12:55:32,616 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 12:55:33,903 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 12:55:33,911 [INFO] - Creating new Optuna study for F3_P3...
-2025-07-13 13:02:20,499 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P3.pkl
-2025-07-13 13:02:20,500 [INFO] - Training final model on combined train+validation data...
-2025-07-13 13:02:25,516 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P3 ---
-2025-07-13 13:02:27,946 [INFO] - Test AUROC for F3_P3: 0.8372 (95% CI: 0.8216-0.8533)
-2025-07-13 13:02:28,781 [INFO] - Model for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P3.pkl
-2025-07-13 13:02:28,781 [INFO] - Results for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P3.pkl
-2025-07-13 13:02:28,781 [INFO] - 
+2025-09-13 11:41:40,129 [INFO] - Loading data for arm: F3_P3...
+2025-09-13 11:41:40,137 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:42:59,181 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:43:10,092 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:43:40,527 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:43:40,537 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:43:40,540 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:43:40,542 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P3_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:43:40,553 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:43:40,553 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:43:41,323 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P3 ---
+2025-09-13 11:43:41,323 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:43:41,336 [INFO] - Calibration done.
+2025-09-13 11:43:42,841 [INFO] - Calibration alignment for F3_P3: ECE 0.1961->0.0122 (delta 0.1839); MCE 0.4647->0.8868 (delta -0.4221); Brier 0.1332->0.0753 (delta 0.0579); Slope 1.009->0.869 (delta toward 1 -0.122); Intercept -1.764->-0.130 (delta toward 0 1.634)
+2025-09-13 11:43:42,841 [INFO] - Test AUROC for F3_P3: 0.8349 (95% CI: 0.8183-0.8509)
+2025-09-13 11:43:42,851 [INFO] - Model for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P3_calibrated.pkl
+2025-09-13 11:43:42,851 [INFO] - Skipping JSON save for F3_P3 (not an XGBoost estimator).
+2025-09-13 11:43:42,852 [INFO] - Parameters for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F3_P3.pkl
+2025-09-13 11:43:42,852 [INFO] - Results for F3_P3 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P3.pkl
+2025-09-13 11:43:42,852 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F3_P4
 ================================================================================
-2025-07-13 13:02:28,781 [INFO] - Loading data for experimental arm: F3_P4...
-2025-07-13 13:02:28,792 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 13:05:27,917 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 13:05:49,464 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 13:06:36,909 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 13:06:36,914 [INFO] - Creating new Optuna study for F3_P4...
-2025-07-13 13:18:07,498 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P4.pkl
-2025-07-13 13:18:07,499 [INFO] - Training final model on combined train+validation data...
-2025-07-13 13:18:09,694 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P4 ---
-2025-07-13 13:18:12,289 [INFO] - Test AUROC for F3_P4: 0.8332 (95% CI: 0.8160-0.8489)
-2025-07-13 13:18:12,333 [INFO] - Model for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P4.pkl
-2025-07-13 13:18:12,333 [INFO] - Results for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P4.pkl
-2025-07-13 13:18:12,334 [INFO] - 
+2025-09-13 11:43:42,852 [INFO] - Loading data for arm: F3_P4...
+2025-09-13 11:43:42,861 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:45:01,013 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:45:11,998 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:45:42,629 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:45:42,635 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:45:42,638 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:45:42,641 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P4_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:45:42,651 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:45:42,652 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:45:44,055 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P4 ---
+2025-09-13 11:45:44,055 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:45:44,069 [INFO] - Calibration done.
+2025-09-13 11:45:45,604 [INFO] - Calibration alignment for F3_P4: ECE 0.1470->0.0100 (delta 0.1370); MCE 0.4609->0.4214 (delta 0.0395); Brier 0.1164->0.0763 (delta 0.0401); Slope 0.823->0.852 (delta toward 1 0.029); Intercept -1.512->-0.168 (delta toward 0 1.344)
+2025-09-13 11:45:45,604 [INFO] - Test AUROC for F3_P4: 0.8272 (95% CI: 0.8108-0.8436)
+2025-09-13 11:45:45,608 [INFO] - Model for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P4_calibrated.pkl
+2025-09-13 11:45:45,608 [INFO] - Skipping JSON save for F3_P4 (not an XGBoost estimator).
+2025-09-13 11:45:45,608 [INFO] - Parameters for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F3_P4.pkl
+2025-09-13 11:45:45,608 [INFO] - Results for F3_P4 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P4.pkl
+2025-09-13 11:45:45,608 [INFO] - 
 ================================================================================
 STARTING ANALYSIS FOR ARM: F3_P5
 ================================================================================
-2025-07-13 13:18:12,334 [INFO] - Loading data for experimental arm: F3_P5...
-2025-07-13 13:18:12,350 [INFO] - Loading train embeddings for 14825 samples...
-2025-07-13 13:18:15,919 [INFO] - Loading val embeddings for 2118 samples...
-2025-07-13 13:18:16,405 [INFO] - Loading test embeddings for 5648 samples...
-2025-07-13 13:18:17,713 [INFO] - Data shapes: X_train=(14825, 768), X_val=(2118, 768), X_test=(5648, 768)
-2025-07-13 13:18:17,724 [INFO] - Creating new Optuna study for F3_P5...
-2025-07-13 13:23:56,945 [INFO] - Study saved to notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P5.pkl
-2025-07-13 13:23:56,945 [INFO] - Training final model on combined train+validation data...
-2025-07-13 13:24:00,681 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P5 ---
-2025-07-13 13:24:03,063 [INFO] - Test AUROC for F3_P5: 0.8389 (95% CI: 0.8236-0.8554)
-2025-07-13 13:24:03,079 [INFO] - Model for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P5.pkl
-2025-07-13 13:24:03,080 [INFO] - Results for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P5.pkl
-2025-07-13 13:24:03,080 [INFO] - 
-Full analysis completed in 2.99 hours
+2025-09-13 11:45:45,608 [INFO] - Loading data for arm: F3_P5...
+2025-09-13 11:45:45,617 [INFO] - Loading train embeddings: n=14825
+2025-09-13 11:47:00,642 [INFO] - Loading val embeddings: n=2118
+2025-09-13 11:47:01,002 [INFO] - Loading test embeddings: n=5648
+2025-09-13 11:47:01,948 [INFO] - Shapes: train=(14825, 768), val=(2118, 768), test=(5648, 768)
+2025-09-13 11:47:01,957 [INFO] - Split val: tune=0.50, cal=0.50
+2025-09-13 11:47:01,960 [INFO] - val_tune=(1059, 768), val_cal=(1059, 768)
+2025-09-13 11:47:01,961 [INFO] - Loading existing Optuna study: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\optuna_study_F3_P5_valtune_1059_calfrac_0.5.pkl
+2025-09-13 11:47:01,975 [INFO] - Study already has 30 trials (>= 30). Reusing best params.
+2025-09-13 11:47:01,975 [INFO] - Training final model on combined train+val_tune data...
+2025-09-13 11:47:08,333 [INFO] - --- FINAL EVALUATION ON TEST SET FOR F3_P5 ---
+2025-09-13 11:47:08,333 [INFO] - Calibrating model using method='isotonic' on val_cal...
+2025-09-13 11:47:08,346 [INFO] - Calibration done.
+2025-09-13 11:47:09,957 [INFO] - Calibration alignment for F3_P5: ECE 0.1171->0.0111 (delta 0.1060); MCE 0.9345->0.1404 (delta 0.7941); Brier 0.0985->0.0752 (delta 0.0233); Slope 0.940->1.033 (delta toward 1 0.028); Intercept -1.235->0.172 (delta toward 0 1.063)
+2025-09-13 11:47:09,965 [INFO] - Test AUROC for F3_P5: 0.8351 (95% CI: 0.8188-0.8512)
+2025-09-13 11:47:09,970 [INFO] - Model for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\model_F3_P5_calibrated.pkl
+2025-09-13 11:47:09,970 [INFO] - Skipping JSON save for F3_P5 (not an XGBoost estimator).
+2025-09-13 11:47:09,970 [INFO] - Parameters for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\params_F3_P5.pkl
+2025-09-13 11:47:09,971 [INFO] - Results for F3_P5 saved to: notebooks/Phase 5/embedding_model_results/text-embedding-004/mort_hosp\results_F3_P5.pkl
+2025-09-13 11:47:09,971 [INFO] - 
+Full analysis completed in 0.60 hours
