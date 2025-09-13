@@ -1,14 +1,20 @@
 # xgboost_analysis.py
 
+# Configure NumExpr to use maximum cores available before any imports
+import os
+os.environ['NUMEXPR_MAX_THREADS'] = str(os.cpu_count())
+print(f"Setting NUMEXPR_MAX_THREADS to {os.cpu_count()} cores")
+
 import pandas as pd
 import numpy as np
 import xgboost as xgb
 import optuna
 import logging
 import time
-import os
 import pickle
 from sklearn.metrics import roc_auc_score, average_precision_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.calibration import CalibratedClassifierCV
 from tqdm import tqdm
 
 # =============================================================================
@@ -31,9 +37,12 @@ class Config:
         self.GAP_TIME = config.get('GAP_TIME', 6)
         self.TARGET_VARIABLES = config.get('TARGET_VARIABLES', ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso'])
         self.SEED = config.get('SEED', 42)
-        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 30)
+        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 15)
         self.OPTUNA_TIMEOUT = config.get('OPTUNA_TIMEOUT', 1800)
         self.REUSE_EXISTING_STUDY = config.get('REUSE_EXISTING_STUDY', True)
+        self.CALIBRATION_ENABLED = config.get('CALIBRATION_ENABLED', True)
+        self.CALIBRATION_METHOD = config.get('CALIBRATION_METHOD', 'isotonic')  # 'isotonic' or 'sigmoid'
+        self.VAL_CAL_FRACTION = config.get('VAL_CAL_FRACTION', 0.5)  # Fraction of original val used for calibration
         
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
 
@@ -43,7 +52,7 @@ class Config:
 
 def get_cache_prefix(config):
     """Generate cache filename prefix."""
-    prefix = f"preprocessed_{config.TARGET_VARIABLE}"
+    prefix = f"preprocessed_{'_'.join(config.TARGET_VARIABLES)}"
     if config.DRY_RUN:
         prefix += f"_dryrun_{config.DRY_RUN_PATIENTS}"
     prefix += f"_trends_{config.CALCULATE_TRENDS}_window_{config.WINDOW_SIZE}_gap_{config.GAP_TIME}_seed_{config.SEED}"
@@ -53,7 +62,7 @@ def load_preprocessed_data(config):
     """Load preprocessed data from cache files."""
     prefix = get_cache_prefix(config)
     cache_files = {
-        key: os.path.join(config.OUTPUT_DIR, f'{prefix}_{key}.pkl')
+        key: os.path.join(config.INPUT_DIR, f'{prefix}_{key}.pkl')
         for key in ['X_train', 'X_val', 'X_test', 'y_train', 'y_val', 'y_test', 'scaler', 'imputation_values']
     }
     
@@ -67,8 +76,35 @@ def load_preprocessed_data(config):
         with open(filepath, 'rb') as f:
             data[key] = pickle.load(f)
     
+    # Extract only the target variable we're analyzing from the multi-target y data
+    y_train = data['y_train'][config.TARGET_VARIABLE]
+    y_val = data['y_val'][config.TARGET_VARIABLE] 
+    y_test = data['y_test'][config.TARGET_VARIABLE]
+    
     logging.info(f"Data shapes: X_train={data['X_train'].shape}, X_val={data['X_val'].shape}, X_test={data['X_test'].shape}")
-    return data['X_train'], data['X_val'], data['X_test'], data['y_train'], data['y_val'], data['y_test'], data['scaler'], data['imputation_values']
+    logging.info(f"Target variable: {config.TARGET_VARIABLE}, y_train shape: {y_train.shape}")
+    return data['X_train'], data['X_val'], data['X_test'], y_train, y_val, y_test, data['scaler'], data['imputation_values']
+
+# =============================================================================
+# VALIDATION SPLITTING FOR TUNING AND CALIBRATION
+# =============================================================================
+
+def split_validation_set(X_val, y_val, config):
+    """Split the original validation set into tuning and calibration subsets (stratified)."""
+    logging.info(
+        f"Splitting validation set: {1 - config.VAL_CAL_FRACTION:.2f} for tuning, {config.VAL_CAL_FRACTION:.2f} for calibration"
+    )
+    X_val_tune, X_val_cal, y_val_tune, y_val_cal = train_test_split(
+        X_val,
+        y_val,
+        test_size=config.VAL_CAL_FRACTION,
+        random_state=config.SEED,
+        stratify=y_val
+    )
+    logging.info(
+        f"val_tune shape: {X_val_tune.shape}, val_cal shape: {X_val_cal.shape}"
+    )
+    return X_val_tune, X_val_cal, y_val_tune, y_val_cal
 
 # =============================================================================
 # EVALUATION WITH UNCERTAINTY QUANTIFICATION
@@ -128,7 +164,11 @@ def evaluate_with_uncertainty(y_true, y_pred_proba, y_pred=None, n_bootstrap=100
 
 def tune_xgboost(X_train, y_train, X_val, y_val, config):
     """Tune XGBoost hyperparameters using Optuna."""
-    study_path = os.path.join(config.OUTPUT_DIR, f'{get_cache_prefix(config)}_optuna_study.pkl')
+    # Include validation split info in study path to avoid mixing studies across different strategies
+    study_path = os.path.join(
+        config.OUTPUT_DIR,
+        f"{get_cache_prefix(config)}_optuna_study_valtune_{len(X_val)}_calfrac_{'nocal' if not getattr(config, 'CALIBRATION_ENABLED', True) else config.VAL_CAL_FRACTION}.pkl"
+    )
     
     if os.path.exists(study_path) and config.REUSE_EXISTING_STUDY:
         logging.info(f"Loading existing Optuna study from {study_path}")
@@ -175,12 +215,12 @@ def tune_xgboost(X_train, y_train, X_val, y_val, config):
     logging.info(f"Best validation AUROC: {study.best_value:.4f}")
     return study.best_params
 
-def train_final_model(X_train, X_val, y_train, y_val, best_params, config):
-    """Train final model on combined train+validation data."""
-    logging.info("Training final model on combined train+validation data...")
+def train_final_model(X_train, X_val_tune, y_train, y_val_tune, best_params, config):
+    """Train final model on combined train+val_tune data."""
+    logging.info("Training final model on combined train+val_tune data...")
     
-    X_full = pd.concat([X_train, X_val])
-    y_full = pd.concat([y_train, y_val])
+    X_full = pd.concat([X_train, X_val_tune])
+    y_full = pd.concat([y_train, y_val_tune])
     
     # Reset index after concatenation
     X_full = X_full.reset_index(drop=True)
@@ -197,10 +237,35 @@ def train_final_model(X_train, X_val, y_train, y_val, best_params, config):
     model.fit(X_full, y_full, verbose=False)
     return model
 
-def save_results(model, results, best_params, config):
+def calibrate_model(fitted_model, X_val_cal, y_val_cal, config):
+    """Calibrate a pre-fitted classifier using a held-out calibration set."""
+    if not config.CALIBRATION_ENABLED:
+        logging.info("Calibration disabled in config. Skipping calibration step.")
+        return fitted_model
+    logging.info(f"Calibrating model using method='{config.CALIBRATION_METHOD}' on val_cal...")
+    try:
+        # Newer scikit-learn uses 'estimator'
+        calibrator = CalibratedClassifierCV(
+            estimator=fitted_model,
+            method=config.CALIBRATION_METHOD,
+            cv='prefit'
+        )
+    except TypeError:
+        # Older scikit-learn uses 'base_estimator'
+        calibrator = CalibratedClassifierCV(
+            base_estimator=fitted_model,
+            method=config.CALIBRATION_METHOD,
+            cv='prefit'
+        )
+    calibrator.fit(X_val_cal, y_val_cal)
+    logging.info("Calibration complete.")
+    return calibrator
+
+def save_results(model, results, best_params, config, is_calibrated=False):
     """Save model and results."""
     # Save model
-    model_path = os.path.join(config.OUTPUT_DIR, 'model_1_xgboost_baseline.pkl')
+    model_filename = 'model_1_xgboost_baseline_calibrated.pkl' if is_calibrated else 'model_1_xgboost_baseline.pkl'
+    model_path = os.path.join(config.OUTPUT_DIR, model_filename)
     with open(model_path, 'wb') as f:
         pickle.dump(model, f)
     
@@ -217,7 +282,10 @@ def save_results(model, results, best_params, config):
         'classification_report': results['classification_report'],
         'confusion_matrix': results['confusion_matrix'].tolist(),
         'best_hyperparameters': best_params,
-        'full_evaluation': results
+        'full_evaluation': results,
+        'calibration_enabled': config.CALIBRATION_ENABLED,
+        'calibration_method': config.CALIBRATION_METHOD if config.CALIBRATION_ENABLED else None,
+        'val_cal_fraction': config.VAL_CAL_FRACTION
     }
     
     results_path = os.path.join(config.OUTPUT_DIR, 'results_xgboost_baseline.pkl')
@@ -251,11 +319,21 @@ def main(config_dict=None):
     X_train, X_val, X_test, y_train, y_val, y_test, scaler, imputation_values = load_preprocessed_data(config)
     logging.info("Using preprocessed data directly - no additional cleaning required")
     
-    # Tune hyperparameters
-    best_params = tune_xgboost(X_train, y_train, X_val, y_val, config)
+    # Split validation into tuning and calibration subsets only if calibration is enabled
+    if config.CALIBRATION_ENABLED:
+        X_val_tune, X_val_cal, y_val_tune, y_val_cal = split_validation_set(X_val, y_val, config)
+    else:
+        X_val_tune, y_val_tune = X_val, y_val
+        X_val_cal, y_val_cal = None, None
     
-    # Train final model
-    model = train_final_model(X_train, X_val, y_train, y_val, best_params, config)
+    # Tune hyperparameters on val_tune (or full val if calibration disabled)
+    best_params = tune_xgboost(X_train, y_train, X_val_tune, y_val_tune, config)
+    
+    # Train final model on train + val_tune
+    base_model = train_final_model(X_train, X_val_tune, y_train, y_val_tune, best_params, config)
+    
+    # Calibrate on val_cal (only if enabled)
+    model = calibrate_model(base_model, X_val_cal, y_val_cal, config) if config.CALIBRATION_ENABLED else base_model
     
     # Evaluate on test set
     logging.info("--- FINAL EVALUATION ON TEST SET ---")
@@ -274,7 +352,7 @@ def main(config_dict=None):
     print(f"\nConfusion Matrix:\n{results['confusion_matrix']}")
     
     # Save all artifacts
-    save_results(model, results, best_params, config)
+    save_results(model, results, best_params, config, is_calibrated=config.CALIBRATION_ENABLED)
     
     logging.info(f"Analysis completed in {(time.time() - start_time)/60:.2f} minutes")
 

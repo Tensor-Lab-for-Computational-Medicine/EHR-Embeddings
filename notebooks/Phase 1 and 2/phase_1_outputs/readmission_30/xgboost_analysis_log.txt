@@ -1,15 +1,15 @@
-2025-07-13 16:13:59,539 [INFO] - Attempting to use GPU for XGBoost.
-2025-07-13 16:13:59,541 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_readmission_30_discharge_location_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42
-2025-07-13 16:13:59,595 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
-2025-07-13 16:13:59,595 [INFO] - Using preprocessed data directly - no additional cleaning required
-2025-07-13 16:13:59,596 [INFO] - Creating new Optuna study with 30 trials...
-2025-07-13 16:14:31,669 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\readmission_30\preprocessed_mort_hosp_los_3_los_7_readmission_30_discharge_location_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
-2025-07-13 16:14:31,670 [INFO] - Best validation AUROC: 0.6466
-2025-07-13 16:14:31,670 [INFO] - Training final model on combined train+validation data...
-2025-07-13 16:14:32,348 [INFO] - --- FINAL EVALUATION ON TEST SET ---
-2025-07-13 16:14:32,473 [INFO] - Calculating bootstrap CIs with 1000 samples...
-2025-07-13 16:14:34,491 [INFO] - Test AUROC: 0.5973 (95% CI: 0.5636-0.6305)
-2025-07-13 16:14:34,492 [INFO] - Test AUPRC: 0.0657 (95% CI: 0.0579-0.0779)
-2025-07-13 16:14:34,526 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\readmission_30\model_1_xgboost_baseline.pkl
-2025-07-13 16:14:34,526 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\readmission_30\results_xgboost_baseline.pkl
-2025-07-13 16:14:34,526 [INFO] - Analysis completed in 0.58 minutes
+2025-08-29 10:49:58,761 [INFO] - Loading preprocessed data with prefix: preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42
+2025-08-29 10:49:58,847 [INFO] - Data shapes: X_train=(14825, 458), X_val=(2118, 458), X_test=(5648, 458)
+2025-08-29 10:49:58,847 [INFO] - Target variable: readmission_30, y_train shape: (14825,)
+2025-08-29 10:49:58,847 [INFO] - Using preprocessed data directly - no additional cleaning required
+2025-08-29 10:49:58,847 [INFO] - Creating new Optuna study with 30 trials...
+2025-08-29 10:50:33,293 [INFO] - Study saved to notebooks\Phase 1 and 2\phase_1_outputs\readmission_30\preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42_optuna_study.pkl
+2025-08-29 10:50:33,293 [INFO] - Best validation AUROC: 0.6322
+2025-08-29 10:50:33,293 [INFO] - Training final model on combined train+validation data...
+2025-08-29 10:50:45,674 [INFO] - --- FINAL EVALUATION ON TEST SET ---
+2025-08-29 10:50:45,722 [INFO] - Calculating bootstrap CIs with 1000 samples...
+2025-08-29 10:50:47,387 [INFO] - Test AUROC: 0.5961 (95% CI: 0.5609-0.6297)
+2025-08-29 10:50:47,388 [INFO] - Test AUPRC: 0.0632 (95% CI: 0.0563-0.0735)
+2025-08-29 10:50:47,413 [INFO] - Model saved to: notebooks\Phase 1 and 2\phase_1_outputs\readmission_30\model_1_xgboost_baseline.pkl
+2025-08-29 10:50:47,414 [INFO] - Results saved to: notebooks\Phase 1 and 2\phase_1_outputs\readmission_30\results_xgboost_baseline.pkl
+2025-08-29 10:50:47,414 [INFO] - Analysis completed in 0.81 minutes
