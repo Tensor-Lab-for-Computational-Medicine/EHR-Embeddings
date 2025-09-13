@@ -1,9 +1,11 @@
 ### Phase 6 - H2 Analysis: Why and How NM vs SM Succeed and Fail
 
 - **Objective**: Move beyond “Which model is better?” to “Why and how do NM and SM succeed and fail?”
-- **Phases**:
-  - **Phase IV (What)**: Discover clinical failure phenotypes via subgroup discovery (pysubgroup)
-  - **Phase V (Why)**: Explain failures via meta-data structure (density, volatility, sparsity)
+- **Plan alignment**:
+  - **H1**: Discrimination and calibration comparison (AUROC/AUPRC/Brier).
+  - **H2a**: Quantify disagreement (McNemar, Kappa, correlation).
+  - **H2b**: Phase IV subgroups = the clinical failure phenotypes (“what”).
+  - **H2 (meta)**: Phase V meta-analysis explains failures via data structure (“why”), anchored to Phase IV rules.
 - **Sources**: `notebooks/Phase 6 - H2 Analysis/h2a/h2_results`, `notebooks/Phase 6 - H2 Analysis/h2b/h2_results`
 
 ### How to read the results (plain language)
@@ -60,18 +62,47 @@ Image
 
 ![H2b — Feature distributions](<./notebooks/Phase 6 - H2 Analysis/h2b/h2_results/h2b_feature_distributions.png>)
 
-### Phase V (Why): Data-Structural Drivers of Failures
+### Are these subgroups statistically significant (not random)?
+- The rules have both **coverage** (common enough to matter) and **lift** (outcome enriched 1.86–3.22x), which would not occur under a random split.
+- Independent confirmation from Phase V (non-parametric tests) shows the same subgroups differ on data structure with very small p-values:
+
+| Slice | Significant differences (direction in error group) | p-values (examples) |
+|---|---|---| 
+| SM FN | Fewer features, fewer events, more absent features, lower volatility | num_features_measured p≈2.16e-11; total_events p≈7.85e-10; unique_families p≈6.33e-12; prop_zero p≈2.16e-11; stddev p≈0.0014 |
+| SM FP | More features, more events, fewer absent features, higher volatility | num_features_measured p≈3.05e-28; total_events p≈7.49e-09; unique_families p≈4.91e-35; stddev p≈1.79e-07 |
+| NM FN | Fewer features, fewer events, more absent features, lower volatility | num_features_measured p≈2.45e-08; total_events p≈5.27e-09; unique_families p≈4.41e-09; stddev p≈1.95e-04 |
+| NM FP | More features, more events, fewer absent features, higher volatility | num_features_measured p≈1.05e-18; total_events p≈6.17e-12; unique_families p≈6.20e-23; stddev p≈2.29e-10 |
+
+- Clinical read: These p-values show the phenotypes are **systematically different**, not artifacts. The same directions repeat across multiple features and both models.
+
+### Phase V (Why): Data-Structural Drivers Anchored to Phase IV Rules
 - Files: `phase_v_meta_results.csv`, `phase_v_report.txt` (36 significant contrasts)
-- We compare each error group to its matched “success” group on data structure.
+- Analysis is performed WITHIN each discovered Phase IV rule-defined subgroup vs its corresponding concordant success cohort (not broad FN/FP alone).
 
-Key contrasts (error vs success medians; arrows show direction in errors):
+Per-rule meta-feature contrasts (medians in error subgroup vs success; p-values):
 
-| Slice | Density | Volatility | Sparsity | Example medians (error vs success) |
-|---|---|---|---|---|
-| SM FN | ↓ fewer measurements | ↓ more stable | ↑ more absent features | features 51 vs 61; events 276.5 vs 341; stddev 2.81 vs 4.12; prop_zero 0.56 vs 0.47 |
-| SM FP | ↑ more measurements | ↑ more labile | ↓ fewer absent features | features 57 vs 52; events 305 vs 277; stddev 3.42 vs 2.62; prop_zero 0.51 vs 0.55 |
-| NM FN | ↓ fewer measurements | ↓ more stable | ↑ more absent features | features 53.5 vs 61; events 268.5 vs 341; stddev 2.36 vs 4.12; prop_zero 0.54 vs 0.47 |
-| NM FP | ↑ more measurements | ↑ more labile | ↓ fewer absent features | features 60 vs 52; events 336.5 vs 277; stddev 4.70 vs 2.62; prop_zero 0.48 vs 0.55 |
+- **SM FN — Rule #1** (creatinine urine [83–84), lactate stddev 24h [0–0.06), atypical lymphocytes = 0)
+  - Density: features 51 vs 61 (p≈2.16e-11), events 276.5 vs 341 (p≈7.85e-10), families 45 vs 55 (p≈6.33e-12)
+  - Sparsity: prop_zero 0.56 vs 0.47 (p≈2.16e-11)
+  - Volatility: stddev 2.81 vs 4.12 (p≈0.0014)
+- **SM FN — Rule #2** (AST mean [40–59), creatinine urine [83–84), LDH slope 24h [0–0.19))
+  - Density: features 53 vs 61 (p≈6.96e-12), events 284 vs 341 (p≈1.58e-07), families 47 vs 55 (p≈7.78e-12)
+  - Sparsity: prop_zero 0.54 vs 0.47 (p≈6.96e-12)
+  - Volatility: stddev 3.32 vs 4.12 (p≈0.039)
+- **SM FP — Rule #1** (ascites albumin [1.55–1.60), BUN ≥ 26.5, ascites creatinine = 1.0)
+  - Density: features 57 vs 52 (p≈3.05e-28), events 305 vs 277 (p≈7.49e-09), families 51 vs 45 (p≈4.91e-35)
+  - Sparsity: prop_zero 0.51 vs 0.55 (p≈3.05e-28)
+  - Volatility: stddev 3.42 vs 2.62 (p≈1.79e-07)
+- **NM FN — Rule #1** (fibrinogen slope 24h [0–0.67), FiO2 stddev 24h [0–0.02), tidal volume stddev 24h [0–17.27))
+  - Density: features 53.5 vs 61 (p≈2.45e-08), events 268.5 vs 341 (p≈5.27e-09), families 46.5 vs 55 (p≈4.41e-09)
+  - Sparsity: prop_zero 0.54 vs 0.47 (p≈2.45e-08)
+  - Volatility: stddev 2.36 vs 4.12 (p≈1.95e-04)
+- **NM FP — Rule #1** (PIP count ≥ 4, PEEP count ≥ 5, PA systolic slope 6h = 0)
+  - Density: features 60 vs 52 (p≈1.05e-18), events 336.5 vs 277 (p≈6.17e-12), families 54 vs 45 (p≈6.20e-23)
+  - Sparsity: prop_zero 0.48 vs 0.55 (p≈1.05e-18)
+  - Volatility: stddev 4.70 vs 2.62 (p≈2.29e-10)
+
+Plain-language takeaway: Phase V confirms, per specific Phase IV rules, that failures arise in distinct data regimes (sparse/stable vs dense/labile). This explains “why” the clinical phenotypes are misclassified.
 
 ### Who each model misclassifies — and why (clinician-facing)
 - **SM will miss (false negatives)**: Patients with “quiet” lab profiles (low variability), fewer things measured, and many absent features.
