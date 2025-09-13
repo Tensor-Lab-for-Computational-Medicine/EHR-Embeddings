@@ -1,0 +1,159 @@
+================================================================================
+H2b ANALYSIS REPORT: DIFFERENTIAL COHORT PROFILES
+================================================================================
+
+METHOD: Subgroup Discovery with pysubgroup
+  - Max depth: 3
+  - Min support: 5%
+  - Quality measure: WRAcc
+
+COHORT SIZES
+----------------------------------------
+  TP_concordant: 127 patients
+  TN_concordant: 4428 patients
+  FN_concordant: 205 patients
+  FP_concordant: 23 patients
+  FN_SM: 35 patients
+  FP_SM: 616 patients
+  FN_NM: 204 patients
+  FP_NM: 10 patients
+
+================================================================================
+ANALYSIS: SM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 35
+Success cohort size: 127
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: central venous pressure_mean_count_6h: [-0.53:0.01[ AND fraction inspired oxygen_mean_last: [-0.04:1.13[ AND lactate dehydrogenase_mean_last: [-0.14:-0.13[
+  Quality (WRAcc): 0.09598384392623077
+  Coverage: 53 patients (32.7%)
+  Target share: 50.9%
+  Lift: 2.36x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+Pattern #2:
+  Rule: central venous pressure_mean_count_6h: [-0.53:0.01[ AND fraction inspired oxygen_mean_count: [-0.52:0.55[ AND lactate dehydrogenase_mean_last: [-0.14:-0.13[
+  Quality (WRAcc): 0.09514555707971348
+  Coverage: 49 patients (30.2%)
+  Target share: 53.1%
+  Lift: 2.46x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+Pattern #3:
+  Rule: central venous pressure_mean_count_6h: [-0.53:0.01[ AND fraction inspired oxygen_mean_mean: [-0.10:0.30[ AND lactate dehydrogenase_mean_last: [-0.14:-0.13[
+  Quality (WRAcc): 0.09514555707971348
+  Coverage: 49 patients (30.2%)
+  Target share: 53.1%
+  Lift: 2.46x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+================================================================================
+ANALYSIS: SM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 616
+Success cohort size: 4428
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: albumin ascites_mean_count==-0.05699378267363867 AND blood urea nitrogen_mean_last>=0.26 AND creatinine ascites_mean_last==-0.010983566510984602
+  Quality (WRAcc): 0.045224388584264974
+  Coverage: 1039 patients (20.6%)
+  Target share: 34.2%
+  Lift: 2.80x
+  Clinical interpretation: Kidney dysfunction/acute kidney injury
+
+Pattern #2:
+  Rule: albumin ascites_mean_last: [-0.02:1.03[ AND blood urea nitrogen_mean_last>=0.26 AND creatinine ascites_mean_count==-0.0307448109471427
+  Quality (WRAcc): 0.045224388584264974
+  Coverage: 1039 patients (20.6%)
+  Target share: 34.2%
+  Lift: 2.80x
+  Clinical interpretation: Kidney dysfunction/acute kidney injury
+
+Pattern #3:
+  Rule: albumin ascites_mean_count==-0.05699378267363867 AND blood urea nitrogen_mean_last>=0.26 AND creatinine ascites_mean_count==-0.0307448109471427
+  Quality (WRAcc): 0.045224388584264974
+  Coverage: 1039 patients (20.6%)
+  Target share: 34.2%
+  Lift: 2.80x
+  Clinical interpretation: Kidney dysfunction/acute kidney injury
+
+================================================================================
+ANALYSIS: NM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 204
+Success cohort size: 127
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: fibrinogen_mean_last: [-0.15:-0.04[ AND red blood cell count ascites_mean_count==-0.09119238194987422 AND systemic vascular resistance_mean_slope_6h: [0.08:0.19[
+  Quality (WRAcc): 0.07456120334790668
+  Coverage: 179 patients (54.1%)
+  Target share: 75.4%
+  Lift: 1.22x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+Pattern #2:
+  Rule: fibrinogen_mean_last: [-0.15:-0.04[ AND red blood cell count ascites_mean_last: [-0.03:0.28[ AND systemic vascular resistance_mean_slope_6h: [0.08:0.19[
+  Quality (WRAcc): 0.07456120334790668
+  Coverage: 179 patients (54.1%)
+  Target share: 75.4%
+  Lift: 1.22x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+Pattern #3:
+  Rule: albumin urine_mean_count==-0.055228570228248966 AND fibrinogen_mean_last: [-0.15:-0.04[ AND red blood cell count ascites_mean_count==-0.09119238194987422
+  Quality (WRAcc): 0.07385839851772072
+  Coverage: 181 patients (54.7%)
+  Target share: 75.1%
+  Lift: 1.22x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+================================================================================
+ANALYSIS: NM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 10
+Success cohort size: 4428
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: central venous pressure_mean_slope_6h: [-0.03:-0.01[ AND glascow coma scale total_mean_last<0.44 AND lactate dehydrogenase_mean_mean: [-0.14:-0.14[
+  Quality (WRAcc): 0.0018045431310280483
+  Coverage: 440 patients (9.9%)
+  Target share: 2.0%
+  Lift: 9.08x
+  Clinical interpretation: Improving or stable trend
+
+Pattern #2:
+  Rule: central venous pressure_mean_slope_6h: [-0.03:-0.01[ AND glascow coma scale total_mean_last<0.44 AND lactate dehydrogenase_mean_count==-0.5588103612368337
+  Quality (WRAcc): 0.0018045431310280483
+  Coverage: 440 patients (9.9%)
+  Target share: 2.0%
+  Lift: 9.08x
+  Clinical interpretation: Improving or stable trend
+
+Pattern #3:
+  Rule: central venous pressure_mean_slope_6h: [-0.03:-0.01[ AND glascow coma scale total_mean_last<0.44 AND lactate dehydrogenase_mean_last: [-0.14:-0.13[
+  Quality (WRAcc): 0.0018045431310280483
+  Coverage: 440 patients (9.9%)
+  Target share: 2.0%
+  Lift: 9.08x
+  Clinical interpretation: Improving or stable trend
+
+================================================================================
+SUMMARY
+================================================================================
+Analyses with meaningful patterns: 3/4
+
+✅ H2b HYPOTHESIS SUPPORTED
+The models show distinct, interpretable failure patterns.

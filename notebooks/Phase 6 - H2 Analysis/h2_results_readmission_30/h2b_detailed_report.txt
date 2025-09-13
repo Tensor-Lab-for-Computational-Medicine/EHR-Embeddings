@@ -1,0 +1,109 @@
+================================================================================
+H2b ANALYSIS REPORT: DIFFERENTIAL COHORT PROFILES
+================================================================================
+
+METHOD: Subgroup Discovery with pysubgroup
+  - Max depth: 3
+  - Min support: 5%
+  - Quality measure: WRAcc
+
+COHORT SIZES
+----------------------------------------
+  TP_concordant: 1 patients
+  TN_concordant: 4071 patients
+  FN_concordant: 149 patients
+  FP_concordant: 52 patients
+  FN_SM: 3 patients
+  FP_SM: 1121 patients
+  FN_NM: 112 patients
+  FP_NM: 139 patients
+
+================================================================================
+ANALYSIS: SM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 3
+Success cohort size: 1
+
+No significant patterns discovered
+
+================================================================================
+ANALYSIS: SM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 1121
+Success cohort size: 4071
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: cholesterol ldl_mean_count==-0.28142877387450027 AND lactate dehydrogenase_mean_count==0.9493570528057768 AND lymphocytes atypical_mean_last: [-0.10:1.79[
+  Quality (WRAcc): 0.02416523672783303
+  Coverage: 901 patients (17.4%)
+  Target share: 35.5%
+  Lift: 1.64x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+Pattern #2:
+  Rule: lactate dehydrogenase_mean_count==0.9493570528057768 AND lymphocytes atypical_mean_last: [-0.10:1.79[ AND red blood cell count urine_mean_slope_24h: [-0.01:0.05[
+  Quality (WRAcc): 0.02413459518139796
+  Coverage: 999 patients (19.2%)
+  Target share: 34.1%
+  Lift: 1.58x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+Pattern #3:
+  Rule: cholesterol ldl_mean_last: [-0.03:0.08[ AND lactate dehydrogenase_mean_count==0.9493570528057768 AND lymphocytes atypical_mean_last: [-0.10:1.79[
+  Quality (WRAcc): 0.024123651771956862
+  Coverage: 902 patients (17.4%)
+  Target share: 35.5%
+  Lift: 1.64x
+  Clinical interpretation: Patients meeting specific clinical criteria
+
+================================================================================
+ANALYSIS: NM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 112
+Success cohort size: 1
+
+No significant patterns discovered
+
+================================================================================
+ANALYSIS: NM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 139
+Success cohort size: 4071
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: cardiac output thermodilution_mean_slope_6h: [-0.03:-0.03[ AND cholesterol hdl_mean_count==-0.2897180280721454 AND lactate_mean_last>=0.19
+  Quality (WRAcc): 0.01655017744201398
+  Coverage: 767 patients (18.2%)
+  Target share: 12.4%
+  Lift: 3.75x
+  Clinical interpretation: Tissue hypoperfusion/possible sepsis; Worsening trend
+
+Pattern #2:
+  Rule: cardiac output thermodilution_mean_slope_6h: [-0.03:-0.03[ AND cholesterol hdl_mean_last: [-0.03:0.21[ AND lactate_mean_last>=0.19
+  Quality (WRAcc): 0.01654233501277921
+  Coverage: 768 patients (18.2%)
+  Target share: 12.4%
+  Lift: 3.75x
+  Clinical interpretation: Tissue hypoperfusion/possible sepsis; Worsening trend
+
+Pattern #3:
+  Rule: cardiac output thermodilution_mean_slope_6h: [-0.03:-0.03[ AND cholesterol ldl_mean_count==-0.28142877387450027 AND lactate_mean_last>=0.19
+  Quality (WRAcc): 0.016534492583544436
+  Coverage: 769 patients (18.3%)
+  Target share: 12.4%
+  Lift: 3.74x
+  Clinical interpretation: Tissue hypoperfusion/possible sepsis; Worsening trend
+
+================================================================================
+SUMMARY
+================================================================================
+Analyses with meaningful patterns: 2/4
+
+✅ H2b HYPOTHESIS SUPPORTED
+The models show distinct, interpretable failure patterns.
