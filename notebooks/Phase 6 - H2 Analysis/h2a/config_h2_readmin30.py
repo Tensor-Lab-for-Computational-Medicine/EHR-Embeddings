@@ -14,8 +14,11 @@ class ConfigH2:
         # Numerical features and labels (Phase 1-2 outputs)
         num_dir = os.path.join(self.NOTEBOOKS_DIR, 'Phase 1 and 2', 'phase_1_outputs')
         # Fixed filenames (overwritten by preprocessing)
+        self.X_TRAIN_NUM_PATH = os.path.join(num_dir, 'X_train.pkl')
         self.X_TEST_NUM_PATH = os.path.join(num_dir, 'X_test.pkl')
+        self.Y_TRAIN_PATH = os.path.join(num_dir, 'y_train.pkl')
         self.Y_TEST_PATH = os.path.join(num_dir, 'y_test.pkl')
+        self.ICUSTAY_IDS_TRAIN_PATH = os.path.join(num_dir, 'icustay_ids_train.pkl')
         self.ICUSTAY_IDS_TEST_PATH = os.path.join(num_dir, 'icustay_ids_test.pkl')
         # Validation split (for threshold selection)
         self.X_VAL_NUM_PATH = os.path.join(num_dir, 'X_val.pkl')
@@ -51,6 +54,10 @@ class ConfigH2:
         self.TARGET_VARIABLE = 'readmission_30'
         self.N_BOOTSTRAP = 1000
         # Thresholding
-        # Use 'youden' (default), 'f1', 'prevalence', or 'fixed' (uses THRESHOLD)
-        self.THRESHOLD_STRATEGY = 'youden'
+        # Strategy: 'youden' (tune) or 'fixed' (use THRESHOLD)
+        self.THRESHOLD_STRATEGY = 'f1'
+        # Objective when tuning: 'youden' | 'f1' | 'fbeta' | 'accuracy' | 'balanced_accuracy'
+        self.THRESHOLD_OBJECTIVE = 'f1'
+        # Beta for fbeta (only used if THRESHOLD_OBJECTIVE='fbeta')
+        self.THRESHOLD_BETA = 1.0
         self.THRESHOLD = 0.5

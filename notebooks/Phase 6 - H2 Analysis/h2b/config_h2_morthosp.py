@@ -13,6 +13,7 @@ class ConfigH2:
        self.SCALER_PATH = os.path.join(self.NOTEBOOKS_DIR, 'Phase 1 and 2', 'phase_1_outputs', 'scaler.pkl')
        self.PHENOTYPE_RULES_CSV = os.path.join(self.NOTEBOOKS_DIR, 'Phase 6 - H2 Analysis', 'feature_engineering', 'feature_rules.csv')
        self.X_TEST_PHENOS_PATH = os.path.join(current_dir, '..', 'feature_engineering', 'artifacts', 'X_test_phenotypes.pkl')
+       self.X_TRAINVAL_PHENOS_PATH = os.path.join(current_dir, '..', 'feature_engineering', 'artifacts', 'X_trainval_phenotypes.pkl')
        # Settings
        self.TARGET_VARIABLE = 'mort_hosp'
        # Subgroup discovery

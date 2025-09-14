@@ -65,17 +65,15 @@ def _load_config(config_file: str = None):
 
 
 def _discover_final_subgroups(cfg, phase: str) -> str:
-    # Prefer root OUTPUT_DIR/final_subgroups.csv (aggregated from Phase IV)
+    # Prefer root OUTPUT_DIR/final_subgroups.csv (combined output supports both phases)
+    root_path = os.path.join(cfg.OUTPUT_DIR, 'final_subgroups.csv')
+    if os.path.exists(root_path):
+        return root_path
+    # Legacy fallbacks by phase
     if phase.lower() == 'iv':
-        root_path = os.path.join(cfg.OUTPUT_DIR, 'final_subgroups.csv')
-        if os.path.exists(root_path):
-            return root_path
         phase_dir = os.path.join(cfg.OUTPUT_DIR, 'phase_iv')
         filename = 'final_subgroups.csv'
     elif phase.lower() == 'ivb':
-        root_path = os.path.join(cfg.OUTPUT_DIR, 'final_subgroups_ivb.csv')
-        if os.path.exists(root_path):
-            return root_path
         phase_dir = os.path.join(cfg.OUTPUT_DIR, 'phase_ivb')
         filename = 'final_subgroups_ivb.csv'
     else:
@@ -145,32 +143,58 @@ def main():
     full_index = pd.Index(X_test.index)
     cohorts_idx = {k: full_index.take(np.asarray(v, dtype=int)) for k, v in art['cohorts_by_pos'].items()}
 
-    # Load vetted Phase IV subgroups
+    # Load vetted Phase IV/IVB subgroups
     final_path = args.final_subgroups_path or _discover_final_subgroups(cfg, args.phase)
     final_subgroups = pd.read_csv(final_path)
+    # If using combined outputs, filter by phase
+    if 'analysis_family' in final_subgroups.columns:
+        if args.phase.lower() == 'iv':
+            final_subgroups = final_subgroups[final_subgroups['analysis_family'] == 'H2b_differential'].copy()
+        else:
+            final_subgroups = final_subgroups[final_subgroups['analysis_family'] == 'IVB_discordance'].copy()
     idx_map = pd.Series(X_test.index, index=X_test.index.astype(str))
 
     rows = []
     for _, r in final_subgroups.iterrows():
         key = r['analysis_key']
         rule = r['rule_str']
-        title_map = {
-            'SM_miss': 'SM False Negatives vs Concordant True Positives',
-            'SM_false_alarm': 'SM False Positives vs Concordant True Negatives',
-            'NM_miss': 'NM False Negatives vs Concordant True Positives',
-            'NM_false_alarm': 'NM False Positives vs Concordant True Negatives',
-        }
-        err_key_map = {
-            'SM_miss': 'FN_SM', 'SM_false_alarm': 'FP_SM', 'NM_miss': 'FN_NM', 'NM_false_alarm': 'FP_NM'
-        }
-        suc_key_map = {
-            'SM_miss': 'TP_concordant', 'SM_false_alarm': 'TN_concordant', 'NM_miss': 'TP_concordant', 'NM_false_alarm': 'TN_concordant'
-        }
-        if key not in err_key_map:
-            continue
-        err_key = err_key_map[key]
-        suc_key = suc_key_map[key]
-        title = title_map.get(key, key)
+        if args.phase.lower() == 'iv':
+            title_map = {
+                'SM_miss': 'SM False Negatives vs Concordant True Positives',
+                'SM_false_alarm': 'SM False Positives vs Concordant True Negatives',
+                'NM_miss': 'NM False Negatives vs Concordant True Positives',
+                'NM_false_alarm': 'NM False Positives vs Concordant True Negatives',
+            }
+            err_key_map = {
+                'SM_miss': 'FN_SM', 'SM_false_alarm': 'FP_SM', 'NM_miss': 'FN_NM', 'NM_false_alarm': 'FP_NM'
+            }
+            suc_key_map = {
+                'SM_miss': 'TP_concordant', 'SM_false_alarm': 'TN_concordant', 'NM_miss': 'TP_concordant', 'NM_false_alarm': 'TN_concordant'
+            }
+            if key not in err_key_map:
+                continue
+            err_key = err_key_map[key]
+            suc_key = suc_key_map[key]
+            title = title_map.get(key, key)
+        else:
+            # IVB: within-battleground comparison of advantaged vs opposite model
+            # Build discordant battleground cohorts from artifact mapping
+            sm_win_deaths = cohorts_idx.get('FN_NM', pd.Index([]))
+            nm_win_deaths = cohorts_idx.get('FN_SM', pd.Index([]))
+            sm_win_surv = cohorts_idx.get('FP_NM', pd.Index([]))
+            nm_win_surv = cohorts_idx.get('FP_SM', pd.Index([]))
+            m = re.match(r'^IVB_(deaths|survivors)_(SM|NM)$', str(key))
+            if not m:
+                continue
+            domain, side = m.group(1), m.group(2)
+            if domain == 'deaths':
+                win_cohort = sm_win_deaths if side == 'SM' else nm_win_deaths
+                opp_cohort = nm_win_deaths if side == 'SM' else sm_win_deaths
+                title = f"Battleground of the Deceased — {'SM' if side=='SM' else 'NM'} advantage"
+            else:
+                win_cohort = sm_win_surv if side == 'SM' else nm_win_surv
+                opp_cohort = nm_win_surv if side == 'SM' else sm_win_surv
+                title = f"Battleground of the Survivors — {'SM' if side=='SM' else 'NM'} advantage"
 
         # Members of the vetted subgroup (prefer explicit membership from Phase IV)
         mem_str = r.get('members') if 'members' in r else None
@@ -183,9 +207,13 @@ def main():
             except Exception as e:
                 print(f"Could not apply rule: {rule}. Error: {e}")
                 continue
-
-        err_members = members.intersection(cohorts_idx[err_key])
-        suc_members = cohorts_idx[suc_key]
+        if args.phase.lower() == 'iv':
+            err_members = members.intersection(cohorts_idx[err_key])
+            suc_members = cohorts_idx[suc_key]
+        else:
+            # Compare within the same battleground: advantaged vs opposite
+            err_members = members.intersection(win_cohort)
+            suc_members = members.intersection(opp_cohort)
 
         meta_feats = [c for c in [
             'num_features_measured', 'total_measurement_events', 'unique_feature_families_measured',

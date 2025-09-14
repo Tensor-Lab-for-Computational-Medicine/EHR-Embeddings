@@ -13,12 +13,13 @@ class ConfigH2:
         self.SCALER_PATH = os.path.join(self.NOTEBOOKS_DIR, 'Phase 1 and 2', 'phase_1_outputs', 'scaler.pkl')
         self.PHENOTYPE_RULES_CSV = os.path.join(self.NOTEBOOKS_DIR, 'Phase 6 - H2 Analysis', 'feature_engineering', 'feature_rules.csv')
         self.X_TEST_PHENOS_PATH = os.path.join(current_dir, '..', 'feature_engineering', 'artifacts', 'X_test_phenotypes.pkl')
+        self.X_TRAINVAL_PHENOS_PATH = os.path.join(current_dir, '..', 'feature_engineering', 'artifacts', 'X_trainval_phenotypes.pkl')
         # Settings
         self.TARGET_VARIABLE = 'readmission_30'
         # Subgroup discovery
         self.SUBGROUP_MIN_SUPPORT = 0.01
         self.SUBGROUP_MAX_DEPTH = 3
         self.SUBGROUP_MAX_CANDIDATES = 200
-        self.SUBGROUP_MIN_QUALITY = 0.0
-        self.SUBGROUP_MIN_LIFT = 0.0
+        self.SUBGROUP_MIN_QUALITY = 0.05
+        self.SUBGROUP_MIN_LIFT = 1.5
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)

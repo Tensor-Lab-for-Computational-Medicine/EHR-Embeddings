@@ -47,52 +47,94 @@ def _count_conditions(rule_str: str) -> int:
 def _load_all_candidates(base_dir: str, phase: str) -> pd.DataFrame:
     rows = []
     if phase.upper() == 'IV':
-        phase_dir = os.path.join(base_dir, 'phase_iv')
-        # Prefer final_subgroups.csv with metrics if present per depth
-        if not os.path.isdir(phase_dir):
-            return pd.DataFrame()
-        for depth_folder in sorted(os.listdir(phase_dir)):
-            d_path = os.path.join(phase_dir, depth_folder)
-            if not os.path.isdir(d_path):
-                continue
-            fsp = os.path.join(d_path, 'final_subgroups.csv')
-            if os.path.exists(fsp):
-                df = pd.read_csv(fsp)
-                rows.append(df)
+        # New combined outputs first
+        combined_path = os.path.join(base_dir, 'final_subgroups.csv')
+        if os.path.exists(combined_path):
+            df = pd.read_csv(combined_path)
+            if 'analysis_family' in df.columns:
+                df_iv = df[df['analysis_family'] == 'H2b_differential']
             else:
-                for fn in os.listdir(d_path):
-                    if fn.startswith('h2b_patterns_') and fn.endswith('.csv'):
-                        k = fn.replace('h2b_patterns_', '').replace('.csv', '')
-                        df = pd.read_csv(os.path.join(d_path, fn))
-                        df['analysis_key'] = k
-                        df['source_depth'] = depth_folder
-                        rows.append(df)
+                df_iv = df[df['analysis_key'].isin(['SM_miss','SM_false_alarm','NM_miss','NM_false_alarm'])]
+            if not df_iv.empty:
+                rows.append(df_iv)
+        # Per-depth combined outputs
+        for fn in sorted(os.listdir(base_dir)):
+            if fn.startswith('final_subgroups_depth_') and fn.endswith('.csv'):
+                df = pd.read_csv(os.path.join(base_dir, fn))
+                if 'analysis_family' in df.columns:
+                    df_iv = df[df['analysis_family'] == 'H2b_differential']
+                else:
+                    df_iv = df[df['analysis_key'].isin(['SM_miss','SM_false_alarm','NM_miss','NM_false_alarm'])]
+                if not df_iv.empty:
+                    rows.append(df_iv)
+        # Legacy fallback
+        if not rows:
+            phase_dir = os.path.join(base_dir, 'phase_iv')
+            if not os.path.isdir(phase_dir):
+                return pd.DataFrame()
+            for depth_folder in sorted(os.listdir(phase_dir)):
+                d_path = os.path.join(phase_dir, depth_folder)
+                if not os.path.isdir(d_path):
+                    continue
+                fsp = os.path.join(d_path, 'final_subgroups.csv')
+                if os.path.exists(fsp):
+                    df = pd.read_csv(fsp)
+                    rows.append(df)
+                else:
+                    for fn in os.listdir(d_path):
+                        if fn.startswith('h2b_patterns_') and fn.endswith('.csv'):
+                            k = fn.replace('h2b_patterns_', '').replace('.csv', '')
+                            df = pd.read_csv(os.path.join(d_path, fn))
+                            df['analysis_key'] = k
+                            df['source_depth'] = depth_folder
+                            rows.append(df)
     elif phase.upper() == 'IVB':
-        phase_dir = os.path.join(base_dir, 'phase_ivb')
-        # Prefer final_subgroups_ivb.csv with metrics if present per depth
-        if not os.path.isdir(phase_dir):
-            return pd.DataFrame()
-        for depth_folder in sorted(os.listdir(phase_dir)):
-            d_path = os.path.join(phase_dir, depth_folder)
-            if not os.path.isdir(d_path):
-                continue
-            fsp = os.path.join(d_path, 'final_subgroups_ivb.csv')
-            if os.path.exists(fsp):
-                df = pd.read_csv(fsp)
-                rows.append(df)
+        # New combined outputs first
+        combined_path = os.path.join(base_dir, 'final_subgroups.csv')
+        if os.path.exists(combined_path):
+            df = pd.read_csv(combined_path)
+            if 'analysis_family' in df.columns:
+                df_ivb = df[df['analysis_family'] == 'IVB_discordance']
             else:
-                for fn in os.listdir(d_path):
-                    if fn.startswith('ivb_patterns_') and fn.endswith('.csv'):
-                        m = re.match(r'^ivb_patterns_(deaths|survivors)_(SM|NM)_depth_\d+\.csv$', fn)
-                        if m:
-                            domain, side = m.group(1), m.group(2)
-                            analysis_key = f"IVB_{domain}_{side}"
-                        else:
-                            analysis_key = 'IVB_unknown'
-                        df = pd.read_csv(os.path.join(d_path, fn))
-                        df['analysis_key'] = analysis_key
-                        df['source_depth'] = depth_folder
-                        rows.append(df)
+                df_ivb = df[df['analysis_key'].astype(str).str.startswith('IVB_')]
+            if not df_ivb.empty:
+                rows.append(df_ivb)
+        # Per-depth combined outputs
+        for fn in sorted(os.listdir(base_dir)):
+            if fn.startswith('final_subgroups_depth_') and fn.endswith('.csv'):
+                df = pd.read_csv(os.path.join(base_dir, fn))
+                if 'analysis_family' in df.columns:
+                    df_ivb = df[df['analysis_family'] == 'IVB_discordance']
+                else:
+                    df_ivb = df[df['analysis_key'].astype(str).str.startswith('IVB_')]
+                if not df_ivb.empty:
+                    rows.append(df_ivb)
+        # Legacy fallback
+        if not rows:
+            phase_dir = os.path.join(base_dir, 'phase_ivb')
+            if not os.path.isdir(phase_dir):
+                return pd.DataFrame()
+            for depth_folder in sorted(os.listdir(phase_dir)):
+                d_path = os.path.join(phase_dir, depth_folder)
+                if not os.path.isdir(d_path):
+                    continue
+                fsp = os.path.join(d_path, 'final_subgroups_ivb.csv')
+                if os.path.exists(fsp):
+                    df = pd.read_csv(fsp)
+                    rows.append(df)
+                else:
+                    for fn in os.listdir(d_path):
+                        if fn.startswith('ivb_patterns_') and fn.endswith('.csv'):
+                            m = re.match(r'^ivb_patterns_(deaths|survivors)_(SM|NM)_depth_\d+\.csv$', fn)
+                            if m:
+                                domain, side = m.group(1), m.group(2)
+                                analysis_key = f"IVB_{domain}_{side}"
+                            else:
+                                analysis_key = 'IVB_unknown'
+                            df = pd.read_csv(os.path.join(d_path, fn))
+                            df['analysis_key'] = analysis_key
+                            df['source_depth'] = depth_folder
+                            rows.append(df)
     else:
         return pd.DataFrame()
     if not rows:
