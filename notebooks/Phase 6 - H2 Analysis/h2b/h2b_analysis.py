@@ -4,26 +4,10 @@ import os
 import pickle
 import argparse
 import importlib.util
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import mannwhitneyu
+import re
 
 import pysubgroup as ps
 
-# Set up plotting style
-try:
-    plt.style.use('seaborn-darkgrid')
-except:
-    plt.style.use('ggplot')
-sns.set_palette("husl")
-
-# =============================================================================
-# DATA LOADING (minimal)
-# =============================================================================
-
-# =============================================================================
-# SUBGROUP DISCOVERY
-# =============================================================================
 
 def _jaccard(a, b):
     inter = len(a & b)
@@ -31,6 +15,82 @@ def _jaccard(a, b):
         return 0.0
     union = len(a | b)
     return inter / union
+
+def _normalize_rule_case(rule_str: str) -> str:
+    s = str(rule_str)
+    s = re.sub(r"\band\b", "AND", s, flags=re.IGNORECASE)
+    s = re.sub(r"\bor\b", "OR", s, flags=re.IGNORECASE)
+    return s
+
+ 
+
+def _get_phenotype_types(config) -> dict:
+    mapping = {}
+    try:
+        csv_path = getattr(config, 'PHENOTYPE_RULES_CSV', None)
+        if csv_path and os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            if {'phenotype_name', 'phenotype_type'}.issubset(df.columns):
+                mapping = {str(r['phenotype_name']).strip(): str(r['phenotype_type']).strip().lower() for _, r in df.iterrows()}
+    except Exception:
+        pass
+    return mapping
+
+
+_BASELINE_CATEGORIES = {
+    'normal', 'none', 'stage_0', 'stable', 'normotension'
+}
+
+
+def _infer_col_type(series: pd.Series, declared_types: dict) -> str:
+    name = series.name
+    t = declared_types.get(name)
+    if t:
+        return t
+    if series.dtype == bool:
+        return 'binary'
+    if pd.api.types.is_numeric_dtype(series):
+        return 'continuous'
+    return 'categorical'
+
+
+def _build_restricted_searchspace(data: pd.DataFrame, config):
+    declared_types = _get_phenotype_types(config)
+    all_selectors = ps.create_selectors(data, ignore=['target'])
+    restricted = []
+    for sel in all_selectors:
+        try:
+            s = str(sel)
+            # Extract column name conservatively before '==' or ':'
+            col = s.split('==', 1)[0].split(':', 1)[0].strip()
+            if col == 'target' or col not in data.columns:
+                continue
+            col_type = _infer_col_type(data[col], declared_types)
+
+            # Numeric selectors typically render like "col: [a:b["; keep if column is continuous
+            if (('[' in s and ':' in s) or ('>' in s) or ('<' in s)):
+                if col_type == 'continuous':
+                    restricted.append(sel)
+                continue
+
+            # Equality selectors: "col==value"
+            if '==' in s:
+                rhs = s.split('==', 1)[1].strip()
+                rhs_clean = rhs.strip().strip('"\'')
+                if col_type == 'binary':
+                    # Only keep TRUE condition
+                    if rhs_clean.lower() in {'true', '1', 'yes'}:
+                        restricted.append(sel)
+                elif col_type == 'categorical':
+                    if rhs_clean.strip().lower() not in _BASELINE_CATEGORIES:
+                        restricted.append(sel)
+                # Ignore equality for continuous
+            # Otherwise skip
+        except Exception:
+            # On any parsing issues, skip the selector to keep the space conservative
+            continue
+    return restricted
+
 
 def run_subgroup_discovery_analysis(X_features, target, analysis_name, config):
     
@@ -53,7 +113,10 @@ def run_subgroup_discovery_analysis(X_features, target, analysis_name, config):
     
     # Create binary target
     target_column = ps.BinaryTarget('target', 1)
-    searchspace = ps.create_selectors(data, ignore=['target'])
+    # Build restricted searchspace from clinically significant conditions
+    searchspace = _build_restricted_searchspace(data, config)
+    if not searchspace:
+        return pd.DataFrame()
     max_candidates = getattr(config, 'SUBGROUP_MAX_CANDIDATES', 20)
     task = ps.SubgroupDiscoveryTask(
         data,
@@ -104,7 +167,7 @@ def run_subgroup_discovery_analysis(X_features, target, analysis_name, config):
             member_idx = data.index[mask]
             results_data.append({
                 'rank': idx + 1,
-                'rule': str(row['subgroup']),
+                'rule': _normalize_rule_case(str(row['subgroup'])),
                 'quality_WRAcc': row['quality'],
                 'coverage': int(row['size_sg']),
                 'coverage_pct': round(row['relative_size_sg'] * 100, 1),
@@ -153,110 +216,14 @@ def analyze_differential_failures(cohorts_idx, X_test_num, config):
 ##
 
 # =============================================================================
-# VISUALIZATIONS
+# REPORTING (concise)
 # =============================================================================
 
-def plot_feature_distributions(subgroup_results, cohorts_idx, X_test_num, config):
-    """Create distribution plots for top features from each analysis."""
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    axes = axes.flatten()
-    
-    analysis_order = ['SM_miss', 'SM_false_alarm', 'NM_miss', 'NM_false_alarm']    
-    
-    for idx, analysis_key in enumerate(analysis_order):
-        ax = axes[idx]
-        
-        if analysis_key not in subgroup_results:
-            ax.text(0.5, 0.5, 'No results', ha='center', va='center')
-            ax.set_title(f"{analysis_key} Analysis")
-            continue
-        
-        analysis = subgroup_results[analysis_key]
-        results_df = analysis['results']
-        
-        if results_df.empty:
-            ax.text(0.5, 0.5, 'No patterns', ha='center', va='center')
-            ax.set_title(analysis['title'])
-            continue
-        
-        # Get the top rule and extract the first feature
-        top_rule = results_df.iloc[0]['rule']
-        
-        # Extract feature name from rule (simple parsing)
-        feature_name = None
-        for col in X_test_num.columns:
-            if col in top_rule:
-                feature_name = col
-                break
-        
-        if feature_name is None:
-            ax.text(0.5, 0.5, f'Top rule:\n{top_rule[:50]}...', ha='center', va='center', fontsize=9)
-            ax.set_title(analysis['title'])
-            continue
-        
-        # Get data for the cohorts
-        error_idx = cohorts_idx.get(analysis['error_cohort'], pd.Index([]))
-        success_idx = cohorts_idx.get(analysis['success_cohort'], pd.Index([]))
-        error_data = X_test_num.loc[X_test_num.index.isin(error_idx), feature_name].dropna()
-        success_data = X_test_num.loc[X_test_num.index.isin(success_idx), feature_name].dropna()
-        
-        # Create violin plot
-        plot_data = pd.DataFrame({
-            'Value': np.concatenate([error_data, success_data]),
-            'Cohort': ['Error'] * len(error_data) + ['Success'] * len(success_data)
-        })
-        
-        sns.violinplot(data=plot_data, x='Cohort', y='Value', ax=ax, palette=['red', 'green'])
-        ax.set_title(f"{analysis['title']}\nTop Feature: {feature_name}", fontsize=10)
-        ax.set_xlabel('')
-        ax.set_ylabel(feature_name)
-        
-        # Add statistical annotation
-        _, p_value = mannwhitneyu(error_data, success_data, alternative='two-sided')
-        ax.text(0.5, 0.95, f'p={p_value:.3f}', transform=ax.transAxes, 
-                ha='center', va='top', fontsize=9,
-                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
-    
-    plt.tight_layout()
-    plt.savefig(os.path.join(config.OUTPUT_DIR, 'h2b_feature_distributions.png'), dpi=300, bbox_inches='tight')
-    plt.close()
-
-# =============================================================================
-# REPORTING
-# =============================================================================
-
-def create_summary_table(subgroup_results, config):
-    """Create summary table of discovered subgroups."""
-    summary_data = []
-    
-    for analysis_key, analysis in subgroup_results.items():
-        results_df = analysis['results']
-        
-        if results_df.empty:
-            continue
-        
-        # Include all discovered subgroups (post-filtered)
-        for idx in range(len(results_df)):
-            row = results_df.iloc[idx]
-            
-            summary_data.append({
-                'Analysis': analysis['title'],
-                'Rank': row['rank'],
-                'Rule': row['rule'][:100],
-                'WRAcc': row.get('quality_WRAcc', row.get('lift', 0)),
-                'Coverage': f"{row['coverage']} ({row['coverage_pct']}%)",
-                'Target_Share': f"{row.get('target_share', 0):.1f}%",
-                'Lift': row.get('lift', 0)
-            })
-    
-    summary_df = pd.DataFrame(summary_data)
-    return summary_df
-
-def create_detailed_report(subgroup_results, cohorts_idx, config):
-    """Create detailed H2b analysis report."""
+def create_detailed_report(subgroup_results, cohorts_idx, config, depth: int):
+    """Write concise per-depth report (patterns only)."""
     report = []
     report.append("="*80)
-    report.append("H2b ANALYSIS REPORT: DIFFERENTIAL COHORT PROFILES")
+    report.append(f"H2b ANALYSIS REPORT: DIFFERENTIAL COHORT PROFILES (max_depth={depth})")
     report.append("="*80)
     report.append("")
     
@@ -296,6 +263,9 @@ def create_detailed_report(subgroup_results, cohorts_idx, config):
         
         report.append(f"Error cohort size: {analysis['error_count']}")
         report.append(f"Success cohort size: {analysis['success_count']}")
+        # Dataset baseline rate for this analysis population (same across rows)
+        if not results_df.empty and 'baseline_rate' in results_df.columns:
+            report.append(f"Dataset baseline rate: {results_df.iloc[0]['baseline_rate']:.1f}%")
         report.append("")
         
         if results_df.empty:
@@ -307,10 +277,10 @@ def create_detailed_report(subgroup_results, cohorts_idx, config):
             for idx in range(len(results_df)):
                 row = results_df.iloc[idx]
                 report.append(f"\nPattern #{row['rank']}:")
-                report.append(f"  Rule: {row['rule']}")
+                report.append(f"  Rule: {_normalize_rule_case(row['rule'])}")
                 report.append(f"  WRAcc: {row.get('quality_WRAcc', 'N/A')}")
                 report.append(f"  Coverage: {row['coverage']} patients ({row['coverage_pct']}%)")
-                report.append(f"  Target share: {row.get('target_share', 0):.1f}%")
+                report.append(f"  Target share: {row.get('target_share', 0):.1f}%  |  Baseline: {row.get('baseline_rate', 0):.1f}%")
                 report.append(f"  Lift: {row.get('lift', 0):.2f}x")
                 
         
@@ -325,7 +295,7 @@ def create_detailed_report(subgroup_results, cohorts_idx, config):
     report_text = "\n".join(report)
     
     # Save report
-    with open(os.path.join(config.OUTPUT_DIR, 'h2b_detailed_report.txt'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(config.OUTPUT_DIR, f'h2b_detailed_report_depth_{depth}.txt'), 'w', encoding='utf-8') as f:
         f.write(report_text)
     
     return report_text
@@ -351,66 +321,114 @@ def _load_config(config_file: str = None):
 def main():
     parser = argparse.ArgumentParser(description='H2b analysis (reusable)')
     parser.add_argument('--config_file', type=str, default=None, help='Path to ConfigH2 .py file (e.g., config_h2_readmin30.py). Defaults to morthosp config if omitted.')
+    parser.add_argument('--max_depth', type=int, default=None, help='Override subgroup discovery max_depth (single run).')
+    parser.add_argument('--depths', type=str, default=None, help='Comma-separated list of depths to sweep (e.g., 2,3,4,5). Overrides --max_depth if provided.')
     args = parser.parse_args()
 
     config = _load_config(args.config_file)
     os.makedirs(config.OUTPUT_DIR, exist_ok=True)
 
-    # Strictly rely on H2a artifact (no fallbacks)
+    # Resolve depth sweep
+    if args.depths:
+        depths = [int(d.strip()) for d in args.depths.split(',') if d.strip()]
+    elif args.max_depth is not None:
+        depths = [int(args.max_depth)]
+    else:
+        depths = [int(getattr(config, 'SUBGROUP_MAX_DEPTH', 3))]
+
+    # Load once: artifact and interpretable features
     artifact_path = os.path.join(config.H2A_OUTPUT_DIR, 'h2a_to_h2b_artifact.pkl')
     if not os.path.exists(artifact_path):
         raise FileNotFoundError(f"Missing H2a artifact: {artifact_path}")
     with open(artifact_path, 'rb') as f:
         artifact = pickle.load(f)
 
-    # Required fields from artifact
     required_keys = ['y_true', 'cohorts_by_pos']
     if any(k not in artifact for k in required_keys):
         raise KeyError(f"H2a artifact missing keys: {required_keys}")
 
-    # Load numeric test features used for subgroup discovery
-    with open(config.X_TEST_NUM_PATH, 'rb') as f:
-        X_test_num = pickle.load(f)
-    if not isinstance(X_test_num, pd.DataFrame):
-        X_test_num = pd.DataFrame(X_test_num)
-    # Revert standardized features to original clinical scale for interpretability
-    with open(r'D:\Projects\EHR Embeddings\notebooks\Phase 1 and 2\phase_1_outputs\scaler.pkl', 'rb') as f:
-        _sc = pickle.load(f)
-    if hasattr(_sc, 'feature_names_in_'):
-        X_test_num[_sc.feature_names_in_] = _sc.inverse_transform(X_test_num[_sc.feature_names_in_])
+    # Prefer engineered phenotypes if available; fallback to numeric
+    X_test_pheno = None
+    if hasattr(config, 'X_TEST_PHENOS_PATH') and os.path.exists(config.X_TEST_PHENOS_PATH):
+        try:
+            X_test_pheno = pd.read_pickle(config.X_TEST_PHENOS_PATH)
+        except Exception:
+            X_test_pheno = None
+    if X_test_pheno is not None and isinstance(X_test_pheno, pd.DataFrame) and not X_test_pheno.empty:
+        X_features = X_test_pheno
     else:
-        X_test_num = pd.DataFrame(_sc.inverse_transform(X_test_num), columns=X_test_num.columns, index=X_test_num.index)
+        with open(config.X_TEST_NUM_PATH, 'rb') as f:
+            X_test_num = pickle.load(f)
+        if not isinstance(X_test_num, pd.DataFrame):
+            X_test_num = pd.DataFrame(X_test_num)
+        # Inverse transform using configured scaler
+        try:
+            with open(getattr(config, 'SCALER_PATH'), 'rb') as f:
+                _sc = pickle.load(f)
+            if hasattr(_sc, 'feature_names_in_'):
+                X_test_num[_sc.feature_names_in_] = _sc.inverse_transform(X_test_num[_sc.feature_names_in_])
+            else:
+                X_test_num = pd.DataFrame(_sc.inverse_transform(X_test_num), columns=X_test_num.columns, index=X_test_num.index)
+        except Exception:
+            pass
+        X_features = X_test_num
 
-    # Build index lists from artifact positions aligned to X_test_num
-    full_index = pd.Index(X_test_num.index)
+    full_index = pd.Index(X_features.index)
     cohorts_idx = {name: full_index.take(np.asarray(idx_list, dtype=int)) for name, idx_list in artifact['cohorts_by_pos'].items()}
 
-    results = analyze_differential_failures(cohorts_idx, X_test_num, config)
-    plot_feature_distributions(results, cohorts_idx, X_test_num, config)
+    # Sweep depths; write each run to phase_iv/depth_{d}/
+    base_output = config.OUTPUT_DIR
+    multi = len(depths) > 1
+    for d in depths:
+        config.SUBGROUP_MAX_DEPTH = d
+        run_dir = os.path.join(base_output, 'phase_iv', f'depth_{d}') if multi else base_output
+        config.OUTPUT_DIR = run_dir
+        os.makedirs(config.OUTPUT_DIR, exist_ok=True)
 
-    summary_df = create_summary_table(results, config)
-    if not summary_df.empty:
-        summary_df.to_csv(os.path.join(config.OUTPUT_DIR, 'h2b_summary_table.csv'), index=False)
-        print(summary_df.to_string(index=False))
+        results = analyze_differential_failures(cohorts_idx, X_features, config)
 
-    report = create_detailed_report(results, cohorts_idx, config)
-    print("\n" + report)
+        # Minimal console output per analysis
+        for key, meta in results.items():
+            n = 0 if meta['results'].empty else meta['results'].shape[0]
+            print(f"[depth={d}] {meta['title']}: {n} patterns kept")
 
-    for key, analysis in results.items():
-        if not analysis['results'].empty:
-            analysis['results'].to_csv(os.path.join(config.OUTPUT_DIR, f'h2b_patterns_{key}.csv'), index=False)
+        # Write patterns per analysis (no per-depth archetypes)
+        for key, analysis in results.items():
+            df = analysis['results']
+            if not df.empty:
+                df.to_csv(os.path.join(config.OUTPUT_DIR, f'h2b_patterns_{key}_depth_{d}.csv'), index=False)
 
-    # Export vetted subgroups for Phase V (final_subgroups.csv)
-    final_rows = [
-        {'analysis_key': k, 'rank': int(r['rank']), 'rule_str': r['rule'], 'members': r.get('members', '')}
-        for k, a in results.items() if not a['results'].empty
-        for _, r in a['results'].iterrows()
-    ]
-    if final_rows:
-        pd.DataFrame(final_rows).to_csv(os.path.join(config.OUTPUT_DIR, 'final_subgroups.csv'), index=False)
+        # Write per-depth final_subgroups with metrics for cross-depth selection
+        rows = []
+        for key, analysis in results.items():
+            df = analysis['results']
+            if df is None or df.empty:
+                continue
+            rows.extend([
+                {
+                    'analysis_key': key,
+                    'rank': int(r['rank']),
+                    'rule_str': r['rule'],
+                    'coverage': int(r.get('coverage', 0)),
+                    'coverage_pct': float(r.get('coverage_pct', 0.0)),
+                    'lift': float(r.get('lift', 0.0)),
+                    'quality_WRAcc': float(r.get('quality_WRAcc', 0.0)),
+                    'target_share': float(r.get('target_share', 0.0)),
+                    'baseline_rate': float(r.get('baseline_rate', 0.0)),
+                    'members': r.get('members', ''),
+                    'source_depth': f'depth_{d}',
+                }
+                for _, r in df.iterrows()
+            ])
+        if rows:
+            pd.DataFrame(rows).to_csv(os.path.join(config.OUTPUT_DIR, 'final_subgroups.csv'), index=False)
 
-    with open(os.path.join(config.OUTPUT_DIR, 'h2b_results.pkl'), 'wb') as f:
-        pickle.dump(results, f)
+        # Write concise per-depth report (patterns only)
+        create_detailed_report(results, cohorts_idx, config, d)
+
+
+    # Restore output dir in case the object is reused elsewhere
+    config.OUTPUT_DIR = base_output
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,2297 @@
+================================================================================
+H2b ANALYSIS REPORT: DIFFERENTIAL COHORT PROFILES (max_depth=4)
+================================================================================
+
+METHOD: Subgroup Discovery with pysubgroup
+  - Max depth: 4
+  - Min support: 1%
+  - Quality measure: WRAcc
+
+COHORT SIZES
+----------------------------------------
+  TP_concordant: 15 patients
+  TN_concordant: 4070 patients
+  FN_concordant: 164 patients
+  FP_concordant: 122 patients
+  FN_SM: 29 patients
+  FP_SM: 584 patients
+  FN_NM: 57 patients
+  FP_NM: 607 patients
+
+================================================================================
+ANALYSIS: SM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 29
+Success cohort size: 15
+Dataset baseline rate: 65.9%
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: anemia_severity=='Mild' AND sirs_hr_criterion==True
+  WRAcc: 0.061983471074380174
+  Coverage: 8 patients (18.2%)
+  Target share: 100.0%  |  Baseline: 65.9%
+  Lift: 1.52x
+
+Pattern #2:
+  Rule: sodium_state=='Hyponatremia'
+  WRAcc: 0.05475206611570249
+  Coverage: 10 patients (22.7%)
+  Target share: 90.0%  |  Baseline: 65.9%
+  Lift: 1.37x
+
+Pattern #3:
+  Rule: glucose_state=='Hyperglycemia'
+  WRAcc: 0.047004132231404955
+  Coverage: 9 patients (20.5%)
+  Target share: 88.9%  |  Baseline: 65.9%
+  Lift: 1.35x
+
+Pattern #4:
+  Rule: has_any_aki==True AND sbp_volatility: [9.95:13.28[
+  WRAcc: 0.04648760330578512
+  Coverage: 6 patients (13.6%)
+  Target share: 100.0%  |  Baseline: 65.9%
+  Lift: 1.52x
+
+Pattern #5:
+  Rule: sirs_hr_criterion==True
+  WRAcc: 0.04080578512396693
+  Coverage: 17 patients (38.6%)
+  Target share: 76.5%  |  Baseline: 65.9%
+  Lift: 1.16x
+
+Pattern #6:
+  Rule: has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc: 0.03977272727272729
+  Coverage: 11 patients (25.0%)
+  Target share: 81.8%  |  Baseline: 65.9%
+  Lift: 1.24x
+
+Pattern #7:
+  Rule: map_volatility: [10.07:10.95[ AND sirs_wbc_criterion==True
+  WRAcc: 0.039256198347107446
+  Coverage: 8 patients (18.2%)
+  Target share: 87.5%  |  Baseline: 65.9%
+  Lift: 1.33x
+
+Pattern #8:
+  Rule: shock_index: [0.81:0.92[ AND sodium_state=='Hyponatremia'
+  WRAcc: 0.038739669421487606
+  Coverage: 5 patients (11.4%)
+  Target share: 100.0%  |  Baseline: 65.9%
+  Lift: 1.52x
+
+Pattern #9:
+  Rule: anemia_severity=='Mild' AND has_hypocalcemia_ionized==True
+  WRAcc: 0.03202479338842977
+  Coverage: 10 patients (22.7%)
+  Target share: 80.0%  |  Baseline: 65.9%
+  Lift: 1.21x
+
+Pattern #10:
+  Rule: thrombocytopenia_severity=='Mild'
+  WRAcc: 0.031508264462809916
+  Coverage: 7 patients (15.9%)
+  Target share: 85.7%  |  Baseline: 65.9%
+  Lift: 1.30x
+
+Pattern #11:
+  Rule: sirs_hr_criterion==True AND thrombocytopenia_severity=='Moderate'
+  WRAcc: 0.030991735537190087
+  Coverage: 4 patients (9.1%)
+  Target share: 100.0%  |  Baseline: 65.9%
+  Lift: 1.52x
+
+================================================================================
+ANALYSIS: SM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 584
+Success cohort size: 4070
+Dataset baseline rate: 12.5%
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: has_neutrophilia==True
+  WRAcc: 0.01805397633099159
+  Coverage: 2279 patients (49.0%)
+  Target share: 16.2%  |  Baseline: 12.5%
+  Lift: 1.29x
+
+Pattern #2:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc: 0.017653417062347448
+  Coverage: 1481 patients (31.8%)
+  Target share: 18.1%  |  Baseline: 12.5%
+  Lift: 1.44x
+
+Pattern #3:
+  Rule: is_malnourished_proxy==True
+  WRAcc: 0.016201689809783287
+  Coverage: 977 patients (21.0%)
+  Target share: 20.3%  |  Baseline: 12.5%
+  Lift: 1.62x
+
+Pattern #4:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc: 0.014574429323080687
+  Coverage: 870 patients (18.7%)
+  Target share: 20.3%  |  Baseline: 12.5%
+  Lift: 1.62x
+
+Pattern #5:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True
+  WRAcc: 0.014479044877596733
+  Coverage: 754 patients (16.2%)
+  Target share: 21.5%  |  Baseline: 12.5%
+  Lift: 1.71x
+
+Pattern #6:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.014165467358851797
+  Coverage: 670 patients (14.4%)
+  Target share: 22.4%  |  Baseline: 12.5%
+  Lift: 1.78x
+
+Pattern #7:
+  Rule: has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.013431201036984973
+  Coverage: 1016 patients (21.8%)
+  Target share: 18.7%  |  Baseline: 12.5%
+  Lift: 1.49x
+
+Pattern #8:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.013035535645989079
+  Coverage: 688 patients (14.8%)
+  Target share: 21.4%  |  Baseline: 12.5%
+  Lift: 1.70x
+
+Pattern #9:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc: 0.012989921012814758
+  Coverage: 610 patients (13.1%)
+  Target share: 22.5%  |  Baseline: 12.5%
+  Lift: 1.79x
+
+Pattern #10:
+  Rule: has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.012447716304313503
+  Coverage: 917 patients (19.7%)
+  Target share: 18.9%  |  Baseline: 12.5%
+  Lift: 1.50x
+
+Pattern #11:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.011418247589211235
+  Coverage: 485 patients (10.4%)
+  Target share: 23.5%  |  Baseline: 12.5%
+  Lift: 1.87x
+
+Pattern #12:
+  Rule: has_neutrophilia==True AND has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc: 0.011290452746471837
+  Coverage: 681 patients (14.6%)
+  Target share: 20.3%  |  Baseline: 12.5%
+  Lift: 1.61x
+
+Pattern #13:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.011026645040036536
+  Coverage: 635 patients (13.6%)
+  Target share: 20.6%  |  Baseline: 12.5%
+  Lift: 1.64x
+
+Pattern #14:
+  Rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.011000513580141126
+  Coverage: 628 patients (13.5%)
+  Target share: 20.7%  |  Baseline: 12.5%
+  Lift: 1.65x
+
+Pattern #15:
+  Rule: has_neutrophilia==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.010866532137355818
+  Coverage: 625 patients (13.4%)
+  Target share: 20.6%  |  Baseline: 12.5%
+  Lift: 1.64x
+
+Pattern #16:
+  Rule: has_anticoagulation_derangement==True
+  WRAcc: 0.010594414072649896
+  Coverage: 2986 patients (64.2%)
+  Target share: 14.2%  |  Baseline: 12.5%
+  Lift: 1.13x
+
+Pattern #17:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.010543443875256723
+  Coverage: 374 patients (8.0%)
+  Target share: 25.7%  |  Baseline: 12.5%
+  Lift: 2.05x
+
+Pattern #18:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True
+  WRAcc: 0.01040309115779727
+  Coverage: 1208 patients (26.0%)
+  Target share: 16.6%  |  Baseline: 12.5%
+  Lift: 1.32x
+
+Pattern #19:
+  Rule: is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.010373358542651251
+  Coverage: 460 patients (9.9%)
+  Target share: 23.0%  |  Baseline: 12.5%
+  Lift: 1.84x
+
+Pattern #20:
+  Rule: has_sirs==True AND is_malnourished_proxy==True
+  WRAcc: 0.010080095233012287
+  Coverage: 439 patients (9.4%)
+  Target share: 23.2%  |  Baseline: 12.5%
+  Lift: 1.85x
+
+Pattern #21:
+  Rule: is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.01005479480894394
+  Coverage: 424 patients (9.1%)
+  Target share: 23.6%  |  Baseline: 12.5%
+  Lift: 1.88x
+
+Pattern #22:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc: 0.010022846098259092
+  Coverage: 473 patients (10.2%)
+  Target share: 22.4%  |  Baseline: 12.5%
+  Lift: 1.79x
+
+Pattern #23:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.01000003878167193
+  Coverage: 434 patients (9.3%)
+  Target share: 23.3%  |  Baseline: 12.5%
+  Lift: 1.85x
+
+Pattern #24:
+  Rule: has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc: 0.009965966312762366
+  Coverage: 762 patients (16.4%)
+  Target share: 18.6%  |  Baseline: 12.5%
+  Lift: 1.49x
+
+Pattern #25:
+  Rule: has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.00980086719511927
+  Coverage: 800 patients (17.2%)
+  Target share: 18.2%  |  Baseline: 12.5%
+  Lift: 1.45x
+
+Pattern #26:
+  Rule: liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.009642785713349146
+  Coverage: 1029 patients (22.1%)
+  Target share: 16.9%  |  Baseline: 12.5%
+  Lift: 1.35x
+
+Pattern #27:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.009554141891795811
+  Coverage: 331 patients (7.1%)
+  Target share: 26.0%  |  Baseline: 12.5%
+  Lift: 2.07x
+
+Pattern #28:
+  Rule: has_neutrophilia==True AND has_sirs==True AND sirs_rr_criterion==True
+  WRAcc: 0.00941803669078579
+  Coverage: 607 patients (13.0%)
+  Target share: 19.8%  |  Baseline: 12.5%
+  Lift: 1.58x
+
+Pattern #29:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc: 0.009321821209474768
+  Coverage: 499 patients (10.7%)
+  Target share: 21.2%  |  Baseline: 12.5%
+  Lift: 1.69x
+
+Pattern #30:
+  Rule: has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc: 0.009259955209015668
+  Coverage: 836 patients (18.0%)
+  Target share: 17.7%  |  Baseline: 12.5%
+  Lift: 1.41x
+
+Pattern #31:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.009234747122261439
+  Coverage: 303 patients (6.5%)
+  Target share: 26.7%  |  Baseline: 12.5%
+  Lift: 2.13x
+
+Pattern #32:
+  Rule: has_anticoagulation_derangement==True AND sirs_wbc_criterion==True
+  WRAcc: 0.0092059378802566
+  Coverage: 1356 patients (29.1%)
+  Target share: 15.7%  |  Baseline: 12.5%
+  Lift: 1.25x
+
+Pattern #33:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.009204460483230712
+  Coverage: 336 patients (7.2%)
+  Target share: 25.3%  |  Baseline: 12.5%
+  Lift: 2.02x
+
+Pattern #34:
+  Rule: has_neutrophilia==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.009159584548569336
+  Coverage: 768 patients (16.5%)
+  Target share: 18.1%  |  Baseline: 12.5%
+  Lift: 1.44x
+
+Pattern #35:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc: 0.009120156515440922
+  Coverage: 889 patients (19.1%)
+  Target share: 17.3%  |  Baseline: 12.5%
+  Lift: 1.38x
+
+Pattern #36:
+  Rule: has_sirs==True AND is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.009072141112099532
+  Coverage: 317 patients (6.8%)
+  Target share: 25.9%  |  Baseline: 12.5%
+  Lift: 2.06x
+
+Pattern #37:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.009048872108941777
+  Coverage: 541 patients (11.6%)
+  Target share: 20.3%  |  Baseline: 12.5%
+  Lift: 1.62x
+
+Pattern #38:
+  Rule: anemia_severity=='Mild' AND has_neutrophilia==True
+  WRAcc: 0.009015168989288686
+  Coverage: 1124 patients (24.2%)
+  Target share: 16.3%  |  Baseline: 12.5%
+  Lift: 1.30x
+
+Pattern #39:
+  Rule: has_anticoagulation_derangement==True AND has_hyperlactatemia==True AND has_neutrophilia==True
+  WRAcc: 0.008879248462906901
+  Coverage: 364 patients (7.8%)
+  Target share: 23.9%  |  Baseline: 12.5%
+  Lift: 1.90x
+
+Pattern #40:
+  Rule: has_hyperlactatemia==True AND has_neutrophilia==True
+  WRAcc: 0.008758932942611068
+  Coverage: 488 patients (10.5%)
+  Target share: 20.9%  |  Baseline: 12.5%
+  Lift: 1.67x
+
+Pattern #41:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc: 0.008701683807857867
+  Coverage: 522 patients (11.2%)
+  Target share: 20.3%  |  Baseline: 12.5%
+  Lift: 1.62x
+
+Pattern #42:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.008570195472553749
+  Coverage: 495 patients (10.6%)
+  Target share: 20.6%  |  Baseline: 12.5%
+  Lift: 1.64x
+
+Pattern #43:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.008468162740453292
+  Coverage: 443 patients (9.5%)
+  Target share: 21.4%  |  Baseline: 12.5%
+  Lift: 1.71x
+
+Pattern #44:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc: 0.008395585611556495
+  Coverage: 366 patients (7.9%)
+  Target share: 23.2%  |  Baseline: 12.5%
+  Lift: 1.85x
+
+Pattern #45:
+  Rule: has_anticoagulation_derangement==True AND has_invasive_hemo_monitoring==True AND has_neutrophilia==True
+  WRAcc: 0.00838727525328587
+  Coverage: 446 patients (9.6%)
+  Target share: 21.3%  |  Baseline: 12.5%
+  Lift: 1.70x
+
+Pattern #46:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.008354957193344547
+  Coverage: 240 patients (5.2%)
+  Target share: 28.7%  |  Baseline: 12.5%
+  Lift: 2.29x
+
+Pattern #47:
+  Rule: has_neutrophilia==True AND has_sirs==True AND is_malnourished_proxy==True
+  WRAcc: 0.00832051537517851
+  Coverage: 313 patients (6.7%)
+  Target share: 24.9%  |  Baseline: 12.5%
+  Lift: 1.99x
+
+Pattern #48:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.0082524627746735
+  Coverage: 451 patients (9.7%)
+  Target share: 21.1%  |  Baseline: 12.5%
+  Lift: 1.68x
+
+Pattern #49:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.008231317529740463
+  Coverage: 396 patients (8.5%)
+  Target share: 22.2%  |  Baseline: 12.5%
+  Lift: 1.77x
+
+Pattern #50:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.008161233508324855
+  Coverage: 295 patients (6.3%)
+  Target share: 25.4%  |  Baseline: 12.5%
+  Lift: 2.03x
+
+Pattern #51:
+  Rule: anemia_severity=='Moderate' AND has_neutrophilia==True
+  WRAcc: 0.008118850681144665
+  Coverage: 703 patients (15.1%)
+  Target share: 17.9%  |  Baseline: 12.5%
+  Lift: 1.43x
+
+Pattern #52:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.008103153337744595
+  Coverage: 337 patients (7.2%)
+  Target share: 23.7%  |  Baseline: 12.5%
+  Lift: 1.89x
+
+Pattern #53:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True AND sirs_rr_criterion==True
+  WRAcc: 0.008094842979473969
+  Coverage: 417 patients (9.0%)
+  Target share: 21.6%  |  Baseline: 12.5%
+  Lift: 1.72x
+
+Pattern #54:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc: 0.008057908053826742
+  Coverage: 514 patients (11.0%)
+  Target share: 19.8%  |  Baseline: 12.5%
+  Lift: 1.58x
+
+Pattern #55:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_hr_criterion==True
+  WRAcc: 0.008030576208847798
+  Coverage: 260 patients (5.6%)
+  Target share: 26.9%  |  Baseline: 12.5%
+  Lift: 2.15x
+
+Pattern #56:
+  Rule: has_neutrophilia==True AND sirs_rr_criterion==True AND sirs_wbc_criterion==True
+  WRAcc: 0.007987824032411136
+  Coverage: 413 patients (8.9%)
+  Target share: 21.5%  |  Baseline: 12.5%
+  Lift: 1.72x
+
+Pattern #57:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.007975820181575787
+  Coverage: 270 patients (5.8%)
+  Target share: 26.3%  |  Baseline: 12.5%
+  Lift: 2.10x
+
+Pattern #58:
+  Rule: anemia_severity=='Mild' AND is_malnourished_proxy==True
+  WRAcc: 0.007953382214245098
+  Coverage: 486 patients (10.4%)
+  Target share: 20.2%  |  Baseline: 12.5%
+  Lift: 1.61x
+
+Pattern #59:
+  Rule: has_myocardial_injury==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.007952181829161565
+  Coverage: 239 patients (5.1%)
+  Target share: 28.0%  |  Baseline: 12.5%
+  Lift: 2.23x
+
+Pattern #60:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.007949688721680377
+  Coverage: 263 patients (5.7%)
+  Target share: 26.6%  |  Baseline: 12.5%
+  Lift: 2.12x
+
+Pattern #61:
+  Rule: is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.007907767581070778
+  Coverage: 408 patients (8.8%)
+  Target share: 21.6%  |  Baseline: 12.5%
+  Lift: 1.72x
+
+Pattern #62:
+  Rule: anemia_severity=='Mild' AND has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc: 0.007902781366108402
+  Coverage: 456 patients (9.8%)
+  Target share: 20.6%  |  Baseline: 12.5%
+  Lift: 1.64x
+
+Pattern #63:
+  Rule: has_invasive_hemo_monitoring==True AND has_neutrophilia==True
+  WRAcc: 0.007891977900356586
+  Coverage: 560 patients (12.0%)
+  Target share: 19.1%  |  Baseline: 12.5%
+  Lift: 1.52x
+
+Pattern #64:
+  Rule: has_neutrophilia==True AND has_sirs==True AND is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.007792068926480846
+  Coverage: 229 patients (4.9%)
+  Target share: 28.4%  |  Baseline: 12.5%
+  Lift: 2.26x
+
+Pattern #65:
+  Rule: has_anticoagulation_derangement==True AND has_hyperlactatemia==True
+  WRAcc: 0.00777332445171488
+  Coverage: 668 patients (14.4%)
+  Target share: 18.0%  |  Baseline: 12.5%
+  Lift: 1.43x
+
+Pattern #66:
+  Rule: has_sirs==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.007754302965006559
+  Coverage: 334 patients (7.2%)
+  Target share: 23.4%  |  Baseline: 12.5%
+  Lift: 1.86x
+
+Pattern #67:
+  Rule: has_myocardial_injury==True AND has_neutrophilia==True
+  WRAcc: 0.007719399460269929
+  Coverage: 670 patients (14.4%)
+  Target share: 17.9%  |  Baseline: 12.5%
+  Lift: 1.43x
+
+Pattern #68:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND has_neutrophilia==True
+  WRAcc: 0.007628170193921287
+  Coverage: 514 patients (11.0%)
+  Target share: 19.5%  |  Baseline: 12.5%
+  Lift: 1.55x
+
+Pattern #69:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc: 0.007620690871477724
+  Coverage: 586 patients (12.6%)
+  Target share: 18.6%  |  Baseline: 12.5%
+  Lift: 1.48x
+
+Pattern #70:
+  Rule: has_sirs==True
+  WRAcc: 0.007550791524690346
+  Coverage: 1776 patients (38.2%)
+  Target share: 14.5%  |  Baseline: 12.5%
+  Lift: 1.16x
+
+Pattern #71:
+  Rule: has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc: 0.007493634727251275
+  Coverage: 1292 patients (27.8%)
+  Target share: 15.2%  |  Baseline: 12.5%
+  Lift: 1.22x
+
+Pattern #72:
+  Rule: has_sirs==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.00745605344040522
+  Coverage: 361 patients (7.8%)
+  Target share: 22.2%  |  Baseline: 12.5%
+  Lift: 1.77x
+
+Pattern #73:
+  Rule: has_neutrophilia==True AND has_sirs==True AND sirs_hr_criterion==True
+  WRAcc: 0.007453098646353441
+  Coverage: 648 patients (13.9%)
+  Target share: 17.9%  |  Baseline: 12.5%
+  Lift: 1.43x
+
+Pattern #74:
+  Rule: has_invasive_hemo_monitoring==True AND is_malnourished_proxy==True
+  WRAcc: 0.007404621556441461
+  Coverage: 339 patients (7.3%)
+  Target share: 22.7%  |  Baseline: 12.5%
+  Lift: 1.81x
+
+Pattern #75:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True
+  WRAcc: 0.007372857520384842
+  Coverage: 1679 patients (36.1%)
+  Target share: 14.6%  |  Baseline: 12.5%
+  Lift: 1.16x
+
+Pattern #76:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc: 0.007338600376847048
+  Coverage: 716 patients (15.4%)
+  Target share: 17.3%  |  Baseline: 12.5%
+  Lift: 1.38x
+
+Pattern #77:
+  Rule: has_neutrophilia==True AND leukocyte_state=='Leukocytosis'
+  WRAcc: 0.007332413776801136
+  Coverage: 517 patients (11.1%)
+  Target share: 19.1%  |  Baseline: 12.5%
+  Lift: 1.53x
+
+Pattern #78:
+  Rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.0072200392655194555
+  Coverage: 306 patients (6.6%)
+  Target share: 23.5%  |  Baseline: 12.5%
+  Lift: 1.88x
+
+Pattern #79:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.007201387128067608
+  Coverage: 227 patients (4.9%)
+  Target share: 27.3%  |  Baseline: 12.5%
+  Lift: 2.18x
+
+Pattern #80:
+  Rule: has_anticoagulation_derangement==True AND sirs_rr_criterion==True
+  WRAcc: 0.007192522745912273
+  Coverage: 1088 patients (23.4%)
+  Target share: 15.6%  |  Baseline: 12.5%
+  Lift: 1.25x
+
+Pattern #81:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.007166945309901571
+  Coverage: 300 patients (6.4%)
+  Target share: 23.7%  |  Baseline: 12.5%
+  Lift: 1.89x
+
+Pattern #82:
+  Rule: has_anticoagulation_derangement==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_hr_criterion==True
+  WRAcc: 0.007154479772495632
+  Coverage: 420 patients (9.0%)
+  Target share: 20.5%  |  Baseline: 12.5%
+  Lift: 1.63x
+
+Pattern #83:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.007086888858561211
+  Coverage: 295 patients (6.3%)
+  Target share: 23.7%  |  Baseline: 12.5%
+  Lift: 1.89x
+
+Pattern #84:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND is_malnourished_proxy==True
+  WRAcc: 0.007078578500290587
+  Coverage: 375 patients (8.1%)
+  Target share: 21.3%  |  Baseline: 12.5%
+  Lift: 1.70x
+
+Pattern #85:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.0070607573986658
+  Coverage: 288 patients (6.2%)
+  Target share: 24.0%  |  Baseline: 12.5%
+  Lift: 1.91x
+
+Pattern #86:
+  Rule: has_anticoagulation_derangement==True AND has_myocardial_injury==True AND has_neutrophilia==True
+  WRAcc: 0.0070383194313351095
+  Coverage: 504 patients (10.8%)
+  Target share: 19.0%  |  Baseline: 12.5%
+  Lift: 1.52x
+
+Pattern #87:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.007030470759635075
+  Coverage: 321 patients (6.9%)
+  Target share: 22.7%  |  Baseline: 12.5%
+  Lift: 1.81x
+
+Pattern #88:
+  Rule: has_anticoagulation_derangement==True AND sirs_hr_criterion==True
+  WRAcc: 0.007028254664096238
+  Coverage: 1118 patients (24.0%)
+  Target share: 15.5%  |  Baseline: 12.5%
+  Lift: 1.23x
+
+Pattern #89:
+  Rule: has_hyperlactatemia==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc: 0.00698070094732544
+  Coverage: 283 patients (6.1%)
+  Target share: 24.0%  |  Baseline: 12.5%
+  Lift: 1.91x
+
+Pattern #90:
+  Rule: is_malnourished_proxy==True AND sirs_hr_criterion==True AND sirs_wbc_criterion==True
+  WRAcc: 0.006960386738219466
+  Coverage: 220 patients (4.7%)
+  Target share: 27.3%  |  Baseline: 12.5%
+  Lift: 2.17x
+
+Pattern #91:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006926775955880492
+  Coverage: 285 patients (6.1%)
+  Target share: 23.9%  |  Baseline: 12.5%
+  Lift: 1.90x
+
+Pattern #92:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.006923451812572243
+  Coverage: 317 patients (6.8%)
+  Target share: 22.7%  |  Baseline: 12.5%
+  Lift: 1.81x
+
+Pattern #93:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND leukocyte_state=='Leukocytosis'
+  WRAcc: 0.006918465597609868
+  Coverage: 365 patients (7.8%)
+  Target share: 21.4%  |  Baseline: 12.5%
+  Lift: 1.70x
+
+Pattern #94:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc: 0.006917634561782804
+  Coverage: 373 patients (8.0%)
+  Target share: 21.2%  |  Baseline: 12.5%
+  Lift: 1.69x
+
+Pattern #95:
+  Rule: anemia_severity=='Mild' AND has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc: 0.006889009994406206
+  Coverage: 390 patients (8.4%)
+  Target share: 20.8%  |  Baseline: 12.5%
+  Lift: 1.66x
+
+Pattern #96:
+  Rule: anemia_severity=='Moderate' AND is_malnourished_proxy==True
+  WRAcc: 0.006888178958579143
+  Coverage: 398 patients (8.6%)
+  Target share: 20.6%  |  Baseline: 12.5%
+  Lift: 1.64x
+
+Pattern #97:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.006856691934464884
+  Coverage: 184 patients (4.0%)
+  Target share: 29.9%  |  Baseline: 12.5%
+  Lift: 2.38x
+
+Pattern #98:
+  Rule: has_any_aki==True AND has_neutrophilia==True
+  WRAcc: 0.006805167713187005
+  Coverage: 680 patients (14.6%)
+  Target share: 17.2%  |  Baseline: 12.5%
+  Lift: 1.37x
+
+Pattern #99:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.0067724803039892105
+  Coverage: 219 patients (4.7%)
+  Target share: 26.9%  |  Baseline: 12.5%
+  Lift: 2.15x
+
+Pattern #100:
+  Rule: has_anticoagulation_derangement==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.006741639641073779
+  Coverage: 1033 patients (22.2%)
+  Target share: 15.6%  |  Baseline: 12.5%
+  Lift: 1.24x
+
+Pattern #101:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND sirs_rr_criterion==True
+  WRAcc: 0.0067379461485090565
+  Coverage: 810 patients (17.4%)
+  Target share: 16.4%  |  Baseline: 12.5%
+  Lift: 1.31x
+
+Pattern #102:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.0067193863483713265
+  Coverage: 213 patients (4.6%)
+  Target share: 27.2%  |  Baseline: 12.5%
+  Lift: 2.17x
+
+Pattern #103:
+  Rule: has_sirs==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.006718555312544263
+  Coverage: 221 patients (4.7%)
+  Target share: 26.7%  |  Baseline: 12.5%
+  Lift: 2.13x
+
+Pattern #104:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc: 0.006709413918446576
+  Coverage: 309 patients (6.6%)
+  Target share: 22.7%  |  Baseline: 12.5%
+  Lift: 1.81x
+
+Pattern #105:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND sirs_rr_criterion==True
+  WRAcc: 0.006631019538760342
+  Coverage: 288 patients (6.2%)
+  Target share: 23.3%  |  Baseline: 12.5%
+  Lift: 1.85x
+
+Pattern #106:
+  Rule: has_neutrophilia==True AND heart_rate_state=='Tachycardia'
+  WRAcc: 0.006614398822219091
+  Coverage: 448 patients (9.6%)
+  Target share: 19.4%  |  Baseline: 12.5%
+  Lift: 1.55x
+
+Pattern #107:
+  Rule: anemia_severity=='Mild' AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.00661107467891084
+  Coverage: 480 patients (10.3%)
+  Target share: 19.0%  |  Baseline: 12.5%
+  Lift: 1.51x
+
+Pattern #108:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006604057043037868
+  Coverage: 289 patients (6.2%)
+  Target share: 23.2%  |  Baseline: 12.5%
+  Lift: 1.85x
+
+Pattern #109:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.006582911798104831
+  Coverage: 234 patients (5.0%)
+  Target share: 25.6%  |  Baseline: 12.5%
+  Lift: 2.04x
+
+Pattern #110:
+  Rule: liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.006581619075707179
+  Coverage: 505 patients (10.9%)
+  Target share: 18.6%  |  Baseline: 12.5%
+  Lift: 1.48x
+
+Pattern #111:
+  Rule: anemia_severity=='Mild' AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.0065804186906236435
+  Coverage: 258 patients (5.5%)
+  Target share: 24.4%  |  Baseline: 12.5%
+  Lift: 1.95x
+
+Pattern #112:
+  Rule: has_neutrophilia==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.0065746014398342075
+  Coverage: 314 patients (6.7%)
+  Target share: 22.3%  |  Baseline: 12.5%
+  Lift: 1.78x
+
+Pattern #113:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.006561766553171797
+  Coverage: 179 patients (3.8%)
+  Target share: 29.6%  |  Baseline: 12.5%
+  Lift: 2.36x
+
+Pattern #114:
+  Rule: data_density_score: [5.74:5.92[ AND has_neutrophilia==True
+  WRAcc: 0.006557149687465892
+  Coverage: 482 patients (10.4%)
+  Target share: 18.9%  |  Baseline: 12.5%
+  Lift: 1.50x
+
+Pattern #115:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.006555949302382357
+  Coverage: 235 patients (5.0%)
+  Target share: 25.5%  |  Baseline: 12.5%
+  Lift: 2.03x
+
+Pattern #116:
+  Rule: anemia_severity=='Moderate' AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.006550963087419982
+  Coverage: 283 patients (6.1%)
+  Target share: 23.3%  |  Baseline: 12.5%
+  Lift: 1.86x
+
+Pattern #117:
+  Rule: has_anticoagulation_derangement==True AND has_myocardial_injury==True AND is_malnourished_proxy==True
+  WRAcc: 0.006528155770832822
+  Coverage: 244 patients (5.2%)
+  Target share: 25.0%  |  Baseline: 12.5%
+  Lift: 1.99x
+
+Pattern #118:
+  Rule: has_hypocalcemia_ionized==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006523538905126918
+  Coverage: 547 patients (11.8%)
+  Target share: 18.1%  |  Baseline: 12.5%
+  Lift: 1.44x
+
+Pattern #119:
+  Rule: has_anticoagulation_derangement==True AND has_hyperlactatemia==True AND has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc: 0.0064497613911465865
+  Coverage: 223 patients (4.8%)
+  Target share: 26.0%  |  Baseline: 12.5%
+  Lift: 2.07x
+
+Pattern #120:
+  Rule: has_neutrophilia==True AND is_on_ventilator==True AND sirs_wbc_criterion==True
+  WRAcc: 0.006433140674605335
+  Coverage: 383 patients (8.2%)
+  Target share: 20.4%  |  Baseline: 12.5%
+  Lift: 1.62x
+
+Pattern #121:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND has_sirs==True
+  WRAcc: 0.006428985495470024
+  Coverage: 423 patients (9.1%)
+  Target share: 19.6%  |  Baseline: 12.5%
+  Lift: 1.56x
+
+Pattern #122:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True
+  WRAcc: 0.006421413835712344
+  Coverage: 1013 patients (21.8%)
+  Target share: 15.5%  |  Baseline: 12.5%
+  Lift: 1.24x
+
+Pattern #123:
+  Rule: has_sirs==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_hr_criterion==True
+  WRAcc: 0.006421136823769988
+  Coverage: 240 patients (5.2%)
+  Target share: 25.0%  |  Baseline: 12.5%
+  Lift: 1.99x
+
+Pattern #124:
+  Rule: anemia_severity=='Mild' AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.006412826465499363
+  Coverage: 320 patients (6.9%)
+  Target share: 21.9%  |  Baseline: 12.5%
+  Lift: 1.74x
+
+Pattern #125:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND is_malnourished_proxy==True
+  WRAcc: 0.006387526041431014
+  Coverage: 305 patients (6.6%)
+  Target share: 22.3%  |  Baseline: 12.5%
+  Lift: 1.78x
+
+Pattern #126:
+  Rule: data_density_score: [5.74:5.92[ AND has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc: 0.006358901474054414
+  Coverage: 322 patients (6.9%)
+  Target share: 21.7%  |  Baseline: 12.5%
+  Lift: 1.73x
+
+Pattern #127:
+  Rule: has_neutrophilia==True AND has_sirs==True AND leukocyte_state=='Leukocytosis'
+  WRAcc: 0.006354746294919103
+  Coverage: 362 patients (7.8%)
+  Target share: 20.7%  |  Baseline: 12.5%
+  Lift: 1.65x
+
+Pattern #128:
+  Rule: is_malnourished_proxy==True AND sirs_rr_criterion==True
+  WRAcc: 0.006326952763369565
+  Coverage: 371 patients (8.0%)
+  Target share: 20.5%  |  Baseline: 12.5%
+  Lift: 1.63x
+
+Pattern #129:
+  Rule: has_hypocalcemia_ionized==True AND has_neutrophilia==True AND has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc: 0.006307469590090655
+  Coverage: 300 patients (6.4%)
+  Target share: 22.3%  |  Baseline: 12.5%
+  Lift: 1.78x
+
+Pattern #130:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND has_sirs==True
+  WRAcc: 0.0062912182228058765
+  Coverage: 715 patients (15.4%)
+  Target share: 16.6%  |  Baseline: 12.5%
+  Lift: 1.33x
+
+Pattern #131:
+  Rule: has_myocardial_injury==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.00626434806439752
+  Coverage: 198 patients (4.3%)
+  Target share: 27.3%  |  Baseline: 12.5%
+  Lift: 2.17x
+
+Pattern #132:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND is_malnourished_proxy==True AND sirs_rr_criterion==True
+  WRAcc: 0.006261023921089269
+  Coverage: 230 patients (4.9%)
+  Target share: 25.2%  |  Baseline: 12.5%
+  Lift: 2.01x
+
+Pattern #133:
+  Rule: has_neutrophilia==True AND organ_dysfunction_score: [1:2[ AND sirs_wbc_criterion==True
+  WRAcc: 0.006248558383683332
+  Coverage: 350 patients (7.5%)
+  Target share: 20.9%  |  Baseline: 12.5%
+  Lift: 1.66x
+
+Pattern #134:
+  Rule: has_invasive_hemo_monitoring==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.00623489246119386
+  Coverage: 223 patients (4.8%)
+  Target share: 25.6%  |  Baseline: 12.5%
+  Lift: 2.04x
+
+Pattern #135:
+  Rule: has_hypocalcemia_ionized==True AND has_myocardial_injury==True
+  WRAcc: 0.006214947601344357
+  Coverage: 415 patients (8.9%)
+  Target share: 19.5%  |  Baseline: 12.5%
+  Lift: 1.56x
+
+Pattern #136:
+  Rule: has_neutrophilia==True AND sirs_hr_criterion==True AND sirs_wbc_criterion==True
+  WRAcc: 0.00621245449386317
+  Coverage: 439 patients (9.4%)
+  Target share: 19.1%  |  Baseline: 12.5%
+  Lift: 1.52x
+
+Pattern #137:
+  Rule: has_myocardial_injury==True AND has_sirs==True
+  WRAcc: 0.006188816141448945
+  Coverage: 408 patients (8.8%)
+  Target share: 19.6%  |  Baseline: 12.5%
+  Lift: 1.56x
+
+Pattern #138:
+  Rule: has_anticoagulation_derangement==True AND has_myocardial_injury==True AND sirs_wbc_criterion==True
+  WRAcc: 0.0061676708965159085
+  Coverage: 353 patients (7.6%)
+  Target share: 20.7%  |  Baseline: 12.5%
+  Lift: 1.65x
+
+Pattern #139:
+  Rule: has_myocardial_injury==True AND has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc: 0.006149849794891123
+  Coverage: 266 patients (5.7%)
+  Target share: 23.3%  |  Baseline: 12.5%
+  Lift: 1.86x
+
+Pattern #140:
+  Rule: has_anticoagulation_derangement==True AND sbp_volatility: [13.18:16.40[
+  WRAcc: 0.006141077750049909
+  Coverage: 609 patients (13.1%)
+  Target share: 17.2%  |  Baseline: 12.5%
+  Lift: 1.37x
+
+Pattern #141:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.0061262114424769
+  Coverage: 235 patients (5.0%)
+  Target share: 24.7%  |  Baseline: 12.5%
+  Lift: 1.97x
+
+Pattern #142:
+  Rule: has_hyperlactatemia==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.006124549370822776
+  Coverage: 251 patients (5.4%)
+  Target share: 23.9%  |  Baseline: 12.5%
+  Lift: 1.90x
+
+Pattern #143:
+  Rule: has_neutrophilia==True AND has_sirs==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.006117901084206275
+  Coverage: 315 patients (6.8%)
+  Target share: 21.6%  |  Baseline: 12.5%
+  Lift: 1.72x
+
+Pattern #144:
+  Rule: has_myocardial_injury==True AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.0060892765168296765
+  Coverage: 332 patients (7.1%)
+  Target share: 21.1%  |  Baseline: 12.5%
+  Lift: 1.68x
+
+Pattern #145:
+  Rule: has_any_aki==True AND is_malnourished_proxy==True
+  WRAcc: 0.006063145056934264
+  Coverage: 325 patients (7.0%)
+  Target share: 21.2%  |  Baseline: 12.5%
+  Lift: 1.69x
+
+Pattern #146:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True AND sirs_hr_criterion==True
+  WRAcc: 0.006049848483701262
+  Coverage: 453 patients (9.7%)
+  Target share: 18.8%  |  Baseline: 12.5%
+  Lift: 1.50x
+
+Pattern #147:
+  Rule: has_neutrophilia==True AND has_sirs==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.0060461549911365415
+  Coverage: 230 patients (4.9%)
+  Target share: 24.8%  |  Baseline: 12.5%
+  Lift: 1.97x
+
+Pattern #148:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_hr_criterion==True
+  WRAcc: 0.006008389029662253
+  Coverage: 335 patients (7.2%)
+  Target share: 20.9%  |  Baseline: 12.5%
+  Lift: 1.67x
+
+Pattern #149:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.0059905679280374685
+  Coverage: 248 patients (5.3%)
+  Target share: 23.8%  |  Baseline: 12.5%
+  Lift: 1.90x
+
+Pattern #150:
+  Rule: has_anticoagulation_derangement==True AND has_myocardial_injury==True AND has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc: 0.005989736892210406
+  Coverage: 256 patients (5.5%)
+  Target share: 23.4%  |  Baseline: 12.5%
+  Lift: 1.87x
+
+Pattern #151:
+  Rule: has_myocardial_injury==True AND is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc: 0.005973577862239746
+  Coverage: 153 patients (3.3%)
+  Target share: 30.7%  |  Baseline: 12.5%
+  Lift: 2.45x
+
+Pattern #152:
+  Rule: has_any_aki==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.005963605432314995
+  Coverage: 249 patients (5.4%)
+  Target share: 23.7%  |  Baseline: 12.5%
+  Lift: 1.89x
+
+Pattern #153:
+  Rule: has_myocardial_injury==True AND has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc: 0.005957788181525556
+  Coverage: 305 patients (6.6%)
+  Target share: 21.6%  |  Baseline: 12.5%
+  Lift: 1.72x
+
+================================================================================
+ANALYSIS: NM False Negatives vs Concordant True Positives
+================================================================================
+Error cohort size: 57
+Success cohort size: 15
+Dataset baseline rate: 79.2%
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: rr_volatility: [3.20:3.86[
+  WRAcc: 0.04340277777777779
+  Coverage: 15 patients (20.8%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #2:
+  Rule: hr_volatility: [5.08:6.43[
+  WRAcc: 0.040509259259259266
+  Coverage: 14 patients (19.4%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #3:
+  Rule: anemia_severity=='Mild' AND has_hypocalcemia_ionized==True
+  WRAcc: 0.03877314814814814
+  Coverage: 23 patients (31.9%)
+  Target share: 91.3%  |  Baseline: 79.2%
+  Lift: 1.15x
+
+Pattern #4:
+  Rule: data_density_score: [5.60:5.72[ AND has_neutrophilia==True
+  WRAcc: 0.03182870370370371
+  Coverage: 11 patients (15.3%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #5:
+  Rule: sbp_volatility: [9.84:12.15[
+  WRAcc: 0.029513888888888902
+  Coverage: 15 patients (20.8%)
+  Target share: 93.3%  |  Baseline: 79.2%
+  Lift: 1.18x
+
+Pattern #6:
+  Rule: has_hypocalcemia_ionized==True AND rr_volatility: [3.20:3.86[
+  WRAcc: 0.028935185185185192
+  Coverage: 10 patients (13.9%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #7:
+  Rule: anemia_severity=='Mild' AND has_neutrophilia==True
+  WRAcc: 0.027199074074074087
+  Coverage: 19 patients (26.4%)
+  Target share: 89.5%  |  Baseline: 79.2%
+  Lift: 1.13x
+
+Pattern #8:
+  Rule: thrombocytopenia_severity=='Mild'
+  WRAcc: 0.026620370370370385
+  Coverage: 14 patients (19.4%)
+  Target share: 92.9%  |  Baseline: 79.2%
+  Lift: 1.17x
+
+Pattern #9:
+  Rule: map_volatility: [7.17:9.48[ AND sbp_volatility: [9.84:12.15[
+  WRAcc: 0.02604166666666667
+  Coverage: 9 patients (12.5%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #10:
+  Rule: anemia_severity=='Mild'
+  WRAcc: 0.023726851851851864
+  Coverage: 37 patients (51.4%)
+  Target share: 83.8%  |  Baseline: 79.2%
+  Lift: 1.06x
+
+Pattern #11:
+  Rule: has_neutrophilia==True AND thrombocytopenia_severity=='Mild'
+  WRAcc: 0.02314814814814815
+  Coverage: 8 patients (11.1%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #12:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True
+  WRAcc: 0.02141203703703704
+  Coverage: 17 patients (23.6%)
+  Target share: 88.2%  |  Baseline: 79.2%
+  Lift: 1.11x
+
+Pattern #13:
+  Rule: has_hypocalcemia_ionized==True
+  WRAcc: 0.02083333333333337
+  Coverage: 36 patients (50.0%)
+  Target share: 83.3%  |  Baseline: 79.2%
+  Lift: 1.05x
+
+Pattern #14:
+  Rule: has_hypocalcemia_ionized==True AND sirs_hr_criterion==True
+  WRAcc: 0.020833333333333332
+  Coverage: 12 patients (16.7%)
+  Target share: 91.7%  |  Baseline: 79.2%
+  Lift: 1.16x
+
+Pattern #15:
+  Rule: sbp_volatility: [9.84:12.15[ AND sirs_wbc_criterion==True
+  WRAcc: 0.020254629629629633
+  Coverage: 7 patients (9.7%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #16:
+  Rule: sbp_volatility: [12.15:14.78[ AND shock_index: [0.57:0.65[
+  WRAcc: 0.017361111111111112
+  Coverage: 6 patients (8.3%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+Pattern #17:
+  Rule: shock_index: [0.65:0.75[
+  WRAcc: 0.015625000000000014
+  Coverage: 15 patients (20.8%)
+  Target share: 86.7%  |  Baseline: 79.2%
+  Lift: 1.09x
+
+Pattern #18:
+  Rule: thrombocytopenia_severity=='Severe'
+  WRAcc: 0.014467592592592596
+  Coverage: 5 patients (6.9%)
+  Target share: 100.0%  |  Baseline: 79.2%
+  Lift: 1.26x
+
+================================================================================
+ANALYSIS: NM False Positives vs Concordant True Negatives
+================================================================================
+Error cohort size: 607
+Success cohort size: 4070
+Dataset baseline rate: 13.0%
+
+TOP DISCOVERED PATTERNS:
+----------------------------------------
+
+Pattern #1:
+  Rule: has_any_aki==True
+  WRAcc: 0.01925119623097925
+  Coverage: 1194 patients (25.5%)
+  Target share: 20.5%  |  Baseline: 13.0%
+  Lift: 1.58x
+
+Pattern #2:
+  Rule: has_severe_aki==True
+  WRAcc: 0.015626399328637696
+  Coverage: 531 patients (11.4%)
+  Target share: 26.7%  |  Baseline: 13.0%
+  Lift: 2.06x
+
+Pattern #3:
+  Rule: is_malnourished_proxy==True
+  WRAcc: 0.015223644117266413
+  Coverage: 977 patients (20.9%)
+  Target share: 20.3%  |  Baseline: 13.0%
+  Lift: 1.56x
+
+Pattern #4:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True
+  WRAcc: 0.014704953921100848
+  Coverage: 857 patients (18.3%)
+  Target share: 21.0%  |  Baseline: 13.0%
+  Lift: 1.62x
+
+Pattern #5:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True
+  WRAcc: 0.014272712090962881
+  Coverage: 757 patients (16.2%)
+  Target share: 21.8%  |  Baseline: 13.0%
+  Lift: 1.68x
+
+Pattern #6:
+  Rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.012787775113010323
+  Coverage: 641 patients (13.7%)
+  Target share: 22.3%  |  Baseline: 13.0%
+  Lift: 1.72x
+
+Pattern #7:
+  Rule: anemia_severity=='Moderate' AND has_any_aki==True
+  WRAcc: 0.011960641169838856
+  Coverage: 509 patients (10.9%)
+  Target share: 24.0%  |  Baseline: 13.0%
+  Lift: 1.85x
+
+Pattern #8:
+  Rule: has_anticoagulation_derangement==True AND has_severe_aki==True
+  WRAcc: 0.01176996103514764
+  Coverage: 408 patients (8.7%)
+  Target share: 26.5%  |  Baseline: 13.0%
+  Lift: 2.04x
+
+Pattern #9:
+  Rule: aki_severity_stage=='Stage_2'
+  WRAcc: 0.010821863381500756
+  Coverage: 342 patients (7.3%)
+  Target share: 27.8%  |  Baseline: 13.0%
+  Lift: 2.14x
+
+Pattern #10:
+  Rule: has_any_aki==True AND has_neutrophilia==True
+  WRAcc: 0.010797999792359349
+  Coverage: 705 patients (15.1%)
+  Target share: 20.1%  |  Baseline: 13.0%
+  Lift: 1.55x
+
+Pattern #11:
+  Rule: liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.010695870945344202
+  Coverage: 1040 patients (22.2%)
+  Target share: 17.8%  |  Baseline: 13.0%
+  Lift: 1.37x
+
+Pattern #12:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND has_any_aki==True
+  WRAcc: 0.010222759290124969
+  Coverage: 379 patients (8.1%)
+  Target share: 25.6%  |  Baseline: 13.0%
+  Lift: 1.97x
+
+Pattern #13:
+  Rule: has_any_aki==True AND is_malnourished_proxy==True
+  WRAcc: 0.009641804326889295
+  Coverage: 346 patients (7.4%)
+  Target share: 26.0%  |  Baseline: 13.0%
+  Lift: 2.00x
+
+Pattern #14:
+  Rule: anemia_severity=='Mild' AND is_malnourished_proxy==True
+  WRAcc: 0.009514074694588348
+  Coverage: 497 patients (10.6%)
+  Target share: 21.9%  |  Baseline: 13.0%
+  Lift: 1.69x
+
+Pattern #15:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND is_malnourished_proxy==True
+  WRAcc: 0.009117765395226525
+  Coverage: 388 patients (8.3%)
+  Target share: 24.0%  |  Baseline: 13.0%
+  Lift: 1.85x
+
+Pattern #16:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.008828156511680889
+  Coverage: 645 patients (13.8%)
+  Target share: 19.4%  |  Baseline: 13.0%
+  Lift: 1.49x
+
+Pattern #17:
+  Rule: anemia_severity=='Moderate' AND has_severe_aki==True
+  WRAcc: 0.008809687373724699
+  Coverage: 245 patients (5.2%)
+  Target share: 29.8%  |  Baseline: 13.0%
+  Lift: 2.30x
+
+Pattern #18:
+  Rule: has_any_aki==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.008610092679871463
+  Coverage: 414 patients (8.9%)
+  Target share: 22.7%  |  Baseline: 13.0%
+  Lift: 1.75x
+
+Pattern #19:
+  Rule: has_neutrophilia==True AND has_severe_aki==True
+  WRAcc: 0.008577725972760124
+  Coverage: 315 patients (6.7%)
+  Target share: 25.7%  |  Baseline: 13.0%
+  Lift: 1.98x
+
+Pattern #20:
+  Rule: aki_severity_stage=='Stage_2' AND has_anticoagulation_derangement==True
+  WRAcc: 0.008524010039347952
+  Coverage: 263 patients (5.6%)
+  Target share: 28.1%  |  Baseline: 13.0%
+  Lift: 2.17x
+
+Pattern #21:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc: 0.008390154504853614
+  Coverage: 1439 patients (30.8%)
+  Target share: 15.7%  |  Baseline: 13.0%
+  Lift: 1.21x
+
+Pattern #22:
+  Rule: has_any_aki==True AND has_myocardial_injury==True
+  WRAcc: 0.008334015639976888
+  Coverage: 501 patients (10.7%)
+  Target share: 20.8%  |  Baseline: 13.0%
+  Lift: 1.60x
+
+Pattern #23:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.00831124922734773
+  Coverage: 471 patients (10.1%)
+  Target share: 21.2%  |  Baseline: 13.0%
+  Lift: 1.64x
+
+Pattern #24:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.007945523723264836
+  Coverage: 515 patients (11.0%)
+  Target share: 20.2%  |  Baseline: 13.0%
+  Lift: 1.56x
+
+Pattern #25:
+  Rule: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.007914939927985904
+  Coverage: 362 patients (7.7%)
+  Target share: 23.2%  |  Baseline: 13.0%
+  Lift: 1.79x
+
+Pattern #26:
+  Rule: has_any_aki==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.007913157016153503
+  Coverage: 416 patients (8.9%)
+  Target share: 21.9%  |  Baseline: 13.0%
+  Lift: 1.69x
+
+Pattern #27:
+  Rule: anemia_severity=='Mild' AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.007900356623510602
+  Coverage: 324 patients (6.9%)
+  Target share: 24.4%  |  Baseline: 13.0%
+  Lift: 1.88x
+
+Pattern #28:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND has_neutrophilia==True
+  WRAcc: 0.00786227545539797
+  Coverage: 518 patients (11.1%)
+  Target share: 20.1%  |  Baseline: 13.0%
+  Lift: 1.55x
+
+Pattern #29:
+  Rule: has_any_aki==True AND has_sirs==True
+  WRAcc: 0.00745600013604989
+  Coverage: 471 patients (10.1%)
+  Target share: 20.4%  |  Baseline: 13.0%
+  Lift: 1.57x
+
+Pattern #30:
+  Rule: is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.007382717888169278
+  Coverage: 412 patients (8.8%)
+  Target share: 21.4%  |  Baseline: 13.0%
+  Lift: 1.65x
+
+Pattern #31:
+  Rule: is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.007294486610309283
+  Coverage: 446 patients (9.5%)
+  Target share: 20.6%  |  Baseline: 13.0%
+  Lift: 1.59x
+
+Pattern #32:
+  Rule: has_any_aki==True AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.007244336500561915
+  Coverage: 286 patients (6.1%)
+  Target share: 24.8%  |  Baseline: 13.0%
+  Lift: 1.91x
+
+Pattern #33:
+  Rule: has_anticoagulation_derangement==True
+  WRAcc: 0.007238439176808579
+  Coverage: 2983 patients (63.8%)
+  Target share: 14.1%  |  Baseline: 13.0%
+  Lift: 1.09x
+
+Pattern #34:
+  Rule: has_severe_aki==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.00721196979345058
+  Coverage: 187 patients (4.0%)
+  Target share: 31.0%  |  Baseline: 13.0%
+  Lift: 2.39x
+
+Pattern #35:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.007175671537170353
+  Coverage: 327 patients (7.0%)
+  Target share: 23.2%  |  Baseline: 13.0%
+  Lift: 1.79x
+
+Pattern #36:
+  Rule: has_any_aki==True AND sirs_rr_criterion==True
+  WRAcc: 0.007163922605351689
+  Coverage: 443 patients (9.5%)
+  Target share: 20.5%  |  Baseline: 13.0%
+  Lift: 1.58x
+
+Pattern #37:
+  Rule: has_sirs==True AND is_malnourished_proxy==True
+  WRAcc: 0.007021975394079519
+  Coverage: 425 patients (9.1%)
+  Target share: 20.7%  |  Baseline: 13.0%
+  Lift: 1.60x
+
+Pattern #38:
+  Rule: anemia_severity=='Mild' AND has_any_aki==True
+  WRAcc: 0.0070216096685754344
+  Coverage: 556 patients (11.9%)
+  Target share: 18.9%  |  Baseline: 13.0%
+  Lift: 1.46x
+
+Pattern #39:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006946910234366505
+  Coverage: 420 patients (9.0%)
+  Target share: 20.7%  |  Baseline: 13.0%
+  Lift: 1.60x
+
+Pattern #40:
+  Rule: sodium_state=='Hyponatremia'
+  WRAcc: 0.006884645467296391
+  Coverage: 507 patients (10.8%)
+  Target share: 19.3%  |  Baseline: 13.0%
+  Lift: 1.49x
+
+Pattern #41:
+  Rule: has_any_aki==True AND has_hypocalcemia_ionized==True
+  WRAcc: 0.006846930024687844
+  Coverage: 570 patients (12.2%)
+  Target share: 18.6%  |  Baseline: 13.0%
+  Lift: 1.43x
+
+Pattern #42:
+  Rule: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006823112151234446
+  Coverage: 332 patients (7.1%)
+  Target share: 22.6%  |  Baseline: 13.0%
+  Lift: 1.74x
+
+Pattern #43:
+  Rule: anemia_severity=='Mild' AND has_severe_aki==True
+  WRAcc: 0.006643815222857808
+  Coverage: 246 patients (5.3%)
+  Target share: 25.6%  |  Baseline: 13.0%
+  Lift: 1.97x
+
+Pattern #44:
+  Rule: anion_gap_corrected: [16.0:18.50[ AND is_malnourished_proxy==True
+  WRAcc: 0.006640615124697082
+  Coverage: 223 patients (4.8%)
+  Target share: 26.9%  |  Baseline: 13.0%
+  Lift: 2.07x
+
+Pattern #45:
+  Rule: anion_gap_corrected: [16.0:18.50[
+  WRAcc: 0.006542417826850827
+  Coverage: 319 patients (6.8%)
+  Target share: 22.6%  |  Baseline: 13.0%
+  Lift: 1.74x
+
+Pattern #46:
+  Rule: has_any_aki==True AND sbp_volatility: [13.11:16.15[
+  WRAcc: 0.0065328175323686516
+  Coverage: 250 patients (5.3%)
+  Target share: 25.2%  |  Baseline: 13.0%
+  Lift: 1.94x
+
+Pattern #47:
+  Rule: has_neutrophilia==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006517137051381098
+  Coverage: 605 patients (12.9%)
+  Target share: 18.0%  |  Baseline: 13.0%
+  Lift: 1.39x
+
+Pattern #48:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.006516451316060941
+  Coverage: 266 patients (5.7%)
+  Target share: 24.4%  |  Baseline: 13.0%
+  Lift: 1.88x
+
+Pattern #49:
+  Rule: has_any_aki==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006477318687124072
+  Coverage: 252 patients (5.4%)
+  Target share: 25.0%  |  Baseline: 13.0%
+  Lift: 1.93x
+
+Pattern #50:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.006460221019808196
+  Coverage: 530 patients (11.3%)
+  Target share: 18.7%  |  Baseline: 13.0%
+  Lift: 1.44x
+
+Pattern #51:
+  Rule: has_anticoagulation_derangement==True AND sodium_state=='Hyponatremia'
+  WRAcc: 0.006434620234522395
+  Coverage: 346 patients (7.4%)
+  Target share: 21.7%  |  Baseline: 13.0%
+  Lift: 1.67x
+
+Pattern #52:
+  Rule: has_any_aki==True AND has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.006397270517417929
+  Coverage: 278 patients (5.9%)
+  Target share: 23.7%  |  Baseline: 13.0%
+  Lift: 1.83x
+
+Pattern #53:
+  Rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_hr_criterion==True
+  WRAcc: 0.006380904301110221
+  Coverage: 294 patients (6.3%)
+  Target share: 23.1%  |  Baseline: 13.0%
+  Lift: 1.78x
+
+Pattern #54:
+  Rule: aki_severity_stage=='Stage_2' AND has_neutrophilia==True
+  WRAcc: 0.0063681039084673196
+  Coverage: 202 patients (4.3%)
+  Target share: 27.7%  |  Baseline: 13.0%
+  Lift: 2.14x
+
+Pattern #55:
+  Rule: anemia_severity=='Mild' AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.006357406437472896
+  Coverage: 526 patients (11.2%)
+  Target share: 18.6%  |  Baseline: 13.0%
+  Lift: 1.44x
+
+Pattern #56:
+  Rule: has_invasive_hemo_monitoring==True AND is_malnourished_proxy==True
+  WRAcc: 0.006312239337718658
+  Coverage: 335 patients (7.2%)
+  Target share: 21.8%  |  Baseline: 13.0%
+  Lift: 1.68x
+
+Pattern #57:
+  Rule: has_severe_aki==True AND sirs_rr_criterion==True
+  WRAcc: 0.00630122185690816
+  Coverage: 189 patients (4.0%)
+  Target share: 28.6%  |  Baseline: 13.0%
+  Lift: 2.20x
+
+Pattern #58:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True
+  WRAcc: 0.0062641464339317585
+  Coverage: 1192 patients (25.5%)
+  Target share: 15.4%  |  Baseline: 13.0%
+  Lift: 1.19x
+
+Pattern #59:
+  Rule: has_any_aki==True AND has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc: 0.006263506414299611
+  Coverage: 252 patients (5.4%)
+  Target share: 24.6%  |  Baseline: 13.0%
+  Lift: 1.90x
+
+Pattern #60:
+  Rule: has_hypocalcemia_ionized==True AND has_severe_aki==True
+  WRAcc: 0.006235756991677322
+  Coverage: 253 patients (5.4%)
+  Target share: 24.5%  |  Baseline: 13.0%
+  Lift: 1.89x
+
+Pattern #61:
+  Rule: has_severe_aki==True AND is_malnourished_proxy==True
+  WRAcc: 0.006234339805349002
+  Coverage: 176 patients (3.8%)
+  Target share: 29.5%  |  Baseline: 13.0%
+  Lift: 2.28x
+
+Pattern #62:
+  Rule: anemia_severity=='Moderate' AND has_any_aki==True AND has_neutrophilia==True
+  WRAcc: 0.006233974079844918
+  Coverage: 307 patients (6.6%)
+  Target share: 22.5%  |  Baseline: 13.0%
+  Lift: 1.73x
+
+Pattern #63:
+  Rule: is_malnourished_proxy==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.006193058539075645
+  Coverage: 347 patients (7.4%)
+  Target share: 21.3%  |  Baseline: 13.0%
+  Lift: 1.64x
+
+Pattern #64:
+  Rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_wbc_criterion==True
+  WRAcc: 0.006158908920131906
+  Coverage: 302 patients (6.5%)
+  Target share: 22.5%  |  Baseline: 13.0%
+  Lift: 1.73x
+
+Pattern #65:
+  Rule: has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.006147479998129319
+  Coverage: 888 patients (19.0%)
+  Target share: 16.2%  |  Baseline: 13.0%
+  Lift: 1.25x
+
+Pattern #66:
+  Rule: sbp_volatility: [13.11:16.15[
+  WRAcc: 0.006126130771828478
+  Coverage: 935 patients (20.0%)
+  Target share: 16.0%  |  Baseline: 13.0%
+  Lift: 1.24x
+
+Pattern #67:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.0061090788202006144
+  Coverage: 612 patients (13.1%)
+  Target share: 17.6%  |  Baseline: 13.0%
+  Lift: 1.36x
+
+Pattern #68:
+  Rule: has_severe_aki==True AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.00610377580039141
+  Coverage: 173 patients (3.7%)
+  Target share: 29.5%  |  Baseline: 13.0%
+  Lift: 2.27x
+
+Pattern #69:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND has_severe_aki==True
+  WRAcc: 0.006085626672251296
+  Coverage: 243 patients (5.2%)
+  Target share: 24.7%  |  Baseline: 13.0%
+  Lift: 1.90x
+
+Pattern #70:
+  Rule: anemia_severity=='Moderate' AND has_any_aki==True AND is_malnourished_proxy==True
+  WRAcc: 0.006036893748832252
+  Coverage: 160 patients (3.4%)
+  Target share: 30.6%  |  Baseline: 13.0%
+  Lift: 2.36x
+
+Pattern #71:
+  Rule: has_any_aki==True AND sirs_hr_criterion==True
+  WRAcc: 0.005997029668887215
+  Coverage: 408 patients (8.7%)
+  Target share: 19.9%  |  Baseline: 13.0%
+  Lift: 1.53x
+
+Pattern #72:
+  Rule: has_anticoagulation_derangement==True AND has_sirs==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.005994195296230573
+  Coverage: 254 patients (5.4%)
+  Target share: 24.0%  |  Baseline: 13.0%
+  Lift: 1.85x
+
+Pattern #73:
+  Rule: has_sirs==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.005920547322845881
+  Coverage: 326 patients (7.0%)
+  Target share: 21.5%  |  Baseline: 13.0%
+  Lift: 1.65x
+
+Pattern #74:
+  Rule: has_any_aki==True AND map_volatility: [7.87:9.54[
+  WRAcc: 0.005852248084958401
+  Coverage: 236 patients (5.0%)
+  Target share: 24.6%  |  Baseline: 13.0%
+  Lift: 1.89x
+
+Pattern #75:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True
+  WRAcc: 0.00583048741746547
+  Coverage: 1015 patients (21.7%)
+  Target share: 15.7%  |  Baseline: 13.0%
+  Lift: 1.21x
+
+Pattern #76:
+  Rule: anion_gap_corrected: [16.0:18.50[ AND has_anticoagulation_derangement==True
+  WRAcc: 0.005796749239713822
+  Coverage: 238 patients (5.1%)
+  Target share: 24.4%  |  Baseline: 13.0%
+  Lift: 1.88x
+
+Pattern #77:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND has_sirs==True
+  WRAcc: 0.005785000307895158
+  Coverage: 354 patients (7.6%)
+  Target share: 20.6%  |  Baseline: 13.0%
+  Lift: 1.59x
+
+Pattern #78:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND has_hypocalcemia_ionized==True
+  WRAcc: 0.005778234386069627
+  Coverage: 439 patients (9.4%)
+  Target share: 19.1%  |  Baseline: 13.0%
+  Lift: 1.47x
+
+Pattern #79:
+  Rule: has_anticoagulation_derangement==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.005758622355913182
+  Coverage: 1033 patients (22.1%)
+  Target share: 15.6%  |  Baseline: 13.0%
+  Lift: 1.20x
+
+Pattern #80:
+  Rule: anemia_severity=='Mild' AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.005752633600783824
+  Coverage: 255 patients (5.5%)
+  Target share: 23.5%  |  Baseline: 13.0%
+  Lift: 1.81x
+
+Pattern #81:
+  Rule: has_anticoagulation_derangement==True AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.005736953119796271
+  Coverage: 610 patients (13.0%)
+  Target share: 17.4%  |  Baseline: 13.0%
+  Lift: 1.34x
+
+Pattern #82:
+  Rule: has_any_aki==True AND has_hypercapnic_failure==True
+  WRAcc: 0.0057039006773647784
+  Coverage: 172 patients (3.7%)
+  Target share: 28.5%  |  Baseline: 13.0%
+  Lift: 2.20x
+
+Pattern #83:
+  Rule: has_any_aki==True AND has_neutrophilia==True AND has_sirs==True
+  WRAcc: 0.005703534951860696
+  Coverage: 303 patients (6.5%)
+  Target share: 21.8%  |  Baseline: 13.0%
+  Lift: 1.68x
+
+Pattern #84:
+  Rule: has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc: 0.005667922430900627
+  Coverage: 782 patients (16.7%)
+  Target share: 16.4%  |  Baseline: 13.0%
+  Lift: 1.26x
+
+Pattern #85:
+  Rule: has_any_aki==True AND has_sirs==True AND sirs_hr_criterion==True
+  WRAcc: 0.005639852998462262
+  Coverage: 313 patients (6.7%)
+  Target share: 21.4%  |  Baseline: 13.0%
+  Lift: 1.65x
+
+Pattern #86:
+  Rule: anemia_severity=='Mild' AND sbp_volatility: [13.11:16.15[
+  WRAcc: 0.005601771830349633
+  Coverage: 507 patients (10.8%)
+  Target share: 18.1%  |  Baseline: 13.0%
+  Lift: 1.40x
+
+Pattern #87:
+  Rule: has_myocardial_injury==True AND has_severe_aki==True
+  WRAcc: 0.005594320173203942
+  Coverage: 253 patients (5.4%)
+  Target share: 23.3%  |  Baseline: 13.0%
+  Lift: 1.80x
+
+Pattern #88:
+  Rule: has_invasive_hemo_monitoring==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.005566570750581653
+  Coverage: 254 patients (5.4%)
+  Target share: 23.2%  |  Baseline: 13.0%
+  Lift: 1.79x
+
+Pattern #89:
+  Rule: anemia_severity=='Moderate' AND is_malnourished_proxy==True
+  WRAcc: 0.005558021916923716
+  Coverage: 393 patients (8.4%)
+  Target share: 19.6%  |  Baseline: 13.0%
+  Lift: 1.51x
+
+Pattern #90:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc: 0.005527758131460858
+  Coverage: 710 patients (15.2%)
+  Target share: 16.6%  |  Baseline: 13.0%
+  Lift: 1.28x
+
+Pattern #91:
+  Rule: anemia_severity=='Moderate' AND has_any_aki==True AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.005495071414533447
+  Coverage: 141 patients (3.0%)
+  Target share: 31.2%  |  Baseline: 13.0%
+  Lift: 2.40x
+
+Pattern #92:
+  Rule: has_myocardial_injury==True
+  WRAcc: 0.0054942942478372735
+  Coverage: 1004 patients (21.5%)
+  Target share: 15.5%  |  Baseline: 13.0%
+  Lift: 1.20x
+
+Pattern #93:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc: 0.005485105394547189
+  Coverage: 203 patients (4.3%)
+  Target share: 25.6%  |  Baseline: 13.0%
+  Lift: 1.97x
+
+Pattern #94:
+  Rule: anemia_severity=='Mild' AND sodium_state=='Hyponatremia'
+  WRAcc: 0.00547513937456093
+  Coverage: 265 patients (5.7%)
+  Target share: 22.6%  |  Baseline: 13.0%
+  Lift: 1.74x
+
+Pattern #95:
+  Rule: has_severe_aki==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.005468739178239479
+  Coverage: 219 patients (4.7%)
+  Target share: 24.7%  |  Baseline: 13.0%
+  Lift: 1.90x
+
+Pattern #96:
+  Rule: has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc: 0.005468693462551471
+  Coverage: 820 patients (17.5%)
+  Target share: 16.1%  |  Baseline: 13.0%
+  Lift: 1.24x
+
+Pattern #97:
+  Rule: anemia_severity=='Moderate'
+  WRAcc: 0.0054636647368703295
+  Coverage: 1452 patients (31.0%)
+  Target share: 14.7%  |  Baseline: 13.0%
+  Lift: 1.14x
+
+Pattern #98:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND has_any_aki==True AND has_neutrophilia==True
+  WRAcc: 0.00545237296193177
+  Coverage: 235 patients (5.0%)
+  Target share: 23.8%  |  Baseline: 13.0%
+  Lift: 1.84x
+
+Pattern #99:
+  Rule: has_severe_aki==True AND has_sirs==True
+  WRAcc: 0.005449172863771045
+  Coverage: 212 patients (4.5%)
+  Target share: 25.0%  |  Baseline: 13.0%
+  Lift: 1.93x
+
+Pattern #100:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND sirs_rr_criterion==True
+  WRAcc: 0.005403274313008642
+  Coverage: 283 patients (6.1%)
+  Target share: 21.9%  |  Baseline: 13.0%
+  Lift: 1.69x
+
+Pattern #101:
+  Rule: is_malnourished_proxy==True AND leukocyte_state=='Leukocytosis'
+  WRAcc: 0.005388691008533336
+  Coverage: 245 patients (5.2%)
+  Target share: 23.3%  |  Baseline: 13.0%
+  Lift: 1.79x
+
+Pattern #102:
+  Rule: has_neutrophilia==True AND has_severe_aki==True AND sirs_rr_criterion==True
+  WRAcc: 0.00537269051772971
+  Coverage: 130 patients (2.8%)
+  Target share: 32.3%  |  Baseline: 13.0%
+  Lift: 2.49x
+
+Pattern #103:
+  Rule: anemia_severity=='Moderate' AND has_any_aki==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.005370907605897307
+  Coverage: 184 patients (3.9%)
+  Target share: 26.6%  |  Baseline: 13.0%
+  Lift: 2.05x
+
+Pattern #104:
+  Rule: anemia_severity=='Mild' AND has_anticoagulation_derangement==True
+  WRAcc: 0.00536048442903095
+  Coverage: 1579 patients (33.8%)
+  Target share: 14.6%  |  Baseline: 13.0%
+  Lift: 1.12x
+
+Pattern #105:
+  Rule: has_any_aki==True AND shock_index: [0.66:0.75[
+  WRAcc: 0.005357741487750322
+  Coverage: 223 patients (4.8%)
+  Target share: 24.2%  |  Baseline: 13.0%
+  Lift: 1.87x
+
+Pattern #106:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND has_myocardial_injury==True
+  WRAcc: 0.005352392752253111
+  Coverage: 385 patients (8.2%)
+  Target share: 19.5%  |  Baseline: 13.0%
+  Lift: 1.50x
+
+Pattern #107:
+  Rule: organ_dysfunction_score: [2:3[
+  WRAcc: 0.005329946349440024
+  Coverage: 825 patients (17.6%)
+  Target share: 16.0%  |  Baseline: 13.0%
+  Lift: 1.23x
+
+Pattern #108:
+  Rule: has_any_aki==True AND has_myocardial_injury==True AND has_neutrophilia==True
+  WRAcc: 0.005321443231470096
+  Coverage: 363 patients (7.8%)
+  Target share: 19.8%  |  Baseline: 13.0%
+  Lift: 1.53x
+
+Pattern #109:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND sirs_rr_criterion==True
+  WRAcc: 0.005279110504372501
+  Coverage: 326 patients (7.0%)
+  Target share: 20.6%  |  Baseline: 13.0%
+  Lift: 1.58x
+
+Pattern #110:
+  Rule: has_any_aki==True AND has_sirs==True AND is_malnourished_proxy==True
+  WRAcc: 0.005264892925401278
+  Coverage: 157 patients (3.4%)
+  Target share: 28.7%  |  Baseline: 13.0%
+  Lift: 2.21x
+
+Pattern #111:
+  Rule: has_sirs==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_hr_criterion==True
+  WRAcc: 0.00523856068910731
+  Coverage: 235 patients (5.0%)
+  Target share: 23.4%  |  Baseline: 13.0%
+  Lift: 1.80x
+
+Pattern #112:
+  Rule: liver_dysfunction_type=='Synthetic_Dysfunction' AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.005226811757288647
+  Coverage: 351 patients (7.5%)
+  Target share: 19.9%  |  Baseline: 13.0%
+  Lift: 1.54x
+
+Pattern #113:
+  Rule: anemia_severity=='Moderate' AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.0052122284528133426
+  Coverage: 313 patients (6.7%)
+  Target share: 20.8%  |  Baseline: 13.0%
+  Lift: 1.60x
+
+Pattern #114:
+  Rule: has_any_aki==True AND sirs_wbc_criterion==True
+  WRAcc: 0.005205096805483728
+  Coverage: 529 patients (11.3%)
+  Target share: 17.6%  |  Baseline: 13.0%
+  Lift: 1.35x
+
+Pattern #115:
+  Rule: has_neutrophilia==True AND has_sirs==True AND is_malnourished_proxy==True
+  WRAcc: 0.0052008452464987615
+  Coverage: 298 patients (6.4%)
+  Target share: 21.1%  |  Baseline: 13.0%
+  Lift: 1.63x
+
+Pattern #116:
+  Rule: is_malnourished_proxy==True AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.005197645148338035
+  Coverage: 275 patients (5.9%)
+  Target share: 21.8%  |  Baseline: 13.0%
+  Lift: 1.68x
+
+Pattern #117:
+  Rule: aki_severity_stage=='Stage_2' AND anemia_severity=='Moderate' AND has_anticoagulation_derangement==True
+  WRAcc: 0.0051948107756813935
+  Coverage: 121 patients (2.6%)
+  Target share: 33.1%  |  Baseline: 13.0%
+  Lift: 2.55x
+
+Pattern #118:
+  Rule: data_density_score: [5.47:5.59[ AND has_any_aki==True
+  WRAcc: 0.005191244952016586
+  Coverage: 229 patients (4.9%)
+  Target share: 23.6%  |  Baseline: 13.0%
+  Lift: 1.82x
+
+Pattern #119:
+  Rule: anemia_severity=='Mild' AND map_volatility: [7.87:9.54[
+  WRAcc: 0.005162764078386131
+  Coverage: 492 patients (10.5%)
+  Target share: 17.9%  |  Baseline: 13.0%
+  Lift: 1.38x
+
+Pattern #120:
+  Rule: has_neutrophilia==True AND has_sirs==True AND sirs_hr_criterion==True
+  WRAcc: 0.00514603213657434
+  Coverage: 639 patients (13.7%)
+  Target share: 16.7%  |  Baseline: 13.0%
+  Lift: 1.29x
+
+Pattern #121:
+  Rule: anemia_severity=='Mild' AND is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.005135746106772007
+  Coverage: 231 patients (4.9%)
+  Target share: 23.4%  |  Baseline: 13.0%
+  Lift: 1.80x
+
+Pattern #122:
+  Rule: aki_severity_stage=='Stage_2' AND is_malnourished_proxy==True
+  WRAcc: 0.005111562507814526
+  Coverage: 124 patients (2.7%)
+  Target share: 32.3%  |  Baseline: 13.0%
+  Lift: 2.49x
+
+Pattern #123:
+  Rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.005095882026826973
+  Coverage: 479 patients (10.2%)
+  Target share: 18.0%  |  Baseline: 13.0%
+  Lift: 1.38x
+
+Pattern #124:
+  Rule: has_neutrophilia==True
+  WRAcc: 0.005077961477126912
+  Coverage: 2221 patients (47.5%)
+  Target share: 14.0%  |  Baseline: 13.0%
+  Lift: 1.08x
+
+Pattern #125:
+  Rule: anemia_severity=='Moderate' AND has_any_aki==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc: 0.005073847065205979
+  Coverage: 187 patients (4.0%)
+  Target share: 25.7%  |  Baseline: 13.0%
+  Lift: 1.98x
+
+Pattern #126:
+  Rule: aki_severity_stage=='Stage_2' AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.005072429878877656
+  Coverage: 110 patients (2.4%)
+  Target share: 34.5%  |  Baseline: 13.0%
+  Lift: 2.66x
+
+Pattern #127:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.005068864055212849
+  Coverage: 218 patients (4.7%)
+  Target share: 23.9%  |  Baseline: 13.0%
+  Lift: 1.84x
+
+Pattern #128:
+  Rule: has_neutrophilia==True AND is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc: 0.005058898035226589
+  Coverage: 280 patients (6.0%)
+  Target share: 21.4%  |  Baseline: 13.0%
+  Lift: 1.65x
+
+Pattern #129:
+  Rule: has_any_aki==True AND has_neutrophilia==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.0050443147307512835
+  Coverage: 242 patients (5.2%)
+  Target share: 22.7%  |  Baseline: 13.0%
+  Lift: 1.75x
+
+Pattern #130:
+  Rule: is_malnourished_proxy==True AND sirs_rr_criterion==True
+  WRAcc: 0.005024382690778767
+  Coverage: 366 patients (7.8%)
+  Target share: 19.4%  |  Baseline: 13.0%
+  Lift: 1.49x
+
+Pattern #131:
+  Rule: anemia_severity=='Moderate' AND has_neutrophilia==True
+  WRAcc: 0.005013685219784341
+  Coverage: 690 patients (14.8%)
+  Target share: 16.4%  |  Baseline: 13.0%
+  Lift: 1.26x
+
+Pattern #132:
+  Rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' AND organ_dysfunction_score: [2:3[
+  WRAcc: 0.00501336520996827
+  Coverage: 220 patients (4.7%)
+  Target share: 23.6%  |  Baseline: 13.0%
+  Lift: 1.82x
+
+Pattern #133:
+  Rule: has_any_aki==True AND is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc: 0.004987398699178384
+  Coverage: 167 patients (3.6%)
+  Target share: 26.9%  |  Baseline: 13.0%
+  Lift: 2.08x
+
+Pattern #134:
+  Rule: has_anticoagulation_derangement==True AND is_malnourished_proxy==True AND organ_dysfunction_score: [1:2[
+  WRAcc: 0.00498063277735285
+  Coverage: 252 patients (5.4%)
+  Target share: 22.2%  |  Baseline: 13.0%
+  Lift: 1.71x
+
+Pattern #135:
+  Rule: has_anticoagulation_derangement==True AND has_any_aki==True AND sirs_hr_criterion==True
+  WRAcc: 0.0049788498655204474
+  Coverage: 306 patients (6.5%)
+  Target share: 20.6%  |  Baseline: 13.0%
+  Lift: 1.59x
+
+Pattern #136:
+  Rule: has_myocardial_injury==True AND is_malnourished_proxy==True
+  WRAcc: 0.004975649767359722
+  Coverage: 283 patients (6.1%)
+  Target share: 21.2%  |  Baseline: 13.0%
+  Lift: 1.63x
+
+Pattern #137:
+  Rule: anemia_severity=='Moderate' AND has_anticoagulation_derangement==True AND is_malnourished_proxy==True
+  WRAcc: 0.004959283551052012
+  Coverage: 299 patients (6.4%)
+  Target share: 20.7%  |  Baseline: 13.0%
+  Lift: 1.60x
+
+================================================================================
+SUMMARY
+================================================================================
+See discovered patterns above; interpret strength, lift, and clinical meaning.

@@ -1,0 +1,1475 @@
+================================================================================
+PHASE IV-B: DIRECT DISCORDANCE CHARACTERIZATION (max_depth=2)
+================================================================================
+
+COHORT SIZES (discordant)
+  SM_Win_on_Deaths: 57
+  NM_Win_on_Deaths: 29
+  SM_Win_on_Survivors: 607
+  NM_Win_on_Survivors: 584
+
+================================================================================
+Battleground of the Deceased — SM advantage (is_SM_win=1)
+================================================================================
+Rule #1: shock_index: [0.64:0.76[
+  WRAcc=0.0434  Lift=1.33x  Coverage=17 (19.8%)  Target%=88.2%  Baseline%=66.3%
+Rule #2: has_neutrophilia==True AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0354  Lift=1.38x  Coverage=12 (14.0%)  Target%=91.7%  Baseline%=66.3%
+Rule #3: has_hypocalcemia_ionized==True
+  WRAcc=0.0329  Lift=1.10x  Coverage=41 (47.7%)  Target%=73.2%  Baseline%=66.3%
+Rule #4: is_on_ventilator==True
+  WRAcc=0.0319  Lift=1.21x  Coverage=20 (23.3%)  Target%=80.0%  Baseline%=66.3%
+Rule #5: bun_creatinine_ratio: [22.0:25.71[ AND has_neutrophilia==True
+  WRAcc=0.0315  Lift=1.37x  Coverage=11 (12.8%)  Target%=90.9%  Baseline%=66.3%
+Rule #6: map_volatility: [6.45:7.93[ AND sirs_wbc_criterion==True
+  WRAcc=0.0314  Lift=1.51x  Coverage=8 (9.3%)  Target%=100.0%  Baseline%=66.3%
+Rule #7: anemia_severity=='Mild' AND shock_index: [0.64:0.76[
+  WRAcc=0.0314  Lift=1.51x  Coverage=8 (9.3%)  Target%=100.0%  Baseline%=66.3%
+Rule #8: anemia_severity=='Mild' AND has_neutrophilia==True
+  WRAcc=0.0281  Lift=1.17x  Coverage=22 (25.6%)  Target%=77.3%  Baseline%=66.3%
+Rule #9: has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc=0.0279  Lift=1.23x  Coverage=16 (18.6%)  Target%=81.2%  Baseline%=66.3%
+Rule #10: has_anticoagulation_derangement==True AND lactate_trend=='Went_Down'
+  WRAcc=0.0279  Lift=1.23x  Coverage=16 (18.6%)  Target%=81.2%  Baseline%=66.3%
+Rule #11: has_hypocalcemia_ionized==True AND lactate_trend=='Went_Down'
+  WRAcc=0.0279  Lift=1.23x  Coverage=16 (18.6%)  Target%=81.2%  Baseline%=66.3%
+Rule #12: is_on_ventilator==True AND sirs_wbc_criterion==True
+  WRAcc=0.0276  Lift=1.36x  Coverage=10 (11.6%)  Target%=90.0%  Baseline%=66.3%
+Rule #13: bun_creatinine_ratio: [22.0:25.71[ AND has_sirs==True
+  WRAcc=0.0276  Lift=1.36x  Coverage=10 (11.6%)  Target%=90.0%  Baseline%=66.3%
+Rule #14: anemia_severity=='Mild' AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0276  Lift=1.36x  Coverage=10 (11.6%)  Target%=90.0%  Baseline%=66.3%
+Rule #15: sirs_temp_criterion==True
+  WRAcc=0.0276  Lift=1.36x  Coverage=10 (11.6%)  Target%=90.0%  Baseline%=66.3%
+Rule #16: hr_volatility: [6.35:8.06[ AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0274  Lift=1.51x  Coverage=7 (8.1%)  Target%=100.0%  Baseline%=66.3%
+Rule #17: has_sirs==True AND sirs_temp_criterion==True
+  WRAcc=0.0274  Lift=1.51x  Coverage=7 (8.1%)  Target%=100.0%  Baseline%=66.3%
+Rule #18: has_invasive_hemo_monitoring==True AND has_sirs==True
+  WRAcc=0.0239  Lift=1.21x  Coverage=15 (17.4%)  Target%=80.0%  Baseline%=66.3%
+Rule #19: liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_rr_criterion==True
+  WRAcc=0.0238  Lift=1.26x  Coverage=12 (14.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #20: has_invasive_hemo_monitoring==True AND sirs_wbc_criterion==True
+  WRAcc=0.0238  Lift=1.26x  Coverage=12 (14.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #21: has_hypocalcemia_ionized==True AND hr_volatility: [8.06:9.91[
+  WRAcc=0.0238  Lift=1.26x  Coverage=12 (14.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #22: has_hypocalcemia_ionized==True AND shock_index: [0.64:0.76[
+  WRAcc=0.0237  Lift=1.34x  Coverage=9 (10.5%)  Target%=88.9%  Baseline%=66.3%
+Rule #23: hemodynamic_state=='Hypertension_Stage1'
+  WRAcc=0.0237  Lift=1.34x  Coverage=9 (10.5%)  Target%=88.9%  Baseline%=66.3%
+Rule #24: hr_volatility: [8.06:9.91[ AND sirs_wbc_criterion==True
+  WRAcc=0.0237  Lift=1.34x  Coverage=9 (10.5%)  Target%=88.9%  Baseline%=66.3%
+Rule #25: sbp_volatility: [12.11:14.78[ AND shock_index: [0.58:0.64[
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #26: liver_dysfunction_type=='Synthetic_Dysfunction' AND shock_index: [0.64:0.76[
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #27: has_sirs==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #28: has_invasive_hemo_monitoring==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #29: gcs_level=='Mild_Moderate_Impairment' AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #30: data_density_score: [5.67:5.82[ AND shock_index: [0.64:0.76[
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #31: bun_creatinine_ratio: [22.0:25.71[ AND map_volatility: [7.93:9.92[
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #32: anemia_severity=='Moderate' AND is_on_ventilator==True
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #33: anemia_severity=='Mild' AND map_volatility: [6.45:7.93[
+  WRAcc=0.0235  Lift=1.51x  Coverage=6 (7.0%)  Target%=100.0%  Baseline%=66.3%
+Rule #34: has_neutrophilia==True
+  WRAcc=0.0216  Lift=1.06x  Coverage=50 (58.1%)  Target%=70.0%  Baseline%=66.3%
+Rule #35: anemia_severity=='Mild'
+  WRAcc=0.0214  Lift=1.06x  Coverage=44 (51.2%)  Target%=70.5%  Baseline%=66.3%
+Rule #36: anemia_severity=='Mild' AND has_hypocalcemia_ionized==True
+  WRAcc=0.0207  Lift=1.09x  Coverage=29 (33.7%)  Target%=72.4%  Baseline%=66.3%
+Rule #37: lactate_trend=='Went_Down'
+  WRAcc=0.0203  Lift=1.13x  Coverage=20 (23.3%)  Target%=75.0%  Baseline%=66.3%
+Rule #38: has_hypocalcemia_ionized==True AND sirs_wbc_criterion==True
+  WRAcc=0.0203  Lift=1.13x  Coverage=20 (23.3%)  Target%=75.0%  Baseline%=66.3%
+Rule #39: rr_volatility: [3.14:3.84[
+  WRAcc=0.0201  Lift=1.15x  Coverage=17 (19.8%)  Target%=76.5%  Baseline%=66.3%
+Rule #40: map_volatility: [6.45:7.93[
+  WRAcc=0.0201  Lift=1.15x  Coverage=17 (19.8%)  Target%=76.5%  Baseline%=66.3%
+Rule #41: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0201  Lift=1.15x  Coverage=17 (19.8%)  Target%=76.5%  Baseline%=66.3%
+Rule #42: hr_volatility: [4.97:6.35[
+  WRAcc=0.0201  Lift=1.15x  Coverage=17 (19.8%)  Target%=76.5%  Baseline%=66.3%
+Rule #43: has_hypocalcemia_ionized==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0201  Lift=1.15x  Coverage=17 (19.8%)  Target%=76.5%  Baseline%=66.3%
+Rule #44: has_hypocalcemia_ionized==True AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0201  Lift=1.15x  Coverage=17 (19.8%)  Target%=76.5%  Baseline%=66.3%
+Rule #45: has_anticoagulation_derangement==True AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0199  Lift=1.23x  Coverage=11 (12.8%)  Target%=81.8%  Baseline%=66.3%
+Rule #46: data_density_score: [5.67:5.82[ AND has_hypocalcemia_ionized==True
+  WRAcc=0.0199  Lift=1.23x  Coverage=11 (12.8%)  Target%=81.8%  Baseline%=66.3%
+Rule #47: has_neutrophilia==True AND hr_volatility: [6.35:8.06[
+  WRAcc=0.0199  Lift=1.23x  Coverage=11 (12.8%)  Target%=81.8%  Baseline%=66.3%
+Rule #48: has_hypocalcemia_ionized==True AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0199  Lift=1.23x  Coverage=11 (12.8%)  Target%=81.8%  Baseline%=66.3%
+Rule #49: has_invasive_hemo_monitoring==True AND is_malnourished_proxy==True
+  WRAcc=0.0199  Lift=1.23x  Coverage=11 (12.8%)  Target%=81.8%  Baseline%=66.3%
+Rule #50: leukocyte_state=='Leukocytosis' AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #51: has_sirs==True AND is_on_ventilator==True
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #52: has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #53: has_hypocalcemia_ionized==True AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #54: has_hypocalcemia_ionized==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #55: has_anticoagulation_derangement==True AND sirs_temp_criterion==True
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #56: anemia_severity=='Mild' AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0197  Lift=1.32x  Coverage=8 (9.3%)  Target%=87.5%  Baseline%=66.3%
+Rule #57: hr_volatility: [6.35:8.06[ AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #58: acid_base_state=='Alkalemia' AND has_anticoagulation_derangement==True
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #59: bun_creatinine_ratio: [22.0:25.71[ AND hr_volatility: [6.35:8.06[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #60: data_density_score: [5.67:5.82[ AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #61: has_invasive_hemo_monitoring==True AND sirs_temp_criterion==True
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #62: has_neutrophilia==True AND hemodynamic_state=='Hypertension_Stage1'
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #63: heart_rate_state=='Tachycardia' AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #64: bun_creatinine_ratio: [22.0:25.71[ AND sirs_temp_criterion==True
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #65: is_on_ventilator==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #66: is_on_ventilator==True AND rr_volatility: [3.84:4.47[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #67: is_on_ventilator==True AND shock_index: [0.64:0.76[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #68: leukocyte_state=='Leukocytosis' AND map_volatility: [6.45:7.93[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #69: liver_dysfunction_type=='Synthetic_Dysfunction' AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #70: liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_temp_criterion==True
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #71: liver_dysfunction_type=='Synthetic_Dysfunction' AND thrombocytopenia_severity=='Severe'
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #72: is_on_ventilator==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0196  Lift=1.51x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=66.3%
+Rule #73: has_invasive_hemo_monitoring==True
+  WRAcc=0.0165  Lift=1.10x  Coverage=22 (25.6%)  Target%=72.7%  Baseline%=66.3%
+Rule #74: data_density_score: [5.49:5.59[
+  WRAcc=0.0164  Lift=1.11x  Coverage=19 (22.1%)  Target%=73.7%  Baseline%=66.3%
+Rule #75: has_invasive_hemo_monitoring==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0161  Lift=1.16x  Coverage=13 (15.1%)  Target%=76.9%  Baseline%=66.3%
+Rule #76: has_anticoagulation_derangement==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0161  Lift=1.16x  Coverage=13 (15.1%)  Target%=76.9%  Baseline%=66.3%
+Rule #77: anemia_severity=='Mild' AND lactate_trend=='Went_Down'
+  WRAcc=0.0161  Lift=1.16x  Coverage=13 (15.1%)  Target%=76.9%  Baseline%=66.3%
+Rule #78: anemia_severity=='Mild' AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0160  Lift=1.21x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=66.3%
+Rule #79: anemia_severity=='Mild' AND rr_volatility: [3.84:4.47[
+  WRAcc=0.0160  Lift=1.21x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=66.3%
+Rule #80: has_neutrophilia==True AND shock_index: [0.64:0.76[
+  WRAcc=0.0160  Lift=1.21x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=66.3%
+Rule #81: data_density_score: [5.59:5.67[ AND has_neutrophilia==True
+  WRAcc=0.0160  Lift=1.21x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=66.3%
+Rule #82: has_hypocalcemia_ionized==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0160  Lift=1.21x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=66.3%
+Rule #83: liver_dysfunction_type=='Synthetic_Dysfunction' AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0160  Lift=1.21x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=66.3%
+Rule #84: aki_severity_stage=='Stage_1' AND has_neutrophilia==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #85: anemia_severity=='Mild' AND has_hypophosphatemia==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #86: bun_creatinine_ratio: [22.0:25.71[ AND sirs_rr_criterion==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #87: data_density_score: [5.59:5.67[ AND lactate_trend=='Went_Down'
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #88: has_hypocalcemia_ionized==True AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #89: has_anticoagulation_derangement==True AND hemodynamic_state=='Hypertension_Stage1'
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #90: has_hypercapnic_failure==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #91: has_hypocalcemia_ionized==True AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #92: data_density_score: [5.67:5.82[ AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #93: has_hypocalcemia_ionized==True AND sirs_temp_criterion==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #94: is_on_ventilator==True AND sirs_rr_criterion==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #95: is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #96: lactate_trend=='Went_Down' AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #97: lactate_trend=='Went_Down' AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #98: shock_index: [0.64:0.76[ AND sirs_wbc_criterion==True
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #99: is_on_ventilator==True AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #100: is_on_ventilator==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #101: is_malnourished_proxy==True AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0158  Lift=1.29x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=66.3%
+Rule #102: bun_creatinine_ratio: [13.33:18.21[ AND rr_volatility: [2.48:3.14[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #103: glucose_state=='Hyperglycemia' AND shock_index: [0.64:0.76[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #104: gcs_level=='Mild_Moderate_Impairment' AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #105: data_density_score: [5.67:5.82[ AND rr_volatility: [2.48:3.14[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #106: data_density_score: [5.59:5.67[ AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #107: data_density_score: [5.49:5.59[ AND sbp_volatility: [12.11:14.78[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #108: data_density_score: [5.49:5.59[ AND map_volatility: [7.93:9.92[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #109: bun_creatinine_ratio: [13.33:18.21[ AND shock_index: [0.64:0.76[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #110: anion_gap_corrected: [13.50:15.0[ AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #111: bun_creatinine_ratio: [13.33:18.21[ AND is_on_ventilator==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #112: bun_creatinine_ratio: [13.33:18.21[ AND data_density_score: [5.49:5.59[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #113: anion_gap_corrected: [15.0:16.50[ AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #114: has_hypocalcemia_ionized==True AND hemodynamic_state=='Hypertension_Stage1'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #115: anion_gap_corrected: [13.50:15.0[ AND has_neutrophilia==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #116: anemia_severity=='Mild' AND sirs_temp_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #117: anemia_severity=='Mild' AND hemodynamic_state=='Hypertension_Stage1'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #118: acid_base_state=='Alkalemia' AND has_neutrophilia==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #119: has_any_aki==True AND thrombocytopenia_severity=='Severe'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #120: has_invasive_hemo_monitoring==True AND shock_index: [0.64:0.76[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #121: has_hypocalcemia_ionized==True AND potassium_state=='Hyperkalemia'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #122: lactate_trend=='Went_Down' AND shock_index: [0.64:0.76[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #123: sirs_temp_criterion==True AND sirs_wbc_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #124: sirs_hr_criterion==True AND sirs_temp_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #125: sbp_volatility: [9.95:12.11[ AND shock_index: [0.64:0.76[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #126: rr_volatility: [3.14:3.84[ AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #127: rr_volatility: [2.48:3.14[ AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #128: map_volatility: [7.93:9.92[ AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #129: map_volatility: [6.45:7.93[ AND sirs_hr_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #130: has_hypocalcemia_ionized==True AND potassium_state=='Hypokalemia'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #131: lactate_trend=='Went_Down' AND map_volatility: [6.45:7.93[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #132: is_on_ventilator==True AND sirs_temp_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #133: hr_volatility: [8.06:9.91[ AND map_volatility: [6.45:7.93[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #134: hr_volatility: [4.97:6.35[ AND sirs_hr_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #135: hemodynamic_state=='Hypertension_Stage1' AND sirs_rr_criterion==True
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #136: hemodynamic_state=='Hypertension_Stage1' AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #137: heart_rate_state=='Bradycardia'
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #138: has_sirs==True AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0157  Lift=1.51x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=66.3%
+Rule #139: liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0131  Lift=1.05x  Coverage=33 (38.4%)  Target%=69.7%  Baseline%=66.3%
+Rule #140: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0130  Lift=1.06x  Coverage=30 (34.9%)  Target%=70.0%  Baseline%=66.3%
+Rule #141: has_neutrophilia==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0126  Lift=1.08x  Coverage=21 (24.4%)  Target%=71.4%  Baseline%=66.3%
+Rule #142: bun_creatinine_ratio: [22.0:25.71[
+  WRAcc=0.0124  Lift=1.09x  Coverage=18 (20.9%)  Target%=72.2%  Baseline%=66.3%
+Rule #143: anemia_severity=='Mild' AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0123  Lift=1.11x  Coverage=15 (17.4%)  Target%=73.3%  Baseline%=66.3%
+Rule #144: lactate_trend=='Went_Down' AND sirs_wbc_criterion==True
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #145: has_invasive_hemo_monitoring==True AND is_on_ventilator==True
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #146: has_invasive_hemo_monitoring==True AND has_neutrophilia==True
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #147: has_anticoagulation_derangement==True AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #148: data_density_score: [5.49:5.59[ AND has_neutrophilia==True
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #149: anemia_severity=='Mild' AND is_malnourished_proxy==True
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #150: anemia_severity=='Mild' AND data_density_score: [5.59:5.67[
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #151: has_neutrophilia==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0122  Lift=1.13x  Coverage=12 (14.0%)  Target%=75.0%  Baseline%=66.3%
+Rule #152: has_hypercapnic_failure==True
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #153: anemia_severity=='Moderate' AND shock_index: [0.64:0.76[
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #154: data_density_score: [5.67:5.82[ AND has_neutrophilia==True
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #155: has_any_aki==True AND shock_index: [0.64:0.76[
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #156: bun_creatinine_ratio: [22.0:25.71[ AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #157: has_hypocalcemia_ionized==True AND sbp_volatility: [12.11:14.78[
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #158: lactate_trend=='Went_Down' AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #159: potassium_state=='Hypokalemia'
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #160: has_hypophosphatemia==True
+  WRAcc=0.0120  Lift=1.17x  Coverage=9 (10.5%)  Target%=77.8%  Baseline%=66.3%
+Rule #161: has_anticoagulation_derangement==True AND has_hypercapnic_failure==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #162: has_invasive_hemo_monitoring==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #163: has_hypophosphatemia==True AND has_sirs==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #164: data_density_score: [5.59:5.67[ AND hr_volatility: [8.06:9.91[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #165: data_density_score: [5.67:5.82[ AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #166: data_density_score: [5.49:5.59[ AND hr_volatility: [6.35:8.06[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #167: bun_creatinine_ratio: [22.0:25.71[ AND is_malnourished_proxy==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #168: anemia_severity=='Mild' AND rr_volatility: [2.48:3.14[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #169: has_myocardial_injury==True AND lactate_trend=='Went_Down'
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #170: has_invasive_hemo_monitoring==True AND rr_volatility: [3.84:4.47[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #171: hr_volatility: [4.97:6.35[ AND sirs_rr_criterion==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #172: has_myocardial_injury==True AND sirs_temp_criterion==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #173: is_malnourished_proxy==True AND shock_index: [0.64:0.76[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #174: sbp_volatility: [8.71:9.95[ AND shock_index: [0.76:0.91[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #175: has_neutrophilia==True AND respiratory_rate_state=='Bradypnea'
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #176: rr_volatility: [2.48:3.14[ AND shock_index: [0.64:0.76[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #177: potassium_state=='Hyperkalemia'
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #178: rr_volatility: [3.14:3.84[ AND sirs_hr_criterion==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #179: is_malnourished_proxy==True AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #180: hr_volatility: [6.35:8.06[ AND sirs_rr_criterion==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #181: hr_volatility: [4.97:6.35[ AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #182: has_neutrophilia==True AND sirs_temp_criterion==True
+  WRAcc=0.0119  Lift=1.26x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=66.3%
+Rule #183: sodium_state=='Hyponatremia' AND thrombocytopenia_severity=='Severe'
+  WRAcc=0.0118  Lift=1.51x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=66.3%
+Rule #184: shock_index: [0.64:0.76[ AND thrombocytopenia_severity=='Severe'
+  WRAcc=0.0118  Lift=1.51x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=66.3%
+Rule #185: rr_volatility: [3.84:4.47[ AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0118  Lift=1.51x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=66.3%
+Rule #186: rr_volatility: [3.84:4.47[ AND sirs_temp_criterion==True
+  WRAcc=0.0118  Lift=1.51x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=66.3%
+Rule #187: rr_volatility: [3.84:4.47[ AND sbp_volatility: [12.11:14.78[
+  WRAcc=0.0118  Lift=1.51x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=66.3%
+Rule #188: rr_volatility: [2.48:3.14[ AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0118  Lift=1.51x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=66.3%
+
+================================================================================
+Battleground of the Deceased — NM advantage (is_SM_win=0)
+================================================================================
+Rule #1: has_severe_aki==True
+  WRAcc=0.0687  Lift=1.73x  Coverage=24 (27.9%)  Target%=58.3%  Baseline%=33.7%
+Rule #2: has_any_aki==True
+  WRAcc=0.0642  Lift=1.44x  Coverage=37 (43.0%)  Target%=48.6%  Baseline%=33.7%
+Rule #3: anemia_severity=='Moderate' AND has_severe_aki==True
+  WRAcc=0.0573  Lift=1.81x  Coverage=18 (20.9%)  Target%=61.1%  Baseline%=33.7%
+Rule #4: map_volatility: [9.92:11.79[ AND sirs_wbc_criterion==True
+  WRAcc=0.0538  Lift=2.37x  Coverage=10 (11.6%)  Target%=80.0%  Baseline%=33.7%
+Rule #5: has_anticoagulation_derangement==True AND has_any_aki==True
+  WRAcc=0.0491  Lift=1.43x  Coverage=29 (33.7%)  Target%=48.3%  Baseline%=33.7%
+Rule #6: has_sirs==True AND map_volatility: [9.92:11.79[
+  WRAcc=0.0423  Lift=2.54x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=33.7%
+Rule #7: aki_severity_stage=='Stage_3'
+  WRAcc=0.0423  Lift=2.54x  Coverage=7 (8.1%)  Target%=85.7%  Baseline%=33.7%
+Rule #8: sodium_state=='Hyponatremia'
+  WRAcc=0.0419  Lift=1.67x  Coverage=16 (18.6%)  Target%=56.2%  Baseline%=33.7%
+Rule #9: map_volatility: [9.92:11.79[ AND sirs_hr_criterion==True
+  WRAcc=0.0385  Lift=2.97x  Coverage=5 (5.8%)  Target%=100.0%  Baseline%=33.7%
+Rule #10: has_severe_aki==True AND shock_index: [0.58:0.64[
+  WRAcc=0.0384  Lift=2.22x  Coverage=8 (9.3%)  Target%=75.0%  Baseline%=33.7%
+Rule #11: has_any_aki==True AND sirs_wbc_criterion==True
+  WRAcc=0.0381  Lift=1.69x  Coverage=14 (16.3%)  Target%=57.1%  Baseline%=33.7%
+Rule #12: has_any_aki==True AND has_myocardial_injury==True
+  WRAcc=0.0381  Lift=1.69x  Coverage=14 (16.3%)  Target%=57.1%  Baseline%=33.7%
+Rule #13: map_volatility: [9.92:11.79[
+  WRAcc=0.0380  Lift=1.57x  Coverage=17 (19.8%)  Target%=52.9%  Baseline%=33.7%
+Rule #14: map_volatility: [9.92:11.79[ AND sirs_rr_criterion==True
+  WRAcc=0.0346  Lift=2.47x  Coverage=6 (7.0%)  Target%=83.3%  Baseline%=33.7%
+Rule #15: has_severe_aki==True AND sirs_wbc_criterion==True
+  WRAcc=0.0345  Lift=1.98x  Coverage=9 (10.5%)  Target%=66.7%  Baseline%=33.7%
+Rule #16: has_myocardial_injury==True AND has_severe_aki==True
+  WRAcc=0.0345  Lift=1.98x  Coverage=9 (10.5%)  Target%=66.7%  Baseline%=33.7%
+Rule #17: has_anticoagulation_derangement==True AND map_volatility: [9.92:11.79[
+  WRAcc=0.0343  Lift=1.73x  Coverage=12 (14.0%)  Target%=58.3%  Baseline%=33.7%
+Rule #18: has_anticoagulation_derangement==True AND sirs_hr_criterion==True
+  WRAcc=0.0339  Lift=1.41x  Coverage=21 (24.4%)  Target%=47.6%  Baseline%=33.7%
+Rule #19: has_myocardial_injury==True
+  WRAcc=0.0337  Lift=1.32x  Coverage=27 (31.4%)  Target%=44.4%  Baseline%=33.7%
+Rule #20: map_volatility: [9.92:11.79[ AND rr_volatility: [3.84:4.47[
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #21: leukocyte_state=='Leukopenia'
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #22: hemodynamic_state=='Hypertension_Stage2' AND map_volatility: [9.92:11.79[
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #23: heart_rate_state=='Tachycardia' AND sodium_state=='Hyponatremia'
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #24: bun_creatinine_ratio: [22.0:25.71[ AND has_severe_aki==True
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #25: aki_severity_stage=='Stage_3' AND sodium_state=='Hyponatremia'
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #26: aki_severity_stage=='Stage_3' AND sirs_wbc_criterion==True
+  WRAcc=0.0308  Lift=2.97x  Coverage=4 (4.7%)  Target%=100.0%  Baseline%=33.7%
+Rule #27: has_hyperlactatemia==True AND sirs_hr_criterion==True
+  WRAcc=0.0307  Lift=2.12x  Coverage=7 (8.1%)  Target%=71.4%  Baseline%=33.7%
+Rule #28: glucose_state=='Hyperglycemia' AND has_severe_aki==True
+  WRAcc=0.0307  Lift=2.12x  Coverage=7 (8.1%)  Target%=71.4%  Baseline%=33.7%
+Rule #29: has_any_aki==True AND map_volatility: [9.92:11.79[
+  WRAcc=0.0307  Lift=2.12x  Coverage=7 (8.1%)  Target%=71.4%  Baseline%=33.7%
+Rule #30: has_neutrophilia==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0307  Lift=2.12x  Coverage=7 (8.1%)  Target%=71.4%  Baseline%=33.7%
+Rule #31: has_severe_aki==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0307  Lift=2.12x  Coverage=7 (8.1%)  Target%=71.4%  Baseline%=33.7%
+Rule #32: has_any_aki==True AND has_sirs==True
+  WRAcc=0.0306  Lift=1.78x  Coverage=10 (11.6%)  Target%=60.0%  Baseline%=33.7%
+Rule #33: anemia_severity=='Moderate' AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0306  Lift=1.78x  Coverage=10 (11.6%)  Target%=60.0%  Baseline%=33.7%
+Rule #34: has_neutrophilia==True AND has_severe_aki==True
+  WRAcc=0.0304  Lift=1.60x  Coverage=13 (15.1%)  Target%=53.8%  Baseline%=33.7%
+Rule #35: anemia_severity=='Moderate' AND is_malnourished_proxy==True
+  WRAcc=0.0304  Lift=1.60x  Coverage=13 (15.1%)  Target%=53.8%  Baseline%=33.7%
+Rule #36: aki_severity_stage=='Stage_2' AND has_anticoagulation_derangement==True
+  WRAcc=0.0303  Lift=1.48x  Coverage=16 (18.6%)  Target%=50.0%  Baseline%=33.7%
+Rule #37: sirs_hr_criterion==True
+  WRAcc=0.0296  Lift=1.24x  Coverage=31 (36.0%)  Target%=41.9%  Baseline%=33.7%
+Rule #38: anemia_severity=='Moderate'
+  WRAcc=0.0293  Lift=1.20x  Coverage=37 (43.0%)  Target%=40.5%  Baseline%=33.7%
+Rule #39: sirs_hr_criterion==True AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #40: sirs_hr_criterion==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #41: hemodynamic_state=='Hypotension' AND is_malnourished_proxy==True
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #42: has_severe_aki==True AND map_volatility: [9.92:11.79[
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #43: has_myocardial_injury==True AND shock_index: [0.58:0.64[
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #44: gcs_level=='Mild_Moderate_Impairment' AND has_myocardial_injury==True
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #45: bun_creatinine_ratio: [22.0:25.71[ AND has_any_aki==True
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #46: bun_creatinine_ratio: [13.33:18.21[ AND sirs_hr_criterion==True
+  WRAcc=0.0269  Lift=2.37x  Coverage=5 (5.8%)  Target%=80.0%  Baseline%=33.7%
+Rule #47: has_severe_aki==True AND is_malnourished_proxy==True
+  WRAcc=0.0268  Lift=1.85x  Coverage=8 (9.3%)  Target%=62.5%  Baseline%=33.7%
+Rule #48: anemia_severity=='Moderate' AND glucose_state=='Hyperglycemia'
+  WRAcc=0.0268  Lift=1.85x  Coverage=8 (9.3%)  Target%=62.5%  Baseline%=33.7%
+Rule #49: hemodynamic_state=='Hypotension' AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0268  Lift=1.85x  Coverage=8 (9.3%)  Target%=62.5%  Baseline%=33.7%
+Rule #50: sirs_wbc_criterion==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0268  Lift=1.85x  Coverage=8 (9.3%)  Target%=62.5%  Baseline%=33.7%
+Rule #51: anemia_severity=='Moderate' AND sirs_wbc_criterion==True
+  WRAcc=0.0265  Lift=1.48x  Coverage=14 (16.3%)  Target%=50.0%  Baseline%=33.7%
+Rule #52: has_any_aki==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0264  Lift=1.40x  Coverage=17 (19.8%)  Target%=47.1%  Baseline%=33.7%
+Rule #53: glucose_state=='Hyperglycemia'
+  WRAcc=0.0264  Lift=1.40x  Coverage=17 (19.8%)  Target%=47.1%  Baseline%=33.7%
+Rule #54: gcs_level=='Mild_Moderate_Impairment' AND map_volatility: [9.92:11.79[
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #55: aki_severity_stage=='Stage_3' AND glucose_state=='Hyperglycemia'
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #56: aki_severity_stage=='Stage_3' AND hr_volatility: [4.97:6.35[
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #57: anemia_severity=='Moderate' AND leukocyte_state=='Leukopenia'
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #58: bun_creatinine_ratio: [18.21:22.0[ AND shock_index: [0.76:0.91[
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #59: gcs_level=='Mild_Moderate_Impairment' AND respiratory_rate_state=='Tachypnea'
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #60: has_invasive_hemo_monitoring==True AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #61: is_malnourished_proxy==True AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #62: sbp_volatility: [12.11:14.78[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #63: glucose_state=='Hyperglycemia' AND shock_index: [0.76:0.91[
+  WRAcc=0.0231  Lift=2.97x  Coverage=3 (3.5%)  Target%=100.0%  Baseline%=33.7%
+Rule #64: anion_gap_corrected: [16.50:17.75[ AND has_anticoagulation_derangement==True
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #65: acid_base_state=='Acidemia' AND sirs_hr_criterion==True
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #66: aki_severity_stage=='Stage_2' AND shock_index: [0.58:0.64[
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #67: anemia_severity=='Moderate' AND map_volatility: [9.92:11.79[
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #68: anemia_severity=='Moderate' AND shock_index: [0.58:0.64[
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #69: gcs_level=='Mild_Moderate_Impairment' AND sirs_rr_criterion==True
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #70: bun_creatinine_ratio: [18.21:22.0[ AND has_severe_aki==True
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #71: has_severe_aki==True AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #72: has_severe_aki==True AND rr_volatility: [2.48:3.14[
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #73: hemodynamic_state=='Hypotension' AND sirs_wbc_criterion==True
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #74: is_malnourished_proxy==True AND map_volatility: [9.92:11.79[
+  WRAcc=0.0230  Lift=1.98x  Coverage=6 (7.0%)  Target%=66.7%  Baseline%=33.7%
+Rule #75: has_any_aki==True AND rr_volatility: [2.48:3.14[
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #76: glucose_state=='Hyperglycemia' AND has_any_aki==True
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #77: has_any_aki==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #78: anemia_severity=='Mild' AND sodium_state=='Hyponatremia'
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #79: has_any_aki==True AND sirs_hr_criterion==True
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #80: has_neutrophilia==True AND map_volatility: [9.92:11.79[
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #81: has_any_aki==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0229  Lift=1.65x  Coverage=9 (10.5%)  Target%=55.6%  Baseline%=33.7%
+Rule #82: has_any_aki==True AND is_malnourished_proxy==True
+  WRAcc=0.0227  Lift=1.48x  Coverage=12 (14.0%)  Target%=50.0%  Baseline%=33.7%
+Rule #83: has_anticoagulation_derangement==True AND shock_index: [0.58:0.64[
+  WRAcc=0.0227  Lift=1.48x  Coverage=12 (14.0%)  Target%=50.0%  Baseline%=33.7%
+Rule #84: gcs_level=='Mild_Moderate_Impairment' AND has_anticoagulation_derangement==True
+  WRAcc=0.0227  Lift=1.48x  Coverage=12 (14.0%)  Target%=50.0%  Baseline%=33.7%
+Rule #85: aki_severity_stage=='Stage_2' AND anemia_severity=='Moderate'
+  WRAcc=0.0227  Lift=1.48x  Coverage=12 (14.0%)  Target%=50.0%  Baseline%=33.7%
+Rule #86: has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc=0.0224  Lift=1.32x  Coverage=18 (20.9%)  Target%=44.4%  Baseline%=33.7%
+Rule #87: has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc=0.0223  Lift=1.27x  Coverage=21 (24.4%)  Target%=42.9%  Baseline%=33.7%
+Rule #88: anemia_severity=='Moderate' AND hemodynamic_state=='Hypertension_Stage2'
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #89: creatinine_trend=='Went_Down' AND has_any_aki==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #90: bun_creatinine_ratio: [18.21:22.0[ AND hr_volatility: [6.35:8.06[
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #91: bun_creatinine_ratio: [13.33:18.21[ AND shock_index: [0.76:0.91[
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #92: aki_severity_stage=='Stage_1' AND has_sirs==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #93: anemia_severity=='Mild' AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #94: aki_severity_stage=='Stage_3' AND has_neutrophilia==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #95: aki_severity_stage=='Stage_3' AND has_anticoagulation_derangement==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #96: data_density_score: [5.67:5.82[ AND gcs_level=='Mild_Moderate_Impairment'
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #97: hr_volatility: [6.35:8.06[ AND map_volatility: [9.92:11.79[
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #98: has_hypomagnesemia==True AND is_malnourished_proxy==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #99: map_volatility: [9.92:11.79[ AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #100: data_density_score: [5.67:5.82[ AND has_myocardial_injury==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #101: heart_rate_state=='Tachycardia' AND shock_severity=='Hyperlactatemia'
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #102: has_severe_aki==True AND hemodynamic_state=='Hypertension_Stage2'
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #103: map_volatility: [9.92:11.79[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #104: has_any_aki==True AND has_hypomagnesemia==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #105: gcs_level=='Mild_Moderate_Impairment' AND has_severe_aki==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #106: data_density_score: [5.67:5.82[ AND sirs_hr_criterion==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #107: data_density_score: [5.67:5.82[ AND has_sirs==True
+  WRAcc=0.0192  Lift=2.22x  Coverage=4 (4.7%)  Target%=75.0%  Baseline%=33.7%
+Rule #108: gcs_level=='Mild_Moderate_Impairment' AND has_any_aki==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #109: bun_creatinine_ratio: [18.21:22.0[ AND sirs_rr_criterion==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #110: bun_creatinine_ratio: [18.21:22.0[ AND is_malnourished_proxy==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #111: bun_creatinine_ratio: [18.21:22.0[ AND has_neutrophilia==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #112: glucose_state=='Hyperglycemia' AND sirs_rr_criterion==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #113: anemia_severity=='Moderate' AND sodium_state=='Hyponatremia'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #114: anemia_severity=='Moderate' AND sbp_volatility: [9.95:12.11[
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #115: anemia_severity=='Moderate' AND rr_volatility: [3.84:4.47[
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #116: acid_base_state=='Acidemia' AND has_sirs==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #117: gcs_level=='Mild_Moderate_Impairment' AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #118: bun_creatinine_ratio: [18.21:22.0[ AND has_myocardial_injury==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #119: has_anticoagulation_derangement==True AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #120: has_sirs==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #121: has_any_aki==True AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #122: shock_index: [0.76:0.91[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #123: hemodynamic_state=='Hypotension' AND sirs_hr_criterion==True
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #124: has_severe_aki==True AND map_volatility: [6.45:7.93[
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #125: has_severe_aki==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #126: has_myocardial_injury==True AND rr_volatility: [3.14:3.84[
+  WRAcc=0.0191  Lift=1.69x  Coverage=7 (8.1%)  Target%=57.1%  Baseline%=33.7%
+Rule #127: has_hypocalcemia_ionized==True AND has_severe_aki==True
+  WRAcc=0.0189  Lift=1.48x  Coverage=10 (11.6%)  Target%=50.0%  Baseline%=33.7%
+Rule #128: has_any_aki==True AND sirs_rr_criterion==True
+  WRAcc=0.0189  Lift=1.48x  Coverage=10 (11.6%)  Target%=50.0%  Baseline%=33.7%
+Rule #129: has_any_aki==True AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0189  Lift=1.48x  Coverage=10 (11.6%)  Target%=50.0%  Baseline%=33.7%
+Rule #130: data_density_score: [5.59:5.67[ AND has_any_aki==True
+  WRAcc=0.0189  Lift=1.48x  Coverage=10 (11.6%)  Target%=50.0%  Baseline%=33.7%
+Rule #131: shock_index: [0.76:0.91[ AND sirs_hr_criterion==True
+  WRAcc=0.0188  Lift=1.37x  Coverage=13 (15.1%)  Target%=46.2%  Baseline%=33.7%
+Rule #132: has_myocardial_injury==True AND sirs_rr_criterion==True
+  WRAcc=0.0188  Lift=1.37x  Coverage=13 (15.1%)  Target%=46.2%  Baseline%=33.7%
+Rule #133: bun_creatinine_ratio: [18.21:22.0[
+  WRAcc=0.0187  Lift=1.30x  Coverage=16 (18.6%)  Target%=43.8%  Baseline%=33.7%
+Rule #134: anemia_severity=='Mild' AND has_myocardial_injury==True
+  WRAcc=0.0187  Lift=1.30x  Coverage=16 (18.6%)  Target%=43.8%  Baseline%=33.7%
+Rule #135: anemia_severity=='Mild' AND sirs_hr_criterion==True
+  WRAcc=0.0185  Lift=1.25x  Coverage=19 (22.1%)  Target%=42.1%  Baseline%=33.7%
+Rule #136: has_anticoagulation_derangement==True AND has_sirs==True
+  WRAcc=0.0184  Lift=1.21x  Coverage=22 (25.6%)  Target%=40.9%  Baseline%=33.7%
+Rule #137: has_anticoagulation_derangement==True AND sirs_wbc_criterion==True
+  WRAcc=0.0183  Lift=1.19x  Coverage=25 (29.1%)  Target%=40.0%  Baseline%=33.7%
+Rule #138: has_anticoagulation_derangement==True
+  WRAcc=0.0165  Lift=1.07x  Coverage=64 (74.4%)  Target%=35.9%  Baseline%=33.7%
+Rule #139: has_sirs==True AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #140: has_severe_aki==True AND map_volatility: [7.93:9.92[
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #141: has_severe_aki==True AND leukocyte_state=='Leukopenia'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #142: has_neutrophilia==True AND leukocyte_state=='Leukopenia'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #143: has_metabolic_acidosis==True AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #144: has_hyperlactatemia==True AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #145: has_hyperlactatemia==True AND respiratory_rate_state=='Bradypnea'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #146: has_hyperlactatemia==True AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #147: hemodynamic_state=='Hypertension_Stage2' AND leukocyte_state=='Leukopenia'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #148: data_density_score: [5.59:5.67[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #149: data_density_score: [5.59:5.67[ AND shock_index: [0.58:0.64[
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #150: data_density_score: [5.49:5.59[ AND leukocyte_state=='Leukopenia'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #151: creatinine_trend=='Went_Down' AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #152: heart_rate_state=='Tachycardia' AND sbp_volatility: [8.71:9.95[
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #153: map_volatility: [7.93:9.92[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #154: liver_dysfunction_type=='Synthetic_Dysfunction' AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #155: sodium_state=='Hyponatremia' AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #156: sbp_volatility: [9.95:12.11[ AND shock_index: [0.58:0.64[
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #157: rr_volatility: [2.48:3.14[ AND shock_index: [0.76:0.91[
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #158: map_volatility: [9.92:11.79[ AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #159: leukocyte_state=='Leukopenia' AND rr_volatility: [3.84:4.47[
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+Rule #160: hr_volatility: [8.06:9.91[ AND thrombocytopenia_severity=='Moderate'
+  WRAcc=0.0154  Lift=2.97x  Coverage=2 (2.3%)  Target%=100.0%  Baseline%=33.7%
+
+================================================================================
+Battleground of the Survivors — SM advantage (is_SM_win=1)
+================================================================================
+Rule #1: has_any_aki==True
+  WRAcc=0.0371  Lift=1.22x  Coverage=394 (33.1%)  Target%=62.2%  Baseline%=51.0%
+Rule #2: has_severe_aki==True
+  WRAcc=0.0345  Lift=1.41x  Coverage=198 (16.6%)  Target%=71.7%  Baseline%=51.0%
+Rule #3: anemia_severity=='Moderate' AND has_any_aki==True
+  WRAcc=0.0271  Lift=1.36x  Coverage=176 (14.8%)  Target%=69.3%  Baseline%=51.0%
+Rule #4: has_anticoagulation_derangement==True AND has_severe_aki==True
+  WRAcc=0.0235  Lift=1.35x  Coverage=157 (13.2%)  Target%=68.8%  Baseline%=51.0%
+Rule #5: has_any_aki==True AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0233  Lift=1.42x  Coverage=130 (10.9%)  Target%=72.3%  Baseline%=51.0%
+Rule #6: aki_severity_stage=='Stage_2'
+  WRAcc=0.0220  Lift=1.38x  Coverage=135 (11.3%)  Target%=70.4%  Baseline%=51.0%
+Rule #7: anemia_severity=='Moderate' AND has_severe_aki==True
+  WRAcc=0.0206  Lift=1.51x  Coverage=95 (8.0%)  Target%=76.8%  Baseline%=51.0%
+Rule #8: has_anticoagulation_derangement==True AND has_any_aki==True
+  WRAcc=0.0206  Lift=1.16x  Coverage=305 (25.6%)  Target%=59.0%  Baseline%=51.0%
+Rule #9: has_severe_aki==True AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0200  Lift=1.70x  Coverage=67 (5.6%)  Target%=86.6%  Baseline%=51.0%
+Rule #10: sbp_volatility: [8.88:11.29[
+  WRAcc=0.0182  Lift=1.18x  Coverage=238 (20.0%)  Target%=60.1%  Baseline%=51.0%
+Rule #11: has_any_aki==True AND sirs_rr_criterion==True
+  WRAcc=0.0152  Lift=1.25x  Coverage=143 (12.0%)  Target%=63.6%  Baseline%=51.0%
+Rule #12: has_any_aki==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0149  Lift=1.43x  Coverage=81 (6.8%)  Target%=72.8%  Baseline%=51.0%
+Rule #13: anemia_severity=='Moderate' AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0145  Lift=1.42x  Coverage=80 (6.7%)  Target%=72.5%  Baseline%=51.0%
+Rule #14: has_severe_aki==True AND sirs_rr_criterion==True
+  WRAcc=0.0137  Lift=1.43x  Coverage=74 (6.2%)  Target%=73.0%  Baseline%=51.0%
+Rule #15: has_neutrophilia==True AND has_severe_aki==True
+  WRAcc=0.0137  Lift=1.25x  Coverage=127 (10.7%)  Target%=63.8%  Baseline%=51.0%
+Rule #16: has_any_aki==True AND rr_volatility: [3.12:3.89[
+  WRAcc=0.0135  Lift=1.35x  Coverage=90 (7.6%)  Target%=68.9%  Baseline%=51.0%
+Rule #17: has_severe_aki==True AND rr_volatility: [3.12:3.89[
+  WRAcc=0.0134  Lift=1.62x  Coverage=51 (4.3%)  Target%=82.4%  Baseline%=51.0%
+Rule #18: has_any_aki==True AND has_hypercapnic_failure==True
+  WRAcc=0.0133  Lift=1.48x  Coverage=65 (5.5%)  Target%=75.4%  Baseline%=51.0%
+Rule #19: anemia_severity=='Mild' AND has_severe_aki==True
+  WRAcc=0.0131  Lift=1.33x  Coverage=93 (7.8%)  Target%=67.7%  Baseline%=51.0%
+Rule #20: aki_severity_stage=='Stage_2' AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0131  Lift=1.69x  Coverage=44 (3.7%)  Target%=86.4%  Baseline%=51.0%
+Rule #21: aki_severity_stage=='Stage_2' AND anemia_severity=='Moderate'
+  WRAcc=0.0129  Lift=1.46x  Coverage=66 (5.5%)  Target%=74.2%  Baseline%=51.0%
+Rule #22: sodium_state=='Hyponatremia'
+  WRAcc=0.0125  Lift=1.18x  Coverage=163 (13.7%)  Target%=60.1%  Baseline%=51.0%
+Rule #23: aki_severity_stage=='Stage_3'
+  WRAcc=0.0125  Lift=1.46x  Coverage=63 (5.3%)  Target%=74.6%  Baseline%=51.0%
+Rule #24: data_density_score: [5.47:5.61[ AND has_any_aki==True
+  WRAcc=0.0124  Lift=1.38x  Coverage=77 (6.5%)  Target%=70.1%  Baseline%=51.0%
+Rule #25: has_any_aki==True AND shock_index: [0.68:0.76[
+  WRAcc=0.0124  Lift=1.37x  Coverage=79 (6.6%)  Target%=69.6%  Baseline%=51.0%
+Rule #26: anemia_severity=='Moderate' AND organ_dysfunction_score: [2:3[
+  WRAcc=0.0122  Lift=1.29x  Coverage=99 (8.3%)  Target%=65.7%  Baseline%=51.0%
+Rule #27: has_any_aki==True AND has_myocardial_injury==True
+  WRAcc=0.0120  Lift=1.16x  Coverage=176 (14.8%)  Target%=59.1%  Baseline%=51.0%
+Rule #28: anemia_severity=='Mild' AND sodium_state=='Hyponatremia'
+  WRAcc=0.0119  Lift=1.31x  Coverage=90 (7.6%)  Target%=66.7%  Baseline%=51.0%
+Rule #29: data_density_score: [5.61:5.74[ AND has_severe_aki==True
+  WRAcc=0.0119  Lift=1.71x  Coverage=39 (3.3%)  Target%=87.2%  Baseline%=51.0%
+Rule #30: has_severe_aki==True AND shock_index: [0.68:0.76[
+  WRAcc=0.0118  Lift=1.67x  Coverage=41 (3.4%)  Target%=85.4%  Baseline%=51.0%
+Rule #31: has_any_aki==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0118  Lift=1.18x  Coverage=151 (12.7%)  Target%=60.3%  Baseline%=51.0%
+Rule #32: has_hypercapnic_failure==True
+  WRAcc=0.0117  Lift=1.17x  Coverage=165 (13.9%)  Target%=59.4%  Baseline%=51.0%
+Rule #33: has_myocardial_injury==True AND has_severe_aki==True
+  WRAcc=0.0115  Lift=1.30x  Coverage=89 (7.5%)  Target%=66.3%  Baseline%=51.0%
+Rule #34: has_any_aki==True AND rr_volatility: [2.53:3.12[
+  WRAcc=0.0111  Lift=1.34x  Coverage=76 (6.4%)  Target%=68.4%  Baseline%=51.0%
+Rule #35: organ_dysfunction_score: [1:2[ AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0110  Lift=1.29x  Coverage=90 (7.6%)  Target%=65.6%  Baseline%=51.0%
+Rule #36: has_hypocalcemia_ionized==True AND has_severe_aki==True
+  WRAcc=0.0110  Lift=1.27x  Coverage=96 (8.1%)  Target%=64.6%  Baseline%=51.0%
+Rule #37: has_any_aki==True AND has_sirs==True
+  WRAcc=0.0109  Lift=1.16x  Coverage=163 (13.7%)  Target%=58.9%  Baseline%=51.0%
+Rule #38: bun_creatinine_ratio: [13.64:17.50[ AND has_any_aki==True
+  WRAcc=0.0108  Lift=1.36x  Coverage=69 (5.8%)  Target%=69.6%  Baseline%=51.0%
+Rule #39: has_anticoagulation_derangement==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0108  Lift=1.21x  Coverage=122 (10.2%)  Target%=61.5%  Baseline%=51.0%
+Rule #40: has_severe_aki==True AND organ_dysfunction_score: [2:3[
+  WRAcc=0.0107  Lift=1.33x  Coverage=75 (6.3%)  Target%=68.0%  Baseline%=51.0%
+Rule #41: anemia_severity=='Mild'
+  WRAcc=0.0107  Lift=1.04x  Coverage=646 (54.2%)  Target%=52.9%  Baseline%=51.0%
+Rule #42: anemia_severity=='Mild' AND has_any_aki==True
+  WRAcc=0.0107  Lift=1.14x  Coverage=181 (15.2%)  Target%=58.0%  Baseline%=51.0%
+Rule #43: shock_index: [0.68:0.76[
+  WRAcc=0.0107  Lift=1.10x  Coverage=238 (20.0%)  Target%=56.3%  Baseline%=51.0%
+Rule #44: has_anticoagulation_derangement==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0104  Lift=1.15x  Coverage=164 (13.8%)  Target%=58.5%  Baseline%=51.0%
+Rule #45: organ_dysfunction_score: [1:2[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0104  Lift=1.38x  Coverage=64 (5.4%)  Target%=70.3%  Baseline%=51.0%
+Rule #46: has_severe_aki==True AND has_sirs==True
+  WRAcc=0.0103  Lift=1.30x  Coverage=80 (6.7%)  Target%=66.2%  Baseline%=51.0%
+Rule #47: has_any_aki==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0103  Lift=1.13x  Coverage=184 (15.4%)  Target%=57.6%  Baseline%=51.0%
+Rule #48: has_any_aki==True AND hr_volatility: [4.83:6.43[
+  WRAcc=0.0103  Lift=1.29x  Coverage=82 (6.9%)  Target%=65.9%  Baseline%=51.0%
+Rule #49: has_any_aki==True AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0102  Lift=1.26x  Coverage=92 (7.7%)  Target%=64.1%  Baseline%=51.0%
+Rule #50: has_severe_aki==True AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0101  Lift=1.50x  Coverage=47 (3.9%)  Target%=76.6%  Baseline%=51.0%
+Rule #51: has_any_aki==True AND organ_dysfunction_score: [2:3[
+  WRAcc=0.0100  Lift=1.20x  Coverage=116 (9.7%)  Target%=61.2%  Baseline%=51.0%
+Rule #52: anemia_severity=='Mild' AND bun_creatinine_ratio: [17.50:21.49[
+  WRAcc=0.0099  Lift=1.19x  Coverage=120 (10.1%)  Target%=60.8%  Baseline%=51.0%
+Rule #53: anemia_severity=='Mild' AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0098  Lift=1.16x  Coverage=140 (11.8%)  Target%=59.3%  Baseline%=51.0%
+Rule #54: aki_severity_stage=='Stage_2' AND rr_volatility: [3.12:3.89[
+  WRAcc=0.0094  Lift=1.71x  Coverage=31 (2.6%)  Target%=87.1%  Baseline%=51.0%
+Rule #55: has_severe_aki==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0094  Lift=1.26x  Coverage=84 (7.1%)  Target%=64.3%  Baseline%=51.0%
+Rule #56: has_any_aki==True AND map_volatility: [8.06:9.60[
+  WRAcc=0.0094  Lift=1.26x  Coverage=84 (7.1%)  Target%=64.3%  Baseline%=51.0%
+Rule #57: acid_base_state=='Acidemia' AND has_any_aki==True
+  WRAcc=0.0094  Lift=1.26x  Coverage=84 (7.1%)  Target%=64.3%  Baseline%=51.0%
+Rule #58: bun_creatinine_ratio: [13.64:17.50[ AND has_severe_aki==True
+  WRAcc=0.0093  Lift=1.56x  Coverage=39 (3.3%)  Target%=79.5%  Baseline%=51.0%
+Rule #59: acid_base_state=='Acidemia' AND has_severe_aki==True
+  WRAcc=0.0093  Lift=1.46x  Coverage=47 (3.9%)  Target%=74.5%  Baseline%=51.0%
+Rule #60: map_volatility: [8.06:9.60[
+  WRAcc=0.0090  Lift=1.09x  Coverage=238 (20.0%)  Target%=55.5%  Baseline%=51.0%
+Rule #61: data_density_score: [5.61:5.74[ AND has_any_aki==True
+  WRAcc=0.0090  Lift=1.25x  Coverage=83 (7.0%)  Target%=63.9%  Baseline%=51.0%
+Rule #62: has_severe_aki==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0089  Lift=1.55x  Coverage=38 (3.2%)  Target%=78.9%  Baseline%=51.0%
+Rule #63: has_severe_aki==True AND sirs_hr_criterion==True
+  WRAcc=0.0087  Lift=1.31x  Coverage=66 (5.5%)  Target%=66.7%  Baseline%=51.0%
+Rule #64: anemia_severity=='Mild' AND shock_index: [0.68:0.76[
+  WRAcc=0.0086  Lift=1.15x  Coverage=133 (11.2%)  Target%=58.6%  Baseline%=51.0%
+Rule #65: has_any_aki==True AND sirs_hr_criterion==True
+  WRAcc=0.0085  Lift=1.14x  Coverage=139 (11.7%)  Target%=58.3%  Baseline%=51.0%
+Rule #66: aki_severity_stage=='Stage_2' AND has_neutrophilia==True
+  WRAcc=0.0085  Lift=1.22x  Coverage=90 (7.6%)  Target%=62.2%  Baseline%=51.0%
+Rule #67: has_severe_aki==True AND hr_volatility: [4.83:6.43[
+  WRAcc=0.0085  Lift=1.48x  Coverage=41 (3.4%)  Target%=75.6%  Baseline%=51.0%
+Rule #68: has_metabolic_acidosis==True AND has_severe_aki==True
+  WRAcc=0.0084  Lift=1.42x  Coverage=47 (3.9%)  Target%=72.3%  Baseline%=51.0%
+Rule #69: aki_severity_stage=='Stage_3' AND has_anticoagulation_derangement==True
+  WRAcc=0.0084  Lift=1.42x  Coverage=47 (3.9%)  Target%=72.3%  Baseline%=51.0%
+Rule #70: has_any_aki==True AND has_neutrophilia==True
+  WRAcc=0.0084  Lift=1.08x  Coverage=259 (21.7%)  Target%=54.8%  Baseline%=51.0%
+Rule #71: has_hypocalcemia_ionized==True AND shock_index: [0.68:0.76[
+  WRAcc=0.0084  Lift=1.18x  Coverage=106 (8.9%)  Target%=60.4%  Baseline%=51.0%
+Rule #72: aki_severity_stage=='Stage_2' AND has_myocardial_injury==True
+  WRAcc=0.0083  Lift=1.32x  Coverage=61 (5.1%)  Target%=67.2%  Baseline%=51.0%
+Rule #73: aki_severity_stage=='Stage_2' AND has_hypocalcemia_ionized==True
+  WRAcc=0.0083  Lift=1.29x  Coverage=67 (5.6%)  Target%=65.7%  Baseline%=51.0%
+Rule #74: has_anticoagulation_derangement==True AND hr_volatility: [4.83:6.43[
+  WRAcc=0.0083  Lift=1.11x  Coverage=171 (14.4%)  Target%=56.7%  Baseline%=51.0%
+Rule #75: anemia_severity=='Mild' AND data_density_score: [5.61:5.74[
+  WRAcc=0.0081  Lift=1.14x  Coverage=134 (11.3%)  Target%=58.2%  Baseline%=51.0%
+Rule #76: rr_volatility: [3.12:3.89[
+  WRAcc=0.0081  Lift=1.08x  Coverage=238 (20.0%)  Target%=55.0%  Baseline%=51.0%
+Rule #77: hr_volatility: [4.83:6.43[
+  WRAcc=0.0081  Lift=1.08x  Coverage=238 (20.0%)  Target%=55.0%  Baseline%=51.0%
+Rule #78: has_invasive_hemo_monitoring==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0081  Lift=1.22x  Coverage=87 (7.3%)  Target%=62.1%  Baseline%=51.0%
+Rule #79: has_myocardial_injury==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0080  Lift=1.36x  Coverage=52 (4.4%)  Target%=69.2%  Baseline%=51.0%
+Rule #80: rr_volatility: [3.12:3.89[ AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0080  Lift=1.34x  Coverage=54 (4.5%)  Target%=68.5%  Baseline%=51.0%
+Rule #81: aki_severity_stage=='Stage_2' AND sirs_rr_criterion==True
+  WRAcc=0.0080  Lift=1.34x  Coverage=54 (4.5%)  Target%=68.5%  Baseline%=51.0%
+Rule #82: aki_severity_stage=='Stage_2' AND anemia_severity=='Mild'
+  WRAcc=0.0079  Lift=1.30x  Coverage=62 (5.2%)  Target%=66.1%  Baseline%=51.0%
+Rule #83: has_hypocalcemia_ionized==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0079  Lift=1.16x  Coverage=117 (9.8%)  Target%=59.0%  Baseline%=51.0%
+Rule #84: map_volatility: [8.06:9.60[ AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0078  Lift=1.25x  Coverage=72 (6.0%)  Target%=63.9%  Baseline%=51.0%
+Rule #85: aki_severity_stage=='Stage_2' AND data_density_score: [5.61:5.74[
+  WRAcc=0.0078  Lift=1.73x  Coverage=25 (2.1%)  Target%=88.0%  Baseline%=51.0%
+Rule #86: aki_severity_stage=='Stage_3' AND anemia_severity=='Moderate'
+  WRAcc=0.0077  Lift=1.62x  Coverage=29 (2.4%)  Target%=82.8%  Baseline%=51.0%
+Rule #87: gcs_level=='Mild_Moderate_Impairment' AND has_severe_aki==True
+  WRAcc=0.0077  Lift=1.55x  Coverage=33 (2.8%)  Target%=78.8%  Baseline%=51.0%
+Rule #88: has_severe_aki==True AND sirs_temp_criterion==True
+  WRAcc=0.0077  Lift=1.51x  Coverage=35 (2.9%)  Target%=77.1%  Baseline%=51.0%
+Rule #89: has_severe_aki==True AND map_volatility: [6.57:8.06[
+  WRAcc=0.0077  Lift=1.48x  Coverage=37 (3.1%)  Target%=75.7%  Baseline%=51.0%
+Rule #90: bun_creatinine_ratio: [21.49:27.50[ AND has_severe_aki==True
+  WRAcc=0.0077  Lift=1.46x  Coverage=39 (3.3%)  Target%=74.4%  Baseline%=51.0%
+Rule #91: anemia_severity=='Mild' AND hr_volatility: [4.83:6.43[
+  WRAcc=0.0077  Lift=1.13x  Coverage=143 (12.0%)  Target%=57.3%  Baseline%=51.0%
+Rule #92: hemodynamic_state=='Hypertension_Stage1' AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0076  Lift=1.44x  Coverage=41 (3.4%)  Target%=73.2%  Baseline%=51.0%
+Rule #93: acid_base_state=='Acidemia' AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0076  Lift=1.44x  Coverage=41 (3.4%)  Target%=73.2%  Baseline%=51.0%
+Rule #94: has_severe_aki==True AND map_volatility: [8.06:9.60[
+  WRAcc=0.0076  Lift=1.38x  Coverage=47 (3.9%)  Target%=70.2%  Baseline%=51.0%
+Rule #95: has_any_aki==True AND is_malnourished_proxy==True
+  WRAcc=0.0075  Lift=1.11x  Coverage=159 (13.4%)  Target%=56.6%  Baseline%=51.0%
+Rule #96: anemia_severity=='Mild' AND map_volatility: [6.57:8.06[
+  WRAcc=0.0074  Lift=1.14x  Coverage=126 (10.6%)  Target%=57.9%  Baseline%=51.0%
+Rule #97: has_hypercapnic_failure==True AND has_severe_aki==True
+  WRAcc=0.0073  Lift=1.66x  Coverage=26 (2.2%)  Target%=84.6%  Baseline%=51.0%
+Rule #98: sbp_volatility: [13.49:16.38[
+  WRAcc=0.0073  Lift=1.07x  Coverage=238 (20.0%)  Target%=54.6%  Baseline%=51.0%
+Rule #99: anemia_severity=='Mild' AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0073  Lift=1.07x  Coverage=238 (20.0%)  Target%=54.6%  Baseline%=51.0%
+Rule #100: has_any_aki==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0073  Lift=1.20x  Coverage=87 (7.3%)  Target%=60.9%  Baseline%=51.0%
+Rule #101: aki_severity_stage=='Stage_2' AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0073  Lift=1.47x  Coverage=36 (3.0%)  Target%=75.0%  Baseline%=51.0%
+Rule #102: sbp_volatility: [8.88:11.29[ AND sirs_hr_criterion==True
+  WRAcc=0.0072  Lift=1.18x  Coverage=93 (7.8%)  Target%=60.2%  Baseline%=51.0%
+Rule #103: data_density_score: [5.47:5.61[ AND has_severe_aki==True
+  WRAcc=0.0072  Lift=1.40x  Coverage=42 (3.5%)  Target%=71.4%  Baseline%=51.0%
+Rule #104: potassium_state=='Hyperkalemia'
+  WRAcc=0.0072  Lift=1.38x  Coverage=44 (3.7%)  Target%=70.5%  Baseline%=51.0%
+Rule #105: organ_dysfunction_score: [2:3[ AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0072  Lift=1.36x  Coverage=46 (3.9%)  Target%=69.6%  Baseline%=51.0%
+Rule #106: shock_index: [0.76:0.91[ AND shock_severity=='Hyperlactatemia'
+  WRAcc=0.0072  Lift=1.36x  Coverage=46 (3.9%)  Target%=69.6%  Baseline%=51.0%
+Rule #107: has_myocardial_injury==True AND rr_volatility: [3.12:3.89[
+  WRAcc=0.0071  Lift=1.29x  Coverage=58 (4.9%)  Target%=65.5%  Baseline%=51.0%
+Rule #108: is_malnourished_proxy==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0070  Lift=1.26x  Coverage=64 (5.4%)  Target%=64.1%  Baseline%=51.0%
+Rule #109: is_on_ventilator==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0070  Lift=1.25x  Coverage=66 (5.5%)  Target%=63.6%  Baseline%=51.0%
+Rule #110: aki_severity_stage=='Stage_3' AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0070  Lift=1.71x  Coverage=23 (1.9%)  Target%=87.0%  Baseline%=51.0%
+Rule #111: has_any_aki==True AND shock_index: [0.57:0.68[
+  WRAcc=0.0069  Lift=1.21x  Coverage=76 (6.4%)  Target%=61.8%  Baseline%=51.0%
+Rule #112: gcs_level=='Mild_Moderate_Impairment' AND has_any_aki==True
+  WRAcc=0.0069  Lift=1.21x  Coverage=78 (6.5%)  Target%=61.5%  Baseline%=51.0%
+Rule #113: anemia_severity=='Mild' AND map_volatility: [8.06:9.60[
+  WRAcc=0.0068  Lift=1.11x  Coverage=141 (11.8%)  Target%=56.7%  Baseline%=51.0%
+Rule #114: has_severe_aki==True AND hemodynamic_state=='Hypertension_Stage2'
+  WRAcc=0.0068  Lift=1.41x  Coverage=39 (3.3%)  Target%=71.8%  Baseline%=51.0%
+Rule #115: gcs_level=='Mild_Moderate_Impairment' AND has_sirs==True
+  WRAcc=0.0068  Lift=1.17x  Coverage=92 (7.7%)  Target%=59.8%  Baseline%=51.0%
+Rule #116: aki_severity_stage=='Stage_2' AND organ_dysfunction_score: [2:3[
+  WRAcc=0.0067  Lift=1.30x  Coverage=53 (4.5%)  Target%=66.0%  Baseline%=51.0%
+Rule #117: anemia_severity=='Moderate' AND has_myocardial_injury==True
+  WRAcc=0.0067  Lift=1.15x  Coverage=106 (8.9%)  Target%=58.5%  Baseline%=51.0%
+Rule #118: has_any_aki==True AND map_volatility: [9.60:11.99[
+  WRAcc=0.0065  Lift=1.21x  Coverage=73 (6.1%)  Target%=61.6%  Baseline%=51.0%
+Rule #119: has_any_aki==True AND shock_index: [0.76:0.91[
+  WRAcc=0.0065  Lift=1.21x  Coverage=73 (6.1%)  Target%=61.6%  Baseline%=51.0%
+Rule #120: acid_base_state=='Acidemia' AND aki_severity_stage=='Stage_2'
+  WRAcc=0.0065  Lift=1.58x  Coverage=26 (2.2%)  Target%=80.8%  Baseline%=51.0%
+Rule #121: map_volatility: [6.57:8.06[ AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0065  Lift=1.19x  Coverage=81 (6.8%)  Target%=60.5%  Baseline%=51.0%
+Rule #122: has_severe_aki==True AND sirs_wbc_criterion==True
+  WRAcc=0.0065  Lift=1.19x  Coverage=81 (6.8%)  Target%=60.5%  Baseline%=51.0%
+Rule #123: aki_severity_stage=='Stage_1' AND anemia_severity=='Moderate'
+  WRAcc=0.0065  Lift=1.19x  Coverage=81 (6.8%)  Target%=60.5%  Baseline%=51.0%
+Rule #124: aki_severity_stage=='Stage_2' AND hr_volatility: [4.83:6.43[
+  WRAcc=0.0065  Lift=1.50x  Coverage=30 (2.5%)  Target%=76.7%  Baseline%=51.0%
+Rule #125: data_density_score: [5.47:5.61[ AND has_hypercapnic_failure==True
+  WRAcc=0.0065  Lift=1.47x  Coverage=32 (2.7%)  Target%=75.0%  Baseline%=51.0%
+Rule #126: data_density_score: [5.47:5.61[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0064  Lift=1.44x  Coverage=34 (2.9%)  Target%=73.5%  Baseline%=51.0%
+Rule #127: acid_base_state=='Acidemia' AND shock_index: [0.68:0.76[
+  WRAcc=0.0064  Lift=1.44x  Coverage=34 (2.9%)  Target%=73.5%  Baseline%=51.0%
+Rule #128: hr_volatility: [4.83:6.43[ AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0064  Lift=1.34x  Coverage=44 (3.7%)  Target%=68.2%  Baseline%=51.0%
+Rule #129: data_density_score: [5.61:5.74[ AND gcs_level=='Mild_Moderate_Impairment'
+  WRAcc=0.0063  Lift=1.31x  Coverage=48 (4.0%)  Target%=66.7%  Baseline%=51.0%
+Rule #130: hr_volatility: [4.83:6.43[ AND organ_dysfunction_score: [2:3[
+  WRAcc=0.0063  Lift=1.28x  Coverage=52 (4.4%)  Target%=65.4%  Baseline%=51.0%
+Rule #131: anemia_severity=='Mild' AND gcs_level=='Mild_Moderate_Impairment'
+  WRAcc=0.0063  Lift=1.14x  Coverage=105 (8.8%)  Target%=58.1%  Baseline%=51.0%
+Rule #132: aki_severity_stage=='Stage_2' AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0062  Lift=1.25x  Coverage=58 (4.9%)  Target%=63.8%  Baseline%=51.0%
+Rule #133: has_anticoagulation_derangement==True AND map_volatility: [6.57:8.06[
+  WRAcc=0.0062  Lift=1.09x  Coverage=164 (13.8%)  Target%=55.5%  Baseline%=51.0%
+Rule #134: has_anticoagulation_derangement==True AND has_hypercapnic_failure==True
+  WRAcc=0.0062  Lift=1.13x  Coverage=113 (9.5%)  Target%=57.5%  Baseline%=51.0%
+Rule #135: gcs_level=='Mild_Moderate_Impairment' AND sirs_rr_criterion==True
+  WRAcc=0.0062  Lift=1.23x  Coverage=62 (5.2%)  Target%=62.9%  Baseline%=51.0%
+Rule #136: aki_severity_stage=='Stage_2' AND shock_index: [0.68:0.76[
+  WRAcc=0.0061  Lift=1.62x  Coverage=23 (1.9%)  Target%=82.6%  Baseline%=51.0%
+Rule #137: aki_severity_stage=='Stage_2' AND bun_creatinine_ratio: [13.64:17.50[
+  WRAcc=0.0061  Lift=1.62x  Coverage=23 (1.9%)  Target%=82.6%  Baseline%=51.0%
+Rule #138: aki_severity_stage=='Stage_3' AND has_sirs==True
+  WRAcc=0.0061  Lift=1.57x  Coverage=25 (2.1%)  Target%=80.0%  Baseline%=51.0%
+Rule #139: organ_dysfunction_score: [1:2[ AND shock_index: [0.68:0.76[
+  WRAcc=0.0060  Lift=1.17x  Coverage=84 (7.1%)  Target%=59.5%  Baseline%=51.0%
+Rule #140: has_any_aki==True AND map_volatility: [6.57:8.06[
+  WRAcc=0.0060  Lift=1.17x  Coverage=84 (7.1%)  Target%=59.5%  Baseline%=51.0%
+Rule #141: sbp_volatility: [8.88:11.29[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0060  Lift=1.43x  Coverage=33 (2.8%)  Target%=72.7%  Baseline%=51.0%
+Rule #142: has_anticoagulation_derangement==True AND potassium_state=='Hyperkalemia'
+  WRAcc=0.0060  Lift=1.43x  Coverage=33 (2.8%)  Target%=72.7%  Baseline%=51.0%
+Rule #143: bun_creatinine_ratio: [17.50:21.49[ AND has_hypercapnic_failure==True
+  WRAcc=0.0060  Lift=1.43x  Coverage=33 (2.8%)  Target%=72.7%  Baseline%=51.0%
+Rule #144: has_severe_aki==True AND is_malnourished_proxy==True
+  WRAcc=0.0060  Lift=1.16x  Coverage=88 (7.4%)  Target%=59.1%  Baseline%=51.0%
+Rule #145: has_severe_aki==True AND shock_index: [0.57:0.68[
+  WRAcc=0.0060  Lift=1.38x  Coverage=37 (3.1%)  Target%=70.3%  Baseline%=51.0%
+Rule #146: has_any_aki==True AND hemodynamic_state=='Hypotension'
+  WRAcc=0.0060  Lift=1.36x  Coverage=39 (3.3%)  Target%=69.2%  Baseline%=51.0%
+Rule #147: aki_severity_stage=='Stage_1' AND has_hypercapnic_failure==True
+  WRAcc=0.0060  Lift=1.36x  Coverage=39 (3.3%)  Target%=69.2%  Baseline%=51.0%
+Rule #148: bun_creatinine_ratio: [21.49:27.50[ AND has_any_aki==True
+  WRAcc=0.0060  Lift=1.15x  Coverage=92 (7.7%)  Target%=58.7%  Baseline%=51.0%
+Rule #149: has_hypercapnic_failure==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0060  Lift=1.34x  Coverage=41 (3.4%)  Target%=68.3%  Baseline%=51.0%
+Rule #150: bun_creatinine_ratio: [17.50:21.49[ AND map_volatility: [8.06:9.60[
+  WRAcc=0.0060  Lift=1.34x  Coverage=41 (3.4%)  Target%=68.3%  Baseline%=51.0%
+Rule #151: aki_severity_stage=='Stage_1' AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0059  Lift=1.32x  Coverage=43 (3.6%)  Target%=67.4%  Baseline%=51.0%
+Rule #152: has_myocardial_injury==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0059  Lift=1.31x  Coverage=45 (3.8%)  Target%=66.7%  Baseline%=51.0%
+Rule #153: hr_volatility: [6.43:8.02[ AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0059  Lift=1.26x  Coverage=53 (4.5%)  Target%=64.2%  Baseline%=51.0%
+Rule #154: has_hypercapnic_failure==True AND is_malnourished_proxy==True
+  WRAcc=0.0059  Lift=1.26x  Coverage=53 (4.5%)  Target%=64.2%  Baseline%=51.0%
+Rule #155: liver_dysfunction_type=='Synthetic_Dysfunction' AND sodium_state=='Hyponatremia'
+  WRAcc=0.0058  Lift=1.23x  Coverage=59 (5.0%)  Target%=62.7%  Baseline%=51.0%
+Rule #156: has_any_aki==True AND sirs_wbc_criterion==True
+  WRAcc=0.0058  Lift=1.08x  Coverage=169 (14.2%)  Target%=55.0%  Baseline%=51.0%
+Rule #157: liver_dysfunction_type=='Synthetic_Dysfunction' AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0058  Lift=1.20x  Coverage=67 (5.6%)  Target%=61.2%  Baseline%=51.0%
+Rule #158: hr_volatility: [4.83:6.43[ AND is_malnourished_proxy==True
+  WRAcc=0.0058  Lift=1.20x  Coverage=67 (5.6%)  Target%=61.2%  Baseline%=51.0%
+Rule #159: has_invasive_hemo_monitoring==True AND shock_index: [0.68:0.76[
+  WRAcc=0.0058  Lift=1.20x  Coverage=67 (5.6%)  Target%=61.2%  Baseline%=51.0%
+Rule #160: aki_severity_stage=='Stage_3' AND shock_index: [0.68:0.76[
+  WRAcc=0.0057  Lift=1.74x  Coverage=18 (1.5%)  Target%=88.9%  Baseline%=51.0%
+Rule #161: aki_severity_stage=='Stage_3' AND sirs_rr_criterion==True
+  WRAcc=0.0057  Lift=1.67x  Coverage=20 (1.7%)  Target%=85.0%  Baseline%=51.0%
+Rule #162: anemia_severity=='Mild' AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0057  Lift=1.07x  Coverage=179 (15.0%)  Target%=54.7%  Baseline%=51.0%
+Rule #163: anemia_severity=='Mild' AND potassium_state=='Hyperkalemia'
+  WRAcc=0.0057  Lift=1.51x  Coverage=26 (2.2%)  Target%=76.9%  Baseline%=51.0%
+Rule #164: aki_severity_stage=='Stage_2' AND shock_index: [0.57:0.68[
+  WRAcc=0.0057  Lift=1.51x  Coverage=26 (2.2%)  Target%=76.9%  Baseline%=51.0%
+Rule #165: has_any_aki==True AND potassium_state=='Hyperkalemia'
+  WRAcc=0.0057  Lift=1.47x  Coverage=28 (2.4%)  Target%=75.0%  Baseline%=51.0%
+Rule #166: is_on_ventilator==True AND map_volatility: [8.06:9.60[
+  WRAcc=0.0056  Lift=1.16x  Coverage=81 (6.8%)  Target%=59.3%  Baseline%=51.0%
+Rule #167: data_density_score: [5.47:5.61[ AND has_hypomagnesemia==True
+  WRAcc=0.0056  Lift=1.41x  Coverage=32 (2.7%)  Target%=71.9%  Baseline%=51.0%
+Rule #168: has_severe_aki==True AND rr_volatility: [2.53:3.12[
+  WRAcc=0.0056  Lift=1.41x  Coverage=32 (2.7%)  Target%=71.9%  Baseline%=51.0%
+Rule #169: rr_volatility: [3.12:3.89[ AND sodium_state=='Hyponatremia'
+  WRAcc=0.0056  Lift=1.39x  Coverage=34 (2.9%)  Target%=70.6%  Baseline%=51.0%
+Rule #170: hemodynamic_state=='Hypertension_Stage1' AND map_volatility: [8.06:9.60[
+  WRAcc=0.0056  Lift=1.36x  Coverage=36 (3.0%)  Target%=69.4%  Baseline%=51.0%
+Rule #171: hemodynamic_state=='Hypertension_Stage2' AND map_volatility: [8.06:9.60[
+  WRAcc=0.0056  Lift=1.34x  Coverage=38 (3.2%)  Target%=68.4%  Baseline%=51.0%
+Rule #172: gcs_level=='Mild_Moderate_Impairment' AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0056  Lift=1.32x  Coverage=40 (3.4%)  Target%=67.5%  Baseline%=51.0%
+Rule #173: anemia_severity=='Mild' AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0055  Lift=1.09x  Coverage=144 (12.1%)  Target%=55.6%  Baseline%=51.0%
+Rule #174: aki_severity_stage=='Stage_1' AND shock_index: [0.76:0.91[
+  WRAcc=0.0055  Lift=1.31x  Coverage=42 (3.5%)  Target%=66.7%  Baseline%=51.0%
+Rule #175: map_volatility: [8.06:9.60[ AND sirs_hr_criterion==True
+  WRAcc=0.0055  Lift=1.14x  Coverage=95 (8.0%)  Target%=57.9%  Baseline%=51.0%
+Rule #176: aki_severity_stage=='Stage_1' AND rr_volatility: [2.53:3.12[
+  WRAcc=0.0055  Lift=1.29x  Coverage=44 (3.7%)  Target%=65.9%  Baseline%=51.0%
+Rule #177: anemia_severity=='Moderate'
+  WRAcc=0.0055  Lift=1.03x  Coverage=407 (34.2%)  Target%=52.6%  Baseline%=51.0%
+Rule #178: has_hypercapnic_failure==True AND has_myocardial_injury==True
+  WRAcc=0.0055  Lift=1.28x  Coverage=46 (3.9%)  Target%=65.2%  Baseline%=51.0%
+Rule #179: has_any_aki==True AND sodium_state=='Hyponatremia'
+  WRAcc=0.0054  Lift=1.23x  Coverage=56 (4.7%)  Target%=62.5%  Baseline%=51.0%
+Rule #180: data_density_score: [5.47:5.61[ AND has_myocardial_injury==True
+  WRAcc=0.0054  Lift=1.21x  Coverage=60 (5.0%)  Target%=61.7%  Baseline%=51.0%
+Rule #181: has_anticoagulation_derangement==True AND map_volatility: [8.06:9.60[
+  WRAcc=0.0054  Lift=1.08x  Coverage=164 (13.8%)  Target%=54.9%  Baseline%=51.0%
+Rule #182: has_invasive_hemo_monitoring==True AND has_severe_aki==True
+  WRAcc=0.0054  Lift=1.20x  Coverage=64 (5.4%)  Target%=60.9%  Baseline%=51.0%
+Rule #183: has_metabolic_acidosis==True AND shock_index: [0.68:0.76[
+  WRAcc=0.0053  Lift=1.73x  Coverage=17 (1.4%)  Target%=88.2%  Baseline%=51.0%
+Rule #184: anemia_severity=='Mild' AND rr_volatility: [3.12:3.89[
+  WRAcc=0.0053  Lift=1.10x  Coverage=121 (10.2%)  Target%=56.2%  Baseline%=51.0%
+Rule #185: liver_dysfunction_type=='Synthetic_Dysfunction' AND rr_volatility: [3.12:3.89[
+  WRAcc=0.0053  Lift=1.18x  Coverage=70 (5.9%)  Target%=60.0%  Baseline%=51.0%
+Rule #186: anemia_severity=='Moderate' AND shock_index: [0.57:0.68[
+  WRAcc=0.0053  Lift=1.18x  Coverage=70 (5.9%)  Target%=60.0%  Baseline%=51.0%
+Rule #187: has_neutrophilia==True AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0053  Lift=1.10x  Coverage=123 (10.3%)  Target%=56.1%  Baseline%=51.0%
+Rule #188: organ_dysfunction_score: [0:1[ AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0053  Lift=1.17x  Coverage=72 (6.0%)  Target%=59.7%  Baseline%=51.0%
+Rule #189: anemia_severity=='Moderate' AND has_hypercapnic_failure==True
+  WRAcc=0.0053  Lift=1.17x  Coverage=72 (6.0%)  Target%=59.7%  Baseline%=51.0%
+Rule #190: gcs_level=='Mild_Moderate_Impairment' AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0053  Lift=1.17x  Coverage=74 (6.2%)  Target%=59.5%  Baseline%=51.0%
+Rule #191: aki_severity_stage=='Stage_2' AND sbp_volatility: [8.88:11.29[
+  WRAcc=0.0052  Lift=1.45x  Coverage=27 (2.3%)  Target%=74.1%  Baseline%=51.0%
+Rule #192: anemia_severity=='Mild' AND has_hypercapnic_failure==True
+  WRAcc=0.0052  Lift=1.15x  Coverage=80 (6.7%)  Target%=58.8%  Baseline%=51.0%
+
+================================================================================
+Battleground of the Survivors — NM advantage (is_SM_win=0)
+================================================================================
+Rule #1: has_neutrophilia==True AND is_on_ventilator==True
+  WRAcc=0.0315  Lift=1.36x  Coverage=213 (17.9%)  Target%=66.7%  Baseline%=49.0%
+Rule #2: has_neutrophilia==True
+  WRAcc=0.0299  Lift=1.11x  Coverage=682 (57.3%)  Target%=54.3%  Baseline%=49.0%
+Rule #3: has_neutrophilia==True AND sirs_wbc_criterion==True
+  WRAcc=0.0278  Lift=1.21x  Coverage=320 (26.9%)  Target%=59.4%  Baseline%=49.0%
+Rule #4: has_hypocalcemia_ionized==True AND has_neutrophilia==True
+  WRAcc=0.0276  Lift=1.23x  Coverage=294 (24.7%)  Target%=60.2%  Baseline%=49.0%
+Rule #5: has_anticoagulation_derangement==True AND has_neutrophilia==True
+  WRAcc=0.0216  Lift=1.11x  Coverage=494 (41.5%)  Target%=54.3%  Baseline%=49.0%
+Rule #6: has_invasive_hemo_monitoring==True AND has_neutrophilia==True
+  WRAcc=0.0186  Lift=1.26x  Coverage=173 (14.5%)  Target%=61.8%  Baseline%=49.0%
+Rule #7: has_hypophosphatemia==True AND has_neutrophilia==True
+  WRAcc=0.0181  Lift=1.39x  Coverage=113 (9.5%)  Target%=68.1%  Baseline%=49.0%
+Rule #8: has_hypophosphatemia==True
+  WRAcc=0.0181  Lift=1.27x  Coverage=164 (13.8%)  Target%=62.2%  Baseline%=49.0%
+Rule #9: has_hyperlactatemia==True AND has_neutrophilia==True
+  WRAcc=0.0173  Lift=1.25x  Coverage=166 (13.9%)  Target%=61.4%  Baseline%=49.0%
+Rule #10: data_density_score: [5.74:5.90[ AND has_neutrophilia==True
+  WRAcc=0.0170  Lift=1.31x  Coverage=134 (11.3%)  Target%=64.2%  Baseline%=49.0%
+Rule #11: has_anticoagulation_derangement==True AND has_hypophosphatemia==True
+  WRAcc=0.0161  Lift=1.34x  Coverage=116 (9.7%)  Target%=65.5%  Baseline%=49.0%
+Rule #12: has_myocardial_injury==True AND is_on_ventilator==True
+  WRAcc=0.0160  Lift=1.36x  Coverage=108 (9.1%)  Target%=66.7%  Baseline%=49.0%
+Rule #13: is_on_ventilator==True AND sirs_wbc_criterion==True
+  WRAcc=0.0159  Lift=1.19x  Coverage=198 (16.6%)  Target%=58.6%  Baseline%=49.0%
+Rule #14: sirs_wbc_criterion==True
+  WRAcc=0.0156  Lift=1.07x  Coverage=521 (43.7%)  Target%=52.6%  Baseline%=49.0%
+Rule #15: has_sirs==True AND sirs_wbc_criterion==True
+  WRAcc=0.0155  Lift=1.10x  Coverage=364 (30.6%)  Target%=54.1%  Baseline%=49.0%
+Rule #16: has_anticoagulation_derangement==True AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0153  Lift=1.21x  Coverage=175 (14.7%)  Target%=59.4%  Baseline%=49.0%
+Rule #17: has_anticoagulation_derangement==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0151  Lift=1.08x  Coverage=463 (38.9%)  Target%=52.9%  Baseline%=49.0%
+Rule #18: has_hyperlactatemia==True AND sirs_wbc_criterion==True
+  WRAcc=0.0150  Lift=1.26x  Coverage=139 (11.7%)  Target%=61.9%  Baseline%=49.0%
+Rule #19: has_neutrophilia==True AND hr_volatility: [8.02:10.60[
+  WRAcc=0.0149  Lift=1.28x  Coverage=131 (11.0%)  Target%=62.6%  Baseline%=49.0%
+Rule #20: has_neutrophilia==True AND has_sirs==True
+  WRAcc=0.0147  Lift=1.11x  Coverage=317 (26.6%)  Target%=54.6%  Baseline%=49.0%
+Rule #21: has_anticoagulation_derangement==True AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0143  Lift=1.11x  Coverage=320 (26.9%)  Target%=54.4%  Baseline%=49.0%
+Rule #22: is_on_ventilator==True
+  WRAcc=0.0142  Lift=1.09x  Coverage=400 (33.6%)  Target%=53.2%  Baseline%=49.0%
+Rule #23: has_anticoagulation_derangement==True AND sirs_wbc_criterion==True
+  WRAcc=0.0142  Lift=1.09x  Coverage=400 (33.6%)  Target%=53.2%  Baseline%=49.0%
+Rule #24: has_neutrophilia==True AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0130  Lift=1.12x  Coverage=252 (21.2%)  Target%=55.2%  Baseline%=49.0%
+Rule #25: has_neutrophilia==True AND map_volatility: [9.60:11.99[
+  WRAcc=0.0129  Lift=1.22x  Coverage=142 (11.9%)  Target%=59.9%  Baseline%=49.0%
+Rule #26: has_hypocalcemia_ionized==True AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0128  Lift=1.24x  Coverage=128 (10.7%)  Target%=60.9%  Baseline%=49.0%
+Rule #27: has_neutrophilia==True AND is_malnourished_proxy==True
+  WRAcc=0.0127  Lift=1.11x  Coverage=275 (23.1%)  Target%=54.5%  Baseline%=49.0%
+Rule #28: bun_creatinine_ratio: [21.49:27.50[ AND sirs_wbc_criterion==True
+  WRAcc=0.0127  Lift=1.27x  Coverage=116 (9.7%)  Target%=62.1%  Baseline%=49.0%
+Rule #29: has_hyperlactatemia==True
+  WRAcc=0.0126  Lift=1.12x  Coverage=263 (22.1%)  Target%=54.8%  Baseline%=49.0%
+Rule #30: has_myocardial_injury==True AND sirs_wbc_criterion==True
+  WRAcc=0.0121  Lift=1.21x  Coverage=142 (11.9%)  Target%=59.2%  Baseline%=49.0%
+Rule #31: has_hypocalcemia_ionized==True AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0120  Lift=1.10x  Coverage=293 (24.6%)  Target%=53.9%  Baseline%=49.0%
+Rule #32: has_hypophosphatemia==True AND sirs_rr_criterion==True
+  WRAcc=0.0119  Lift=1.42x  Coverage=69 (5.8%)  Target%=69.6%  Baseline%=49.0%
+Rule #33: has_anticoagulation_derangement==True AND is_on_ventilator==True
+  WRAcc=0.0117  Lift=1.09x  Coverage=304 (25.5%)  Target%=53.6%  Baseline%=49.0%
+Rule #34: has_hypophosphatemia==True AND is_malnourished_proxy==True
+  WRAcc=0.0115  Lift=1.40x  Coverage=70 (5.9%)  Target%=68.6%  Baseline%=49.0%
+Rule #35: liver_dysfunction_type=='Mild_Inflammation'
+  WRAcc=0.0114  Lift=1.48x  Coverage=58 (4.9%)  Target%=72.4%  Baseline%=49.0%
+Rule #36: has_high_peep_requirement==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0113  Lift=1.65x  Coverage=42 (3.5%)  Target%=81.0%  Baseline%=49.0%
+Rule #37: data_density_score: [5.74:5.90[
+  WRAcc=0.0112  Lift=1.11x  Coverage=240 (20.2%)  Target%=54.6%  Baseline%=49.0%
+Rule #38: has_neutrophilia==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0111  Lift=1.15x  Coverage=175 (14.7%)  Target%=56.6%  Baseline%=49.0%
+Rule #39: sirs_rr_criterion==True AND sirs_wbc_criterion==True
+  WRAcc=0.0110  Lift=1.12x  Coverage=214 (18.0%)  Target%=55.1%  Baseline%=49.0%
+Rule #40: gcs_level=='Severe_Impairment' AND has_neutrophilia==True
+  WRAcc=0.0109  Lift=1.56x  Coverage=47 (3.9%)  Target%=76.6%  Baseline%=49.0%
+Rule #41: has_invasive_hemo_monitoring==True AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0108  Lift=1.31x  Coverage=84 (7.1%)  Target%=64.3%  Baseline%=49.0%
+Rule #42: has_neutrophilia==True AND lactate_trend=='Went_Down'
+  WRAcc=0.0107  Lift=1.20x  Coverage=127 (10.7%)  Target%=59.1%  Baseline%=49.0%
+Rule #43: has_hypophosphatemia==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0106  Lift=1.41x  Coverage=62 (5.2%)  Target%=69.4%  Baseline%=49.0%
+Rule #44: has_invasive_hemo_monitoring==True AND has_myocardial_injury==True
+  WRAcc=0.0104  Lift=1.27x  Coverage=95 (8.0%)  Target%=62.1%  Baseline%=49.0%
+Rule #45: anemia_severity=='Mild' AND has_neutrophilia==True
+  WRAcc=0.0104  Lift=1.07x  Coverage=348 (29.2%)  Target%=52.6%  Baseline%=49.0%
+Rule #46: has_myocardial_injury==True AND has_sirs==True
+  WRAcc=0.0104  Lift=1.18x  Coverage=138 (11.6%)  Target%=58.0%  Baseline%=49.0%
+Rule #47: has_hypocalcemia_ionized==True AND sirs_wbc_criterion==True
+  WRAcc=0.0104  Lift=1.09x  Coverage=293 (24.6%)  Target%=53.2%  Baseline%=49.0%
+Rule #48: has_sirs==True AND is_on_ventilator==True
+  WRAcc=0.0103  Lift=1.13x  Coverage=189 (15.9%)  Target%=55.6%  Baseline%=49.0%
+Rule #49: has_neutrophilia==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0103  Lift=1.11x  Coverage=238 (20.0%)  Target%=54.2%  Baseline%=49.0%
+Rule #50: has_hypocalcemia_ionized==True AND has_hypophosphatemia==True
+  WRAcc=0.0102  Lift=1.34x  Coverage=73 (6.1%)  Target%=65.8%  Baseline%=49.0%
+Rule #51: data_density_score: [5.74:5.90[ AND has_hypocalcemia_ionized==True
+  WRAcc=0.0102  Lift=1.14x  Coverage=175 (14.7%)  Target%=56.0%  Baseline%=49.0%
+Rule #52: is_malnourished_proxy==True AND is_on_ventilator==True
+  WRAcc=0.0101  Lift=1.16x  Coverage=155 (13.0%)  Target%=56.8%  Baseline%=49.0%
+Rule #53: has_neutrophilia==True AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0100  Lift=1.17x  Coverage=145 (12.2%)  Target%=57.2%  Baseline%=49.0%
+Rule #54: has_neutrophilia==True AND rr_volatility: [3.89:4.91[
+  WRAcc=0.0099  Lift=1.18x  Coverage=135 (11.3%)  Target%=57.8%  Baseline%=49.0%
+Rule #55: has_anticoagulation_derangement==True AND has_sirs==True
+  WRAcc=0.0098  Lift=1.06x  Coverage=384 (32.2%)  Target%=52.1%  Baseline%=49.0%
+Rule #56: has_neutrophilia==True AND sirs_rr_criterion==True
+  WRAcc=0.0098  Lift=1.09x  Coverage=274 (23.0%)  Target%=53.3%  Baseline%=49.0%
+Rule #57: anemia_severity=='Mild' AND data_density_score: [5.74:5.90[
+  WRAcc=0.0097  Lift=1.21x  Coverage=115 (9.7%)  Target%=59.1%  Baseline%=49.0%
+Rule #58: organ_dysfunction_score: [0:1[ AND rr_volatility: [2.53:3.12[
+  WRAcc=0.0096  Lift=1.23x  Coverage=101 (8.5%)  Target%=60.4%  Baseline%=49.0%
+Rule #59: has_invasive_hemo_monitoring==True AND sirs_wbc_criterion==True
+  WRAcc=0.0096  Lift=1.12x  Coverage=195 (16.4%)  Target%=54.9%  Baseline%=49.0%
+Rule #60: has_hypocalcemia_ionized==True
+  WRAcc=0.0095  Lift=1.04x  Coverage=607 (51.0%)  Target%=50.9%  Baseline%=49.0%
+Rule #61: has_sirs==True
+  WRAcc=0.0095  Lift=1.05x  Coverage=503 (42.2%)  Target%=51.3%  Baseline%=49.0%
+Rule #62: has_hypophosphatemia==True AND has_sirs==True
+  WRAcc=0.0095  Lift=1.29x  Coverage=79 (6.6%)  Target%=63.3%  Baseline%=49.0%
+Rule #63: has_neutrophilia==True AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0094  Lift=1.18x  Coverage=128 (10.7%)  Target%=57.8%  Baseline%=49.0%
+Rule #64: is_on_ventilator==True AND shock_index: [0.57:0.68[
+  WRAcc=0.0094  Lift=1.31x  Coverage=75 (6.3%)  Target%=64.0%  Baseline%=49.0%
+Rule #65: sirs_hr_criterion==True AND sirs_wbc_criterion==True
+  WRAcc=0.0094  Lift=1.10x  Coverage=226 (19.0%)  Target%=54.0%  Baseline%=49.0%
+Rule #66: data_density_score: [5.74:5.90[ AND has_anticoagulation_derangement==True
+  WRAcc=0.0094  Lift=1.13x  Coverage=173 (14.5%)  Target%=55.5%  Baseline%=49.0%
+Rule #67: has_hypocalcemia_ionized==True AND has_sirs==True
+  WRAcc=0.0094  Lift=1.08x  Coverage=273 (22.9%)  Target%=53.1%  Baseline%=49.0%
+Rule #68: bun_creatinine_ratio: [21.49:27.50[ AND has_hypocalcemia_ionized==True
+  WRAcc=0.0093  Lift=1.20x  Coverage=116 (9.7%)  Target%=58.6%  Baseline%=49.0%
+Rule #69: has_invasive_hemo_monitoring==True AND is_on_ventilator==True
+  WRAcc=0.0093  Lift=1.11x  Coverage=210 (17.6%)  Target%=54.3%  Baseline%=49.0%
+Rule #70: has_neutrophilia==True AND respiratory_rate_state=='Bradypnea'
+  WRAcc=0.0092  Lift=1.46x  Coverage=49 (4.1%)  Target%=71.4%  Baseline%=49.0%
+Rule #71: anion_gap_corrected: [13.00:15.0[ AND sirs_hr_criterion==True
+  WRAcc=0.0091  Lift=1.54x  Coverage=41 (3.4%)  Target%=75.6%  Baseline%=49.0%
+Rule #72: is_on_ventilator==True AND sirs_rr_criterion==True
+  WRAcc=0.0091  Lift=1.16x  Coverage=143 (12.0%)  Target%=56.6%  Baseline%=49.0%
+Rule #73: has_invasive_hemo_monitoring==True AND sirs_rr_criterion==True
+  WRAcc=0.0091  Lift=1.16x  Coverage=135 (11.3%)  Target%=57.0%  Baseline%=49.0%
+Rule #74: has_high_peep_requirement==True AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0090  Lift=1.81x  Coverage=27 (2.3%)  Target%=88.9%  Baseline%=49.0%
+Rule #75: has_neutrophilia==True AND sirs_hr_criterion==True
+  WRAcc=0.0090  Lift=1.08x  Coverage=280 (23.5%)  Target%=52.9%  Baseline%=49.0%
+Rule #76: has_anticoagulation_derangement==True AND map_volatility: [9.60:11.99[
+  WRAcc=0.0090  Lift=1.12x  Coverage=176 (14.8%)  Target%=55.1%  Baseline%=49.0%
+Rule #77: has_anticoagulation_derangement==True AND sirs_rr_criterion==True
+  WRAcc=0.0089  Lift=1.07x  Coverage=325 (27.3%)  Target%=52.3%  Baseline%=49.0%
+Rule #78: is_on_ventilator==True AND respiratory_rate_state=='Tachypnea'
+  WRAcc=0.0089  Lift=1.37x  Coverage=58 (4.9%)  Target%=67.2%  Baseline%=49.0%
+Rule #79: bun_creatinine_ratio: [21.49:27.50[ AND has_hyperlactatemia==True
+  WRAcc=0.0089  Lift=1.38x  Coverage=56 (4.7%)  Target%=67.9%  Baseline%=49.0%
+Rule #80: hr_volatility: [6.43:8.02[ AND sirs_wbc_criterion==True
+  WRAcc=0.0088  Lift=1.20x  Coverage=107 (9.0%)  Target%=58.9%  Baseline%=49.0%
+Rule #81: has_invasive_hemo_monitoring==True AND respiratory_rate_state=='Tachypnea'
+  WRAcc=0.0088  Lift=1.41x  Coverage=52 (4.4%)  Target%=69.2%  Baseline%=49.0%
+Rule #82: data_density_score: [5.74:5.90[ AND has_hypophosphatemia==True
+  WRAcc=0.0088  Lift=1.44x  Coverage=48 (4.0%)  Target%=70.8%  Baseline%=49.0%
+Rule #83: has_anticoagulation_derangement==True AND shock_severity=='Hyperlactatemia'
+  WRAcc=0.0087  Lift=1.11x  Coverage=193 (16.2%)  Target%=54.4%  Baseline%=49.0%
+Rule #84: is_on_ventilator==True AND map_volatility: [9.60:11.99[
+  WRAcc=0.0086  Lift=1.25x  Coverage=83 (7.0%)  Target%=61.4%  Baseline%=49.0%
+Rule #85: rr_volatility: [2.53:3.12[
+  WRAcc=0.0086  Lift=1.09x  Coverage=238 (20.0%)  Target%=53.4%  Baseline%=49.0%
+Rule #86: has_neutrophilia==True AND shock_index: [0.57:0.68[
+  WRAcc=0.0086  Lift=1.16x  Coverage=134 (11.3%)  Target%=56.7%  Baseline%=49.0%
+Rule #87: has_high_peep_requirement==True AND has_myocardial_injury==True
+  WRAcc=0.0086  Lift=1.80x  Coverage=26 (2.2%)  Target%=88.5%  Baseline%=49.0%
+Rule #88: rr_volatility: [2.53:3.12[ AND sirs_hr_criterion==True
+  WRAcc=0.0086  Lift=1.27x  Coverage=77 (6.5%)  Target%=62.3%  Baseline%=49.0%
+Rule #89: has_hypophosphatemia==True AND sirs_hr_criterion==True
+  WRAcc=0.0086  Lift=1.27x  Coverage=77 (6.5%)  Target%=62.3%  Baseline%=49.0%
+Rule #90: has_sirs==True AND sirs_rr_criterion==True
+  WRAcc=0.0086  Lift=1.06x  Coverage=332 (27.9%)  Target%=52.1%  Baseline%=49.0%
+Rule #91: has_invasive_hemo_monitoring==True AND has_sirs==True
+  WRAcc=0.0085  Lift=1.12x  Coverage=173 (14.5%)  Target%=54.9%  Baseline%=49.0%
+Rule #92: has_myocardial_injury==True AND rr_volatility: [3.89:4.91[
+  WRAcc=0.0085  Lift=1.30x  Coverage=69 (5.8%)  Target%=63.8%  Baseline%=49.0%
+Rule #93: has_myocardial_injury==True AND has_neutrophilia==True
+  WRAcc=0.0085  Lift=1.09x  Coverage=224 (18.8%)  Target%=53.6%  Baseline%=49.0%
+Rule #94: has_hypocalcemia_ionized==True AND map_volatility: [9.60:11.99[
+  WRAcc=0.0085  Lift=1.18x  Coverage=116 (9.7%)  Target%=57.8%  Baseline%=49.0%
+Rule #95: bun_creatinine_ratio: [21.49:27.50[ AND has_sirs==True
+  WRAcc=0.0084  Lift=1.19x  Coverage=110 (9.2%)  Target%=58.2%  Baseline%=49.0%
+Rule #96: has_hypophosphatemia==True AND is_on_ventilator==True
+  WRAcc=0.0084  Lift=1.37x  Coverage=55 (4.6%)  Target%=67.3%  Baseline%=49.0%
+Rule #97: has_hyperlactatemia==True AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0084  Lift=1.39x  Coverage=53 (4.5%)  Target%=67.9%  Baseline%=49.0%
+Rule #98: anemia_severity=='Moderate' AND has_hypophosphatemia==True
+  WRAcc=0.0084  Lift=1.40x  Coverage=51 (4.3%)  Target%=68.6%  Baseline%=49.0%
+Rule #99: has_neutrophilia==True AND rr_volatility: [2.53:3.12[
+  WRAcc=0.0083  Lift=1.14x  Coverage=145 (12.2%)  Target%=55.9%  Baseline%=49.0%
+Rule #100: has_high_peep_requirement==True AND has_neutrophilia==True
+  WRAcc=0.0082  Lift=1.64x  Coverage=31 (2.6%)  Target%=80.6%  Baseline%=49.0%
+Rule #101: gcs_level=='Severe_Impairment' AND sirs_rr_criterion==True
+  WRAcc=0.0082  Lift=1.69x  Coverage=29 (2.4%)  Target%=82.8%  Baseline%=49.0%
+Rule #102: has_sirs==True AND liver_dysfunction_type=='Synthetic_Dysfunction'
+  WRAcc=0.0082  Lift=1.11x  Coverage=182 (15.3%)  Target%=54.4%  Baseline%=49.0%
+Rule #103: has_hyperlactatemia==True AND has_myocardial_injury==True
+  WRAcc=0.0082  Lift=1.26x  Coverage=76 (6.4%)  Target%=61.8%  Baseline%=49.0%
+Rule #104: anion_gap_corrected: [13.00:15.0[ AND heart_rate_state=='Tachycardia'
+  WRAcc=0.0082  Lift=1.86x  Coverage=23 (1.9%)  Target%=91.3%  Baseline%=49.0%
+Rule #105: has_anticoagulation_derangement==True
+  WRAcc=0.0081  Lift=1.02x  Coverage=845 (70.9%)  Target%=50.2%  Baseline%=49.0%
+Rule #106: anemia_severity=='Moderate' AND sirs_wbc_criterion==True
+  WRAcc=0.0081  Lift=1.12x  Coverage=170 (14.3%)  Target%=54.7%  Baseline%=49.0%
+Rule #107: data_density_score: [5.61:5.74[ AND sirs_wbc_criterion==True
+  WRAcc=0.0080  Lift=1.18x  Coverage=109 (9.2%)  Target%=57.8%  Baseline%=49.0%
+Rule #108: is_on_ventilator==True AND potassium_state=='Hypokalemia'
+  WRAcc=0.0080  Lift=1.35x  Coverage=56 (4.7%)  Target%=66.1%  Baseline%=49.0%
+Rule #109: data_density_score: [5.74:5.90[ AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0080  Lift=1.19x  Coverage=101 (8.5%)  Target%=58.4%  Baseline%=49.0%
+Rule #110: is_on_ventilator==True AND organ_dysfunction_score: [1:2[
+  WRAcc=0.0079  Lift=1.13x  Coverage=150 (12.6%)  Target%=55.3%  Baseline%=49.0%
+Rule #111: data_density_score: [5.74:5.90[ AND shock_index: [0.57:0.68[
+  WRAcc=0.0079  Lift=1.44x  Coverage=44 (3.7%)  Target%=70.5%  Baseline%=49.0%
+Rule #112: data_density_score: [5.74:5.90[ AND hemodynamic_state=='Hypertension_Stage2'
+  WRAcc=0.0079  Lift=1.44x  Coverage=44 (3.7%)  Target%=70.5%  Baseline%=49.0%
+Rule #113: organ_dysfunction_score: [0:1[ AND shock_index: [0.57:0.68[
+  WRAcc=0.0079  Lift=1.21x  Coverage=91 (7.6%)  Target%=59.3%  Baseline%=49.0%
+Rule #114: has_hyperlactatemia==True AND has_sirs==True
+  WRAcc=0.0079  Lift=1.13x  Coverage=142 (11.9%)  Target%=55.6%  Baseline%=49.0%
+Rule #115: bun_creatinine_ratio: [21.49:27.50[ AND has_neutrophilia==True
+  WRAcc=0.0079  Lift=1.14x  Coverage=140 (11.8%)  Target%=55.7%  Baseline%=49.0%
+Rule #116: acid_base_state=='Acidemia' AND is_on_ventilator==True
+  WRAcc=0.0078  Lift=1.22x  Coverage=85 (7.1%)  Target%=60.0%  Baseline%=49.0%
+Rule #117: data_density_score: [5.74:5.90[ AND is_on_ventilator==True
+  WRAcc=0.0078  Lift=1.14x  Coverage=136 (11.4%)  Target%=55.9%  Baseline%=49.0%
+Rule #118: has_neutrophilia==True AND sbp_volatility: [11.29:13.49[
+  WRAcc=0.0078  Lift=1.14x  Coverage=136 (11.4%)  Target%=55.9%  Baseline%=49.0%
+Rule #119: map_volatility: [9.60:11.99[
+  WRAcc=0.0078  Lift=1.08x  Coverage=238 (20.0%)  Target%=52.9%  Baseline%=49.0%
+Rule #120: hr_volatility: [8.02:10.60[
+  WRAcc=0.0078  Lift=1.08x  Coverage=238 (20.0%)  Target%=52.9%  Baseline%=49.0%
+Rule #121: hr_volatility: [6.43:8.02[
+  WRAcc=0.0078  Lift=1.08x  Coverage=238 (20.0%)  Target%=52.9%  Baseline%=49.0%
+Rule #122: bun_creatinine_ratio: [17.50:21.49[ AND has_hypophosphatemia==True
+  WRAcc=0.0078  Lift=1.63x  Coverage=30 (2.5%)  Target%=80.0%  Baseline%=49.0%
+Rule #123: has_hypophosphatemia==True AND sirs_wbc_criterion==True
+  WRAcc=0.0078  Lift=1.24x  Coverage=79 (6.6%)  Target%=60.8%  Baseline%=49.0%
+Rule #124: organ_dysfunction_score: [1:2[ AND shock_severity=='Hyperlactatemia'
+  WRAcc=0.0078  Lift=1.24x  Coverage=77 (6.5%)  Target%=61.0%  Baseline%=49.0%
+Rule #125: gcs_level=='Severe_Impairment'
+  WRAcc=0.0078  Lift=1.24x  Coverage=77 (6.5%)  Target%=61.0%  Baseline%=49.0%
+Rule #126: anion_gap_corrected: [13.00:15.0[ AND has_neutrophilia==True
+  WRAcc=0.0078  Lift=1.24x  Coverage=77 (6.5%)  Target%=61.0%  Baseline%=49.0%
+Rule #127: has_hyperlactatemia==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0077  Lift=1.26x  Coverage=73 (6.1%)  Target%=61.6%  Baseline%=49.0%
+Rule #128: has_hypocalcemia_ionized==True AND is_malnourished_proxy==True
+  WRAcc=0.0076  Lift=1.09x  Coverage=214 (18.0%)  Target%=53.3%  Baseline%=49.0%
+Rule #129: bun_creatinine_ratio: [13.64:17.50[ AND has_anticoagulation_derangement==True
+  WRAcc=0.0076  Lift=1.11x  Coverage=161 (13.5%)  Target%=54.7%  Baseline%=49.0%
+Rule #130: hr_volatility: [8.02:10.60[ AND sirs_wbc_criterion==True
+  WRAcc=0.0076  Lift=1.17x  Coverage=108 (9.1%)  Target%=57.4%  Baseline%=49.0%
+Rule #131: bun_creatinine_ratio: [13.64:17.50[ AND heart_rate_state=='Tachycardia'
+  WRAcc=0.0076  Lift=1.33x  Coverage=55 (4.6%)  Target%=65.5%  Baseline%=49.0%
+Rule #132: has_neutrophilia==True AND potassium_state=='Hypokalemia'
+  WRAcc=0.0076  Lift=1.18x  Coverage=104 (8.7%)  Target%=57.7%  Baseline%=49.0%
+Rule #133: data_density_score: [5.74:5.90[ AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0076  Lift=1.36x  Coverage=51 (4.3%)  Target%=66.7%  Baseline%=49.0%
+Rule #134: has_neutrophilia==True AND hemodynamic_state=='Severe_Hypotension'
+  WRAcc=0.0075  Lift=1.39x  Coverage=47 (3.9%)  Target%=68.1%  Baseline%=49.0%
+Rule #135: is_malnourished_proxy==True AND sirs_wbc_criterion==True
+  WRAcc=0.0075  Lift=1.09x  Coverage=198 (16.6%)  Target%=53.5%  Baseline%=49.0%
+Rule #136: has_hyperlactatemia==True AND has_hypocalcemia_ionized==True
+  WRAcc=0.0075  Lift=1.09x  Coverage=194 (16.3%)  Target%=53.6%  Baseline%=49.0%
+Rule #137: anemia_severity=='Moderate' AND has_invasive_hemo_monitoring==True
+  WRAcc=0.0074  Lift=1.13x  Coverage=139 (11.7%)  Target%=55.4%  Baseline%=49.0%
+Rule #138: has_sirs==True AND is_malnourished_proxy==True
+  WRAcc=0.0074  Lift=1.09x  Coverage=190 (16.0%)  Target%=53.7%  Baseline%=49.0%
+Rule #139: anemia_severity=='Moderate' AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0074  Lift=1.21x  Coverage=84 (7.1%)  Target%=59.5%  Baseline%=49.0%
+Rule #140: anemia_severity=='Moderate' AND has_neutrophilia==True
+  WRAcc=0.0074  Lift=1.08x  Coverage=239 (20.1%)  Target%=52.7%  Baseline%=49.0%
+Rule #141: has_invasive_hemo_monitoring==True AND sbp_volatility: [13.49:16.38[
+  WRAcc=0.0073  Lift=1.25x  Coverage=72 (6.0%)  Target%=61.1%  Baseline%=49.0%
+Rule #142: bun_creatinine_ratio: [21.49:27.50[ AND is_on_ventilator==True
+  WRAcc=0.0073  Lift=1.25x  Coverage=72 (6.0%)  Target%=61.1%  Baseline%=49.0%
+Rule #143: sirs_rr_criterion==True
+  WRAcc=0.0073  Lift=1.04x  Coverage=433 (36.4%)  Target%=51.0%  Baseline%=49.0%
+Rule #144: has_neutrophilia==True AND heart_rate_state=='Tachycardia'
+  WRAcc=0.0072  Lift=1.11x  Coverage=160 (13.4%)  Target%=54.4%  Baseline%=49.0%
+Rule #145: potassium_state=='Hypokalemia'
+  WRAcc=0.0072  Lift=1.11x  Coverage=158 (13.3%)  Target%=54.4%  Baseline%=49.0%
+Rule #146: has_anticoagulation_derangement==True AND shock_index: [0.57:0.68[
+  WRAcc=0.0072  Lift=1.11x  Coverage=158 (13.3%)  Target%=54.4%  Baseline%=49.0%
+Rule #147: bun_creatinine_ratio: [13.64:17.50[ AND sirs_wbc_criterion==True
+  WRAcc=0.0071  Lift=1.17x  Coverage=101 (8.5%)  Target%=57.4%  Baseline%=49.0%
+Rule #148: has_hypophosphatemia==True AND heart_rate_state=='Tachycardia'
+  WRAcc=0.0071  Lift=1.37x  Coverage=46 (3.9%)  Target%=67.4%  Baseline%=49.0%
+Rule #149: respiratory_rate_state=='Tachypnea'
+  WRAcc=0.0071  Lift=1.12x  Coverage=148 (12.4%)  Target%=54.7%  Baseline%=49.0%
+Rule #150: anion_gap_corrected: [13.00:15.0[ AND has_sirs==True
+  WRAcc=0.0071  Lift=1.41x  Coverage=42 (3.5%)  Target%=69.0%  Baseline%=49.0%
+Rule #151: data_density_score: [5.74:5.90[ AND is_malnourished_proxy==True
+  WRAcc=0.0071  Lift=1.18x  Coverage=93 (7.8%)  Target%=58.1%  Baseline%=49.0%
+Rule #152: liver_dysfunction_type=='Synthetic_Dysfunction' AND sirs_rr_criterion==True
+  WRAcc=0.0070  Lift=1.12x  Coverage=140 (11.8%)  Target%=55.0%  Baseline%=49.0%
+Rule #153: hr_volatility: [6.43:8.02[ AND is_on_ventilator==True
+  WRAcc=0.0070  Lift=1.20x  Coverage=83 (7.0%)  Target%=59.0%  Baseline%=49.0%
+Rule #154: has_myocardial_injury==True AND is_malnourished_proxy==True
+  WRAcc=0.0070  Lift=1.13x  Coverage=134 (11.3%)  Target%=55.2%  Baseline%=49.0%
+Rule #155: has_high_peep_requirement==True AND has_sirs==True
+  WRAcc=0.0069  Lift=1.60x  Coverage=28 (2.4%)  Target%=78.6%  Baseline%=49.0%
+Rule #156: glucose_state=='Hyperglycemia' AND potassium_state=='Hypokalemia'
+  WRAcc=0.0069  Lift=1.60x  Coverage=28 (2.4%)  Target%=78.6%  Baseline%=49.0%
+Rule #157: has_hypocalcemia_ionized==True AND respiratory_rate_state=='Tachypnea'
+  WRAcc=0.0069  Lift=1.21x  Coverage=79 (6.6%)  Target%=59.5%  Baseline%=49.0%
+Rule #158: has_hyperlactatemia==True AND is_on_ventilator==True
+  WRAcc=0.0069  Lift=1.14x  Coverage=122 (10.2%)  Target%=55.7%  Baseline%=49.0%
+Rule #159: bun_creatinine_ratio: [17.50:21.49[ AND has_neutrophilia==True
+  WRAcc=0.0069  Lift=1.14x  Coverage=122 (10.2%)  Target%=55.7%  Baseline%=49.0%
+Rule #160: has_anticoagulation_derangement==True AND lactate_trend=='Went_Down'
+  WRAcc=0.0068  Lift=1.10x  Coverage=169 (14.2%)  Target%=53.8%  Baseline%=49.0%
+Rule #161: has_hypocalcemia_ionized==True AND potassium_state=='Hypokalemia'
+  WRAcc=0.0068  Lift=1.26x  Coverage=65 (5.5%)  Target%=61.5%  Baseline%=49.0%
+Rule #162: potassium_state=='Hypokalemia' AND sirs_hr_criterion==True
+  WRAcc=0.0068  Lift=1.26x  Coverage=63 (5.3%)  Target%=61.9%  Baseline%=49.0%
+Rule #163: has_anticoagulation_derangement==True AND organ_dysfunction_score: [0:1[
+  WRAcc=0.0068  Lift=1.08x  Coverage=218 (18.3%)  Target%=52.8%  Baseline%=49.0%
+Rule #164: has_neutrophilia==True AND sirs_temp_criterion==True
+  WRAcc=0.0068  Lift=1.15x  Coverage=112 (9.4%)  Target%=56.2%  Baseline%=49.0%
+Rule #165: anion_gap_corrected: [13.00:15.0[
+  WRAcc=0.0068  Lift=1.15x  Coverage=110 (9.2%)  Target%=56.4%  Baseline%=49.0%
+Rule #166: has_anticoagulation_derangement==True AND potassium_state=='Hypokalemia'
+  WRAcc=0.0067  Lift=1.15x  Coverage=106 (8.9%)  Target%=56.6%  Baseline%=49.0%
+Rule #167: has_anticoagulation_derangement==True AND hemodynamic_state=='Hypertension_Stage1'
+  WRAcc=0.0067  Lift=1.15x  Coverage=106 (8.9%)  Target%=56.6%  Baseline%=49.0%
+Rule #168: bun_creatinine_ratio: [13.64:17.50[ AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0067  Lift=1.31x  Coverage=53 (4.5%)  Target%=64.2%  Baseline%=49.0%
+Rule #169: has_hyperlactatemia==True AND lactate_trend=='Went_Up'
+  WRAcc=0.0067  Lift=1.35x  Coverage=47 (3.9%)  Target%=66.0%  Baseline%=49.0%
+Rule #170: map_volatility: [9.60:11.99[ AND sirs_hr_criterion==True
+  WRAcc=0.0067  Lift=1.17x  Coverage=98 (8.2%)  Target%=57.1%  Baseline%=49.0%
+Rule #171: hr_volatility: [6.43:8.02[ AND sirs_hr_criterion==True
+  WRAcc=0.0067  Lift=1.17x  Coverage=98 (8.2%)  Target%=57.1%  Baseline%=49.0%
+Rule #172: has_neutrophilia==True AND respiratory_rate_state=='Tachypnea'
+  WRAcc=0.0067  Lift=1.17x  Coverage=98 (8.2%)  Target%=57.1%  Baseline%=49.0%
+Rule #173: has_hyperlactatemia==True AND has_hypophosphatemia==True
+  WRAcc=0.0066  Lift=1.39x  Coverage=41 (3.4%)  Target%=68.3%  Baseline%=49.0%
+Rule #174: has_hypophosphatemia==True AND hr_volatility: [6.43:8.02[
+  WRAcc=0.0066  Lift=1.46x  Coverage=35 (2.9%)  Target%=71.4%  Baseline%=49.0%
+Rule #175: respiratory_rate_state=='Bradypnea' AND sirs_wbc_criterion==True
+  WRAcc=0.0066  Lift=1.46x  Coverage=35 (2.9%)  Target%=71.4%  Baseline%=49.0%
+Rule #176: is_malnourished_proxy==True AND sirs_hr_criterion==True
+  WRAcc=0.0066  Lift=1.08x  Coverage=188 (15.8%)  Target%=53.2%  Baseline%=49.0%
+Rule #177: hemodynamic_state=='Hypotension' AND shock_severity=='Hyperlactatemia'
+  WRAcc=0.0065  Lift=1.51x  Coverage=31 (2.6%)  Target%=74.2%  Baseline%=49.0%
+Rule #178: shock_index: [0.68:0.76[ AND sirs_hr_criterion==True
+  WRAcc=0.0065  Lift=1.20x  Coverage=80 (6.7%)  Target%=58.8%  Baseline%=49.0%
+Rule #179: heart_rate_state=='Tachycardia' AND sirs_wbc_criterion==True
+  WRAcc=0.0065  Lift=1.12x  Coverage=131 (11.0%)  Target%=55.0%  Baseline%=49.0%
+Rule #180: respiratory_rate_state=='Tachypnea' AND sirs_wbc_criterion==True
+  WRAcc=0.0065  Lift=1.20x  Coverage=78 (6.5%)  Target%=59.0%  Baseline%=49.0%
+Rule #181: has_myocardial_injury==True AND leukocyte_state=='Leukocytosis'
+  WRAcc=0.0065  Lift=1.20x  Coverage=78 (6.5%)  Target%=59.0%  Baseline%=49.0%
+Rule #182: has_high_peep_requirement==True AND sirs_wbc_criterion==True
+  WRAcc=0.0065  Lift=1.68x  Coverage=23 (1.9%)  Target%=82.6%  Baseline%=49.0%
+Rule #183: has_neutrophilia==True AND map_volatility: [8.06:9.60[
+  WRAcc=0.0064  Lift=1.13x  Coverage=121 (10.2%)  Target%=55.4%  Baseline%=49.0%
+Rule #184: has_anticoagulation_derangement==True AND thrombocytopenia_severity=='Mild'
+  WRAcc=0.0064  Lift=1.09x  Coverage=170 (14.3%)  Target%=53.5%  Baseline%=49.0%
+Rule #185: has_hypocalcemia_ionized==True AND shock_index: [0.57:0.68[
+  WRAcc=0.0064  Lift=1.13x  Coverage=117 (9.8%)  Target%=55.6%  Baseline%=49.0%

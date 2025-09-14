@@ -64,13 +64,41 @@ def _load_config(config_file: str = None):
         return _Cfg()
 
 
+def _discover_final_subgroups(cfg, phase: str) -> str:
+    # Prefer root OUTPUT_DIR/final_subgroups.csv (aggregated from Phase IV)
+    if phase.lower() == 'iv':
+        root_path = os.path.join(cfg.OUTPUT_DIR, 'final_subgroups.csv')
+        if os.path.exists(root_path):
+            return root_path
+        phase_dir = os.path.join(cfg.OUTPUT_DIR, 'phase_iv')
+        filename = 'final_subgroups.csv'
+    elif phase.lower() == 'ivb':
+        root_path = os.path.join(cfg.OUTPUT_DIR, 'final_subgroups_ivb.csv')
+        if os.path.exists(root_path):
+            return root_path
+        phase_dir = os.path.join(cfg.OUTPUT_DIR, 'phase_ivb')
+        filename = 'final_subgroups_ivb.csv'
+    else:
+        raise ValueError('phase must be one of: IV, IVB')
+    if os.path.isdir(phase_dir):
+        for name in sorted(os.listdir(phase_dir)):
+            p = os.path.join(phase_dir, name, filename)
+            if os.path.exists(p):
+                return p
+    raise FileNotFoundError(f'{filename} not found in OUTPUT_DIR or {os.path.basename(phase_dir)} subfolders')
+
+
 def main():
     parser = argparse.ArgumentParser(description='Phase V meta-analysis (reusable)')
     parser.add_argument('--config_file', type=str, default=None, help='Path to ConfigH2 .py file (e.g., config_h2_readmin30.py). Defaults to morthosp config if omitted.')
+    parser.add_argument('--final_subgroups_path', type=str, default=None, help='Optional path to final_subgroups.csv or final_subgroups_ivb.csv; if omitted, auto-discover.')
+    parser.add_argument('--phase', type=str, default='IV', help='Which phase subgroups to analyze: IV or IVB')
     args = parser.parse_args()
 
     cfg = _load_config(args.config_file)
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+    out_dir = os.path.join(cfg.OUTPUT_DIR, 'phase_v_meta')
+    os.makedirs(out_dir, exist_ok=True)
 
     with open(os.path.join(cfg.H2A_OUTPUT_DIR, 'h2a_to_h2b_artifact.pkl'), 'rb') as f:
         art = pickle.load(f)
@@ -89,7 +117,7 @@ def main():
 
     meta = compute_meta_features(X_test)
     # Debug: log representative column names and values to guide meta-feature definitions
-    debug_path = os.path.join(cfg.OUTPUT_DIR, 'phase_v_meta_debug.txt')
+    debug_path = os.path.join(out_dir, 'phase_v_meta_debug.txt')
     count_cols = [c for c in X_test.columns if 'count' in c]
     stddev_cols = [c for c in X_test.columns if 'stddev' in c]
     slope_cols = [c for c in X_test.columns if 'slope' in c]
@@ -118,9 +146,7 @@ def main():
     cohorts_idx = {k: full_index.take(np.asarray(v, dtype=int)) for k, v in art['cohorts_by_pos'].items()}
 
     # Load vetted Phase IV subgroups
-    final_path = os.path.join(cfg.OUTPUT_DIR, 'final_subgroups.csv')
-    if not os.path.exists(final_path):
-        raise FileNotFoundError(f"Missing vetted Phase IV subgroups: {final_path}")
+    final_path = args.final_subgroups_path or _discover_final_subgroups(cfg, args.phase)
     final_subgroups = pd.read_csv(final_path)
     idx_map = pd.Series(X_test.index, index=X_test.index.astype(str))
 
@@ -186,7 +212,7 @@ def main():
 
     meta_df = pd.DataFrame(rows)
     if not meta_df.empty:
-        meta_df.to_csv(os.path.join(cfg.OUTPUT_DIR, 'phase_v_meta_results.csv'), index=False)
+        meta_df.to_csv(os.path.join(out_dir, 'phase_v_meta_results.csv'), index=False)
 
     # Minimal report
     lines = []
@@ -194,7 +220,7 @@ def main():
     if not meta_df.empty:
         sig = meta_df[meta_df['p_value'] < 0.05]
         lines.append(f"Significant findings: {len(sig)} (p<0.05)")
-    with open(os.path.join(cfg.OUTPUT_DIR, 'phase_v_report.txt'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(out_dir, 'phase_v_report.txt'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
 
 
