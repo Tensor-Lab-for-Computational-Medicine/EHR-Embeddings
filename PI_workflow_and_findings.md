@@ -98,12 +98,80 @@ Notes:
 
 ---
 
+### Readmission-30 Results (Secondary analysis)
+Source files:
+- H2b false alarms (readmission): `notebooks/Phase 6 - H2 Analysis/h2b/h2_results_readmission_30/final_archetypes.csv`
+- IVB survivors battleground (readmission): `notebooks/Phase 6 - H2 Analysis/h2b/h2_results_readmission_30/final_archetypes_ivb.csv`
+
+#### H2b Differential – SM False Alarms (Readmission)
+- **Malnutrition proxy**
+  - Coverage: 1086 (21.8%); Lift 1.61; Target 20.8% vs 12.9%; q 3.19e-15
+  - Takeaway: SM overcalls readmission risk in low-albumin patients.
+- **Neutrophilia + Malnutrition**
+  - Coverage: 742 (14.9%); Lift 1.78; Target 22.9% vs 12.9%; q 7.24e-15
+  - Takeaway: Inflammatory frailty pattern heightens SM false alarms.
+- **Coagulopathy + Neutrophilia + Malnutrition**
+  - Coverage: 592 (11.9%); Lift 1.81; Target 23.3% vs 12.9%; q 2.74e-12
+  - Takeaway: Coagulopathy layered onto inflammation and malnutrition further biases SM upward.
+
+Notes:
+- Patterns mirror mortality task: SM overweights frailty/inflammation/coagulopathy signals without clear corroborating trajectories.
+
+#### IVB Discordance – Survivors Battleground (SM Advantage, Readmission)
+- **Severe AKI**
+  - Coverage: 154 (15.8% of battleground); Lift 1.58; SM wins 53.9% vs Baseline 34.1%; q 7.77e-06
+  - Interpretation: For survivors with severe AKI, SM more often avoids false readmission calls by NM (or more often is correct vs NM, per battleground definition).
+- **Severe AKI + Coagulopathy**
+  - Coverage: 124 (12.7%); Lift 1.54; 52.4% vs 34.1%; q 3.10e-04
+  - Interpretation: When renal dysfunction and coagulopathy co-occur, SM has an edge on survivors.
+- **AKI Stage 2; Severe AKI + Organ dysfunction score [1–2)**
+  - Coverage: 106 (10.9%) and 45 (4.6%); Lifts ~1.60–2.08; q values 1.54e-04 to 2.56e-05
+  - Interpretation: SM advantage persists across moderate-to-severe renal dysfunction strata.
+
+Notes:
+- Additional findings involve anemia + severe AKI and HR volatility with AKI; both consistent with SM leveraging semantic context in complex renal cases.
+
+---
+
 ### Clinical synthesis (why these patterns make sense)
 - **NM strengths**: Excels with dense, quantitative signals (trends, counts, extremes) common in AKI and in high-acuity monitoring. It likely captures trajectory features (e.g., rising labs) that are hard to convey in short text.
 - **SM sensitivities**: Overweights semantic cues like “coagulopathy” and frailty proxies, which can correlate with illness but do not necessarily imply imminent mortality in isolation—leading to false alarms in survivors.
 - **Practical implications**: Combine modalities for safety. Use NM to temper SM overcalls in coagulopathy/frailty patterns; use SM to complement NM where semantics add context (not shown in the provided rows).
 
 ---
+
+### Phenotype rule glossary for used features (how subgroups were constructed)
+Concise logic for phenotypes appearing in significant archetypes (selected items):
+- **is_malnourished_proxy**: albumin measured and < 3.5 g/dL.
+- **has_neutrophilia**: neutrophils measured and > 7.7 x10^9/L.
+- **has_anticoagulation_derangement**: INR > 1.1 or PTT > 35 sec if measured.
+- **sirs_wbc_criterion**: WBC > 12k or < 4k if measured.
+- **has_sirs**: ≥2 of temp, HR, RR, WBC SIRS criteria.
+- **liver_dysfunction_type == 'Synthetic_Dysfunction'**: INR > 1.5 or albumin < 3.0 if measured.
+- **has_any_aki**: creatinine above sex-specific ULN with measurement.
+- **has_severe_aki**: creatinine ≥ 2.0 mg/dL with measurement.
+- **aki_severity_stage**: Stage_2 if creatinine ≥ 2.0; Stage_3 if ≥ 4.0; Stage_1 if has_any_aki.
+- **organ_dysfunction_score**: Count of severe failures among: severe AKI, ventilation, lactic acidosis/hyperlactatemia, hepatic synthetic dysfunction, severe thrombocytopenia, severe GCS impairment.
+- **anemia_severity == 'Moderate'**: hemoglobin < 10 g/dL (sex-adjusted lower bounds also considered for Mild).
+- **has_invasive_hemo_monitoring**: CVP or PA catheter counts > preset thresholds.
+- **has_hypocalcemia_ionized**: ionized calcium < 4.6 mg/dL if measured.
+- **hr_volatility**: 24h HR stddev when ≥2 HR measures exist.
+
+Full rule source: `notebooks/Phase 6 - H2 Analysis/feature_engineering/feature_rules.csv`.
+
+---
+
+### Anticipated PI Q&A
+- What’s the headline? — NM overcalls mortality in AKI (esp. with hepatic dysfunction/inflammation); SM overcalls in coagulopathy/frailty patterns. In readmission, SM shows advantage among survivors with severe AKI.
+- Are these clinically plausible? — Yes: AKI drives lab extremes/trends (NM-friendly); coagulopathy/malnutrition are risk markers but not determinative without trajectories (SM-sensitive cues).
+- Did you correct for multiple testing? — Yes, BH-FDR; we report q-values and retain q<0.05 as significant in discovery/Phase V summaries.
+- Any data leakage? — No. Thresholds set on full training set; all subgroup discovery and archetype selection used training; final metrics reported on held-out test.
+- Why Youden’s J? — Provides a stable, symmetric operating point to define binary cohorts for discordance without optimizing on test.
+- Could token count or data density confound SM? — Phase V meta includes density/volatility/imputation/token features; we test for significant shifts between error vs success cohorts.
+- How robust are these archetypes? — We pruned by significance, coverage, and redundancy; then validated lift direction on test and, for readmission, observed consistent patterns.
+- What’s next to make this actionable? — Calibrate per subgroup, adjust SM prompts to de-emphasize isolated coagulopathy/frailty, and evaluate fusion models within battlegrounds.
+- External validity? — Plan to replicate on an external ICU dataset; if consistent, consider prospective silent deployment.
+- Deployment concerns? — Guardrails: calibration monitoring, shift detection, fail-safe defaults, clinician-in-the-loop review for high-risk flags.
 
 ### Limitations and guardrails
 - Single-dataset context (MIMIC-derived); external validity not yet proven.

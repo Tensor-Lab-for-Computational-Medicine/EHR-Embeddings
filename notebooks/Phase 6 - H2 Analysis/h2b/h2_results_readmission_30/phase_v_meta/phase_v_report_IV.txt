@@ -1,0 +1,41 @@
+PHASE V META-ANALYSIS
+Significant tests (p<0.05): 32
+Significant tests (q<0.05 BH-FDR): 24
+Top meta-features with q<0.05: imputation_proportion:6, total_imputation_count:6, total_measurement_events:6, unique_feature_count:6
+
+Per-archetype significant differences:
+- SM_false_alarm | rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND is_malnourished_proxy==True (rank=6, coverage=592 (11.9%), lift=1.807, target=23.3 vs base=12.9)
+  * total_measurement_events (higher_in_error): med_error=48.273, med_success=40.329, effect=7.944, p=0.00134, q=0.00752, n_err=138, n_suc=454
+  * imputation_proportion (higher_in_success): med_error=0.615, med_success=0.644, effect=-0.029, p=0.00621, q=0.0186, n_err=138, n_suc=454
+  * total_imputation_count (higher_in_success): med_error=64.000, med_success=67.000, effect=-3.000, p=0.00621, q=0.0186, n_err=138, n_suc=454
+  * unique_feature_count (higher_in_error): med_error=40.000, med_success=37.000, effect=3.000, p=0.00621, q=0.0186, n_err=138, n_suc=454
+
+- SM_false_alarm | rule: has_neutrophilia==True AND is_malnourished_proxy==True (rank=2, coverage=742 (14.9%), lift=1.776, target=22.9 vs base=12.9)
+  * total_measurement_events (higher_in_error): med_error=46.671, med_success=39.038, effect=7.633, p=0.000673, q=0.00419, n_err=170, n_suc=572
+  * imputation_proportion (higher_in_success): med_error=0.625, med_success=0.654, effect=-0.029, p=0.00254, q=0.0102, n_err=170, n_suc=572
+  * total_imputation_count (higher_in_success): med_error=65.000, med_success=68.000, effect=-3.000, p=0.00254, q=0.0102, n_err=170, n_suc=572
+  * unique_feature_count (higher_in_error): med_error=39.000, med_success=36.000, effect=3.000, p=0.00254, q=0.0102, n_err=170, n_suc=572
+
+- SM_false_alarm | rule: has_neutrophilia==True AND is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' (rank=8, coverage=475 (9.5%), lift=1.795, target=23.2 vs base=12.9)
+  * total_measurement_events (higher_in_error): med_error=48.828, med_success=41.320, effect=7.509, p=0.00238, q=0.0102, n_err=110, n_suc=365
+  * imputation_proportion (higher_in_success): med_error=0.606, med_success=0.644, effect=-0.038, p=0.00663, q=0.0186, n_err=110, n_suc=365
+  * total_imputation_count (higher_in_success): med_error=63.000, med_success=67.000, effect=-4.000, p=0.00663, q=0.0186, n_err=110, n_suc=365
+  * unique_feature_count (higher_in_error): med_error=41.000, med_success=37.000, effect=4.000, p=0.00663, q=0.0186, n_err=110, n_suc=365
+
+- SM_false_alarm | rule: is_malnourished_proxy==True (rank=1, coverage=1086 (21.8%), lift=1.613, target=20.8 vs base=12.9)
+  * imputation_proportion (higher_in_success): med_error=0.635, med_success=0.663, effect=-0.029, p=0.00019, q=0.00177, n_err=226, n_suc=860
+  * total_imputation_count (higher_in_success): med_error=66.000, med_success=69.000, effect=-3.000, p=0.00019, q=0.00177, n_err=226, n_suc=860
+  * unique_feature_count (higher_in_error): med_error=38.000, med_success=35.000, effect=3.000, p=0.00019, q=0.00177, n_err=226, n_suc=860
+  * total_measurement_events (higher_in_error): med_error=43.846, med_success=37.385, effect=6.461, p=0.000434, q=0.00304, n_err=226, n_suc=860
+
+- SM_false_alarm | rule: is_malnourished_proxy==True AND liver_dysfunction_type=='Synthetic_Dysfunction' (rank=3, coverage=696 (14.0%), lift=1.593, target=20.5 vs base=12.9)
+  * imputation_proportion (higher_in_success): med_error=0.615, med_success=0.654, effect=-0.038, p=0.000149, q=0.00177, n_err=143, n_suc=553
+  * total_imputation_count (higher_in_success): med_error=64.000, med_success=68.000, effect=-4.000, p=0.000149, q=0.00177, n_err=143, n_suc=553
+  * unique_feature_count (higher_in_error): med_error=40.000, med_success=36.000, effect=4.000, p=0.000149, q=0.00177, n_err=143, n_suc=553
+  * total_measurement_events (higher_in_error): med_error=48.359, med_success=40.637, effect=7.722, p=0.000245, q=0.00196, n_err=143, n_suc=553
+
+- SM_false_alarm | rule: is_malnourished_proxy==True AND sirs_wbc_criterion==True (rank=5, coverage=505 (10.1%), lift=1.827, target=23.6 vs base=12.9)
+  * imputation_proportion (higher_in_success): med_error=0.635, med_success=0.654, effect=-0.019, p=0.00805, q=0.0196, n_err=119, n_suc=386
+  * total_imputation_count (higher_in_success): med_error=66.000, med_success=68.000, effect=-2.000, p=0.00805, q=0.0196, n_err=119, n_suc=386
+  * unique_feature_count (higher_in_error): med_error=38.000, med_success=36.000, effect=2.000, p=0.00805, q=0.0196, n_err=119, n_suc=386
+  * total_measurement_events (higher_in_error): med_error=46.842, med_success=40.218, effect=6.624, p=0.011, q=0.0256, n_err=119, n_suc=386

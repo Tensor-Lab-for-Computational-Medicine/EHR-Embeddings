@@ -1,0 +1,5 @@
+[DEBUG] char_text_dir: D:\Projects\EHR Embeddings\notebooks\Phase 3\phase_3_serialized_data\F3_P5 | exists=True
+[DEBUG] Built ICU ID -> path map: 22591 entries
+[DEBUG] Sample id_to_path entries: [('200003', 'D:\\Projects\\EHR Embeddings\\notebooks\\Phase 3\\phase_3_serialized_data\\F3_P5\\test\\200003.txt'), ('200014', 'D:\\Projects\\EHR Embeddings\\notebooks\\Phase 3\\phase_3_serialized_data\\F3_P5\\test\\200014.txt'), ('200019', 'D:\\Projects\\EHR Embeddings\\notebooks\\Phase 3\\phase_3_serialized_data\\F3_P5\\test\\200019.txt')]
+[DEBUG] ICU IDs total=5648 | ids_without_text=0 | read_failures=0
+[DEBUG] Sample input_character_count values (first 5): [4960.0, 5813.0, 4288.0, 4133.0, 1831.0]

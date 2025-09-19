@@ -306,10 +306,6 @@ def main():
             final = tmp.groupby(group_cols, group_keys=False).head(args.max_archetypes)
         else:
             final = tmp.head(args.max_archetypes)
-    # Drop exact member listings from final output
-    for _col in ['members', 'member_set']:
-        if _col in final.columns:
-            final = final.drop(columns=[_col])
     out_name = 'final_archetypes.csv' if args.phase.upper() == 'IV' else 'final_archetypes_ivb.csv'
     final.to_csv(os.path.join(base_dir, out_name), index=False)
     print(f'Wrote {final.shape[0]} archetypes to {os.path.join(base_dir, out_name)}')

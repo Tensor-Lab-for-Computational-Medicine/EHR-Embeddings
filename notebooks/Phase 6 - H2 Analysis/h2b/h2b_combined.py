@@ -310,7 +310,7 @@ def _augment_and_prune_rules(
     out['baseline_rate'] = ts_baseline_rate
     out['quality_WRAcc'] = wracc_ts
     out['members'] = members_ts
-    keep = (out['q_value'] <= alpha) & (out['lift_test'] >= 1.0) & (out['lift_test'] >= 0.67 * out['lift_train'])
+    keep = (out['q_value'] <= alpha) & (out['lift_test'] >= 1.0) & (out['lift_test'] >= 0.7 * out['lift_train'])
     
     out = out.loc[keep].reset_index(drop=True)
     out['lift'], out['coverage'] = out['lift_test'], out['coverage_test']

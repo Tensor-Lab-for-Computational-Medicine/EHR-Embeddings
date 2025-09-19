@@ -1,19 +1,8 @@
-n_total_columns=458
-count_cols_first5=['alanine aminotransferase_mean_count', 'albumin ascites_mean_count', 'albumin pleural_mean_count', 'albumin urine_mean_count', 'albumin_mean_count']
-stddev_cols_first5=['anion gap_mean_stddev_24h', 'bicarbonate_mean_stddev_24h', 'blood urea nitrogen_mean_stddev_24h', 'calcium ionized_mean_stddev_24h', 'calcium_mean_stddev_24h']
-slope_cols_first5=['alanine aminotransferase_mean_slope_24h', 'alkaline phosphate_mean_slope_24h', 'anion gap_mean_slope_24h', 'asparate aminotransferase_mean_slope_24h', 'basophils_mean_slope_24h']
-
-index=200003
-counts={'alanine aminotransferase_mean_count': 3.0, 'albumin ascites_mean_count': 0.0, 'albumin pleural_mean_count': 0.0, 'albumin urine_mean_count': 0.0, 'albumin_mean_count': 2.0}
-stddev={'anion gap_mean_stddev_24h': 3.0550504633038935, 'bicarbonate_mean_stddev_24h': 3.605551275463989, 'blood urea nitrogen_mean_stddev_24h': 1.0, 'calcium ionized_mean_stddev_24h': 3.469446951953614e-18, 'calcium_mean_stddev_24h': 0.41633329151930076}
-slope={'alanine aminotransferase_mean_slope_24h': -0.8254847645429363, 'alkaline phosphate_mean_slope_24h': -3.792243767313019, 'anion gap_mean_slope_24h': -0.16343490304709143, 'asparate aminotransferase_mean_slope_24h': -0.3074792243767313, 'basophils_mean_slope_24h': 0.0}
-
-index=200014
-counts={'alanine aminotransferase_mean_count': 1.0, 'albumin ascites_mean_count': 0.0, 'albumin pleural_mean_count': 0.0, 'albumin urine_mean_count': 0.0, 'albumin_mean_count': 2.0}
-stddev={'anion gap_mean_stddev_24h': 2.1213203435596424, 'bicarbonate_mean_stddev_24h': 0.7071067811865476, 'blood urea nitrogen_mean_stddev_24h': 0.0, 'calcium ionized_mean_stddev_24h': 0.05656854249492385, 'calcium_mean_stddev_24h': 0.0}
-slope={'alanine aminotransferase_mean_slope_24h': 0.0, 'alkaline phosphate_mean_slope_24h': 0.0, 'anion gap_mean_slope_24h': -0.5999999999999999, 'asparate aminotransferase_mean_slope_24h': 0.0, 'basophils_mean_slope_24h': 0.0}
-
-index=200019
-counts={'alanine aminotransferase_mean_count': -1.1102230246251565e-16, 'albumin ascites_mean_count': 0.0, 'albumin pleural_mean_count': 0.0, 'albumin urine_mean_count': 0.0, 'albumin_mean_count': 0.0}
-stddev={'anion gap_mean_stddev_24h': 2.1213203435596424, 'bicarbonate_mean_stddev_24h': 3.5355339059327378, 'blood urea nitrogen_mean_stddev_24h': 4.242640687119285, 'calcium ionized_mean_stddev_24h': 3.469446951953614e-18, 'calcium_mean_stddev_24h': 0.7071066013599939}
-slope={'alanine aminotransferase_mean_slope_24h': 0.0, 'alkaline phosphate_mean_slope_24h': 0.0, 'anion gap_mean_slope_24h': -0.17647058823529413, 'asparate aminotransferase_mean_slope_24h': 0.0, 'basophils_mean_slope_24h': 0.0}
+IVB|IVB_survivors_NM|members=72|err=45|suc=27
+IVB|IVB_survivors_NM|members=50|err=34|suc=16
+IVB|IVB_survivors_NM|members=46|err=32|suc=14
+IVB|IVB_survivors_NM|members=52|err=33|suc=19
+IVB|IVB_survivors_NM|members=54|err=33|suc=21
+IVB|IVB_survivors_NM|members=53|err=32|suc=21
+IVB|IVB_survivors_NM|members=38|err=26|suc=12
+IVB|IVB_survivors_NM|members=61|err=34|suc=27
