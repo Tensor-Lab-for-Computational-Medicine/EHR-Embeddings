@@ -42,6 +42,20 @@ logging.basicConfig(
 # -----------------------------------------------------------------------------
 # Utilities
 # -----------------------------------------------------------------------------
+def ensure_dir(d: str) -> str:
+    os.makedirs(d, exist_ok=True); return d
+
+def model_slug(name: str) -> str:
+    return name.lower().replace(' ', '_')
+
+def build_output_dirs(target_col: Optional[str]) -> Dict[str, str]:
+    root = ensure_dir(os.path.join(EVALUATION_DIR, target_col or 'default'))
+    return {
+        'performance': ensure_dir(os.path.join(root, 'performance')),
+        'shap_summary': ensure_dir(os.path.join(root, 'shap', 'summary')),
+        'shap_importance': ensure_dir(os.path.join(root, 'shap', 'importance')),
+        'shap_waterfalls': ensure_dir(os.path.join(root, 'shap', 'waterfalls')),
+    }
 def resolve_in_dirs(filename: str, candidate_dirs: List[str]) -> Optional[str]:
     for d in candidate_dirs:
         path = os.path.join(d, filename)
@@ -201,6 +215,9 @@ def load_test_data(target_column: Optional[str] = None) -> Tuple[Optional[pd.Dat
 def generate_predictions(models: Dict, X_test: pd.DataFrame, y_test: pd.Series) -> Dict:
     preds: Dict[str, Dict] = {}
     for name, model in models.items():
+        if name.lower() not in {'xgboost', 'elastic net'}:
+            logging.info(f"Skipping model {name} (only XGBoost and Elastic Net requested)")
+            continue
         if hasattr(model, 'predict_proba'):
             proba = model.predict_proba(X_test)[:, 1]
         else:
@@ -289,7 +306,7 @@ def calculate_calibration_curve(y_true: np.ndarray, y_prob: np.ndarray, n_bins: 
     return np.array(fracs), np.array(means)
 
 
-def assess_model_calibration(preds: Dict, y_test: pd.Series, save_base: Optional[str] = None) -> Dict:
+def assess_model_calibration(preds: Dict, y_test: pd.Series, save_path: Optional[str] = None) -> Dict:
     n = len(preds)
     fig, axes = plt.subplots(n, 1, figsize=(10, 6*n))
     axes = [axes] if n == 1 else axes
@@ -307,9 +324,8 @@ def assess_model_calibration(preds: Dict, y_test: pd.Series, save_base: Optional
         ax.legend(); ax.grid(True, alpha=0.3)
         out[name] = {'brier_score': brier}
     plt.tight_layout()
-    if save_base:
-        path = save_base.replace('.png', '_calibration.png')
-        plt.savefig(path, dpi=DPI, bbox_inches='tight')
+    if save_path:
+        plt.savefig(save_path, dpi=DPI, bbox_inches='tight')
     plt.show()
     return out
 
@@ -339,7 +355,7 @@ def create_feature_name_mapping(cols: List[str]) -> Dict[str, str]:
     return m
 
 
-def analyze_with_shap(models: Dict, X: pd.DataFrame, y: pd.Series, save_base: Optional[str] = None,
+def analyze_with_shap(models: Dict, X: pd.DataFrame, y: pd.Series, out_dirs: Dict[str, str],
                       n_samples: int = 30000, include_interactions: bool = False) -> Dict:
     if len(X) > n_samples:
         idx = np.random.choice(len(X), n_samples, replace=False)
@@ -382,9 +398,8 @@ def analyze_with_shap(models: Dict, X: pd.DataFrame, y: pd.Series, save_base: Op
         shap.summary_plot(d['shap_values'], d['Xd'], plot_type='dot', show=False, max_display=20)
         ax.set_title(f'{name} - Feature Impact')
     plt.tight_layout()
-    if save_base:
-        p = save_base.replace('.png', '_summary.png')
-        plt.savefig(p, dpi=DPI, bbox_inches='tight')
+    if out_dirs:
+        plt.savefig(os.path.join(out_dirs['shap_summary'], 'summary.png'), dpi=DPI, bbox_inches='tight')
     plt.show()
 
     # Importance (bar)
@@ -395,48 +410,40 @@ def analyze_with_shap(models: Dict, X: pd.DataFrame, y: pd.Series, save_base: Op
         shap.summary_plot(d['shap_values'], d['Xd'], plot_type='bar', show=False, max_display=20)
         ax.set_title(f'{name} - Feature Importance')
     plt.tight_layout()
-    if save_base:
-        p = save_base.replace('.png', '_importance.png')
-        plt.savefig(p, dpi=DPI, bbox_inches='tight')
+    if out_dirs:
+        plt.savefig(os.path.join(out_dirs['shap_importance'], 'importance.png'), dpi=DPI, bbox_inches='tight')
     plt.show()
 
-    # Waterfall: one survivor and one deceased if available
-    survivors = d['y'][d['y'] == 0].index if len(data) else []
-    deceased = d['y'][d['y'] == 1].index if len(data) else []
-    pick_idx = []
-    if len(survivors) > 0:
-        s_idx = np.random.choice(survivors)
-        pick_idx.append(('Survived', s_idx))
-    if len(deceased) > 0:
-        d_idx = np.random.choice(deceased)
-        pick_idx.append(('Died', d_idx))
-
+    # Waterfalls: up to 2 survivors and 2 deceased per model
     for name, d in data.items():
-        for outcome, ridx in pick_idx:
-            try:
-                pos = d['y'].index.get_loc(ridx)
-                base = d['explainer'].expected_value
-                if isinstance(base, np.ndarray):
-                    base = base[1] if len(base) > 1 else base[0]
-                vals = d['shap_values'][pos]
-                row = d['Xd'].iloc[pos]
-                shap.waterfall_plot(
-                    shap.Explanation(values=vals, base_values=base, data=row.values, feature_names=row.index.tolist()),
-                    max_display=15, show=False
-                )
-                # Title & save
-                if hasattr(models[name], 'predict_proba'):
-                    pred = models[name].predict_proba(d['X'].iloc[pos:pos+1])[:, 1][0]
-                else:
-                    pred = float(models[name].predict(d['X'].iloc[pos:pos+1])[0])
-                plt.title(f'{name} - {outcome} Patient\nScore: {pred:.3f} (uncalibrated)')
-                if save_base:
-                    fn = f"_waterfall_{name.lower().replace(' ', '_')}_{outcome.lower()}_patient.png"
-                    p = save_base.replace('.png', fn)
-                    plt.savefig(p, dpi=DPI, bbox_inches='tight', facecolor='white', edgecolor='none')
-                plt.show(); plt.close()
-            except Exception as e:
-                logging.warning(f"Waterfall failed for {name} ({outcome}): {e}")
+        survivors = d['y'][d['y'] == 0].index
+        deceased = d['y'][d['y'] == 1].index
+        surv_idx = list(np.random.choice(survivors, min(2, len(survivors)), replace=False)) if len(survivors)>0 else []
+        dead_idx = list(np.random.choice(deceased, min(2, len(deceased)), replace=False)) if len(deceased)>0 else []
+        wf_dir = ensure_dir(os.path.join(out_dirs['shap_waterfalls'], model_slug(name)))
+        for label, indices in [('Survived', surv_idx), ('Died', dead_idx)]:
+            for j, ridx in enumerate(indices, start=1):
+                try:
+                    pos = d['y'].index.get_loc(ridx)
+                    base = d['explainer'].expected_value
+                    if isinstance(base, np.ndarray):
+                        base = base[1] if len(base) > 1 else base[0]
+                    vals = d['shap_values'][pos]
+                    row = d['Xd'].iloc[pos]
+                    shap.waterfall_plot(
+                        shap.Explanation(values=vals, base_values=base, data=row.values, feature_names=row.index.tolist()),
+                        max_display=15, show=False
+                    )
+                    # Title & save
+                    if hasattr(models[name], 'predict_proba'):
+                        pred = models[name].predict_proba(d['X'].iloc[pos:pos+1])[:, 1][0]
+                    else:
+                        pred = float(models[name].predict(d['X'].iloc[pos:pos+1])[0])
+                    plt.title(f'{name} - {label} Patient\nScore: {pred:.3f} (uncalibrated)')
+                    plt.savefig(os.path.join(wf_dir, f'waterfall_{model_slug(name)}_{label.lower()}_{j}.png'), dpi=DPI, bbox_inches='tight', facecolor='white', edgecolor='none')
+                    plt.show(); plt.close()
+                except Exception as e:
+                    logging.warning(f"Waterfall failed for {name} ({label}): {e}")
 
     # Optional interactions for tree models
     if include_interactions:
@@ -451,8 +458,8 @@ def analyze_with_shap(models: Dict, X: pd.DataFrame, y: pd.Series, save_base: Op
                 fig = plt.figure(figsize=(14, 10))
                 shap.summary_plot(inter, Xdi, plot_type='dot', show=False, max_display=15)
                 plt.title(f'{name} - SHAP Interaction Effects')
-                if save_base:
-                    p = save_base.replace('.png', f"_interaction_summary_{name.lower().replace(' ', '_')}.png")
+                if out_dirs:
+                    p = os.path.join(out_dirs['shap_summary'], f"interaction_summary_{name.lower().replace(' ', '_')}.png")
                     plt.savefig(p, dpi=DPI, bbox_inches='tight')
                 plt.show(); plt.close()
             except Exception as e:
@@ -494,6 +501,7 @@ def main():
     logging.info('Starting evaluation...')
     models, stored = load_models_and_results(preferred_dir=args.model_dir, allow_fallback=not args.no_fallback)
     X_test, y_test = load_test_data(target_column=args.target_col)
+    out_dirs = build_output_dirs(args.target_col)
     if not models or X_test is None:
         logging.error('Missing models or test data. Exiting.')
         return
@@ -504,21 +512,21 @@ def main():
         preds[name]['color'] = stored.get(name, {}).get('color')
         preds[name]['linestyle'] = stored.get(name, {}).get('linestyle')
 
-    plot_roc_curves(preds, os.path.join(EVALUATION_DIR, 'roc_curves.png'))
-    plot_pr_curves(preds, y_test, os.path.join(EVALUATION_DIR, 'pr_curves.png'))
-    plot_confusion_matrices(preds, os.path.join(EVALUATION_DIR, 'confusion_matrices.png'))
-    assess_model_calibration(preds, y_test, os.path.join(EVALUATION_DIR, 'calibration_analysis.png'))
+    plot_roc_curves(preds, os.path.join(out_dirs['performance'], 'roc_curves.png'))
+    plot_pr_curves(preds, y_test, os.path.join(out_dirs['performance'], 'pr_curves.png'))
+    plot_confusion_matrices(preds, os.path.join(out_dirs['performance'], 'confusion_matrices.png'))
+    assess_model_calibration(preds, y_test, os.path.join(out_dirs['performance'], 'calibration.png'))
 
-    shap_data = analyze_with_shap(models, X_test, y_test, os.path.join(EVALUATION_DIR, 'shap_analysis.png'))
+    shap_data = analyze_with_shap(models, X_test, y_test, out_dirs)
 
     df = create_performance_summary(preds, stored)
-    df.to_csv(os.path.join(EVALUATION_DIR, 'performance_summary.csv'), index=False)
+    df.to_csv(os.path.join(out_dirs['performance'], 'performance_summary.csv'), index=False)
 
     if shap_data:
-        with open(os.path.join(EVALUATION_DIR, 'shap_data.pkl'), 'wb') as f:
+        with open(os.path.join(out_dirs['shap_summary'], 'shap_data.pkl'), 'wb') as f:
             pickle.dump(shap_data, f)
 
-    logging.info(f"Done. Outputs in {os.path.relpath(EVALUATION_DIR, BASE_DIR)}/")
+    logging.info(f"Done. Outputs in {os.path.relpath(os.path.dirname(list(out_dirs.values())[0]), BASE_DIR)}/")
     print(df.to_string(index=False, float_format='%.4f'))
 
 
