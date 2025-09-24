@@ -41,14 +41,14 @@ def infer_dataset_tag(path: Path) -> str:
 def map_theme(rule: str) -> str:
   s = rule.lower()
   themes = [
-    ("anticoagulation", "Anticoagulation"),
-    ("liver_dysfunction", "Synthetic Liver"),
-    ("malnour", "Malnutrition"),
+    ("anticoagulation", "Coagulation derangement"),
+    ("liver_dysfunction", "Liver dysfunction"),
+    ("malnour", "Low albumin"),
     ("neutrophil", "Neutrophilia"),
-    ("ventilator", "Ventilator"),
-    ("aki", "AKI"),
+    ("ventilator", "On ventilator"),
+    ("aki", "Acute kidney injury"),
     ("sirs", "SIRS"),
-    ("hemo_monitor", "Invasive Hemodynamics"),
+    ("hemo_monitor", "Invasive hemodynamic monitoring"),
   ]
   for k, v in themes:
     if k in s:
@@ -57,22 +57,59 @@ def map_theme(rule: str) -> str:
 
 # Human-readable names for variables and enumerated values
 NAME_MAP = {
+  "hemodynamic_state": "Hemodynamic state",
+  "heart_rate_state": "Heart rate state",
+  "has_myocardial_injury": "Myocardial injury",
+  "low_cardiac_output_state": "Low cardiac output",
+  "shock_index": "Shock index (HR/SBP)",
   "has_any_aki": "Acute kidney injury",
   "has_severe_aki": "Severe acute kidney injury",
   "aki_severity_stage": "AKI stage",
   "anemia_severity": "Anemia severity",
   "organ_dysfunction_score": "Organ dysfunction score",
-  "has_anticoagulation_derangement": "Anticoagulation derangement",
+  "has_anticoagulation_derangement": "Coagulation derangement",
   "liver_dysfunction_type": "Liver dysfunction",
-  "is_malnourished_proxy": "Malnutrition (proxy)",
+  "is_malnourished_proxy": "Low albumin",
+  "has_barotrauma_risk": "Barotrauma risk",
+  "has_high_peep_requirement": "High PEEP requirement",
+  "has_hypoxemic_failure": "Hypoxemic respiratory failure",
+  "has_hypercapnic_failure": "Hypercapnic respiratory failure",
+  "respiratory_rate_state": "Respiratory rate state",
+  "pf_ratio": "P/F ratio",
+  "ards_severity": "ARDS severity",
+  "bun_creatinine_ratio": "BUN/Creatinine ratio",
+  "creatinine_trend": "Creatinine 24h trend",
+  "gcs_level": "GCS level",
+  "unconfounded_neuro_impairment": "Unconfounded neurologic impairment",
+  "has_hyperlactatemia": "Hyperlactatemia",
+  "shock_severity": "Shock severity (lactate/pH)",
+  "lactate_trend": "Lactate 24h trend",
+  "acid_base_state": "Acid-base state",
+  "has_metabolic_acidosis": "Metabolic acidosis",
+  "anion_gap_corrected": "Albumin-corrected anion gap",
+  "glucose_state": "Glucose state",
+  "sodium_state": "Sodium state",
+  "potassium_state": "Potassium state",
   "has_neutrophilia": "Neutrophilia",
+  "has_neutropenia": "Neutropenia",
   "is_on_ventilator": "On ventilator",
   "has_invasive_hemo_monitoring": "Invasive hemodynamic monitoring",
   "has_hypocalcemia_ionized": "Ionized hypocalcemia",
+  "has_hypomagnesemia": "Hypomagnesemia",
+  "has_hypophosphatemia": "Hypophosphatemia",
+  "thrombocytopenia_severity": "Thrombocytopenia severity",
+  "leukocyte_state": "Leukocyte count state",
   "hr_volatility": "Heart rate volatility",
+  "sbp_volatility": "Systolic blood pressure volatility",
+  "map_volatility": "MAP volatility",
+  "rr_volatility": "Respiratory rate volatility",
+  "data_density_score": "Data density score",
   "sirs_rr_criterion": "SIRS respiratory-rate criterion",
   "sirs_wbc_criterion": "SIRS white blood cell criterion",
+  "sirs_temp_criterion": "SIRS temperature criterion",
+  "sirs_hr_criterion": "SIRS heart-rate criterion",
   "has_sirs": "Systemic inflammatory response syndrome (SIRS)",
+  "has_effusion": "Pleural or ascitic effusion",
 }
 
 VALUE_MAP = {
@@ -173,14 +210,14 @@ def create_custom_colormap():
     """Create beautiful custom colormaps for different themes"""
     # Medical theme colors - sophisticated and professional
     colors = {
-        'AKI': '#E74C3C',           # Deep red
-        'SIRS': '#E67E22',          # Orange
-        'Ventilator': '#3498DB',    # Blue
-        'Anticoagulation': '#9B59B6', # Purple
-        'Synthetic Liver': '#F39C12', # Gold
-        'Malnutrition': '#27AE60',  # Green
-        'Neutrophilia': '#FF6B9D',  # Pink
-        'Invasive Hemodynamics': '#17A2B8', # Teal
+        'Acute kidney injury': '#E74C3C',
+        'SIRS': '#E67E22',
+        'On ventilator': '#3498DB',
+        'Coagulation derangement': '#9B59B6',
+        'Liver dysfunction': '#F39C12',
+        'Low albumin': '#27AE60',
+        'Neutrophilia': '#FF6B9D',
+        'Invasive hemodynamic monitoring': '#17A2B8',
         'Other': '#6C757D'          # Gray
     }
     return colors
@@ -204,18 +241,18 @@ def style_matplotlib():
         'grid.alpha': 0.3,
         'grid.color': '#E1E8ED',
         'grid.linewidth': 0.8,
-        'axes.titlesize': 18,
+        'axes.titlesize': 22,
         'axes.titleweight': 'bold',
         'axes.titlecolor': '#2C3E50',
-        'axes.labelsize': 14,
+        'axes.labelsize': 16,
         'axes.labelweight': '500',
         'axes.labelcolor': '#34495E',
-        'xtick.labelsize': 12,
-        'ytick.labelsize': 12,
+        'xtick.labelsize': 14,
+        'ytick.labelsize': 14,
         'xtick.color': '#7F8C8D',
         'ytick.color': '#7F8C8D',
-        'legend.fontsize': 11,
-        'legend.title_fontsize': 12,
+        'legend.fontsize': 13,
+        'legend.title_fontsize': 14,
         'legend.frameon': True,
         'legend.fancybox': True,
         'legend.shadow': True,
@@ -226,6 +263,7 @@ def style_matplotlib():
         'savefig.facecolor': 'white',
         'font.family': ['DejaVu Sans', 'Arial', 'sans-serif'],
         'font.weight': 'normal',
+        'font.size': 14,
     })
 
 def save_top_table(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int):
@@ -252,32 +290,32 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
         
         # Calculate optimal layout with better spacing
         rows = max(1, int(np.ceil(n/2)))
-        card_height = 8.5  # Increased card height
-        fig_height = rows * card_height + 2.2  # Trim excess vertical padding
+        card_height = 9.2
+        fig_height = rows * card_height + 1.6
         
-        fig = plt.figure(figsize=(22, fig_height), facecolor='#FAFBFC')  # Wider figure
+        fig = plt.figure(figsize=(22, fig_height), facecolor='#FAFBFC')
         gs = gridspec.GridSpec(
             nrows=rows, 
             ncols=2, 
             figure=fig,
-            hspace=0.15,  # More space between card rows
-            wspace=0.12,  # More space between card columns
+            hspace=0.10,
+            wspace=0.08,
             left=0.03, 
             right=0.97, 
-            top=0.90, 
-            bottom=0.01
+            top=0.94, 
+            bottom=0.03
         )
         
         # Determine prevalent theme
         theme_keywords = [
-            ("anticoagulation", "Anticoagulation"),
-            ("liver_dysfunction", "Synthetic Liver"),
-            ("malnour", "Malnutrition"),
+            ("anticoagulation", "Coagulation derangement"),
+            ("liver_dysfunction", "Liver dysfunction"),
+            ("malnour", "Low albumin"),
             ("neutrophil", "Neutrophilia"),
-            ("ventilator", "Ventilator"),
-            ("aki", "AKI"),
+            ("ventilator", "On ventilator"),
+            ("aki", "Acute kidney injury"),
             ("sirs", "SIRS"),
-            ("hemo_monitor", "Invasive Hemodynamics"),
+            ("hemo_monitor", "Invasive hemodynamic monitoring"),
         ]
         counts = {k: 0 for k, _ in theme_keywords}
         for rs in dtop.get("rule_str", pd.Series(dtype=str)).astype(str).fillna(""):
@@ -302,7 +340,7 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             
             # Determine theme
             if force_ivb_theme:
-                theme = row.get("theme", "Other") if i == 7 else "Invasive Hemodynamics"
+                theme = row.get("theme", "Other") if i == 7 else "Invasive hemodynamic monitoring"
             else:
                 rule_text_lc = str(row.get("rule_str", "")).lower()
                 if prevalent_key and prevalent_key in rule_text_lc:
@@ -313,7 +351,7 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             
             # Create main card background
             gradient_bg = FancyBboxPatch(
-                (0.2, 0.2), 9.6, 9.5,
+                (0.1, 0.1), 9.8, 9.8,
                 boxstyle="round,pad=0.05",
                 facecolor='white',
                 edgecolor='none',
@@ -325,11 +363,11 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             
             # Main card with colored border
             card = FancyBboxPatch(
-                (0.2, 0.2), 9.6, 9.5,
+                (0.1, 0.1), 9.8, 9.8,
                 boxstyle="round,pad=0.05",
                 facecolor='none',
                 edgecolor=primary_color,
-                linewidth=2.5,
+                linewidth=3.0,
                 alpha=1,
                 mutation_scale=15,
                 zorder=2
@@ -338,7 +376,7 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             
             # Theme header bar
             header = Rectangle(
-                (0.2, 8.8), 9.6, 0.9,
+                (0.1, 9.0), 9.8, 0.9,
                 facecolor=primary_color,
                 edgecolor='none',
                 alpha=1,
@@ -347,47 +385,47 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             ax.add_patch(header)
             
             # Rank badge
-            rank_bg = Circle((1.2, 9.25), 0.35, 
+            rank_bg = Circle((0.8, 9.35), 0.36, 
                            facecolor='white', 
                            edgecolor=primary_color, 
-                           linewidth=2.5,
+                           linewidth=3.0,
                            zorder=5)
             ax.add_patch(rank_bg)
             
             # Rank number
-            rank_text = ax.text(1.2, 9.25, f"#{i+1}", 
+            rank_text = ax.text(0.8, 9.35, f"#{i+1}", 
                               ha='center', va='center', 
-                              fontsize=22, fontweight='bold',
+                              fontsize=26, fontweight='bold',
                               color=primary_color,
                               zorder=6)
             rank_text.set_path_effects([patheffects.withStroke(linewidth=3, foreground='white')])
             
             # Theme label
-            ax.text(5.0, 9.25, theme.upper(), 
-                   ha='center', va='center', 
-                   fontsize=20, fontweight='bold',
+            ax.text(1.5, 9.35, theme.upper(), 
+                   ha='left', va='center', 
+                   fontsize=24, fontweight='bold',
                    color='white',
                    zorder=4)
             
             # Clinical Conditions section
             ax.text(0.7, 8.4, "Clinical Conditions", 
-                   fontsize=20, fontweight='bold',
+                   fontsize=24, fontweight='bold',
                    color='#111827')
             
             # Line under conditions header
             ax.plot([0.7, 9.3], [8.2, 8.2], 
-                   color=primary_color, linewidth=1.5, alpha=0.5)
+                   color=primary_color, linewidth=2.0, alpha=0.6)
             
             # Display conditions
             bullets = pretty_rule(row.get("rule_str", ""))
             y_pos = 7.9
             max_conditions = 4
-            line_spacing = 0.5
+            line_spacing = 0.7
             
             for j, condition in enumerate(bullets[:max_conditions]):
                 # Bullet point
                 ax.text(0.8, y_pos, "•", 
-                       fontsize=18, va='center',
+                       fontsize=22, va='center',
                        color=primary_color, fontweight='bold')
                 
                 # Condition text
@@ -395,35 +433,35 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
                     # Split long conditions
                     first_part = condition[:50]
                     ax.text(1.2, y_pos, first_part, 
-                           fontsize=16, va='center',
+                           fontsize=20, va='center',
                            color='#374151', fontweight='500')
-                    y_pos -= 0.35
+                    y_pos -= 0.45
                     second_part = condition[50:90]
                     if second_part.strip():
                         ax.text(1.2, y_pos, "  " + second_part + ("..." if len(condition) > 90 else ""), 
-                               fontsize=16, va='center',
+                               fontsize=20, va='center',
                                color='#374151', fontweight='500')
                 else:
                     ax.text(1.2, y_pos, condition, 
-                           fontsize=16, va='center',
+                           fontsize=20, va='center',
                            color='#374151', fontweight='500')
                 
                 y_pos -= line_spacing
                 
             if len(bullets) > max_conditions:
                 ax.text(1.2, y_pos, f"+ {len(bullets)-max_conditions} more condition{'s' if len(bullets)-max_conditions > 1 else ''}", 
-                       fontsize=14, va='center',
+                       fontsize=16, va='center',
                        color='#9CA3AF', style='italic')
                 y_pos -= 0.3
             
             # Key Statistics section with proper spacing
-            stats_top = y_pos - 0.4  # Gap between sections
+            stats_top = y_pos - 0.3
             stats_bottom = 0
             stats_height = stats_top - stats_bottom
             
             # Ensure minimum height (fit header + rows comfortably)
-            if stats_height < 3.6:
-                stats_height = 3.6
+            if stats_height < 4.6:
+                stats_height = 4.6
                 stats_top = stats_bottom + stats_height
             
             # Statistics background
@@ -440,12 +478,12 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             # Statistics header with proper spacing
             header_y = stats_top - 0.25
             ax.text(5.0, header_y, "Key Statistics", 
-                   ha='center', fontsize=18, fontweight='bold',
+                   ha='center', fontsize=22, fontweight='bold',
                    color='#111827')
             
             # Header underline
             ax.plot([1.5, 8.5], [header_y - 0.2, header_y - 0.2], 
-                   color=primary_color, linewidth=1.5, alpha=0.6)
+                   color=primary_color, linewidth=2.0, alpha=0.6)
             
             # Format metrics
             N = int(row.get("coverage", np.nan)) if pd.notnull(row.get("coverage")) else "N/A"
@@ -480,7 +518,7 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
             
             # Display statistics with proper spacing
             current_y = header_y - 0.7
-            row_height = 0.6
+            row_height = 0.8
             left_col_x = 1.2
             right_col_x = 4.8
             
@@ -488,29 +526,29 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
                 # Label
                 ax.text(left_col_x, current_y, label, 
                        ha='left', va='center', 
-                       fontsize=15, fontweight='600',
+                       fontsize=20, fontweight='600',
                        color='#4B5563')
                 # Value
                 ax.text(right_col_x, current_y, value, 
                        ha='left', va='center', 
-                       fontsize=15, fontweight='bold',
+                       fontsize=22, fontweight='bold',
                        color=primary_color)
                 current_y -= row_height
         
         # Title
         fig.suptitle(
             f"Clinical Archetypes Overview — {str(ak)}",
-            fontsize=32,
+            fontsize=36,
             fontweight='bold',
             color='#111827',
-            y=0.95
+            y=0.982
         )
         
         # Subtitle
-        fig.text(0.5, 0.92, 
+        fig.text(0.5, 0.945, 
                 f"Top {n} highest-significance patient subgroups",
                 ha='center', 
-                fontsize=18,
+                fontsize=20,
                 color='#6B7280',
                 style='italic')
         
