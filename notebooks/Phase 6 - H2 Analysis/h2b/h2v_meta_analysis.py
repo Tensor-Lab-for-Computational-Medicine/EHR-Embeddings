@@ -16,16 +16,45 @@ def compute_meta_features(X: pd.DataFrame) -> pd.DataFrame:
         fam_map = {}
         for c in counts:
             fam_map.setdefault(re.sub(r'_mean_count(_6h)?$', '', c), []).append(c)
-        meta['total_measurement_events'] = C.sum(axis=1)
-        meta['unique_feature_families_measured'] = pd.DataFrame({f: (C[v] > 0).any(axis=1) for f, v in fam_map.items()}).sum(axis=1)
         fam_max = pd.DataFrame({f: C[v].max(axis=1) for f, v in fam_map.items()})
+        # Density: sum of per-family max across cadences (no double-counting)
+        meta['total_measurement_events'] = fam_max.sum(axis=1)
+        meta['unique_feature_families_measured'] = pd.DataFrame({f: (C[v] > 0).any(axis=1) for f, v in fam_map.items()}).sum(axis=1)
         z = (fam_max == 0).sum(axis=1)
-        meta['total_imputation_count'] = z
+        # Scale-free imputation burden
         meta['imputation_proportion'] = z / fam_max.shape[1]
+    # Volatility: per-family averages to avoid overweighting families with more derived columns
     stddev_cols = [c for c in X.columns if 'stddev' in c]
+    if stddev_cols:
+        fam_map_std = {}
+        for c in stddev_cols:
+            fam = re.sub(r'_stddev.*$', '', c)
+            fam_map_std.setdefault(fam, []).append(c)
+        fam_std_means = pd.DataFrame({f: X[v].mean(axis=1) for f, v in fam_map_std.items()})
+        meta['aggregate_stddev'] = fam_std_means.mean(axis=1)
+    else:
+        meta['aggregate_stddev'] = np.nan
+    # Trend magnitude: prefer 24h slopes else 6h; use absolute value, then per-family mean
     slope_cols = [c for c in X.columns if 'slope' in c]
-    meta['aggregate_stddev'] = X[stddev_cols].mean(axis=1) if stddev_cols else np.nan
-    meta['aggregate_slope'] = X[slope_cols].mean(axis=1) if slope_cols else np.nan
+    if slope_cols:
+        fam_map_slope_any = {}
+        fam_map_slope_24 = {}
+        fam_map_slope_6 = {}
+        for c in slope_cols:
+            fam = re.sub(r'_slope.*$', '', c)
+            fam_map_slope_any.setdefault(fam, []).append(c)
+            if re.search(r'_slope_24h', c):
+                fam_map_slope_24.setdefault(fam, []).append(c)
+            elif re.search(r'_slope_6h', c):
+                fam_map_slope_6.setdefault(fam, []).append(c)
+        fam_slope_vals = {}
+        for f in fam_map_slope_any.keys():
+            cols = fam_map_slope_24.get(f) or fam_map_slope_6.get(f) or fam_map_slope_any.get(f)
+            fam_slope_vals[f] = X[cols].abs().mean(axis=1)
+        fam_slope_means = pd.DataFrame(fam_slope_vals)
+        meta['aggregate_slope'] = fam_slope_means.mean(axis=1)
+    else:
+        meta['aggregate_slope'] = np.nan
     meta['unique_feature_count'] = meta.get('unique_feature_families_measured', pd.Series(0, index=X.index))
     # populated later from external text corpus by ICU stay id
     meta['input_character_count'] = np.nan
@@ -56,10 +85,6 @@ def _load_config(config_file: str = None):
     else:
         from config_h2_readmin30 import ConfigH2 as _Cfg
         return _Cfg()
-
-
-def _discover_final_subgroups(cfg, phase: str) -> str:
-    raise FileNotFoundError('Subgroups fallback disabled; use final_archetypes* only')
 
 
 def _discover_final_archetypes(cfg, phase: str) -> str:
@@ -112,6 +137,7 @@ def main():
     # Subgroup fallback removed for concise script
     parser.add_argument('--phenotypes_test_path', type=str, default=None, help='Path to X_test_phenotypes.pkl; if omitted, attempts default artifact location.')
     parser.add_argument('--phase', type=str, default='IV', help='Which phase subgroups to analyze: IV or IVB')
+    parser.add_argument('--debug_fdr', action='store_true', help='Enable verbose debug logging for BH-FDR calculations')
     args = parser.parse_args()
 
     cfg = _load_config(args.config_file)
@@ -122,8 +148,11 @@ def main():
     with open(os.path.join(cfg.H2A_OUTPUT_DIR, 'h2a_to_h2b_artifact.pkl'), 'rb') as f:
         art = pickle.load(f)
 
-    with open(cfg.X_TEST_NUM_PATH, 'rb') as f:
-        X_test = pickle.load(f)
+    try:
+        with open(cfg.X_TEST_NUM_PATH, 'rb') as f:
+            X_test = pickle.load(f)
+    except Exception:
+        X_test = pd.read_pickle(cfg.X_TEST_NUM_PATH)
     if not isinstance(X_test, pd.DataFrame):
         X_test = pd.DataFrame(X_test)
     # Note: Inverse scaling not required for Phase V meta-features; using current scale
@@ -157,7 +186,6 @@ def main():
 
     # character counts will be assigned after loading final_archetypes to ensure id alignment
     char_text_dir = r'D:\Projects\EHR Embeddings\notebooks\Phase 3\phase_3_serialized_data\F3_P5'
-    print(f"[DEBUG] char_text_dir: {char_text_dir} | exists={os.path.isdir(char_text_dir)}")
     # Align cohort positions to the actual index labels of X_test to avoid boolean length mismatches
     full_index = pd.Index(X_test.index)
     cohorts_idx = {k: full_index.take(np.asarray(v, dtype=int)) for k, v in art['cohorts_by_pos'].items()}
@@ -196,8 +224,11 @@ def main():
         # Default artifact location: parent directory of h2b → feature_engineering/artifacts/X_test_phenotypes.pkl
         base_dir = os.path.dirname(os.path.abspath(__file__))
         phenos_path = os.path.abspath(os.path.join(base_dir, '..', 'feature_engineering', 'artifacts', 'X_test_phenotypes.pkl'))
-    with open(phenos_path, 'rb') as f:
-        phenos = pickle.load(f)
+    try:
+        with open(phenos_path, 'rb') as f:
+            phenos = pickle.load(f)
+    except Exception:
+        phenos = pd.read_pickle(phenos_path)
     if not isinstance(phenos, pd.DataFrame):
         phenos = pd.DataFrame(phenos)
     # Align phenotype index to X_test and build an icustay id mapping
@@ -208,8 +239,11 @@ def main():
             phenos.index = X_test.index
     # Prefer aligned ICU IDs from config artifact if available
     try:
-        with open(cfg.ICUSTAY_IDS_TEST_PATH, 'rb') as f:
-            ids_loaded = pickle.load(f)
+        try:
+            with open(cfg.ICUSTAY_IDS_TEST_PATH, 'rb') as f:
+                ids_loaded = pickle.load(f)
+        except Exception:
+            ids_loaded = pd.read_pickle(cfg.ICUSTAY_IDS_TEST_PATH)
         if len(ids_loaded) == X_test.shape[0]:
             icu_ids = pd.Series(pd.Index(ids_loaded).astype(str).tolist(), index=X_test.index)
         else:
@@ -227,35 +261,20 @@ def main():
     # Populate input_character_count for ALL X_test rows using ICU stay ids
     if os.path.isdir(char_text_dir):
         id_to_path = _build_id_to_path_map(char_text_dir)
-        print(f"[DEBUG] Built ICU ID -> path map: {len(id_to_path)} entries")
-        if len(id_to_path) > 0:
-            sample_items = list(id_to_path.items())[:3]
-            print(f"[DEBUG] Sample id_to_path entries: {sample_items}")
         cache = {}
-        missing_sid_count = 0
-        nan_read_count = 0
         mapped_values = []
         for sid in icu_ids:
-            sid_str = str(sid)
-            p = id_to_path.get(sid_str)
+            p = id_to_path.get(str(sid))
             if not p:
-                missing_sid_count += 1
                 mapped_values.append(np.nan)
                 continue
             if p not in cache:
                 cache[p] = _count_chars_from_path(p)
             val = cache[p]
-            if pd.isna(val):
-                nan_read_count += 1
             mapped_values.append(float(val) if pd.notna(val) else np.nan)
-        total_ids = len(icu_ids)
-        print(f"[DEBUG] ICU IDs total={total_ids} | ids_without_text={missing_sid_count} | read_failures={nan_read_count}")
-        if total_ids > 0:
-            sample_vals = mapped_values[:5]
-            print(f"[DEBUG] Sample input_character_count values (first 5): {sample_vals}")
-        meta['input_character_count'] = mapped_values
-    else:
-        print(f"[DEBUG] Character text directory does not exist. input_character_count remains NaN.")
+        meta['input_character_count'] = pd.Series(mapped_values, index=meta.index).apply(lambda v: np.log1p(v) if pd.notna(v) and v >= 0 else np.nan)
+
+    # (diagnostics removed for concision)
 
     # Rule parser: supports boolean equality, categorical equality, and interval syntax: feat: [low:high[
     interval_pat = re.compile(r"^([A-Za-z0-9_]+)\s*:\s*\[\s*([^:\]]+)\s*:\s*([^\]\[]+)\[$")
@@ -307,7 +326,6 @@ def main():
         return phenos.index[mask.values]
 
     rows = []
-    debug_lines = []
     for _, r in final_df.iterrows():
         key = r['analysis_key']
         rule = r['rule_str']
@@ -368,21 +386,16 @@ def main():
             err_members = members.intersection(win_cohort)
             suc_members = members.intersection(opp_cohort)
 
-        # Debug: record cohort sizes to verify within-subgroup restriction
-        try:
-            debug_lines.append(f"{args.phase}|{key}|members={len(members)}|err={len(err_members)}|suc={len(suc_members)}")
-        except Exception:
-            pass
+        # (debug metrics removed)
 
         # Analyze ONLY the pre-specified meta-features per Phase V plan
         meta_feats = [c for c in [
             'total_measurement_events',        # density
             'unique_feature_count',            # density
-            'input_character_count',           # density (from ICU text; may be NaN)
+            'input_character_count',           # density (from ICU text; may be NaN, log1p-scaled)
             'aggregate_stddev',                # volatility
-            'aggregate_slope',                 # volatility
-            'total_imputation_count',          # imputation
-            'imputation_proportion'            # imputation
+            'aggregate_slope',                 # volatility (magnitude, 24h preferred)
+            'imputation_proportion'            # imputation (scale-free)
         ] if c in meta.columns]
         for feat in meta_feats:
             if feat not in meta.columns:
@@ -411,9 +424,52 @@ def main():
     if not meta_df.empty:
         # Add direction and FDR q-values
         meta_df['direction'] = np.where(meta_df['effect_size'] > 0, 'higher_in_error', np.where(meta_df['effect_size'] < 0, 'higher_in_success', 'no_diff'))
+        # Global BH-FDR across all tests (kept for backwards-compatibility)
         meta_df['q_value'] = _bh_fdr(meta_df['p_value'])
         meta_df['significant_p_lt_0_05'] = meta_df['p_value'] < 0.05
         meta_df['significant_q_lt_0_05'] = meta_df['q_value'] < 0.05
+        # Per-family BH-FDR within each (analysis, rule, family)
+        family_map = {
+            'total_measurement_events': 'density',
+            'unique_feature_count': 'density',
+            'input_character_count': 'density',
+            'aggregate_stddev': 'volatility',
+            'aggregate_slope': 'volatility',
+            'imputation_proportion': 'imputation',
+        }
+        meta_df['family'] = meta_df['meta_feature'].map(family_map).fillna('other')
+        # Per-(analysis,rule,family) BH-FDR. This controls for multiple meta-features within each vetted subgroup.
+        meta_df['q_value_family'] = (
+            meta_df.groupby(['analysis', 'rule', 'family'], dropna=False)['p_value']
+                   .transform(_bh_fdr)
+        )
+        # Safety: ensure adjusted q-values are never below raw p-values
+        meta_df['q_value_family'] = np.maximum(meta_df['q_value_family'], meta_df['p_value'])
+        if args.debug_fdr:
+            # Debug summary of per-family groups and where q==p
+            print("[DEBUG] ----- FDR family grouping diagnostics -----")
+            grp_keys = ['analysis', 'rule', 'family']
+            gobj = meta_df.groupby(grp_keys, dropna=False)
+            counts = gobj['p_value'].size().rename('m')
+            equal_mask = (meta_df['q_value_family'] == meta_df['p_value'])
+            eq_counts = gobj.apply(lambda d: int((d['q_value_family'] == d['p_value']).sum())).rename('eq_count')
+            min_p = gobj['p_value'].min().rename('min_p')
+            max_p = gobj['p_value'].max().rename('max_p')
+            dbg = pd.concat([counts, eq_counts, min_p, max_p], axis=1).reset_index()
+            dbg['eq_rate'] = dbg.apply(lambda r: (r['eq_count'] / r['m']) if r['m'] else np.nan, axis=1)
+            dbg['note'] = dbg.apply(lambda r: 'single-test family (m=1)' if r['m'] == 1 else ('all q==p at largest ranks' if r['eq_rate'] > 0 and r['m'] > 1 else ''), axis=1)
+            # Print a compact table-like summary
+            print(dbg.sort_values(['family','m','eq_rate'], ascending=[True, False, False]).head(50).to_string(index=False))
+            # Show an example group with m>1 where any q>p for sanity
+            try:
+                example_key = next(k for k, d in gobj if gobj.size()[k] > 1)
+                ex_df = gobj.get_group(example_key).copy()
+                ex_df = ex_df.sort_values('p_value')
+                print("[DEBUG] Example group (analysis, rule, family)=", example_key)
+                print(ex_df[['meta_feature','p_value','q_value_family','u_stat','n_error_in_subgroup','n_success_concordant']].head(10).to_string(index=False))
+            except StopIteration:
+                print("[DEBUG] No multi-test families found; equality q==p is expected when m=1.")
+        meta_df['significant_q_family_lt_0_05'] = meta_df['q_value_family'] < 0.05
         # Standardized rank effect sizes for comparability across sample sizes
         n1 = meta_df['n_error_in_subgroup'].replace(0, np.nan).astype(float)
         n2 = meta_df['n_success_concordant'].replace(0, np.nan).astype(float)
@@ -432,33 +488,41 @@ def main():
     if not meta_df.empty:
         sig_p = meta_df[meta_df['p_value'] < 0.05]
         sig_q = meta_df[meta_df['q_value'] < 0.05]
+        sig_qf = meta_df[meta_df['q_value_family'] < 0.05]
         lines.append(f"Significant tests (p<0.05): {len(sig_p)}")
-        lines.append(f"Significant tests (q<0.05 BH-FDR): {len(sig_q)}")
-        if not sig_q.empty:
-            counts = sig_q['meta_feature'].value_counts().to_dict()
-            top_feats = ', '.join([f"{k}:{v}" for k, v in counts.items()])
-            lines.append(f"Top meta-features with q<0.05: {top_feats}")
+        lines.append(f"Significant tests (q<0.05 global BH-FDR): {len(sig_q)}")
+        lines.append(f"Significant tests (q_family<0.05 per-family BH-FDR): {len(sig_qf)}")
+        if not sig_qf.empty:
+            fam_counts = sig_qf.groupby('family').size().to_dict()
+            fam_s = ', '.join([f"{k}:{v}" for k, v in fam_counts.items()])
+            lines.append(f"Significant by family (q_family<0.05): {fam_s}")
+            feat_counts = sig_qf['meta_feature'].value_counts().to_dict()
+            top_feats = ', '.join([f"{k}:{v}" for k, v in feat_counts.items()])
+            lines.append(f"Top meta-features with q_family<0.05: {top_feats}")
             lines.append('')
-            lines.append('Per-archetype significant differences:')
-            grp = sig_q.sort_values(['analysis','rule','q_value']).groupby(['analysis','rule'])
+            lines.append('Per-archetype significant differences (per-family FDR):')
+            grp = sig_qf.sort_values(['analysis','rule','q_value_family']).groupby(['analysis','rule'])
             for (analysis_key, rule_str), g in grp:
                 ctx = _ctx(analysis_key, rule_str)
                 lines.append(f"- {analysis_key} | rule: {rule_str} {ctx}")
                 # top-N per archetype for readability
                 for _, row in g.head(5).iterrows():
                     lines.append(
-                        f"  * {row['meta_feature']} ({row['direction']}): med_error={row['median_subgroup_error']:.3f}, med_success={row['median_concordant_success']:.3f}, "
-                        f"effect={row['effect_size']:.3f}, p={row['p_value']:.3g}, q={row['q_value']:.3g}, n_err={row['n_error_in_subgroup']}, n_suc={row['n_success_concordant']}"
+                        f"  * {row['meta_feature']} [{row['family']}] ({row['direction']}): med_error={row['median_subgroup_error']:.3f}, med_success={row['median_concordant_success']:.3f}, "
+                        f"effect={row['effect_size']:.3f}, p={row['p_value']:.3g}, q_family={row['q_value_family']:.3g}, n_err={row['n_error_in_subgroup']}, n_suc={row['n_success_concordant']}"
                     )
                 lines.append('')
     phase_tag = 'IVB' if args.phase.lower() == 'ivb' else 'IV'
     with open(os.path.join(out_dir, f'phase_v_report_{phase_tag}.txt'), 'w', encoding='utf-8') as f:
+        # Append concise note explaining when q == p can occur and the safety clamp
+        lines.append('')
+        lines.append('Notes on BH-FDR (per-family):')
+        lines.append('- q_values are Benjamini-Hochberg adjusted within each (analysis, rule, family).')
+        lines.append('- When family size m=1, q equals p. For small m, the worst-ranked test can also have q==p due to the monotone step.')
+        lines.append('- The implementation enforces q_value_family >= p_value to avoid downward bias.')
         f.write('\n'.join(lines))
 
-    # Emit debug cohort sizes
-    if debug_lines:
-        with open(os.path.join(out_dir, f'phase_v_meta_debug.txt'), 'w', encoding='utf-8') as f:
-            f.write('\n'.join(debug_lines))
+    # (diagnostics and debug file output removed)
 
 
 if __name__ == '__main__':

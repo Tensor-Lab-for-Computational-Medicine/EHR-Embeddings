@@ -1,0 +1,47 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{@{}llllrrrrrrr@{}}
+\toprule
+Comparison & Meta-feature & Feature family & Direction of difference & Median (error) & Median (success) & Effect size & p-value & q (per-family BH-FDR) & n (error) & n (success) \\
+\midrule
+\multicolumn{11}{l}{\textbf{Rule: Low albumin present; Synthetic liver dysfunction} \textit{(n err: 572, n suc: 2,212)}} \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.615 & 0.654 & -0.038 & 1.49e-04 & 1.49e-04 & 143 & 553 \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 46.137 & 37.878 & 8.259 & 1.25e-04 & 2.24e-04 & 143 & 553 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 40.000 & 36.000 & 4.000 & 1.49e-04 & 2.24e-04 & 143 & 553 \\
+SM false alarms (FP) & Input character count & Density & Higher in error & 8.526 & 8.505 & 0.020 & 0.048 & 0.048 & 143 & 553 \\
+\multicolumn{11}{l}{\textbf{Rule: Low albumin present} \textit{(n err: 904, n suc: 3,440)}} \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.635 & 0.663 & -0.029 & 1.90e-04 & 1.90e-04 & 226 & 860 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 38.000 & 35.000 & 3.000 & 1.90e-04 & 5.43e-04 & 226 & 860 \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 41.820 & 35.049 & 6.771 & 3.62e-04 & 5.43e-04 & 226 & 860 \\
+SM false alarms (FP) & Input character count & Density & Higher in error & 8.497 & 8.464 & 0.033 & 0.026 & 0.026 & 226 & 860 \\
+\multicolumn{11}{l}{\textbf{Rule: Neutrophilia present; Low albumin present} \textit{(n err: 680, n suc: 2,288)}} \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 44.367 & 37.108 & 7.259 & 7.77e-04 & 0.002 & 170 & 572 \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.625 & 0.654 & -0.029 & 0.003 & 0.003 & 170 & 572 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 39.000 & 36.000 & 3.000 & 0.003 & 0.004 & 170 & 572 \\
+SM false alarms (FP) & Input character count & Density & Higher in error & 8.526 & 8.493 & 0.033 & 0.026 & 0.026 & 170 & 572 \\
+\multicolumn{11}{l}{\textbf{Rule: Coagulation derangement present; Neutrophilia present; Low albumin present} \textit{(n err: 552, n suc: 1,816)}} \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 46.833 & 38.116 & 8.716 & 0.001 & 0.004 & 138 & 454 \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.615 & 0.644 & -0.029 & 0.006 & 0.006 & 138 & 454 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 40.000 & 37.000 & 3.000 & 0.006 & 0.009 & 138 & 454 \\
+SM false alarms (FP) & Input character count & Density & Higher in error & 8.557 & 8.522 & 0.035 & 0.043 & 0.043 & 138 & 454 \\
+\multicolumn{11}{l}{\textbf{Rule: Neutrophilia present; Low albumin present; Synthetic liver dysfunction} \textit{(n err: 330, n suc: 1,095)}} \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 47.267 & 38.801 & 8.467 & 0.002 & 0.005 & 110 & 365 \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.606 & 0.644 & -0.038 & 0.007 & 0.007 & 110 & 365 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 41.000 & 37.000 & 4.000 & 0.007 & 0.010 & 110 & 365 \\
+\multicolumn{11}{l}{\textbf{Rule: Low albumin present; SIRS white blood cell criterion present} \textit{(n err: 357, n suc: 1,158)}} \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.635 & 0.654 & -0.019 & 0.008 & 0.008 & 119 & 386 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 38.000 & 36.000 & 2.000 & 0.008 & 0.013 & 119 & 386 \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 43.559 & 37.732 & 5.827 & 0.009 & 0.013 & 119 & 386 \\
+\multicolumn{11}{l}{\textbf{Rule: Neutrophilia present; Low albumin present; SIRS white blood cell criterion present} \textit{(n err: 291, n suc: 801)}} \\
+SM false alarms (FP) & Imputation proportion & Imputation & Higher in success & 0.625 & 0.635 & -0.010 & 0.030 & 0.030 & 97 & 267 \\
+SM false alarms (FP) & Total measurement events & Density & Higher in error & 46.372 & 40.140 & 6.232 & 0.023 & 0.045 & 97 & 267 \\
+SM false alarms (FP) & Unique feature count & Density & Higher in error & 39.000 & 38.000 & 1.000 & 0.030 & 0.045 & 97 & 267 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{document}

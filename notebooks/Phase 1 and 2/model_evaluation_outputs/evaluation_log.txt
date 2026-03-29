@@ -1,0 +1,12 @@
+2025-09-26 16:33:01,023 [INFO] - Starting evaluation...
+2025-09-26 16:33:01,078 [INFO] - Loaded XGBoost model from phase_1_outputs\mort_hosp\model_1_xgboost_baseline.pkl
+2025-09-26 16:33:01,079 [INFO] - Loaded XGBoost results from phase_1_outputs\mort_hosp\results_xgboost_baseline.pkl
+2025-09-26 16:33:01,079 [INFO] - Loaded Elastic Net model from phase_1_outputs\mort_hosp\model_2_elastic_net_baseline.pkl
+2025-09-26 16:33:01,080 [INFO] - Loaded Elastic Net results from phase_1_outputs\mort_hosp\results_elastic_net_baseline.pkl
+2025-09-26 16:33:01,112 [INFO] - Loaded test data: X_test(5648, 458), y_test(5648,)
+2025-09-26 16:33:01,112 [INFO] - y_test unique values (up to 5): [0, 1]
+2025-09-26 16:33:01,549 [INFO] - XGBoost: AUROC=0.9107 AUPRC=0.6143
+2025-09-26 16:33:01,576 [INFO] - Elastic Net: AUROC=0.8989 AUPRC=0.5604
+2025-09-26 16:33:09,371 [INFO] - SHAP computed for XGBoost
+2025-09-26 16:33:09,381 [INFO] - SHAP computed for Elastic Net
+2025-09-26 16:33:30,696 [INFO] - Done. Outputs in model_evaluation_outputs\default/

@@ -1,0 +1,18 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+Comparison & Archetype rule & N & Coverage (\%) & Outcome (\%) & Baseline (\%) & Enrichment & q (BH-FDR) \\
+\midrule
+NM advantage—survivors & Coagulation derangement present; Invasive hemodynamic monitoring & 72 & 33.0\% & 62.5\% & 35.8\% & 1.75 & 2.29e-06 \\
+NM advantage—survivors & Ionized hypocalcemia present; Invasive hemodynamic monitoring & 46 & 21.1\% & 69.6\% & 35.8\% & 1.94 & 1.03e-05 \\
+NM advantage—survivors & Invasive hemodynamic monitoring; Low albumin present & 50 & 22.9\% & 68.0\% & 35.8\% & 1.90 & 1.03e-05 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{document}

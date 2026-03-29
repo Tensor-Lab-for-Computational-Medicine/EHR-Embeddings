@@ -1,0 +1,17 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{@{}llllrrrrrrr@{}}
+\toprule
+Comparison & Meta-feature & Feature family & Direction of difference & Median (error) & Median (success) & Effect size & p-value & q (per-family BH-FDR) & n (error) & n (success) \\
+\midrule
+\multicolumn{11}{l}{\textbf{Rule: On ventilator; Synthetic liver dysfunction} \textit{(n err: 34, n suc: 27)}} \\
+NM advantage—survivors & Input character count & Density & Higher in error & 8.688 & 8.597 & 0.091 & 0.015 & 0.045 & 34 & 27 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{document}

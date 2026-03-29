@@ -322,6 +322,10 @@ def evaluate_and_calibrate(arm, base_model, X_test, y_test_values, X_val_cal, y_
 
     results = evaluate_with_uncertainty(y_test_values, y_pred_proba_after)
 
+    # Store raw predictions for statistical comparison
+    results['y_true'] = y_test_values
+    results['y_pred_proba'] = y_pred_proba_after
+
     cal_before = compute_calibration_metrics(y_test_values, y_pred_proba_before)
     cal_after = compute_calibration_metrics(y_test_values, y_pred_proba_after)
     ece_improvement = cal_before['ece'] - cal_after['ece']

@@ -35,7 +35,7 @@ Total discordant predictions: 1058 (18.7%)
 
 THRESHOLDING
 ------------------------------
-Strategy: f1
-Objective: f1
+Strategy: youden
+Objective: youden
 NM threshold: 0.0600
 SM threshold: 0.0800

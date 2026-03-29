@@ -1,19 +1,12 @@
 # generate_manuscript_figures_corrected.py
 """
-A streamlined script to analyze experimental results and generate a focused set of
-publication-quality figures and tables for a manuscript.
-
-Refactored for improved readability, modularity, and maintainability.
-This version incorporates user feedback for plotting corrections, including confidence intervals on Figure 2.
-This version also adds a new figure (Figure 6) to compare different models within a task.
-This version includes baseline models in Figure 6 and adds a new plot to compare task performance by model.
-This version adds baseline performance markers to Figure 7 for direct comparison.
+Generate publication figures/tables from experiment results with concise, modular plotting.
+Includes CIs, numeric baselines, and per-model/task comparison (prompts vs representations).
 """
-import os
 import pickle
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional
 
 import pandas as pd
 import numpy as np
@@ -21,6 +14,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
+from sklearn.metrics import roc_auc_score
+from statsmodels.stats.multitest import multipletests
 
 # --- Configuration ---
 
@@ -63,6 +58,102 @@ def setup_environment() -> None:
         format='%(asctime)s [%(levelname)s] - %(message)s',
         handlers=[logging.StreamHandler()]
     )
+    # Manuscript-friendly defaults: paper context, readable fonts
+    sns.set_theme(context="paper", style="whitegrid", font_scale=1.4)
+    plt.rcParams.update({
+        'axes.labelsize': 14,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'legend.fontsize': 12,
+        'axes.grid': True,
+        'grid.alpha': 0.3,
+        'savefig.dpi': 300,
+    })
+
+def calculate_paired_bootstrap_pvalue(y_true, p_baseline, p_champion, n_boot=2000, seed=42):
+    """
+    Calculate p-value for H1: Champion != Baseline (two-sided) using paired bootstrap.
+    Returns p-value.
+    """
+    if y_true is None or p_baseline is None or p_champion is None:
+        return None
+    
+    # Ensure numpy arrays
+    y_true = np.array(y_true)
+    p_baseline = np.array(p_baseline)
+    p_champion = np.array(p_champion)
+    
+    if len(y_true) != len(p_baseline) or len(y_true) != len(p_champion):
+        logging.warning("Shape mismatch in predictions for p-value calculation.")
+        return None
+
+    rng = np.random.RandomState(seed)
+    n_samples = len(y_true)
+    indices = np.arange(n_samples)
+    
+    diffs = []
+    for _ in range(n_boot):
+        boot_idx = rng.choice(indices, n_samples, replace=True)
+        # Skip if single class in sample
+        if len(np.unique(y_true[boot_idx])) < 2: continue
+            
+        b_y = y_true[boot_idx]
+        try:
+            # Difference: Champion - Baseline
+            d = roc_auc_score(b_y, p_champion[boot_idx]) - roc_auc_score(b_y, p_baseline[boot_idx])
+            diffs.append(d)
+        except ValueError:
+            continue
+            
+    if not diffs: return None
+    
+    diffs = np.array(diffs)
+    # Two-sided p-value: 2 * min(P(diff <= 0), P(diff >= 0))
+    # This tests if the difference is significantly different from zero in either direction
+    p_left = np.mean(diffs <= 0)
+    p_right = np.mean(diffs >= 0)
+    p_val = 2 * min(p_left, p_right)
+    
+    return p_val
+
+# Shared styles and light helpers (kept minimal for clarity)
+BASELINE_STYLES = {
+    'XGBoost': {'marker': 'D', 'color': 'crimson', 'label': 'XGBoost Baseline'},
+    'ElasticNet': {'marker': 's', 'color': '#663399', 'label': 'ElasticNet Baseline'}
+}
+TASK_KEY_MAP = {v: k for k, v in TASK_LABELS.items()}
+
+def add_errorbar(ax: plt.Axes, x: float, y: float, lo: float, hi: float, **kwargs) -> None:
+    ax.errorbar(x=x, y=y, yerr=[[lo], [hi]], fmt=kwargs.pop('fmt', 'none'), capsize=kwargs.pop('capsize', 3), **kwargs)
+
+def add_ci_for_catplot(ax: plt.Axes, df: pd.DataFrame, x_field: str, hue_field: str, metric: str,
+                       hue_order: List[str], bar_width: float, x_pos_map: Dict[str, int]) -> None:
+    num_hues = len(hue_order)
+    for _, row in df.iterrows():
+        xl, hl = row[x_field], row[hue_field]
+        if xl in x_pos_map and hl in hue_order:
+            xg = x_pos_map[xl]
+            hi = hue_order.index(hl)
+            x_coord = xg + (hi - (num_hues - 1) / 2) * bar_width
+            y_val = row[metric]
+            add_errorbar(ax, x_coord, y_val, y_val - row[f'{metric}_CI_Lower'], row[f'{metric}_CI_Upper'] - y_val,
+                         c='black', elinewidth=1, zorder=10)
+
+def add_baseline_markers(ax: plt.Axes, baseline_df: pd.DataFrame, task_cats: List[str], metric: str) -> None:
+    x_pos_map = {label: i for i, label in enumerate(task_cats)}
+    for task_label, x_pos in x_pos_map.items():
+        task_key = TASK_KEY_MAP.get(task_label)
+        if not task_key: continue
+        task_baselines = baseline_df[baseline_df['Task'] == task_key]
+        if task_baselines.empty: continue
+        for b_model_name, style in BASELINE_STYLES.items():
+            bd = task_baselines[task_baselines['Prompt'] == b_model_name]
+            if bd.empty: continue
+            r = bd.iloc[0]
+            y_val = r[metric]
+            add_errorbar(ax, x_pos, y_val, y_val - r[f'{metric}_CI_Lower'], r[f'{metric}_CI_Upper'] - y_val,
+                         fmt=style['marker'], color=style['color'], markersize=7, elinewidth=1.5,
+                         zorder=12, markeredgewidth=1.5, markerfacecolor='none')
 
 def _load_pickle_file(filepath: Path) -> Optional[Dict[str, Any]]:
     """Safely load a single pickle file."""
@@ -97,6 +188,7 @@ def _load_embedding_results(results_dir: Path) -> List[Dict[str, Any]]:
         if data:
             data['task'] = filepath.parent.name
             data['model_name'] = filepath.parent.parent.name
+            data['filepath'] = str(filepath)
             results.append(data)
     return results
 
@@ -138,6 +230,19 @@ def load_all_results(results_dir: Path, baseline_dir: Path) -> Optional[List[Dic
         return None
 
     logging.info(f"Successfully loaded {len(all_results)} total result files.")
+    
+    # DEBUG: Check for predictions in baselines
+    baselines_with_pred = 0
+    for res in all_results:
+        if 'Baseline' in res.get('experimental_arm', ''):
+             yt = res.get('y_true')
+             if yt is None and 'full_evaluation' in res:
+                 yt = res['full_evaluation'].get('y_true')
+             
+             if yt is not None:
+                 baselines_with_pred += 1
+    logging.info(f"DEBUG: Found {baselines_with_pred} baseline results with predictions out of {len([r for r in all_results if 'Baseline' in r.get('experimental_arm', '')])} baselines.")
+
     return all_results
 
 def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
@@ -152,6 +257,18 @@ def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
         auroc_data = eval_data.get('auroc', {})
         auprc_data = eval_data.get('auprc', {})
 
+        # Extract raw predictions if available
+        # xgboost_analysis.py stores in 'full_evaluation', xgboost_embedding_analysis.py in root
+        y_true = res.get('y_true')
+        y_pred = res.get('y_pred_proba')
+        if y_true is None and 'full_evaluation' in res:
+             y_true = res['full_evaluation'].get('y_true')
+             y_pred = res['full_evaluation'].get('y_pred_proba')
+        
+        # DEBUG LOGGING FOR DATAFRAME CREATION
+        # if res.get('model_name') in ['Baseline_XGBoost', 'Baseline_ElasticNet'] and y_true is None:
+        #    logging.warning(f"Baseline model {res.get('model_name')} for task {res.get('task')} is missing predictions!")
+
         records.append({
             'Task': res.get('task', 'Unknown'),
             'Representation': rep,
@@ -163,6 +280,9 @@ def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
             'AUPRC': auprc_data.get('point_estimate'),
             'AUPRC_CI_Lower': auprc_data.get('ci_lower'),
             'AUPRC_CI_Upper': auprc_data.get('ci_upper'),
+            'y_true': y_true,
+            'y_pred_proba': y_pred,
+            'filepath': res.get('filepath', 'Unknown')
         })
 
     if not records:
@@ -182,12 +302,12 @@ def create_summary_dataframe(all_results: List[Dict[str, Any]]) -> pd.DataFrame:
 
 # --- Plotting Functions ---
 
-def generate_representation_barplot(df: pd.DataFrame, metric: str, filename: str, title: str) -> None:
+def generate_representation_barplot(df: pd.DataFrame, metric: str, filename: str) -> None:
     """
     Generate a bar plot comparing representations for each prompt, including baselines.
     This version now plots confidence intervals for each bar.
     """
-    logging.info(f"Generating {metric} representation bar plot (with CI): {title}")
+    logging.info(f"Generating {metric} representation bar plot (with CI)")
 
     fig, ax = plt.subplots(figsize=(14, 8))
     sns.set_theme(style="whitegrid")
@@ -219,33 +339,22 @@ def generate_representation_barplot(df: pd.DataFrame, metric: str, filename: str
     # Add confidence intervals
     hue_order = [h.get_text() for h in ax.get_legend().get_texts()]
     x_labels = [label.get_text() for label in ax.get_xticklabels()]
-    
-    num_hues = len(hue_order)
     bar_width = bplot.patches[0].get_width() if bplot.patches else 0.8
     x_pos_map = {label: i for i, label in enumerate(x_labels)}
 
     # Iterate through the plotted data to add error bars at correct positions
-    for _, row in df_plot.iterrows():
-        prompt_label = row['PromptLabel']
-        rep_label = row['RepresentationLabel']
-        
-        if prompt_label in x_pos_map and rep_label in hue_order:
-            x_pos_group = x_pos_map[prompt_label]
-            hue_index = hue_order.index(rep_label)
-            
-            bar_offset = (hue_index - (num_hues - 1) / 2) * bar_width
-            x_coord = x_pos_group + bar_offset
-            
-            y_val = row[metric]
-            ci_lower = row[f'{metric}_CI_Lower']
-            ci_upper = row[f'{metric}_CI_Upper']
-            
-            if pd.notna(ci_lower) and pd.notna(ci_upper):
-                y_err = [[y_val - ci_lower], [ci_upper - y_val]]
-                ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=3, zorder=10)
+    add_ci_for_catplot(
+        ax,
+        df_plot,
+        x_field='PromptLabel',
+        hue_field='RepresentationLabel',
+        metric=metric,
+        hue_order=hue_order,
+        bar_width=bar_width,
+        x_pos_map=x_pos_map
+    )
 
 
-    ax.set_title(title, fontsize=16, pad=20)
     ax.set_xlabel('Prompting Strategy / Baseline Model', fontsize=12)
     ax.set_ylabel(f'Test Set {metric} (with 95% CI)', fontsize=12)
     plt.xticks(rotation=45, ha='right')
@@ -256,12 +365,12 @@ def generate_representation_barplot(df: pd.DataFrame, metric: str, filename: str
 
     save_figure(fig, filename)
     
-def generate_performance_lift_plot(df: pd.DataFrame, metric: str, filename: str, title: str) -> None:
+def generate_performance_lift_plot(df: pd.DataFrame, metric: str, filename: str) -> None:
     """
     Generate a plot showing performance lift over the best baseline model for a given task.
     Now includes baseline models in the plot for comprehensive comparison.
     """
-    logging.info(f"Generating {metric} performance lift plot: {title}")
+    logging.info(f"Generating {metric} performance lift plot")
 
     baseline_scores = df[df['Representation'] == 'Baseline'][metric]
     if baseline_scores.empty:
@@ -288,100 +397,121 @@ def generate_performance_lift_plot(df: pd.DataFrame, metric: str, filename: str,
                     fmt='none', ecolor='black', capsize=3)
 
     ax.axvline(0, color='black', linewidth=0.8, linestyle='--')
-    ax.set_title(title, fontsize=16, pad=20)
     ax.set_xlabel(f'Change in {metric} vs. Best Baseline (with 95% CI)', fontsize=12)
     ax.set_ylabel('Experimental Arm', fontsize=12)
     if ax.get_legend(): ax.get_legend().remove()
     
     save_figure(fig, filename)
 
-def generate_model_comparison_plot(df: pd.DataFrame, baselines_df: pd.DataFrame, metric: str, filename: str, title: str):
+def generate_task_comparison_by_prompt_plot(df: pd.DataFrame, baseline_df: pd.DataFrame, metric: str, filename: str):
     """
-    Generate a faceted bar plot comparing model performance for a task.
-    Includes baseline performance as a reference.
+    Generate a faceted bar plot comparing task performance for each embedding model,
+    but grouping bars by Prompt (P0–P5) instead of Representation, with numeric
+    baseline markers overlaid per task.
     """
-    logging.info(f"Generating detailed model comparison plot for {metric}: {title}")
-    
-    plot_df = df.copy()
-    if plot_df.empty:
-        logging.warning("No embedding model data available for the detailed comparison plot.")
+    logging.info(f"Generating per-model task comparison by prompt plot for {metric}")
+
+    if df.empty:
+        logging.warning("No embedding model data available for this plot.")
         return
 
-    plot_df['RepresentationLabel'] = plot_df['Representation'].map(REP_LABELS)
+    # For each model, task, and prompt, find the best-performing representation
+    best_rep_indices = df.groupby(['Model', 'Task', 'Prompt'], observed=True)[metric].idxmax()
+    plot_df = df.loc[best_rep_indices].copy()
+
+    plot_df['TaskLabel'] = plot_df['Task'].map(TASK_LABELS)
     plot_df['PromptLabel'] = plot_df['Prompt'].map(PROMPT_LABELS)
 
-    rep_cats = [REP_LABELS[r] for r in REPRESENTATIONS if r in plot_df['Representation'].unique()]
-    prompt_cats = [PROMPT_LABELS[p] for p in PROMPTS if p in plot_df['Prompt'].unique()]
+    # Ensure categorical ordering for consistent plots
     model_names = sorted(plot_df['Model'].unique())
-    
-    plot_df['RepresentationLabel'] = pd.Categorical(plot_df['RepresentationLabel'], categories=rep_cats, ordered=True)
-    plot_df['PromptLabel'] = pd.Categorical(plot_df['PromptLabel'], categories=prompt_cats, ordered=True)
-    plot_df = plot_df.dropna(subset=['PromptLabel', 'RepresentationLabel'])
+    task_cats = [TASK_LABELS[t] for t in TASK_LABELS if t in plot_df['Task'].unique()]
+    prompt_cats = [PROMPT_LABELS[p] for p in ['P0','P1','P2','P3','P4','P5'] if p in plot_df['Prompt'].unique()]
 
-    palette = sns.color_palette('cubehelix', n_colors=len(model_names))
-    color_map = dict(zip(model_names, palette))
+    plot_df['TaskLabel'] = pd.Categorical(plot_df['TaskLabel'], categories=task_cats, ordered=True)
+    plot_df['PromptLabel'] = pd.Categorical(plot_df['PromptLabel'], categories=prompt_cats, ordered=True)
+    plot_df = plot_df.sort_values(['Model', 'TaskLabel', 'PromptLabel'])
+
+    palette = sns.color_palette('viridis', n_colors=len(prompt_cats))
+    color_map = dict(zip(prompt_cats, palette))
 
     g = sns.catplot(
-        data=plot_df, x='PromptLabel', y=metric, hue='Model', col='RepresentationLabel',
-        kind='bar', palette=color_map, height=6, aspect=1.2, legend=False,
-        col_wrap=3
+        data=plot_df, x='TaskLabel', y=metric, hue='PromptLabel', col='Model',
+        kind='bar', palette=color_map, height=6, aspect=1.45, legend=False,
+        col_wrap=2, sharey=False, col_order=model_names,
+        hue_order=prompt_cats
     )
 
-    baseline_models = {'XGBoost': ('blue', '--'), 'ElasticNet': ('green', ':')}
-    
-    for ax in g.axes.flatten():
-        if not ax.patches: continue
-        current_rep_label = ax.get_title().split(' = ')[-1]
-        ax_df = plot_df[plot_df['RepresentationLabel'] == current_rep_label]
+    # --- ADDING CONFIDENCE INTERVALS AND BASELINE MARKERS ---
+    baseline_styles = {
+        'XGBoost': {'marker': 'D', 'color': 'crimson', 'label': 'XGBoost Baseline'},
+        'ElasticNet': {'marker': 's', 'color': '#663399', 'label': 'ElasticNet Baseline'}
+    }
+    task_key_map = {v: k for k, v in TASK_LABELS.items()}
 
-        hue_order = sorted(ax_df['Model'].unique())
-        num_hues = len(hue_order)
+    for model_name, ax in zip(g.col_names, g.axes.flat):
+        if not ax.patches: continue
+
+        ax_df = plot_df[plot_df['Model'] == model_name]
+        if ax_df.empty: continue
+
+        hue_order = prompt_cats
         bar_width = ax.patches[0].get_width()
-        x_labels = [label.get_text() for label in ax.get_xticklabels()]
+        x_labels = task_cats
         x_pos_map = {label: i for i, label in enumerate(x_labels)}
 
-        for _, row in ax_df.iterrows():
-            prompt_label, model_name = row['PromptLabel'], row['Model']
-            if prompt_label in x_pos_map and model_name in hue_order:
-                x_pos_group = x_pos_map[prompt_label]
-                hue_index = hue_order.index(model_name)
-                bar_offset = (hue_index - (num_hues - 1) / 2) * bar_width
-                x_coord = x_pos_group + bar_offset
-                y_val = row[metric]
-                y_err = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
-                ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=2, zorder=10)
+        # Plot CIs for embedding model bars
+        add_ci_for_catplot(
+            ax,
+            ax_df,
+            x_field='TaskLabel',
+            hue_field='PromptLabel',
+            metric=metric,
+            hue_order=hue_order,
+            bar_width=bar_width,
+            x_pos_map=x_pos_map
+        )
 
-        # Add baseline horizontal lines with CIs
-        for model_name, (color, style) in baseline_models.items():
-            baseline_data = baselines_df[baselines_df['Prompt'] == model_name]
-            if not baseline_data.empty:
-                score = baseline_data[metric].iloc[0]
-                ci_low = baseline_data[f'{metric}_CI_Lower'].iloc[0]
-                ci_high = baseline_data[f'{metric}_CI_Upper'].iloc[0]
-                ax.axhline(y=score, color=color, linestyle=style, zorder=8)
-                ax.axhspan(ci_low, ci_high, color=color, alpha=0.1, zorder=7)
+        # Baseline markers per task
+        add_baseline_markers(ax, baseline_df, task_cats, metric)
 
-        if ax_df[metric].min() > 0.4:
-            ax.set_ylim(0.5, max(1.0, ax_df[f'{metric}_CI_Upper'].max() * 1.05))
+        if not ax_df.empty and ax_df[metric].min() > 0.4:
+            y_max_ci = ax_df[f'{metric}_CI_Upper'].max()
+            ax.set_ylim(0.5, max(1.0, y_max_ci * 1.05) if pd.notna(y_max_ci) else 1.0)
 
-    g.fig.suptitle(title, fontsize=18, y=1.03)
-    g.set_axis_labels("Prompting Strategy", f'Test Set {metric} (with 95% CI)')
-    g.set_titles("Representation: {col_name}")
-    g.set_xticklabels(rotation=45, ha='right')
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+        ax.tick_params(axis='x', labelsize=10)
+        ax.tick_params(axis='y', labelsize=10)
 
-    legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in model_names]
-    for model_name, (color, style) in baseline_models.items():
-        if not baselines_df[baselines_df['Prompt'] == model_name].empty:
-            legend_handles.append(Line2D([0], [0], color=color, linestyle=style, label=f'{model_name} Baseline (95% CI shaded)'))
-            
-    g.fig.legend(handles=legend_handles, title="Model", bbox_to_anchor=(1.0, 0.5), loc="center left")
-    g.fig.tight_layout(rect=[0, 0, 0.9, 1])
+    g.set_axis_labels("Prediction Task", f'Test Set {metric} (with 95% CI)')
+    g.set_titles("Model: {col_name}")
+
+    # --- Combined Legend inside at bottom to reduce whitespace ---
+    rep_legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in prompt_cats]
+    baseline_legend_handles = [
+        Line2D([0], [0], marker=style['marker'], color='w', label=style['label'],
+               markerfacecolor='none', markeredgecolor=style['color'], 
+               markeredgewidth=1.5, markersize=9)
+        for _, style in baseline_styles.items()
+    ]
+    all_handles = rep_legend_handles + baseline_legend_handles
+
+    # Ensure x tick labels are visible and readable across all facets
+    positions = np.arange(len(task_cats))
+    for ax in g.axes.flatten():
+        ax.set_xticks(positions)
+        ax.set_xticklabels(task_cats, rotation=45, ha='right')
+        ax.tick_params(axis='x', labelsize=12)
+        ax.tick_params(axis='y', labelsize=12)
+
+    g.fig.tight_layout()
+    g.fig.subplots_adjust(bottom=0.15)
+    g.fig.legend(handles=all_handles, loc='lower center', ncol=max(3, len(all_handles)), frameon=False)
 
     save_figure(g.fig, filename)
 
-def generate_task_comparison_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
+def generate_task_comparison_plot(df: pd.DataFrame, metric: str, filename: str):
     """Generate a bar plot comparing representation performance across all prediction tasks."""
-    logging.info(f"Generating {metric} comparison plot across tasks: {title}")
+    logging.info(f"Generating {metric} comparison plot across tasks")
     
     best_indices = df.groupby(['Task', 'Representation'], observed=True)[metric].idxmax()
     plot_df = df.loc[best_indices].copy()
@@ -418,7 +548,6 @@ def generate_task_comparison_plot(df: pd.DataFrame, metric: str, filename: str, 
             
             ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=2)
 
-    ax.set_title(title, fontsize=16, pad=20)
     ax.set_xlabel('Prediction Task', fontsize=12)
     ax.set_ylabel(f'Test Set {metric}', fontsize=12)
     plt.xticks(rotation=45, ha='right')
@@ -426,12 +555,12 @@ def generate_task_comparison_plot(df: pd.DataFrame, metric: str, filename: str, 
     
     save_figure(fig, filename)
     
-def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, title: str):
+def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str):
     """
     Generate a plot showing the best performing semantic model for each task vs. baseline.
     Now includes a confidence interval for the baseline model marker and shows champion model details.
     """
-    logging.info(f"Generating champion model plot for {metric}: {title}")
+    logging.info(f"Generating champion model plot for {metric}")
     
     semantic_df = df[df['Representation'] != 'Baseline']
     if semantic_df.empty:
@@ -451,13 +580,38 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
         lambda r: f"{r['Representation']}-{r['Prompt']} ({r['Model'].split('_')[-1] if '_' in r['Model'] else r['Model']})", axis=1
     )
 
-    baseline_cols = ['Task', metric, f'{metric}_CI_Lower', f'{metric}_CI_Upper']
-    baseline_data = df[df['Prompt'] == 'XGBoost'][baseline_cols].set_index('Task')
-    champion_df = champion_df.join(baseline_data.rename(columns={
+    # Select XGBoost numeric baseline per task
+    baseline_df = df[(df['Representation'] == 'Baseline') & (df['Prompt'] == 'XGBoost')]
+    if baseline_df.empty:
+        logging.warning("No baseline rows found; champion plot will omit baseline markers.")
+        baseline_best = pd.DataFrame(columns=['Task', metric, f'{metric}_CI_Lower', f'{metric}_CI_Upper', 'Prompt', 'y_true', 'y_pred_proba'])
+    else:
+        best_idx = baseline_df.groupby('Task', observed=True)[metric].idxmax()
+        # Include predictions for stats
+        baseline_cols = ['Task', 'Prompt', metric, f'{metric}_CI_Lower', f'{metric}_CI_Upper', 'y_true', 'y_pred_proba']
+        baseline_best = baseline_df.loc[best_idx, baseline_cols]
+        baseline_best = baseline_best.rename(columns={'Prompt': 'Baseline_Model'}).set_index('Task')
+
+    champion_df = champion_df.join(baseline_best.rename(columns={
         metric: 'Baseline_Metric',
         f'{metric}_CI_Lower': 'Baseline_CI_Lower',
-        f'{metric}_CI_Upper': 'Baseline_CI_Upper'
+        f'{metric}_CI_Upper': 'Baseline_CI_Upper',
+        'y_true': 'Baseline_y_true',
+        'y_pred_proba': 'Baseline_y_pred'
     }), on='Task')
+
+    # Calculate significance
+    logging.info("Calculating paired bootstrap p-values for champion models...")
+    p_values = []
+    for _, row in champion_df.iterrows():
+        # Use champion y_true (should be identical to baseline y_true)
+        p = calculate_paired_bootstrap_pvalue(
+            row.get('y_true'),
+            row.get('Baseline_y_pred'),
+            row.get('y_pred_proba')
+        )
+        p_values.append(p)
+    champion_df['p_value'] = p_values
 
     fig, ax = plt.subplots(figsize=(16, 10))
     sns.set_theme(style="whitegrid")
@@ -470,12 +624,21 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
     ax.errorbar(x=champion_df[metric], y=np.arange(len(champion_df)), xerr=x_err,
                 fmt='none', ecolor='black', capsize=3)
     
-    # Add text annotations showing champion model details
+    # Add text annotations showing champion model details and significance
     x_min, x_max = ax.get_xlim()
     text_x_pos = x_min + (x_max - x_min) * 0.05  # Position at 5% from left edge
     
     for i, (_, row) in enumerate(champion_df.iterrows()):
         champion_text = row['ChampionShort']
+        pval = row.get('p_value')
+        
+        if pd.notnull(pval):
+            if pval < 0.001: sig = "***"
+            elif pval < 0.01: sig = "**"
+            elif pval < 0.05: sig = "*"
+            else: sig = "ns"
+            champion_text += f" [{sig}]"
+        
         ax.text(text_x_pos, i, champion_text, va='center', ha='left', fontsize=9, 
                 bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', alpha=0.8),
                 zorder=10)
@@ -490,12 +653,11 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
             ax.errorbar(x=[row['Baseline_Metric']], y=[y_coord], xerr=[[lower_err], [upper_err]],
                         fmt='D', color='blue', markersize=8, capsize=5, zorder=5)
 
-    ax.set_title(title, fontsize=16, pad=20)
     ax.set_xlabel(f'Best Test Set {metric} (with 95% CI)', fontsize=12)
     ax.set_ylabel('Prediction Task', fontsize=12)
 
     legend_elements = [
-        Line2D([0], [0], marker='D', color='w', label='XGBoost Baseline (with 95% CI)',
+        Line2D([0], [0], marker='D', color='w', label='Best Baseline (with 95% CI)',
                markerfacecolor='blue', markersize=10),
         Line2D([0], [0], color='skyblue', linewidth=6, label='Champion Semantic Model')
     ]
@@ -503,12 +665,12 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str, t
 
     save_figure(fig, filename)
 
-def generate_task_comparison_by_model_plot(df: pd.DataFrame, baseline_df: pd.DataFrame, metric: str, filename: str, title: str):
+def generate_task_comparison_by_model_plot(df: pd.DataFrame, baseline_df: pd.DataFrame, metric: str, filename: str):
     """
     Generate a faceted bar plot comparing task performance for each embedding model.
     Includes baseline model performance as reference markers on each subplot.
     """
-    logging.info(f"Generating per-model task comparison plot for {metric}: {title}")
+    logging.info(f"Generating per-model task comparison plot for {metric}")
     
     if df.empty:
         logging.warning("No embedding model data available for this plot.")
@@ -535,7 +697,7 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, baseline_df: pd.Dat
 
     g = sns.catplot(
         data=plot_df, x='TaskLabel', y=metric, hue='RepresentationLabel', col='Model',
-        kind='bar', palette=color_map, height=5, aspect=1.8, legend=False,
+        kind='bar', palette=color_map, height=6, aspect=1.45, legend=False,
         col_wrap=2, sharey=False, col_order=model_names,
         hue_order=rep_cats
     )
@@ -554,42 +716,24 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, baseline_df: pd.Dat
         if ax_df.empty: continue
 
         hue_order = rep_cats
-        num_hues = len(hue_order)
         bar_width = ax.patches[0].get_width()
         x_labels = task_cats
         x_pos_map = {label: i for i, label in enumerate(x_labels)}
 
         # Plot CIs for embedding model bars
-        for _, row in ax_df.iterrows():
-            task_label, rep_label = row['TaskLabel'], row['RepresentationLabel']
-            if task_label in x_pos_map and rep_label in hue_order:
-                x_pos_group = x_pos_map[task_label]
-                hue_index = hue_order.index(rep_label)
-                bar_offset = (hue_index - (num_hues - 1) / 2) * bar_width
-                x_coord = x_pos_group + bar_offset
-                
-                y_val = row[metric]
-                y_err = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
-                ax.errorbar(x=x_coord, y=y_val, yerr=y_err, fmt='none', c='black', capsize=3, elinewidth=1, zorder=10)
+        add_ci_for_catplot(
+            ax,
+            ax_df,
+            x_field='TaskLabel',
+            hue_field='RepresentationLabel',
+            metric=metric,
+            hue_order=hue_order,
+            bar_width=bar_width,
+            x_pos_map=x_pos_map
+        )
 
         # Plot baseline markers for each task
-        for task_label, x_pos in x_pos_map.items():
-            task_key = task_key_map.get(task_label)
-            if not task_key: continue
-            
-            task_baselines = baseline_df[baseline_df['Task'] == task_key]
-            if task_baselines.empty: continue
-            
-            for b_model_name, style in baseline_styles.items():
-                baseline_data = task_baselines[task_baselines['Prompt'] == b_model_name]
-                if not baseline_data.empty:
-                    row = baseline_data.iloc[0]
-                    y_val = row[metric]
-                    y_err_data = [[y_val - row[f'{metric}_CI_Lower']], [row[f'{metric}_CI_Upper'] - y_val]]
-                    ax.errorbar(x=x_pos, y=y_val, yerr=y_err_data, fmt=style['marker'],
-                                color=style['color'], markersize=7, capsize=4,
-                                elinewidth=1.5, zorder=12, markeredgewidth=1.5,
-                                markerfacecolor='none')
+        add_baseline_markers(ax, baseline_df, task_cats, metric)
 
         if not ax_df.empty and ax_df[metric].min() > 0.4:
             y_max_ci = ax_df[f'{metric}_CI_Upper'].max()
@@ -599,56 +743,84 @@ def generate_task_comparison_by_model_plot(df: pd.DataFrame, baseline_df: pd.Dat
         ax.tick_params(axis='x', labelsize=10)
         ax.tick_params(axis='y', labelsize=10)
 
-    g.fig.suptitle(title, fontsize=18, y=1.03)
     g.set_axis_labels("Prediction Task", f'Test Set {metric} (with 95% CI)')
     g.set_titles("Model: {col_name}")
-    
-    # --- Create Combined Legend ---
-    rep_legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in rep_cats]
-    legend1 = g.fig.legend(handles=rep_legend_handles, title="Representation",
-                           bbox_to_anchor=(1.02, 0.6), loc="center left", frameon=True)
 
+    # --- Combined Legend inside at bottom to reduce whitespace ---
+    rep_legend_handles = [mpatches.Patch(color=color_map[name], label=name) for name in rep_cats]
     baseline_legend_handles = [
         Line2D([0], [0], marker=style['marker'], color='w', label=style['label'],
                markerfacecolor='none', markeredgecolor=style['color'], 
-               markeredgewidth=1.5, markersize=8)
+               markeredgewidth=1.5, markersize=9)
         for _, style in baseline_styles.items()
     ]
-    g.fig.add_artist(legend1)
-    g.fig.legend(handles=baseline_legend_handles, title="Baselines",
-                 bbox_to_anchor=(1.02, 0.35), loc="center left", frameon=True)
+    all_handles = rep_legend_handles + baseline_legend_handles
 
-    g.fig.tight_layout(rect=[0, 0, 0.90, 1]) 
+    # Ensure x tick labels are visible and readable across all facets
+    positions = np.arange(len(task_cats))
+    for ax in g.axes.flatten():
+        ax.set_xticks(positions)
+        ax.set_xticklabels(task_cats, rotation=45, ha='right')
+        ax.tick_params(axis='x', labelsize=12)
+        ax.tick_params(axis='y', labelsize=12)
+
+    g.fig.tight_layout()
+    # Place legend at bottom inside with minimal whitespace
+    g.fig.subplots_adjust(bottom=0.15)
+    g.fig.legend(handles=all_handles, loc='lower center', ncol=max(3, len(all_handles)), frameon=False)
 
     save_figure(g.fig, filename)
 
-# --- Table Generation ---
+# --- Table Generation (LaTeX only) ---
 
 def generate_results_table(df: pd.DataFrame, filename: str) -> None:
-    """Generate and save a formatted Markdown table of all results."""
-    logging.info("Generating Markdown results table...")
+    """Generate and save a LaTeX table of all results (no markdown)."""
+    logging.info("Generating LaTeX results table...")
     
     df_table = df.copy()
     
     for metric in ['AUROC', 'AUPRC']:
         ci_lower, ci_upper = f'{metric}_CI_Lower', f'{metric}_CI_Upper'
         df_table[f'{metric} (95% CI)'] = df_table.apply(
-            lambda r: f"{r[metric]:.4f} ({r[ci_lower]:.4f} - {r[ci_upper]:.4f})"
+            lambda r: f"{r[metric]:.4f} ({r[ci_lower]:.4f}-{r[ci_upper]:.4f})"
             if pd.notnull(r[ci_lower]) else f"{r[metric]:.4f}", axis=1
         )
     
     df_table['Representation'] = df_table['Representation'].map(REP_LABELS)
     df_table['Prompt'] = df_table['Prompt'].map(PROMPT_LABELS)
+    df_table['Task'] = df_table['Task'].map(TASK_LABELS)
+    
+    # Sanitize LaTeX special chars
+    df_table['Task'] = df_table['Task'].astype(str).str.replace('>', '\\textgreater{}', regex=False)
+    df_table['Model'] = df_table['Model'].astype(str).str.replace('_', '\\_', regex=False)
     
     table_cols = ['Task', 'Representation', 'Prompt', 'Model', 'AUROC (95% CI)', 'AUPRC (95% CI)']
     df_table = df_table[table_cols]
     
-    markdown_table = df_table.to_markdown(index=False)
-    full_table_text = "## Table 1: Full Experimental Results\n\n" + markdown_table
+    # Escape percent in headers
+    df_table = df_table.rename(columns={
+        'AUROC (95% CI)': 'AUROC (95\\% CI)',
+        'AUPRC (95% CI)': 'AUPRC (95\\% CI)'
+    })
     
+    latex_table = df_table.to_latex(index=False, escape=False)
     save_path = OUTPUT_DIR / filename
-    save_path.write_text(full_table_text, encoding='utf-8')
-    logging.info(f"Markdown table saved to: {save_path}")
+    save_path.write_text(latex_table, encoding='utf-8')
+    # Standalone wrapper for direct compilation in TeXworks (cropped to table)
+    latex_table_standalone = (
+        "\\documentclass[border=0pt]{standalone}\n"
+        "\\usepackage{booktabs}\n"
+        "\\usepackage[T1]{fontenc}\n"
+        "\\usepackage[utf8]{inputenc}\n"
+        "\\usepackage{adjustbox}\n"
+        "\\begin{document}\n"
+        "\\begin{adjustbox}{width=\\textwidth}\n"
+        + latex_table +
+        "\n\\end{adjustbox}\n"
+        "\\end{document}\n"
+    )
+    (OUTPUT_DIR / (Path(filename).stem + '_standalone.tex')).write_text(latex_table_standalone, encoding='utf-8')
+    logging.info(f"LaTeX tables saved to: {save_path} and standalone version")
 
 
 # --- Main Execution ---
@@ -681,45 +853,207 @@ def main():
         task_label = TASK_LABELS.get(task, task)
         
         generate_representation_barplot(
-            task_df_summary, 'AUROC', f'figure_2_auroc_representation_barplot_{task}.png',
-            f'Figure 2: AUROC by Representation for {task_label} (with 95% CI)'
+            task_df_summary, 'AUROC', f'figure_2_auroc_representation_barplot_{task}.png'
         )
         
         generate_performance_lift_plot(
-            task_df_summary, 'AUROC', f'figure_3_auroc_lift_{task}.png',
-            f'Figure 3: AUROC Improvement Over Best Baseline for {task_label}'
+            task_df_summary, 'AUROC', f'figure_3_auroc_lift_{task}.png'
         )
 
-        # Figure 6: Modified to include baselines
-        task_df_full_embeddings = embedding_df_full[embedding_df_full['Task'] == task]
-        task_df_baselines = baseline_df_full[baseline_df_full['Task'] == task]
-        generate_model_comparison_plot(
-            task_df_full_embeddings, task_df_baselines, 'AUROC', f'figure_6_auroc_model_comparison_{task}.png',
-            f'Figure 6: Detailed Model Comparison for {task_label} with Baselines'
-        )
+        # Figure 6: New - Per-Model Task Comparison by Prompt (with baselines)
+        # (Single figure across all tasks rather than per-task file)
 
     # --- Generate Cross-Task Summary Plots ---
     logging.info("Generating cross-task summary plots...")
     generate_task_comparison_plot(
-        summary_df, 'AUROC', 'figure_4_task_comparison_auroc.png',
-        'Figure 4: Best Model AUROC by Representation and Task (with 95% CI)'
+        summary_df, 'AUROC', 'figure_4_task_comparison_auroc.png'
     )
     generate_champion_model_plot(
-        summary_df, 'AUROC', 'figure_5_champion_models_auroc.png',
-        'Figure 5: Champion Semantic Model vs. XGBoost Baseline by AUROC (with 95% CI)'
+        summary_df, 'AUROC', 'figure_5_champion_models_auroc.png'
     )
     
-    # --- Generate NEW Plot: Per-Model Task Comparison with Baselines ---
+    # --- Generate NEW Plot: Per-Model Task Comparison with Baselines (Figure 7)
     generate_task_comparison_by_model_plot(
         embedding_df_full, 
         baseline_df_full,
         'AUROC', 
-        'figure_7_task_comparison_by_model_auroc_with_baselines.png',
-        'Figure 7: Comparing Task Performance for each Embedding Model with Baselines'
+        'figure_7_task_comparison_by_model_auroc_with_baselines.png'
+    )
+
+    # --- Generate NEW Plot: Per-Model Task Comparison by Prompt (Figure 6)
+    generate_task_comparison_by_prompt_plot(
+        embedding_df_full,
+        baseline_df_full,
+        'AUROC',
+        'figure_6_task_comparison_by_model_auroc_by_prompt_with_baselines.png'
     )
     
-    # --- Generate Final Table ---
-    generate_results_table(full_df, 'table_1_full_results.md')
+    # --- Generate Final Table (LaTeX only) ---
+    generate_results_table(full_df, 'table_1_full_results.tex')
+    
+    # --- NEW: Generate LaTeX tables ---
+    def _fmt_ci(val, lo, hi):
+        try:
+            return f"{val:.4f} ({lo:.4f}-{hi:.4f})"
+        except Exception:
+            return ""
+
+    # Champion semantic vs champion numeric (table representation of champion plot)
+    try:
+        # Reuse the logic from generate_champion_model_plot to get the exact same rows/models
+        # but re-calculate for the table (or we could return DF from that function, but this is cleaner to keep separate)
+        
+        # 1. Get Champion Semantic Models
+        semantic_only = summary_df[summary_df['Representation'] != 'Baseline']
+        best_idx = semantic_only.groupby('Task', observed=True)['AUROC'].idxmax()
+        champion_df = semantic_only.loc[best_idx].copy()
+        champion_df['TaskLabel'] = champion_df['Task'].map(TASK_LABELS)
+        champion_df['Champion'] = champion_df.apply(
+            lambda r: f"{r['Representation']}-{r['Prompt']} ({r['Model']})", axis=1
+        )
+
+        # 2. Get XGBoost Numeric Models
+        numeric = summary_df[(summary_df['Representation'] == 'Baseline') & (summary_df['Prompt'] == 'XGBoost')]
+        best_num_idx = numeric.groupby('Task', observed=True)['AUROC'].idxmax()
+        # Include predictions for stats
+        best_numeric = numeric.loc[best_num_idx, ['Task', 'Prompt', 'AUROC', 'AUROC_CI_Lower', 'AUROC_CI_Upper', 'y_true', 'y_pred_proba']]
+        best_numeric = best_numeric.rename(columns={
+            'Prompt': 'Numeric_Model',
+            'AUROC': 'NUM_AUROC',
+            'AUROC_CI_Lower': 'NUM_CI_L',
+            'AUROC_CI_Upper': 'NUM_CI_U',
+            'y_true': 'NUM_y_true',
+            'y_pred_proba': 'NUM_y_pred'
+        }).set_index('Task')
+
+        merged = champion_df.join(best_numeric, on='Task')
+
+        # 3. Calculate p-values and format columns based on superiority
+        semantic_formatted = []
+        numeric_formatted = []
+        p_val_strings = []
+        
+        for task_idx, row in merged.iterrows():
+            yt = row.get('y_true')
+            yp_base = row.get('NUM_y_pred')
+            yp_champ = row.get('y_pred_proba')
+            
+            # Calculate p-value
+            p = calculate_paired_bootstrap_pvalue(yt, yp_base, yp_champ)
+            
+            # Base Strings
+            sem_val = row['AUROC']
+            sem_str = _fmt_ci(sem_val, row['AUROC_CI_Lower'], row['AUROC_CI_Upper'])
+            
+            num_val = row['NUM_AUROC']
+            num_str = _fmt_ci(num_val, row['NUM_CI_L'], row['NUM_CI_U']) if pd.notna(num_val) else ''
+            
+            # Apply formatting if significant
+            if pd.notnull(p) and p < 0.05 and pd.notna(num_val):
+                # Determine stars
+                if p < 0.001: stars = "***"
+                elif p < 0.01: stars = "**"
+                else: stars = "*"
+                
+                if num_val > sem_val:
+                    # Numeric wins
+                    num_str = f"\\textbf{{{num_str}}}{stars}"
+                else:
+                    # Semantic wins
+                    sem_str = f"\\textbf{{{sem_str}}}{stars}"
+            
+            semantic_formatted.append(sem_str)
+            numeric_formatted.append(num_str)
+            if pd.notnull(p):
+                if p < 0.001:
+                    p_val_strings.append("<0.001")
+                else:
+                    p_val_strings.append(f"{p:.3f}")
+            else:
+                p_val_strings.append("")
+
+        table_champion = pd.DataFrame({
+            'Task': merged['TaskLabel'],
+            'Numeric Baseline AUROC (95% CI)': numeric_formatted,
+            'Champion Semantic': merged['Champion'],
+            'Champion Semantic AUROC (95% CI)': semantic_formatted,
+            'p-value': p_val_strings
+        })
+        # Sanitize symbols for LaTeX rendering
+        table_champion['Task'] = table_champion['Task'].astype(str).str.replace('>', '\\textgreater{}', regex=False)
+        table_champion['Champion Semantic'] = table_champion['Champion Semantic'].astype(str).str.replace('_', '\\_', regex=False)
+        
+        # Rename for LaTeX
+        table_champion = table_champion.rename(columns={
+            'Numeric Baseline AUROC (95% CI)': 'Numeric Baseline AUROC (95\\% CI)',
+            'Champion Semantic AUROC (95% CI)': 'Champion Semantic AUROC (95\\% CI)'
+        }).sort_values('Task')
+
+        latex_champion = table_champion.to_latex(index=False, escape=False)
+        out_champ = OUTPUT_DIR / 'table_champion_semantic_vs_numeric.tex'
+        out_champ.write_text(latex_champion, encoding='utf-8')
+        # Standalone wrapper for TeXworks
+        latex_champion_standalone = (
+            "\\documentclass{article}\n"
+            "\\usepackage{booktabs}\n"
+            "\\usepackage{geometry}\n"
+            "\\usepackage[T1]{fontenc}\n"
+            "\\usepackage[utf8]{inputenc}\n"
+            "\\usepackage{adjustbox}\n"
+            "\\geometry{margin=1in}\n"
+            "\\begin{document}\n"
+            "\\begin{table}[ht]\n"
+            "\\centering\n"
+            "\\begin{adjustbox}{width=\\textwidth}\n"
+            + latex_champion +
+            "\n\\end{adjustbox}\n"
+            "\\end{table}\n"
+            "\\end{document}\n"
+        )
+        (OUTPUT_DIR / 'table_champion_semantic_vs_numeric_standalone.tex').write_text(latex_champion_standalone, encoding='utf-8')
+        logging.info(f"LaTeX table saved: {out_champ} and standalone version")
+    except Exception as e:
+        logging.warning(f"Failed to generate champion vs baseline LaTeX table: {e}")
+
+    # Best numerical baseline per task (XGBoost vs ElasticNet)
+    try:
+        numeric = summary_df[summary_df['Representation'] == 'Baseline'].copy()
+        best_num_idx = numeric.groupby('Task', observed=True)['AUROC'].idxmax()
+        best_num = numeric.loc[best_num_idx].copy()
+        best_num['TaskLabel'] = best_num['Task'].map(TASK_LABELS)
+        best_num['Best Numeric Model'] = best_num['Prompt']
+        table_numeric = pd.DataFrame({
+            'Task': best_num['TaskLabel'],
+            'Best Numeric Model': best_num['Best Numeric Model'],
+            'AUROC (95% CI)': [_fmt_ci(best_num['AUROC'].iloc[i], best_num['AUROC_CI_Lower'].iloc[i], best_num['AUROC_CI_Upper'].iloc[i]) for i in range(len(best_num))]
+        })
+        # Sanitize symbols for LaTeX rendering
+        table_numeric['Task'] = table_numeric['Task'].astype(str).str.replace('>', '\\textgreater{}', regex=False)
+        table_numeric['Best Numeric Model'] = table_numeric['Best Numeric Model'].astype(str).str.replace('_', '\\_', regex=False)
+        table_numeric = table_numeric.rename(columns={
+            'AUROC (95% CI)': 'AUROC (95\\% CI)'
+        }).sort_values('Task')
+
+        latex_numeric = table_numeric.to_latex(index=False, escape=False)
+        out_num = OUTPUT_DIR / 'table_best_numeric_baseline.tex'
+        out_num.write_text(latex_numeric, encoding='utf-8')
+        # Standalone wrapper for TeXworks
+        latex_numeric_standalone = (
+            "\\documentclass[border=0pt]{standalone}\n"
+            "\\usepackage{booktabs}\n"
+            "\\usepackage[T1]{fontenc}\n"
+            "\\usepackage[utf8]{inputenc}\n"
+            "\\usepackage{adjustbox}\n"
+            "\\begin{document}\n"
+            "\\begin{adjustbox}{width=\\textwidth}\n"
+            + latex_numeric +
+            "\n\\end{adjustbox}\n"
+            "\\end{document}\n"
+        )
+        (OUTPUT_DIR / 'table_best_numeric_baseline_standalone.tex').write_text(latex_numeric_standalone, encoding='utf-8')
+        logging.info(f"LaTeX table saved: {out_num} and standalone version")
+    except Exception as e:
+        logging.warning(f"Failed to generate best numeric baseline LaTeX table: {e}")
     
     logging.info("All manuscript figures and tables have been generated successfully.")
 

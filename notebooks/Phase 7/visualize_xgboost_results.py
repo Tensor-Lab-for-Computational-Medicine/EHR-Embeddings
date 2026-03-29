@@ -79,7 +79,6 @@ def load_results():
                 # Extract metrics with error handling
                 full_eval = data.get('full_evaluation', data)
                 auroc_data = full_eval.get('auroc', {})
-                auprc_data = full_eval.get('auprc', {})
                 
                 results.append({
                     'Task': task,
@@ -87,9 +86,6 @@ def load_results():
                     'AUROC': auroc_data.get('point_estimate'),
                     'AUROC_CI_Lower': auroc_data.get('ci_lower'),
                     'AUROC_CI_Upper': auroc_data.get('ci_upper'),
-                    'AUPRC': auprc_data.get('point_estimate'),
-                    'AUPRC_CI_Lower': auprc_data.get('ci_lower'),
-                    'AUPRC_CI_Upper': auprc_data.get('ci_upper'),
                 })
                 
                 logging.info(f"Loaded {task} - {arm}: AUROC={auroc_data.get('point_estimate', 'N/A'):.4f}")
@@ -176,159 +172,67 @@ def create_performance_comparison(df, save_path):
     plt.show()
     logging.info(f"Professional AUROC comparison plot saved to {save_path}")
 
-def create_metrics_comparison(df, save_path):
-    """Create professional side-by-side comparison of AUROC and AUPRC."""
-    df_plot = df.copy()
-    df_plot['TaskLabel'] = df_plot['Task'].map(TASK_LABELS)
-    
-    # Create figure with professional styling
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 10))
-    fig.patch.set_facecolor('white')
-    
-    # Professional color schemes
-    auroc_colors = plt.cm.Reds(np.linspace(0.4, 0.8, len(df_plot)))
-    auprc_colors = plt.cm.Blues(np.linspace(0.4, 0.8, len(df_plot)))
-    
-    # AUROC plot with enhanced styling
-    bars1 = ax1.bar(range(len(df_plot)), df_plot['AUROC'], 
-                    color=auroc_colors, edgecolor='#2C3E50', linewidth=1.5, alpha=0.85)
-    
-    # Add shadow effects
-    for bar in bars1:
-        bar.set_path_effects([
-            plt.matplotlib.patheffects.SimplePatchShadow(offset=(1, -1), shadow_rgbFace='#CCCCCC', alpha=0.3),
-            plt.matplotlib.patheffects.Normal()
-        ])
-    
-    # Enhanced error bars
-    ax1.errorbar(range(len(df_plot)), df_plot['AUROC'],
-                yerr=[df_plot['AUROC'] - df_plot['AUROC_CI_Lower'],
-                      df_plot['AUROC_CI_Upper'] - df_plot['AUROC']],
-                fmt='none', color='#2C3E50', capsize=5, capthick=2, 
-                elinewidth=2, alpha=0.8, zorder=10)
-    
-    # Professional styling for AUROC plot
-    ax1.set_xlabel('Prediction Task', fontweight='bold', color='#2C3E50')
-    ax1.set_ylabel('Test Set AUROC (with 95% CI)', fontweight='bold', color='#2C3E50')
-    ax1.set_title('Area Under ROC Curve', fontweight='bold', color='#C0392B', pad=20)
-    ax1.set_xticks(range(len(df_plot)))
-    ax1.set_xticklabels(df_plot['TaskLabel'], rotation=45, ha='right')
-    ax1.grid(axis='y', alpha=0.4, linestyle='-', linewidth=0.8, color='#BDC3C7')
-    ax1.set_axisbelow(True)
-    
-    # Add reference line at 0.5
-    ax1.axhline(y=0.5, color='#E74C3C', linestyle='--', linewidth=1.5, alpha=0.7, 
-                label='Random (0.5)', zorder=1)
-    ax1.legend(loc='upper left', frameon=True, fancybox=True, shadow=True)
-    
-    # Value labels for AUROC
-    for i, (_, row) in enumerate(df_plot.iterrows()):
-        text_y = row['AUROC_CI_Upper'] + 0.02 if pd.notna(row['AUROC_CI_Upper']) else row['AUROC'] + 0.02
-        ax1.text(i, text_y, f"{row['AUROC']:.3f}", ha='center', va='bottom', 
-                fontweight='bold', fontsize=10, color='#2C3E50',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', 
-                         edgecolor='#C0392B', alpha=0.8))
-    
-    # Set y-axis limits for AUROC
-    max_ci_upper = df_plot['AUROC_CI_Upper'].max() if df_plot['AUROC_CI_Upper'].notna().any() else df_plot['AUROC'].max()
-    ax1.set_ylim(0.4, max_ci_upper + 0.08)
-    
-    # AUPRC plot with enhanced styling
-    bars2 = ax2.bar(range(len(df_plot)), df_plot['AUPRC'], 
-                    color=auprc_colors, edgecolor='#2C3E50', linewidth=1.5, alpha=0.85)
-    
-    # Add shadow effects
-    for bar in bars2:
-        bar.set_path_effects([
-            plt.matplotlib.patheffects.SimplePatchShadow(offset=(1, -1), shadow_rgbFace='#CCCCCC', alpha=0.3),
-            plt.matplotlib.patheffects.Normal()
-        ])
-    
-    # Enhanced error bars
-    ax2.errorbar(range(len(df_plot)), df_plot['AUPRC'],
-                yerr=[df_plot['AUPRC'] - df_plot['AUPRC_CI_Lower'],
-                      df_plot['AUPRC_CI_Upper'] - df_plot['AUPRC']],
-                fmt='none', color='#2C3E50', capsize=5, capthick=2, 
-                elinewidth=2, alpha=0.8, zorder=10)
-    
-    # Professional styling for AUPRC plot
-    ax2.set_xlabel('Prediction Task', fontweight='bold', color='#2C3E50')
-    ax2.set_ylabel('Test Set AUPRC (with 95% CI)', fontweight='bold', color='#2C3E50')
-    ax2.set_title('Area Under Precision-Recall Curve', fontweight='bold', color='#2980B9', pad=20)
-    ax2.set_xticks(range(len(df_plot)))
-    ax2.set_xticklabels(df_plot['TaskLabel'], rotation=45, ha='right')
-    ax2.grid(axis='y', alpha=0.4, linestyle='-', linewidth=0.8, color='#BDC3C7')
-    ax2.set_axisbelow(True)
-    
-    # Value labels for AUPRC
-    for i, (_, row) in enumerate(df_plot.iterrows()):
-        text_y = row['AUPRC_CI_Upper'] + 0.02 if pd.notna(row['AUPRC_CI_Upper']) else row['AUPRC'] + 0.02
-        ax2.text(i, text_y, f"{row['AUPRC']:.3f}", ha='center', va='bottom', 
-                fontweight='bold', fontsize=10, color='#2C3E50',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', 
-                         edgecolor='#2980B9', alpha=0.8))
-    
-    # Set y-axis limits for AUPRC
-    max_ci_upper = df_plot['AUPRC_CI_Upper'].max() if df_plot['AUPRC_CI_Upper'].notna().any() else df_plot['AUPRC'].max()
-    ax2.set_ylim(0, max_ci_upper + 0.08)
-    
-    # Clean up spines for both plots
-    for ax in [ax1, ax2]:
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_color('#BDC3C7')
-        ax.spines['bottom'].set_color('#BDC3C7')
-    
-    plt.suptitle('XGBoost MODEL4B Performance Evaluation\nClinical Prediction Task Comparison', 
-                fontsize=16, fontweight='bold', color='#2C3E50', y=0.98)
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.88)
-    plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white', edgecolor='none')
-    plt.show()
-    logging.info(f"Professional metrics comparison plot saved to {save_path}")
-
 def create_summary_table(df, save_path):
-    """Create and save a professional summary table."""
+    """Create and save a professional summary table.
+    Now outputs a standalone LaTeX .tex table (AUROC only) compilable in TeXworks.
+    """
     df_table = df.copy()
     df_table['TaskLabel'] = df_table['Task'].map(TASK_LABELS)
+    # Fallback to raw task if mapping missing
+    df_table['TaskLabel'] = df_table['TaskLabel'].fillna(df_table['Task'])
     
-    # Format metrics with confidence intervals
+    # Format metrics with confidence intervals (AUROC only)
     df_table['AUROC (95% CI)'] = df_table.apply(
         lambda row: f"{row['AUROC']:.4f} ({row['AUROC_CI_Lower']:.4f}-{row['AUROC_CI_Upper']:.4f})",
         axis=1
     )
-    df_table['AUPRC (95% CI)'] = df_table.apply(
-        lambda row: f"{row['AUPRC']:.4f} ({row['AUPRC_CI_Lower']:.4f}-{row['AUPRC_CI_Upper']:.4f})",
-        axis=1
-    )
     
     # Select and order columns
-    summary_cols = ['TaskLabel', 'Arm', 'AUROC (95% CI)', 'AUPRC (95% CI)']
+    summary_cols = ['TaskLabel', 'Arm', 'AUROC (95% CI)']
     df_summary = df_table[summary_cols].rename(columns={
         'TaskLabel': 'Clinical Prediction Task',
         'Arm': 'Model Configuration'
     })
     
-    # Sort by AUROC for better readability (extracting numeric value for sorting)
+    # Sort by AUROC numeric for readability
     df_summary['AUROC_numeric'] = df_table['AUROC']
     df_summary = df_summary.sort_values('AUROC_numeric', ascending=False).drop('AUROC_numeric', axis=1)
     
-    # Save as CSV and markdown
-    df_summary.to_csv(save_path.with_suffix('.csv'), index=False)
+    # Generate standalone LaTeX content similar to provided example
+    header_lines = [
+        "\\documentclass[border=0pt]{standalone}",
+        "\\usepackage{booktabs}",
+        "\\usepackage[T1]{fontenc}",
+        "\\usepackage[utf8]{inputenc}",
+        "\\usepackage{adjustbox}",
+        "\\begin{document}",
+        "\\begin{adjustbox}{width=\\textwidth}",
+        "\\begin{tabular}{@{}llr@{}}",
+        "\\toprule",
+        "Clinical Prediction Task & Model configuration & AUROC (95\\% CI) \\",
+        "\\midrule",
+    ]
+    rows = []
+    for _, r in df_summary.iterrows():
+        task = str(r['Clinical Prediction Task']).replace('_', '\\_')
+        cfg = str(r['Model Configuration']).replace('_', '\\_')
+        rows.append(f"{task} & {cfg} & {r['AUROC (95% CI)']} \\")
+    footer = (
+        "\\bottomrule\n"
+        "\\end{tabular}\n"
+        "\\end{adjustbox}\n"
+        "\\end{document}\n"
+    )
+    latex_str = "\n".join(header_lines) + "\n" + "\n".join(rows) + "\n" + footer
     
-    with open(save_path.with_suffix('.md'), 'w', encoding='utf-8') as f:
-        f.write("# XGBoost MODEL4B Performance Summary\n")
-        f.write("## Clinical Prediction Task Results\n\n")
-        f.write("This table presents the performance of XGBoost MODEL4B across different clinical prediction tasks. ")
-        f.write("All metrics are reported with 95% confidence intervals.\n\n")
-        f.write("**Performance Metrics:**\n")
-        f.write("- **AUROC**: Area Under the Receiver Operating Characteristic Curve\n")
-        f.write("- **AUPRC**: Area Under the Precision-Recall Curve\n\n")
-        f.write(df_summary.to_markdown(index=False))
-        f.write(f"\n\n*Generated on: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}*\n")
-    
-    logging.info(f"Professional summary table saved to {save_path.with_suffix('.csv')} and {save_path.with_suffix('.md')}")
+    # Write .tex file
+    tex_path = save_path.with_suffix('.tex')
+    with open(tex_path, 'w', encoding='utf-8') as f:
+        f.write(latex_str)
+    logging.info(f"Standalone LaTeX table saved to {tex_path}")
     return df_summary
+
+    
 
 def main():
     """Main execution function."""
@@ -347,7 +251,7 @@ def main():
     logging.info(f"✅ Successfully loaded {len(df)} result records")
     print(f"\n📊 Data Summary:")
     print("-" * 60)
-    summary_data = df[['Task', 'Arm', 'AUROC', 'AUPRC']].copy()
+    summary_data = df[['Task', 'Arm', 'AUROC']].copy()
     summary_data['Task'] = summary_data['Task'].map(TASK_LABELS)
     print(summary_data.to_string(index=False, float_format='%.4f'))
     
@@ -356,7 +260,7 @@ def main():
     
     # Create visualizations
     create_performance_comparison(df, OUTPUT_DIR / "professional_auroc_comparison.png")
-    create_metrics_comparison(df, OUTPUT_DIR / "professional_metrics_comparison.png")
+    # (Removed AUPRC comparison plot)
     
     # Create summary table
     summary_df = create_summary_table(df, OUTPUT_DIR / "professional_results_summary")
@@ -368,9 +272,7 @@ def main():
     print(f"\n✨ All professional outputs saved to: {OUTPUT_DIR}")
     print("Generated files:")
     print("  📈 professional_auroc_comparison.png")
-    print("  📊 professional_metrics_comparison.png") 
-    print("  📄 professional_results_summary.csv")
-    print("  📄 professional_results_summary.md")
+    print("  📄 professional_results_summary.tex")
     print("="*80)
     
     logging.info("🎉 Professional visualization generation complete!")

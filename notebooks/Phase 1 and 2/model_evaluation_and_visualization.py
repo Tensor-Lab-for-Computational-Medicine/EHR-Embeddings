@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import re
 from sklearn.metrics import (
     roc_auc_score, average_precision_score, roc_curve, precision_recall_curve,
     classification_report, confusion_matrix, brier_score_loss
@@ -331,28 +332,113 @@ def assess_model_calibration(preds: Dict, y_test: pd.Series, save_path: Optional
 
 
 def create_feature_name_mapping(cols: List[str]) -> Dict[str, str]:
-    abbr = {
-        'alanine aminotransferase': 'ALT', 'asparate aminotransferase': 'AST', 'alkaline phosphate': 'ALP',
-        'blood urea nitrogen': 'BUN', 'glascow coma scale': 'GCS', 'respiratory rate': 'RR', 'heart rate': 'HR',
-        'blood pressure': 'BP', 'systolic blood pressure': 'SBP', 'diastolic blood pressure': 'DBP',
-        'mean blood pressure': 'MAP', 'oxygen saturation': 'SpO2', 'partial pressure': 'P', 'temperature': 'Temp',
-        'cardiac output': 'CO', 'central venous pressure': 'CVP', 'pulmonary artery pressure': 'PAP',
-        'inspired oxygen': 'FiO2', 'positive end expiratory pressure': 'PEEP', 'tidal volume': 'TV',
-        'glascow coma scale total': 'GCS Total', 'glascow coma scale motor response': 'GCS Motor',
-        'glascow coma scale verbal response': 'GCS Verbal', 'glascow coma scale eye opening': 'GCS Eyes',
-        '_mean': ' (avg)', '_std': ' (var)', '_slope_6h': ' (6h trend)', '_slope_24h': ' (24h trend)', '_encoded': ''
+    """Map engineered feature names to concise, human-friendly labels.
+    Rules are aligned with data preprocessing outputs in `data_preprocessing_LOS.py`.
+    Examples:
+      - "Bun (avg)_last" -> "BUN last"
+      - "blood urea nitrogen_mean" -> "BUN avg"
+      - "systolic blood pressure_min_24h" -> "SBP 24h min"
+      - "gender_encoded" -> "Gender"
+    """
+    # Engineered suffixes (match longest first)
+    suffix_specs: List[Tuple[re.Pattern, str]] = [
+        (re.compile(r"_slope_24h$", re.I), "24h trend"),
+        (re.compile(r"_slope_6h$", re.I), "6h trend"),
+        (re.compile(r"_min_24h$", re.I), "24h min"),
+        (re.compile(r"_max_24h$", re.I), "24h max"),
+        (re.compile(r"_stddev_24h$", re.I), "24h SD"),
+        (re.compile(r"_count_6h$", re.I), "6h count"),
+        (re.compile(r"_count$", re.I), "count"),
+        (re.compile(r"_mean$", re.I), "24h avg"),
+        (re.compile(r"_last$", re.I), "last hour avg"),
+        (re.compile(r"_value$", re.I), ""),
+        (re.compile(r"_encoded$", re.I), ""),
+    ]
+
+    # Canonical term replacements (lowercase keys)
+    term_map: Dict[str, str] = {
+        'alanine aminotransferase': 'ALT',
+        'aspartate aminotransferase': 'AST',
+        'alkaline phosphatase': 'ALP',
+        'blood urea nitrogen': 'BUN',
+        'bun': 'BUN',
+        'glascow coma scale': 'GCS',
+        'glasgow coma scale': 'GCS',
+        'glascow coma scale total': 'GCS Total',
+        'glascow coma scale motor response': 'GCS Motor',
+        'glascow coma scale verbal response': 'GCS Verbal',
+        'glascow coma scale eye opening': 'GCS Eyes',
+        'respiratory rate': 'RR',
+        'heart rate': 'HR',
+        'systolic blood pressure': 'SBP',
+        'diastolic blood pressure': 'DBP',
+        'mean blood pressure': 'MAP',
+        'mean arterial pressure': 'MAP',
+        'blood pressure': 'BP',
+        'oxygen saturation': 'SpO2',
+        'spo2': 'SpO2',
+        'fio2': 'FiO2',
+        'positive end expiratory pressure': 'PEEP',
+        'tidal volume': 'TV',
+        'temperature': 'Temp',
+        'cardiac output': 'CO',
+        'central venous pressure': 'CVP',
+        'pulmonary artery pressure': 'PAP',
+        'white blood cell': 'WBC',
+        'wbc': 'WBC',
+        'hemoglobin': 'Hgb',
+        'hematocrit': 'Hct',
+        'sodium': 'Na',
+        'potassium': 'K',
+        'chloride': 'Cl',
+        'magnesium': 'Mg',
+        'phosphate': 'Phos',
+        'phosphorus': 'Phos',
+        'creatinine': 'Creatinine',
+        'lactate': 'Lactate',
     }
-    m: dict[str, str] = {}
-    for c in cols:
-        s = c.lower()
-        for k, v in abbr.items():
-            s = s.replace(k, v)
-        s = s.replace('  ', ' ').strip()
-        if len(s) > 25:
-            parts = s.split()
-            s = (' '.join(parts[:2]) + '...') if len(parts) > 1 else (s[:22] + '...')
-        m[c] = s.capitalize()
-    return m
+
+    acronyms = {v for v in term_map.values() if v.upper() == v} | {
+        'ALT','AST','ALP','BUN','GCS','SBP','DBP','MAP','BP','SpO2','FiO2','PEEP','TV','Temp','CO','CVP','PAP',
+        'WBC','Hgb','Hct','Na','K','Cl','Mg','Phos'
+    }
+
+    def clean_base(name: str) -> str:
+        # Remove any parenthetical/bracketed annotations from raw columns like "(avg)"
+        s = re.sub(r"[\(\[\{].*?[\)\]\}]", " ", name)
+        s = s.replace('_', ' ').replace('.', ' ')
+        s = re.sub(r"\s+", " ", s).strip().lower()
+        # Phrase-level replacements
+        for k, v in term_map.items():
+            s = re.sub(rf"\b{re.escape(k)}\b", v, s)
+        # Title case while preserving acronyms and common chemicals
+        parts = []
+        for tok in s.split():
+            if tok.upper() in acronyms:
+                parts.append(tok.upper())
+            elif tok.capitalize() in acronyms:
+                parts.append(tok.capitalize())
+            else:
+                parts.append(tok.capitalize())
+        out = ' '.join(parts)
+        # Compact "GCS Total" etc. are already correct
+        return re.sub(r"\s+", " ", out).strip()
+
+    name_map: Dict[str, str] = {}
+    for col in cols:
+        base = col
+        suffix_label = ""
+        for pat, label in suffix_specs:
+            if pat.search(base):
+                base = pat.sub("", base)
+                suffix_label = label
+                break
+        base_clean = clean_base(base)
+        # If base already contains an averaged notion from raw (e.g., Bun (avg)), it was stripped.
+        final = f"{base_clean} {suffix_label}".strip()
+        final = re.sub(r"\s+", " ", final)
+        name_map[col] = final
+    return name_map
 
 
 def analyze_with_shap(models: Dict, X: pd.DataFrame, y: pd.Series, out_dirs: Dict[str, str],

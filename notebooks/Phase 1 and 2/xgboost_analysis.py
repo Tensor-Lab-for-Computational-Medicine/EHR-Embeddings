@@ -29,7 +29,7 @@ class Config:
         config = config_dict if config_dict else {}
         
         # Explicitly define all attributes to avoid linter errors
-        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'intervention_vaso')  # This is the variable we are predicting
+        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'readmission_30')  # This is the variable we are predicting
         self.INPUT_DIR = config.get('INPUT_DIR', 'notebooks\Phase 1 and 2\phase_1_outputs')  # Where to load data from
         self.OUTPUT_DIR = os.path.join(self.INPUT_DIR, self.TARGET_VARIABLE)  # Where to save results
 
@@ -279,6 +279,11 @@ def evaluate_and_calibrate(base_model, X_test, y_test_values, X_val_cal, y_val_c
     p_before = base_model.predict_proba(X_test)[:, 1]
     p_after = model.predict_proba(X_test)[:, 1]
     results = evaluate_with_uncertainty(y_test_values, p_after, n_bootstrap=1000)
+    
+    # Store raw predictions for statistical comparison
+    results['y_true'] = y_test_values
+    results['y_pred_proba'] = p_after
+    
     cal_before = compute_calibration_metrics(y_test_values, p_before)
     cal_after = compute_calibration_metrics(y_test_values, p_after)
     imp = {

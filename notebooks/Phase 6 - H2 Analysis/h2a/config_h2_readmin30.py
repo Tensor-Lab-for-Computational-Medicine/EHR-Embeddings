@@ -10,6 +10,7 @@ class ConfigH2:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.NOTEBOOKS_DIR = os.path.abspath(os.path.join(current_dir, '..', '..'))
         self.ROOT_DIR = os.path.abspath(os.path.join(self.NOTEBOOKS_DIR, '..'))
+        self.TASK_NAME = 'Readmission'
 
         # Numerical features and labels (Phase 1-2 outputs)
         num_dir = os.path.join(self.NOTEBOOKS_DIR, 'Phase 1 and 2', 'phase_1_outputs')
@@ -55,9 +56,9 @@ class ConfigH2:
         self.N_BOOTSTRAP = 1000
         # Thresholding
         # Strategy: 'youden' (tune) or 'fixed' (use THRESHOLD)
-        self.THRESHOLD_STRATEGY = 'f1'
+        self.THRESHOLD_STRATEGY = 'youden'
         # Objective when tuning: 'youden' | 'f1' | 'fbeta' | 'accuracy' | 'balanced_accuracy'
-        self.THRESHOLD_OBJECTIVE = 'f1'
+        self.THRESHOLD_OBJECTIVE = 'youden'
         # Beta for fbeta (only used if THRESHOLD_OBJECTIVE='fbeta')
         self.THRESHOLD_BETA = 1.0
         self.THRESHOLD = 0.5

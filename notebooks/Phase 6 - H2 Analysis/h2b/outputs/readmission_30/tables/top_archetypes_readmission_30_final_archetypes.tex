@@ -1,0 +1,18 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+Comparison & Archetype rule & N & Coverage (\%) & Outcome (\%) & Baseline (\%) & Enrichment & q (BH-FDR) \\
+\midrule
+SM false alarms (FP) & Low albumin present & 1,086 & 21.8\% & 20.8\% & 12.9\% & 1.61 & 3.19e-15 \\
+SM false alarms (FP) & Neutrophilia present; Low albumin present & 742 & 14.9\% & 22.9\% & 12.9\% & 1.78 & 7.24e-15 \\
+SM false alarms (FP) & Coagulation derangement present; Neutrophilia present; Low albumin present & 592 & 11.9\% & 23.3\% & 12.9\% & 1.81 & 2.74e-12 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{document}

@@ -182,6 +182,38 @@ def pretty_rule(rule: str) -> list[str]:
   parts = re.split(r"\s+AND\s+", rule)
   return [pretty_condition(p) for p in parts if p.strip()]
 
+def pretty_analysis_key(key: str) -> str:
+  s = str(key or "").strip()
+  sl = s.lower()
+  exact = {
+    "sm_false_alarm": "SM false alarms (FP)",
+    "nm_false_alarm": "NM false alarms (FP)",
+    "sm_miss": "SM misses (FN)",
+    "nm_miss": "NM misses (FN)",
+    "sm_win": "SM advantage",
+    "nm_win": "NM advantage",
+  }
+  if sl in exact:
+    return exact[sl]
+  if "false_alarm" in sl and "sm" in sl:
+    return "SM false alarms (FP)"
+  if "false_alarm" in sl and "nm" in sl:
+    return "NM false alarms (FP)"
+  if "miss" in sl and "sm" in sl:
+    return "SM misses (FN)"
+  if "miss" in sl and "nm" in sl:
+    return "NM misses (FN)"
+  if "survivor" in sl and "sm" in sl:
+    return "SM advantage—survivors"
+  if "survivor" in sl and "nm" in sl:
+    return "NM advantage—survivors"
+  if "deceased" in sl and "sm" in sl:
+    return "SM advantage—deceased"
+  if "deceased" in sl and "nm" in sl:
+    return "NM advantage—deceased"
+  # Fallback: make human-readable
+  return s.replace("_", " ").strip().capitalize()
+
 def load_and_tidy(csv_path: Path) -> pd.DataFrame:
   df = pd.read_csv(csv_path)
   if "analysis_key" not in df.columns and "analysis_family" in df.columns:
@@ -267,15 +299,123 @@ def style_matplotlib():
     })
 
 def save_top_table(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int):
+  def latex_escape(text: str) -> str:
+    if pd.isna(text):
+      return ""
+    s = str(text)
+    s = s.replace("\\", r"\textbackslash{}")
+    s = s.replace("&", r"\&").replace("%", r"\%").replace("_", r"\_")
+    s = s.replace("#", r"\#").replace("{", r"\{").replace("}", r"\}")
+    s = s.replace("~", r"\textasciitilde{}").replace("^", r"\textasciicircum{}")
+    return s
+
   cols = [c for c in [
-    "analysis_family", "analysis_key", "rank", "rule_str", "coverage", "coverage_pct", "lift", "quality_WRAcc",
-    "target_share", "baseline_rate", "source_depth", "p_value", "q_value", "n_conditions"
+    "analysis_key", "rule_str", "coverage", "coverage_pct", "target_share", "baseline_rate", "lift", "q_value"
   ] if c in df.columns]
+
+  if not cols:
+    return
+
   tidy = df[cols].copy().rename(columns=RENAME)
-  sort_cols = [c for c in ["q (BH-FDR)", "Enrichment (lift)"] if c in tidy.columns]
-  tidy = tidy.sort_values(sort_cols, ascending=[True, False]).head(top_k)
+  # Add pretty comparison label and grouping key
+  if "Comparison" in tidy.columns:
+    tidy["Comparison_pretty"] = tidy["Comparison"].astype(str).map(pretty_analysis_key)
+  elif "analysis_key" in tidy.columns:
+    tidy["Comparison_pretty"] = tidy["analysis_key"].astype(str).map(pretty_analysis_key)
+  else:
+    tidy["Comparison_pretty"] = ""
+
+  # Define stable comparison grouping order
+  comparison_order = [
+    "SM advantage—deceased",
+    "NM advantage—deceased",
+    "SM advantage—survivors",
+    "NM advantage—survivors",
+    "SM false alarms (FP)",
+    "NM false alarms (FP)",
+    "SM misses (FN)",
+    "NM misses (FN)",
+  ]
+  order_map = {name: i for i, name in enumerate(comparison_order)}
+  tidy["Comparison_group"] = tidy["Comparison_pretty"].map(lambda x: order_map.get(x, len(order_map)))
+
+  # Sort by group, then significance, then effect size
+  sort_cols = [
+    "Comparison_group",
+  ] + [c for c in ["q (BH-FDR)", "Enrichment (lift)"] if c in tidy.columns]
+  sort_asc = [True] + [True, False][: len(sort_cols) - 1]
+  tidy = tidy.sort_values(sort_cols, ascending=sort_asc).head(top_k)
+
+  # Prepare LaTeX content
   out_dir.mkdir(parents=True, exist_ok=True)
-  tidy.to_csv(out_dir / f"top_archetypes_{tag}.csv", index=False)
+  tex_path = out_dir / f"top_archetypes_{tag}.tex"
+
+  headers = [
+    ("Comparison", "l"),
+    ("Archetype rule", "l"),
+    ("N", "r"),
+    ("Coverage (\\%)", "r"),
+    ("Outcome (\\%)", "r"),
+    ("Baseline (\\%)", "r"),
+    ("Enrichment", "r"),
+    ("q (BH-FDR)", "r"),
+  ]
+
+  def fmt_int(x):
+    return "-" if pd.isna(x) else f"{int(x):,}"
+
+  def fmt_pct(x):
+    return "-" if pd.isna(x) else f"{x:.1f}\\%"
+
+  def fmt_lift(x):
+    return "-" if pd.isna(x) else f"{x:.2f}"
+
+  def fmt_q(x):
+    if pd.isna(x):
+      return "-"
+    try:
+      return f"{x:.2e}" if float(x) < 0.001 else f"{x:.3f}"
+    except Exception:
+      return latex_escape(str(x))
+
+  rows = []
+  for _, r in tidy.iterrows():
+    comparison = latex_escape(r.get("Comparison_pretty", r.get("analysis_key", "")))
+    rule_raw = r.get("Archetype rule", r.get("rule_str", ""))
+    rule_pretty = "; ".join(pretty_rule(rule_raw)) if isinstance(rule_raw, str) else ""
+    rule = latex_escape(rule_pretty)
+    n_val = fmt_int(r.get("N", r.get("coverage", np.nan)))
+    cov_val = fmt_pct(r.get("Coverage (%)", r.get("coverage_pct", np.nan)))
+    out_val = fmt_pct(r.get("Outcome in subgroup (%)", r.get("target_share", np.nan)))
+    base_val = fmt_pct(r.get("Baseline rate (%)", r.get("baseline_rate", np.nan)))
+    lift_val = fmt_lift(r.get("Enrichment (lift)", r.get("lift", np.nan)))
+    q_val = fmt_q(r.get("q (BH-FDR)", r.get("q_value", np.nan)))
+    rows.append([comparison, rule, n_val, cov_val, out_val, base_val, lift_val, q_val])
+
+  col_spec = "@{}" + "".join(col for _, col in headers) + "@{}"
+  header_line = " & ".join(h for h, _ in headers) + r" \\"
+
+  body_lines = [" & ".join(map(str, row)) + r" \\" for row in rows]
+
+  content = []
+  content.append(r"\documentclass[border=0pt]{standalone}")
+  content.append(r"\usepackage{booktabs}")
+  content.append(r"\usepackage[T1]{fontenc}")
+  content.append(r"\usepackage[utf8]{inputenc}")
+  content.append(r"\usepackage{adjustbox}")
+  content.append(r"\begin{document}")
+  content.append(r"\begin{adjustbox}{width=\textwidth}")
+  content.append(fr"\begin{{tabular}}{{{col_spec}}}")
+  content.append(r"\toprule")
+  content.append(header_line)
+  content.append(r"\midrule")
+  content.extend(body_lines)
+  content.append(r"\bottomrule")
+  content.append(r"\end{tabular}")
+  content.append(r"\end{adjustbox}")
+  content.append(r"\end{document}")
+
+  tex_path.write_text("\n".join(content), encoding="utf-8")
 
 def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int = 8):
     """Create stunning archetype cards with proper spacing and layout"""
@@ -557,7 +697,7 @@ def create_elegant_cards(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int =
         safe_ak = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(ak) if pd.notnull(ak) else "all")
         
         plt.savefig(
-            out_dir / f"archetype_cards_{tag}_{safe_ak}.png",
+            out_dir / f"archetype_cards_{tag}_{safe_ak}.pdf",
             dpi=300,
             bbox_inches='tight',
             facecolor='#FAFBFC',
@@ -613,18 +753,18 @@ def main():
   if not csvs:
     raise SystemExit("No result CSVs found under provided roots.")
   
-  print(f"🎨 Generating publication-quality visualizations...")
-  print(f"📊 Processing {len(csvs)} archetype files...")
+  print(f"Generating publication-quality visualizations...")
+  print(f"Processing {len(csvs)} archetype files...")
   
   for i, c in enumerate(csvs, 1):
     print(f"   [{i}/{len(csvs)}] {c.name}")
     process_file(c, out_root, args.q, args.coverage, args.lift, args.top_k)
   
-  print(f"✨ Generated stunning visualizations in {out_root}")
-  print(f"📁 Output structure:")
-  print(f"   ├── tables/           (Clean CSV tables)")
-  print(f"   └── figs/")
-  print(f"       └── archetype_cards_*.png      (Elegant archetype cards)")
+  print(f"Generated stunning visualizations in {out_root}")
+  print(f"Output structure:")
+  print(f"   |-- tables/           (Standalone LaTeX tables: top_archetypes_*.tex)")
+  print(f"   `-- figs/")
+  print(f"       `-- archetype_cards_*.pdf      (Elegant archetype cards)")
 
 if __name__ == "__main__":
   main()

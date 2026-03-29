@@ -1,0 +1,46 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{@{}llllrrrrrrr@{}}
+\toprule
+Comparison & Meta-feature & Feature family & Direction of difference & Median (error) & Median (success) & Effect size & p-value & q (per-family BH-FDR) & n (error) & n (success) \\
+\midrule
+\multicolumn{11}{l}{\textbf{Rule: Severe acute kidney injury present} \textit{(n err: 498, n suc: 426)}} \\
+SM advantage—survivors & Input character count & Density & Higher in success & 8.453 & 8.596 & -0.142 & 3.74e-05 & 1.12e-04 & 83 & 71 \\
+SM advantage—survivors & Imputation proportion & Imputation & Higher in error & 0.702 & 0.615 & 0.087 & 2.52e-04 & 2.52e-04 & 83 & 71 \\
+SM advantage—survivors & Unique feature count & Density & Higher in success & 31.000 & 40.000 & -9.000 & 2.52e-04 & 3.78e-04 & 83 & 71 \\
+SM advantage—survivors & Aggregate stddev & Volatility & Higher in success & -0.099 & 0.118 & -0.217 & 3.02e-04 & 3.98e-04 & 83 & 71 \\
+SM advantage—survivors & Aggregate slope & Volatility & Higher in success & 0.391 & 0.485 & -0.094 & 3.98e-04 & 3.98e-04 & 83 & 71 \\
+SM advantage—survivors & Total measurement events & Density & Higher in success & 25.670 & 47.932 & -22.261 & 0.001 & 0.001 & 83 & 71 \\
+\multicolumn{11}{l}{\textbf{Rule: Coagulation derangement present; Severe acute kidney injury present} \textit{(n err: 390, n suc: 354)}} \\
+SM advantage—survivors & Input character count & Density & Higher in success & 8.491 & 8.622 & -0.130 & 6.89e-05 & 2.07e-04 & 65 & 59 \\
+SM advantage—survivors & Imputation proportion & Imputation & Higher in error & 0.702 & 0.606 & 0.096 & 0.002 & 0.002 & 65 & 59 \\
+SM advantage—survivors & Unique feature count & Density & Higher in success & 31.000 & 41.000 & -10.000 & 0.002 & 0.002 & 65 & 59 \\
+SM advantage—survivors & Total measurement events & Density & Higher in success & 30.476 & 50.915 & -20.439 & 0.003 & 0.003 & 65 & 59 \\
+SM advantage—survivors & Aggregate stddev & Volatility & Higher in success & -0.057 & 0.118 & -0.175 & 0.002 & 0.004 & 65 & 59 \\
+SM advantage—survivors & Aggregate slope & Volatility & Higher in success & 0.410 & 0.479 & -0.069 & 0.004 & 0.004 & 65 & 59 \\
+\multicolumn{11}{l}{\textbf{Rule: AKI stage 2} \textit{(n err: 348, n suc: 288)}} \\
+SM advantage—survivors & Input character count & Density & Higher in success & 8.471 & 8.622 & -0.151 & 2.66e-04 & 7.74e-04 & 58 & 48 \\
+SM advantage—survivors & Total measurement events & Density & Higher in success & 28.083 & 51.555 & -23.472 & 7.42e-04 & 7.74e-04 & 58 & 48 \\
+SM advantage—survivors & Imputation proportion & Imputation & Higher in error & 0.702 & 0.601 & 0.101 & 7.74e-04 & 7.74e-04 & 58 & 48 \\
+SM advantage—survivors & Unique feature count & Density & Higher in success & 31.000 & 41.500 & -10.500 & 7.74e-04 & 7.74e-04 & 58 & 48 \\
+SM advantage—survivors & Aggregate stddev & Volatility & Higher in success & -0.113 & 0.160 & -0.274 & 9.55e-04 & 0.001 & 58 & 48 \\
+SM advantage—survivors & Aggregate slope & Volatility & Higher in success & 0.390 & 0.509 & -0.119 & 0.001 & 0.001 & 58 & 48 \\
+\multicolumn{11}{l}{\textbf{Rule: Severe acute kidney injury present; SIRS respiratory-rate criterion present} \textit{(n err: 198, n suc: 150)}} \\
+SM advantage—survivors & Input character count & Density & Higher in success & 8.453 & 8.646 & -0.193 & 2.70e-04 & 8.09e-04 & 33 & 25 \\
+SM advantage—survivors & Aggregate slope & Volatility & Higher in success & 0.410 & 0.553 & -0.143 & 0.005 & 0.007 & 33 & 25 \\
+SM advantage—survivors & Aggregate stddev & Volatility & Higher in success & -0.124 & 0.234 & -0.358 & 0.007 & 0.007 & 33 & 25 \\
+SM advantage—survivors & Imputation proportion & Imputation & Higher in error & 0.702 & 0.596 & 0.106 & 0.008 & 0.008 & 33 & 25 \\
+SM advantage—survivors & Unique feature count & Density & Higher in success & 31.000 & 42.000 & -11.000 & 0.008 & 0.012 & 33 & 25 \\
+SM advantage—survivors & Total measurement events & Density & Higher in success & 25.670 & 52.194 & -26.524 & 0.014 & 0.014 & 33 & 25 \\
+\multicolumn{11}{l}{\textbf{Rule: Moderate anemia; Severe acute kidney injury present} \textit{(n err: 88, n suc: 56)}} \\
+SM advantage—survivors & Aggregate slope & Volatility & Higher in success & 0.378 & 0.457 & -0.078 & 0.013 & 0.018 & 44 & 28 \\
+SM advantage—survivors & Aggregate stddev & Volatility & Higher in success & -0.124 & 0.008 & -0.132 & 0.018 & 0.018 & 44 & 28 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{document}

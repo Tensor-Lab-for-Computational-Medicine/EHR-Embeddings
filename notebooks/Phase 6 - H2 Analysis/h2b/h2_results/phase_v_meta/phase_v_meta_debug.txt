@@ -1,8 +1,0 @@
-IVB|IVB_survivors_NM|members=72|err=45|suc=27
-IVB|IVB_survivors_NM|members=50|err=34|suc=16
-IVB|IVB_survivors_NM|members=46|err=32|suc=14
-IVB|IVB_survivors_NM|members=52|err=33|suc=19
-IVB|IVB_survivors_NM|members=54|err=33|suc=21
-IVB|IVB_survivors_NM|members=53|err=32|suc=21
-IVB|IVB_survivors_NM|members=38|err=26|suc=12
-IVB|IVB_survivors_NM|members=61|err=34|suc=27

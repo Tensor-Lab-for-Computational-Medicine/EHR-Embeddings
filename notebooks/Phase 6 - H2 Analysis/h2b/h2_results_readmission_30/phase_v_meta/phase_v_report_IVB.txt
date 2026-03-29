@@ -1,36 +1,31 @@
 PHASE V META-ANALYSIS
-Significant tests (p<0.05): 26
-Significant tests (q<0.05 BH-FDR): 25
-Top meta-features with q<0.05: aggregate_stddev:5, imputation_proportion:4, input_character_count:4, total_imputation_count:4, total_measurement_events:4, unique_feature_count:4
+Significant tests (p<0.05): 14
+Significant tests (q<0.05 global BH-FDR): 14
+Significant tests (q_family<0.05 per-family BH-FDR): 14
+Significant by family (q_family<0.05): density:6, imputation:2, volatility:6
+Top meta-features with q_family<0.05: aggregate_slope:3, aggregate_stddev:3, imputation_proportion:2, input_character_count:2, total_measurement_events:2, unique_feature_count:2
 
-Per-archetype significant differences:
+Per-archetype significant differences (per-family FDR):
 - IVB_survivors_SM | rule: aki_severity_stage=='Stage_2' (rank=5, coverage=106 (10.9%), lift=1.604, target=54.7 vs base=34.1)
-  * input_character_count (higher_in_success): med_error=4771.000, med_success=5550.000, effect=-779.000, p=0.000266, q=0.00211, n_err=58, n_suc=48
-  * imputation_proportion (higher_in_error): med_error=0.702, med_success=0.601, effect=0.101, p=0.000774, q=0.00394, n_err=58, n_suc=48
-  * total_imputation_count (higher_in_error): med_error=73.000, med_success=62.500, effect=10.500, p=0.000774, q=0.00394, n_err=58, n_suc=48
-  * unique_feature_count (higher_in_success): med_error=31.000, med_success=41.500, effect=-10.500, p=0.000774, q=0.00394, n_err=58, n_suc=48
-  * aggregate_stddev (higher_in_success): med_error=-0.113, med_success=0.160, effect=-0.274, p=0.000955, q=0.00445, n_err=58, n_suc=48
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.702, med_success=0.601, effect=0.101, p=0.000774, q_family=0.000774, n_err=58, n_suc=48
+  * input_character_count [density] (higher_in_success): med_error=8.471, med_success=8.622, effect=-0.151, p=0.000266, q_family=0.000774, n_err=58, n_suc=48
+  * total_measurement_events [density] (higher_in_success): med_error=28.083, med_success=51.555, effect=-23.472, p=0.000742, q_family=0.000774, n_err=58, n_suc=48
+  * unique_feature_count [density] (higher_in_success): med_error=31.000, med_success=41.500, effect=-10.500, p=0.000774, q_family=0.000774, n_err=58, n_suc=48
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.390, med_success=0.509, effect=-0.119, p=0.00122, q_family=0.00122, n_err=58, n_suc=48
 
 - IVB_survivors_SM | rule: anemia_severity=='Moderate' AND has_severe_aki==True (rank=42, coverage=72 (7.4%), lift=1.791, target=61.1 vs base=34.1)
-  * aggregate_stddev (higher_in_success): med_error=-0.124, med_success=0.008, effect=-0.132, p=0.0182, q=0.0407, n_err=44, n_suc=28
-
-- IVB_survivors_SM | rule: has_anticoagulation_derangement==True AND has_severe_aki==True (rank=2, coverage=124 (12.7%), lift=1.536, target=52.4 vs base=34.1)
-  * input_character_count (higher_in_success): med_error=4872.000, med_success=5551.000, effect=-679.000, p=6.89e-05, q=0.00193, n_err=65, n_suc=59
-  * imputation_proportion (higher_in_error): med_error=0.702, med_success=0.606, effect=0.096, p=0.00164, q=0.00541, n_err=65, n_suc=59
-  * total_imputation_count (higher_in_error): med_error=73.000, med_success=63.000, effect=10.000, p=0.00164, q=0.00541, n_err=65, n_suc=59
-  * unique_feature_count (higher_in_success): med_error=31.000, med_success=41.000, effect=-10.000, p=0.00164, q=0.00541, n_err=65, n_suc=59
-  * aggregate_stddev (higher_in_success): med_error=-0.057, med_success=0.118, effect=-0.175, p=0.00199, q=0.00619, n_err=65, n_suc=59
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.378, med_success=0.457, effect=-0.078, p=0.0128, q_family=0.0182, n_err=44, n_suc=28
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.124, med_success=0.008, effect=-0.132, p=0.0182, q_family=0.0182, n_err=44, n_suc=28
 
 - IVB_survivors_SM | rule: has_severe_aki==True (rank=1, coverage=154 (15.8%), lift=1.58, target=53.9 vs base=34.1)
-  * input_character_count (higher_in_success): med_error=4690.000, med_success=5408.000, effect=-718.000, p=3.74e-05, q=0.00193, n_err=83, n_suc=71
-  * aggregate_stddev (higher_in_success): med_error=-0.099, med_success=0.118, effect=-0.217, p=0.000302, q=0.00211, n_err=83, n_suc=71
-  * imputation_proportion (higher_in_error): med_error=0.702, med_success=0.615, effect=0.087, p=0.000252, q=0.00211, n_err=83, n_suc=71
-  * total_imputation_count (higher_in_error): med_error=73.000, med_success=64.000, effect=9.000, p=0.000252, q=0.00211, n_err=83, n_suc=71
-  * unique_feature_count (higher_in_success): med_error=31.000, med_success=40.000, effect=-9.000, p=0.000252, q=0.00211, n_err=83, n_suc=71
+  * input_character_count [density] (higher_in_success): med_error=8.453, med_success=8.596, effect=-0.142, p=3.74e-05, q_family=0.000112, n_err=83, n_suc=71
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.702, med_success=0.615, effect=0.087, p=0.000252, q_family=0.000252, n_err=83, n_suc=71
+  * unique_feature_count [density] (higher_in_success): med_error=31.000, med_success=40.000, effect=-9.000, p=0.000252, q_family=0.000378, n_err=83, n_suc=71
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.391, med_success=0.485, effect=-0.094, p=0.000398, q_family=0.000398, n_err=83, n_suc=71
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.099, med_success=0.118, effect=-0.217, p=0.000302, q_family=0.000398, n_err=83, n_suc=71
 
-- IVB_survivors_SM | rule: has_severe_aki==True AND sirs_rr_criterion==True (rank=119, coverage=58 (5.9%), lift=1.668, target=56.9 vs base=34.1)
-  * input_character_count (higher_in_success): med_error=4690.000, med_success=5686.000, effect=-996.000, p=0.00027, q=0.00211, n_err=33, n_suc=25
-  * aggregate_stddev (higher_in_success): med_error=-0.124, med_success=0.234, effect=-0.358, p=0.0066, q=0.0185, n_err=33, n_suc=25
-  * imputation_proportion (higher_in_error): med_error=0.702, med_success=0.596, effect=0.106, p=0.00773, q=0.0188, n_err=33, n_suc=25
-  * total_imputation_count (higher_in_error): med_error=73.000, med_success=62.000, effect=11.000, p=0.00773, q=0.0188, n_err=33, n_suc=25
-  * unique_feature_count (higher_in_success): med_error=31.000, med_success=42.000, effect=-11.000, p=0.00773, q=0.0188, n_err=33, n_suc=25
+
+Notes on BH-FDR (per-family):
+- q_values are Benjamini-Hochberg adjusted within each (analysis, rule, family).
+- When family size m=1, q equals p. For small m, the worst-ranked test can also have q==p due to the monotone step.
+- The implementation enforces q_value_family >= p_value to avoid downward bias.

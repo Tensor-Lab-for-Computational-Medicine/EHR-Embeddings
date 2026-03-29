@@ -32,6 +32,11 @@ def main():
 
     config = _resolve_config(args.config)
 
+    # Force the baseline model to use the xgboost numeric model, rather than the champion numeric model
+    if hasattr(config, 'BASELINE_MODEL_PATH'):
+        base_dir = os.path.dirname(config.BASELINE_MODEL_PATH)
+        config.BASELINE_MODEL_PATH = os.path.join(base_dir, 'model_1_xgboost_baseline_calibrated.pkl')
+
     os.makedirs(config.OUTPUT_DIR, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,

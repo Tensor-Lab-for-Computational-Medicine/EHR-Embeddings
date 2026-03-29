@@ -1,0 +1,22 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{lll}
+\toprule
+Task & Best Numeric Model & AUROC (95\% CI) \\
+\midrule
+30-Day Readmission & ElasticNet & 0.5759 (0.5419-0.6097) \\
+Hospital Mortality & XGBoost & 0.9010 (0.8891-0.9131) \\
+Length-of-Stay \textgreater{} 3 Days & XGBoost & 0.7272 (0.7146-0.7401) \\
+Length-of-Stay \textgreater{} 7 Days & ElasticNet & 0.7438 (0.7203-0.7682) \\
+Mechanical Ventilation & XGBoost & 0.6939 (0.6602-0.7271) \\
+Vasopressor Administration & ElasticNet & 0.7719 (0.7394-0.8035) \\
+\bottomrule
+\end{tabular}
+
+\end{adjustbox}
+\end{document}

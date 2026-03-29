@@ -1,0 +1,21 @@
+\documentclass[border=0pt]{standalone}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\begin{document}
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+Comparison & Archetype rule & N & Coverage (\%) & Outcome (\%) & Baseline (\%) & Enrichment & q (BH-FDR) \\
+\midrule
+SM false alarms (FP) & Coagulation derangement present; Acute kidney injury present & 741 & 15.3\% & 9.9\% & 2.9\% & 3.45 & 4.59e-24 \\
+SM false alarms (FP) & Acute kidney injury present & 1,074 & 22.2\% & 7.4\% & 2.9\% & 2.61 & 1.25e-19 \\
+SM false alarms (FP) & Ionized hypocalcemia present; Neutrophilia present & 795 & 16.4\% & 7.8\% & 2.9\% & 2.73 & 2.60e-15 \\
+NM false alarms (FP) & Coagulation derangement present; Synthetic liver dysfunction & 837 & 17.2\% & 8.6\% & 3.4\% & 2.51 & 8.07e-14 \\
+NM false alarms (FP) & Acute kidney injury present & 1,132 & 22.8\% & 6.4\% & 2.8\% & 2.25 & 2.17e-13 \\
+NM false alarms (FP) & Coagulation derangement present; Acute kidney injury present & 729 & 15.0\% & 8.4\% & 3.4\% & 2.44 & 5.38e-11 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{document}

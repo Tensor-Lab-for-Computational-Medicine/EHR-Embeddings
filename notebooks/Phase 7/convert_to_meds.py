@@ -12,12 +12,9 @@ import pyarrow.parquet as pq
 import jsonschema
 from sklearn.model_selection import train_test_split
 import tqdm
-<<<<<<< HEAD
 from difflib import SequenceMatcher
 import warnings
 warnings.filterwarnings('ignore', category=pd.errors.DtypeWarning)
-=======
->>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
 
 from meds import (
     CodeMetadataSchema,
@@ -586,10 +583,7 @@ def _process_event_data(df: pd.DataFrame, admission_info: pd.DataFrame, mapper: 
     else:
         df['time'] = df['admittime']
 
-<<<<<<< HEAD
     # OMOP Concept Mapping (replaces hardcoded prefixes)
-=======
->>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     if 'icd9_codes' in df.columns:
         df = df.explode('icd9_codes').dropna(subset=['icd9_codes'])
         # Map each ICD9 code to OMOP standard concept
@@ -648,16 +642,6 @@ def generate_and_save_labels(patients_df: pd.DataFrame, target: str, output_dir:
     labels_path = os.path.join(task_dir, 'labels.parquet')
     
     # Ensure the DataFrame being saved matches the full schema and has correct dtypes
-<<<<<<< HEAD
-=======
-    # Handle boolean_value column carefully to preserve NaN for intervention tasks
-    if target in ['intervention_vent', 'intervention_vaso']:
-        # Use nullable boolean type that can handle NaN
-        labels_df['boolean_value'] = labels_df['boolean_value'].astype('boolean')
-    else:
-        labels_df['boolean_value'] = labels_df['boolean_value'].astype(bool)
-    
->>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
     final_labels_df = labels_df[LABEL_SCHEMA.schema().names].astype({
         'integer_value': 'Int64',
         'float_value': 'float32',
@@ -742,7 +726,6 @@ def main():
     pq.write_table(pa.Table.from_pandas(all_splits_df, schema=SUBJECT_SPLIT_SCHEMA.schema()), splits_path)
     print(f"  --> Wrote {len(all_splits_df)} subject splits to: {splits_path}")
 
-<<<<<<< HEAD
     # Step 5: Process all event data into a single dataframe with OMOP concept mapping
     print("\nStep 5: Processing all events with OMOP concept mapping...")
     admission_info = filtered_data['patients'].reset_index()[['subject_id', 'hadm_id', 'icustay_id', 'admittime']]
@@ -755,17 +738,6 @@ def main():
         _process_event_data(filtered_data['interventions'], admission_info, mapper, 'procedure', 
                             value_col='val', needs_melting=True),
         _process_event_data(filtered_data['vitals'], admission_info, mapper, 'measurement', 
-=======
-    # Step 5: Process all event data into a single dataframe
-    print("\nStep 5: Processing all events...")
-    admission_info = filtered_data['patients'].reset_index()[['subject_id', 'hadm_id', 'icustay_id', 'admittime']]
-    
-    processed_events = [
-        _process_event_data(filtered_data['codes'], admission_info, "DIAGNOSIS/ICD9CM/"),
-        _process_event_data(filtered_data['interventions'], admission_info, "PROCEDURE/intervention/", 
-                            value_col='val', needs_melting=True),
-        _process_event_data(filtered_data['vitals'], admission_info, "MEASUREMENT/vitals_labs/", 
->>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
                             value_col='numeric_value', needs_melting=True)
     ]
     
@@ -842,18 +814,5 @@ def main():
 
     print("\n--- MEDS Conversion Completed Successfully! ---")
     
-<<<<<<< HEAD
-=======
-    print("\nRunning meds_reader to confirm MEDS extract is valid...")
-    print("--- NOTE: This validation may fail due to the new split-directory structure, which is expected. ---")
-    print("--- The new structure is required by the `generate_climbr_embeddings.py` script. ---")
-    db_path = os.path.join(MEDS_OUTPUT_DIR, "processed_db")
-    status = os.system(f"meds_reader_convert {MEDS_OUTPUT_DIR} {db_path} --num_threads 5")
-    if status == 0:
-        print(f"--- meds_reader validation successful! DB created at {db_path} ---")
-    else:
-        print("--- WARNING: meds_reader_convert failed as expected. The output directory is still likely valid for the embedding script. ---")
-
->>>>>>> c9b96b8dc53bcdd9e88ecfd6548d53e75fe50130
 if __name__ == '__main__':
     main()
