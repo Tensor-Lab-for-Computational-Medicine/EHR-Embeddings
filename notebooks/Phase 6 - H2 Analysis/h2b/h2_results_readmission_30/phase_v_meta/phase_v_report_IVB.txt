@@ -1,29 +1,7 @@
 PHASE V META-ANALYSIS
-Significant tests (p<0.05): 14
-Significant tests (q<0.05 global BH-FDR): 14
-Significant tests (q_family<0.05 per-family BH-FDR): 14
-Significant by family (q_family<0.05): density:6, imputation:2, volatility:6
-Top meta-features with q_family<0.05: aggregate_slope:3, aggregate_stddev:3, imputation_proportion:2, input_character_count:2, total_measurement_events:2, unique_feature_count:2
-
-Per-archetype significant differences (per-family FDR):
-- IVB_survivors_SM | rule: aki_severity_stage=='Stage_2' (rank=5, coverage=106 (10.9%), lift=1.604, target=54.7 vs base=34.1)
-  * imputation_proportion [imputation] (higher_in_error): med_error=0.702, med_success=0.601, effect=0.101, p=0.000774, q_family=0.000774, n_err=58, n_suc=48
-  * input_character_count [density] (higher_in_success): med_error=8.471, med_success=8.622, effect=-0.151, p=0.000266, q_family=0.000774, n_err=58, n_suc=48
-  * total_measurement_events [density] (higher_in_success): med_error=28.083, med_success=51.555, effect=-23.472, p=0.000742, q_family=0.000774, n_err=58, n_suc=48
-  * unique_feature_count [density] (higher_in_success): med_error=31.000, med_success=41.500, effect=-10.500, p=0.000774, q_family=0.000774, n_err=58, n_suc=48
-  * aggregate_slope [volatility] (higher_in_success): med_error=0.390, med_success=0.509, effect=-0.119, p=0.00122, q_family=0.00122, n_err=58, n_suc=48
-
-- IVB_survivors_SM | rule: anemia_severity=='Moderate' AND has_severe_aki==True (rank=42, coverage=72 (7.4%), lift=1.791, target=61.1 vs base=34.1)
-  * aggregate_slope [volatility] (higher_in_success): med_error=0.378, med_success=0.457, effect=-0.078, p=0.0128, q_family=0.0182, n_err=44, n_suc=28
-  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.124, med_success=0.008, effect=-0.132, p=0.0182, q_family=0.0182, n_err=44, n_suc=28
-
-- IVB_survivors_SM | rule: has_severe_aki==True (rank=1, coverage=154 (15.8%), lift=1.58, target=53.9 vs base=34.1)
-  * input_character_count [density] (higher_in_success): med_error=8.453, med_success=8.596, effect=-0.142, p=3.74e-05, q_family=0.000112, n_err=83, n_suc=71
-  * imputation_proportion [imputation] (higher_in_error): med_error=0.702, med_success=0.615, effect=0.087, p=0.000252, q_family=0.000252, n_err=83, n_suc=71
-  * unique_feature_count [density] (higher_in_success): med_error=31.000, med_success=40.000, effect=-9.000, p=0.000252, q_family=0.000378, n_err=83, n_suc=71
-  * aggregate_slope [volatility] (higher_in_success): med_error=0.391, med_success=0.485, effect=-0.094, p=0.000398, q_family=0.000398, n_err=83, n_suc=71
-  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.099, med_success=0.118, effect=-0.217, p=0.000302, q_family=0.000398, n_err=83, n_suc=71
-
+Significant tests (p<0.05): 3
+Significant tests (q<0.05 global BH-FDR): 0
+Significant tests (q_family<0.05 per-family BH-FDR): 0
 
 Notes on BH-FDR (per-family):
 - q_values are Benjamini-Hochberg adjusted within each (analysis, rule, family).

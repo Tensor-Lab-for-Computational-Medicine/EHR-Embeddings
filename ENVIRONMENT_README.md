@@ -4,8 +4,8 @@ This guide helps you reproduce the `mimic-legacy` environment used for the EHR E
 
 ## Files Created
 
-- `mimic-legacy_environment.yml` - Complete conda environment specification
-- `mimic-legacy_requirements.txt` - Pip requirements file
+- `environment.yml` - Complete conda environment specification (env name: `mimic_legacy`)
+- `requirements.txt` - Pip requirements file (mirror/complement to conda)
 - `setup_environment.sh` - Linux/Mac setup script
 - `setup_environment.bat` - Windows setup script
 
@@ -21,7 +21,7 @@ This guide helps you reproduce the `mimic-legacy` environment used for the EHR E
 
 3. Activate the environment:
    ```bash
-   conda activate mimic-legacy
+   conda activate mimic_legacy
    ```
 
 ### Option 2: Using pip
@@ -29,7 +29,7 @@ This guide helps you reproduce the `mimic-legacy` environment used for the EHR E
 If you prefer using pip instead of conda:
 
 ```bash
-pip install -r mimic-legacy_requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Environment Details
@@ -59,4 +59,8 @@ print("XGBoost version:", xgb.__version__)
 
 - `environment.yml` - Original environment specification
 - `requirements.txt` - Project requirements (may not include all conda packages)
+
+## Full manuscript workflow
+
+Environment setup is step one only. For phase order, key folders (Phase 1–6), and what is intentionally excluded from version control, read **`docs/PROJECT_LAYOUT.md`**.
 

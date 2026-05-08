@@ -56,8 +56,18 @@ def compute_meta_features(X: pd.DataFrame) -> pd.DataFrame:
     else:
         meta['aggregate_slope'] = np.nan
     meta['unique_feature_count'] = meta.get('unique_feature_families_measured', pd.Series(0, index=X.index))
-    # populated later from external text corpus by ICU stay id
-    meta['input_character_count'] = np.nan
+
+    # Temporal Concentration: proportion of events in the final 6h vs total 24h
+    counts_6h = [c for c in X.columns if c.endswith('_mean_count_6h')]
+    counts_all = [c for c in X.columns if c.endswith('_mean_count')]
+    if counts_6h and counts_all:
+        sum_6h = X[counts_6h].clip(lower=0).sum(axis=1)
+        sum_all = X[counts_all].clip(lower=0).sum(axis=1)
+        # Avoid division by zero
+        meta['temporal_concentration'] = np.where(sum_all > 0, sum_6h / sum_all, 0.0)
+    else:
+        meta['temporal_concentration'] = np.nan
+
     return meta
 
 
@@ -158,34 +168,7 @@ def main():
     # Note: Inverse scaling not required for Phase V meta-features; using current scale
 
     meta = compute_meta_features(X_test)
-    # Compute input_character_count per ICU stay id using external text corpus
-    def _build_id_to_path_map(base_dir: str) -> dict:
-        mp = {}
-        for root, _, files in os.walk(base_dir):
-            for name in files:
-                if not name.lower().endswith('.txt'):
-                    continue
-                sid = os.path.splitext(name)[0]
-                if sid not in mp:
-                    mp[sid] = os.path.join(root, name)
-        return mp
-    def _count_chars_from_path(path: str) -> float:
-        # Fast path: byte size approximates character count for ASCII-heavy clinical text; fallback to decode length
-        try:
-            size = os.path.getsize(path)
-            if size is not None and size >= 0:
-                return float(size)
-        except Exception:
-            pass
-        try:
-            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                return float(len(f.read()))
-        except Exception:
-            print(f"[DEBUG] Failed to read text file for character count: {path}")
-            return np.nan
-
-    # character counts will be assigned after loading final_archetypes to ensure id alignment
-    char_text_dir = r'D:\Projects\EHR Embeddings\notebooks\Phase 3\phase_3_serialized_data\F3_P5'
+    # character counts logic removed
     # Align cohort positions to the actual index labels of X_test to avoid boolean length mismatches
     full_index = pd.Index(X_test.index)
     cohorts_idx = {k: full_index.take(np.asarray(v, dtype=int)) for k, v in art['cohorts_by_pos'].items()}
@@ -258,21 +241,7 @@ def main():
             icu_ids = pd.Series(X_test.index.astype(str), index=X_test.index)
     # Map from ICU id string -> row label in X_test for member resolution below
     idx_map = pd.Series(X_test.index, index=icu_ids.values)
-    # Populate input_character_count for ALL X_test rows using ICU stay ids
-    if os.path.isdir(char_text_dir):
-        id_to_path = _build_id_to_path_map(char_text_dir)
-        cache = {}
-        mapped_values = []
-        for sid in icu_ids:
-            p = id_to_path.get(str(sid))
-            if not p:
-                mapped_values.append(np.nan)
-                continue
-            if p not in cache:
-                cache[p] = _count_chars_from_path(p)
-            val = cache[p]
-            mapped_values.append(float(val) if pd.notna(val) else np.nan)
-        meta['input_character_count'] = pd.Series(mapped_values, index=meta.index).apply(lambda v: np.log1p(v) if pd.notna(v) and v >= 0 else np.nan)
+    # character counts logic removed
 
     # (diagnostics removed for concision)
 
@@ -392,7 +361,7 @@ def main():
         meta_feats = [c for c in [
             'total_measurement_events',        # density
             'unique_feature_count',            # density
-            'input_character_count',           # density (from ICU text; may be NaN, log1p-scaled)
+            'temporal_concentration',          # temporal
             'aggregate_stddev',                # volatility
             'aggregate_slope',                 # volatility (magnitude, 24h preferred)
             'imputation_proportion'            # imputation (scale-free)
@@ -432,7 +401,7 @@ def main():
         family_map = {
             'total_measurement_events': 'density',
             'unique_feature_count': 'density',
-            'input_character_count': 'density',
+            'temporal_concentration': 'temporal',
             'aggregate_stddev': 'volatility',
             'aggregate_slope': 'volatility',
             'imputation_proportion': 'imputation',

@@ -8,48 +8,48 @@ import matplotlib.transforms as transforms
 
 # Reuse beauty functions
 NAME_MAP = {
-    "hemodynamic_state": "Hemodynamic state",
+    "blood_pressure_state": "Blood pressure state",
     "heart_rate_state": "Heart rate state",
-    "has_myocardial_injury": "Myocardial injury",
-    "low_cardiac_output_state": "Low cardiac output",
+    "has_elevated_troponin": "Elevated troponin",
+    "decreased_cardiac_output": "Decreased cardiac output",
     "shock_index": "Shock index",
-    "has_any_aki": "Acute kidney injury",
-    "has_severe_aki": "Severe AKI",
-    "aki_severity_stage": "AKI stage",
-    "anemia_severity": "Anemia severity",
-    "organ_dysfunction_score": "Organ dysfunction score",
-    "has_anticoagulation_derangement": "Coagulation derangement",
-    "liver_dysfunction_type": "Liver dysfunction",
-    "is_malnourished_proxy": "Low albumin",
-    "has_barotrauma_risk": "Barotrauma risk",
-    "has_high_peep_requirement": "High PEEP requirement",
-    "has_hypoxemic_failure": "Hypoxemic resp failure",
-    "has_hypercapnic_failure": "Hypercapnic resp failure",
+    "has_creatinine_elevation": "Creatinine elevation",
+    "has_severe_creatinine_elevation": "Severe creatinine elevation",
+    "creatinine_elevation_stage": "Creatinine elevation stage",
+    "hemoglobin_level_category": "Hemoglobin level category",
+    "severe_lab_abnormality_count": "Severe lab abnormality count",
+    "has_prolonged_coagulation": "Prolonged coagulation",
+    "hepatic_lab_abnormality_type": "Hepatic lab abnormality state",
+    "has_low_albumin": "Low albumin",
+    "has_high_plateau_pressure": "High plateau pressure",
+    "has_high_peep_set": "High PEEP set",
+    "has_low_oxygen_saturation": "Low oxygen saturation",
+    "has_elevated_co2": "Elevated CO2",
     "respiratory_rate_state": "Resp rate state",
     "pf_ratio": "P/F ratio",
-    "ards_severity": "ARDS severity",
+    "pf_ratio_category": "P/F ratio category",
     "bun_creatinine_ratio": "BUN/Creatinine ratio",
     "creatinine_trend": "Creatinine 24h trend",
     "gcs_level": "GCS level",
-    "unconfounded_neuro_impairment": "Unconfounded neuro impairment",
+    "severe_gcs_impairment_unconfounded_by_ventilation": "Severe GCS impairment (unconfounded)",
     "has_hyperlactatemia": "Hyperlactatemia",
-    "shock_severity": "Shock severity",
+    "lactate_and_ph_severity": "Metabolic stress severity (Lactate/pH)",
     "lactate_trend": "Lactate 24h trend",
     "acid_base_state": "Acid-base state",
-    "has_metabolic_acidosis": "Metabolic acidosis",
+    "has_low_bicarb_with_acidemia": "Low bicarb (with acidemia)",
     "anion_gap_corrected": "Anion gap",
     "glucose_state": "Glucose state",
     "sodium_state": "Sodium state",
     "potassium_state": "Potassium state",
-    "has_neutrophilia": "Neutrophilia",
-    "has_neutropenia": "Neutropenia",
-    "is_on_ventilator": "On ventilator",
-    "has_invasive_hemo_monitoring": "Invasive hemo monitoring",
+    "has_high_neutrophil_count": "High neutrophil count",
+    "has_low_neutrophil_count": "Low neutrophil count",
+    "has_mechanical_ventilation_data": "Mechanical ventilation data",
+    "has_cvp_or_pap_measurements": "CVP or PAP measurements",
     "has_hypocalcemia_ionized": "Ionized hypocalcemia",
     "has_hypomagnesemia": "Hypomagnesemia",
     "has_hypophosphatemia": "Hypophosphatemia",
-    "thrombocytopenia_severity": "Thrombocytopenia severity",
-    "leukocyte_state": "Leukocyte count state",
+    "platelet_count_category": "Platelet count category",
+    "wbc_count_state": "WBC count state",
     "hr_volatility": "HR volatility",
     "sbp_volatility": "SBP volatility",
     "map_volatility": "MAP volatility",
@@ -59,17 +59,18 @@ NAME_MAP = {
     "sirs_wbc_criterion": "SIRS WBC criterion",
     "sirs_temp_criterion": "SIRS temp criterion",
     "sirs_hr_criterion": "SIRS HR criterion",
-    "has_sirs": "SIRS",
-    "has_effusion": "Pleural/ascitic effusion",
+    "meets_sirs_criteria": "Meets SIRS criteria",
+    "has_effusion_fluid_labs": "Effusion fluid labs",
 }
 
 def beautify_var_name(name: str) -> str:
     if name in NAME_MAP:
         return NAME_MAP[name]
     words = name.replace("has_", "").replace("is_", "").replace("_", " ").strip()
-    words = re.sub(r"\baki\b", "AKI", words, flags=re.IGNORECASE)
+    words = re.sub(r"\bcreatinine\b", "creatinine", words, flags=re.IGNORECASE)
     words = re.sub(r"\bwbc\b", "WBC", words, flags=re.IGNORECASE)
-    words = re.sub(r"\brr\b", "RR", words, flags=re.IGNORECASE)
+    words = re.sub(r"\brr\b", "respiratory rate", words, flags=re.IGNORECASE)
+    words = re.sub(r"\baki\b", "creatinine elevation", words, flags=re.IGNORECASE)
     return words[:1].upper() + words[1:]
 
 def pretty_condition(expr: str) -> str:
@@ -117,18 +118,18 @@ def pretty_rule(rule: str) -> str:
     return "; ".join([pretty_condition(p) for p in parts if str(p).strip()])
 
 META_FEAT_MAP = {
-    'total_measurement_events': 'Total events',
-    'unique_feature_count': 'Unique features',
-    'input_character_count': 'Note characters',
-    'aggregate_stddev': 'Volatility (StdDev)',
-    'aggregate_slope': 'Trend Magnitude',
-    'imputation_proportion': 'Imputation %',
+    'total_measurement_events': 'Total\nevents',
+    'unique_feature_count': 'Unique\nfeatures',
+    'temporal_concentration': 'Late-Window\nConcentration',
+    'aggregate_stddev': 'Volatility\n(StdDev)',
+    'aggregate_slope': 'Trend\nMagnitude',
+    'imputation_proportion': 'Imputation\n%',
 }
 
 FAMILIES = {
     'total_measurement_events': 'Density',
     'unique_feature_count': 'Density',
-    'input_character_count': 'Density',
+    'temporal_concentration': 'Temporal',
     'aggregate_stddev': 'Volatility',
     'aggregate_slope': 'Volatility',
     'imputation_proportion': 'Imputation',
@@ -169,7 +170,7 @@ def generate_plot(df):
         
     datasets = ['Mortality', 'Readmission']
     meta_features = [
-        'total_measurement_events', 'unique_feature_count', 'input_character_count',
+        'total_measurement_events', 'unique_feature_count', 'temporal_concentration',
         'aggregate_stddev', 'aggregate_slope',
         'imputation_proportion'
     ]
@@ -204,7 +205,8 @@ def generate_plot(df):
             df_mf = df_ds[df_ds['meta_feature'] == mf]
             
             # Title for the column
-            ax.set_title(f"{FAMILIES[mf]}\n{META_FEAT_MAP[mf]}", fontsize=12)
+            title = f"{META_FEAT_MAP.get(mf, mf)}"
+            ax.set_title(title, fontsize=12)
             
             ax.axvline(0, color='gray', linestyle='--', linewidth=1)
             
@@ -248,6 +250,7 @@ def generate_plot(df):
         fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=12)
         
         plt.tight_layout()
+        plt.subplots_adjust(wspace=0.35)
         out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'outputs', f'meta_features_forest_plot_{ds.lower()}.png')
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
         plt.savefig(out_path, dpi=300, bbox_inches='tight')

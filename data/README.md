@@ -13,4 +13,6 @@ This directory contains all data files for the EHR Embeddings project.
 
 - Place new raw data files in the `raw/` subdirectory
 - Processed data will be automatically saved to the `processed/` subdirectory
-- Never modify files in `raw/` - always work with copies or processed versions 
+- Never modify files in `raw/` - always work with copies or processed versions
+
+Further directories under `data/` used solely for exploratory, non-manuscript pipelines are kept **only locally** and are excluded via `.gitignore`; they are not required to reproduce the published analyses documented in `docs/PROJECT_LAYOUT.md`.

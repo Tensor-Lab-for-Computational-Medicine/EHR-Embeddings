@@ -16,6 +16,7 @@ from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
 from sklearn.metrics import roc_auc_score
 from statsmodels.stats.multitest import multipletests
+from scipy import stats
 
 # --- Configuration ---
 
@@ -70,51 +71,53 @@ def setup_environment() -> None:
         'savefig.dpi': 300,
     })
 
-def calculate_paired_bootstrap_pvalue(y_true, p_baseline, p_champion, n_boot=2000, seed=42):
-    """
-    Calculate p-value for H1: Champion != Baseline (two-sided) using paired bootstrap.
-    Returns p-value.
-    """
+def _fast_delong_auc_covariance(predictions: np.ndarray, labels: np.ndarray):
+    """Fast DeLong covariance estimate for correlated ROC AUCs."""
+    pos_mask = labels == 1
+    neg_mask = labels == 0
+    m, n = pos_mask.sum(), neg_mask.sum()
+    if m == 0 or n == 0:
+        raise ValueError("Both positive and negative samples are required for DeLong test.")
+
+    k = predictions.shape[0]
+    aucs = np.zeros(k)
+    v10 = np.zeros((k, m))
+    v01 = np.zeros((k, n))
+    for idx in range(k):
+        pred = predictions[idx]
+        pos_pred = pred[pos_mask]
+        neg_pred = pred[neg_mask]
+        comp = np.add.outer(pos_pred, -neg_pred)
+        aucs[idx] = np.mean(comp > 0) + 0.5 * np.mean(comp == 0)
+        for i, p in enumerate(pos_pred):
+            v10[idx, i] = np.mean(neg_pred < p) + 0.5 * np.mean(neg_pred == p)
+        for j, q in enumerate(neg_pred):
+            v01[idx, j] = np.mean(pos_pred > q) + 0.5 * np.mean(pos_pred == q)
+    s10 = np.cov(v10) if k > 1 else np.var(v10, ddof=1).reshape(1, 1)
+    s01 = np.cov(v01) if k > 1 else np.var(v01, ddof=1).reshape(1, 1)
+    return aucs, (s10 / m) + (s01 / n)
+
+
+def calculate_delong_pvalue(y_true, p_baseline, p_champion):
+    """Two-sided DeLong test p-value for AUROC difference (champion vs baseline)."""
     if y_true is None or p_baseline is None or p_champion is None:
         return None
-    
-    # Ensure numpy arrays
-    y_true = np.array(y_true)
-    p_baseline = np.array(p_baseline)
-    p_champion = np.array(p_champion)
-    
+    y_true = np.asarray(y_true).ravel()
+    p_baseline = np.asarray(p_baseline).ravel()
+    p_champion = np.asarray(p_champion).ravel()
     if len(y_true) != len(p_baseline) or len(y_true) != len(p_champion):
-        logging.warning("Shape mismatch in predictions for p-value calculation.")
+        logging.warning("Shape mismatch in predictions for DeLong p-value calculation.")
         return None
-
-    rng = np.random.RandomState(seed)
-    n_samples = len(y_true)
-    indices = np.arange(n_samples)
-    
-    diffs = []
-    for _ in range(n_boot):
-        boot_idx = rng.choice(indices, n_samples, replace=True)
-        # Skip if single class in sample
-        if len(np.unique(y_true[boot_idx])) < 2: continue
-            
-        b_y = y_true[boot_idx]
-        try:
-            # Difference: Champion - Baseline
-            d = roc_auc_score(b_y, p_champion[boot_idx]) - roc_auc_score(b_y, p_baseline[boot_idx])
-            diffs.append(d)
-        except ValueError:
-            continue
-            
-    if not diffs: return None
-    
-    diffs = np.array(diffs)
-    # Two-sided p-value: 2 * min(P(diff <= 0), P(diff >= 0))
-    # This tests if the difference is significantly different from zero in either direction
-    p_left = np.mean(diffs <= 0)
-    p_right = np.mean(diffs >= 0)
-    p_val = 2 * min(p_left, p_right)
-    
-    return p_val
+    try:
+        _, cov = _fast_delong_auc_covariance(np.vstack([p_champion, p_baseline]), y_true)
+        var_diff = cov[0, 0] + cov[1, 1] - 2 * cov[0, 1]
+        if var_diff <= 0:
+            return 1.0
+        z = (roc_auc_score(y_true, p_champion) - roc_auc_score(y_true, p_baseline)) / np.sqrt(var_diff)
+        return float(2 * stats.norm.sf(abs(z)))
+    except Exception as e:
+        logging.warning(f"DeLong test failed: {e}")
+        return None
 
 # Shared styles and light helpers (kept minimal for clarity)
 BASELINE_STYLES = {
@@ -601,11 +604,11 @@ def generate_champion_model_plot(df: pd.DataFrame, metric: str, filename: str):
     }), on='Task')
 
     # Calculate significance
-    logging.info("Calculating paired bootstrap p-values for champion models...")
+    logging.info("Calculating DeLong p-values for champion models...")
     p_values = []
     for _, row in champion_df.iterrows():
         # Use champion y_true (should be identical to baseline y_true)
-        p = calculate_paired_bootstrap_pvalue(
+        p = calculate_delong_pvalue(
             row.get('y_true'),
             row.get('Baseline_y_pred'),
             row.get('y_pred_proba')
@@ -939,7 +942,7 @@ def main():
             yp_champ = row.get('y_pred_proba')
             
             # Calculate p-value
-            p = calculate_paired_bootstrap_pvalue(yt, yp_base, yp_champ)
+            p = calculate_delong_pvalue(yt, yp_base, yp_champ)
             
             # Base Strings
             sem_val = row['AUROC']

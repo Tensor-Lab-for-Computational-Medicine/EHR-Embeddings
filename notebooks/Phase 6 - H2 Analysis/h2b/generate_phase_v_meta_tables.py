@@ -66,48 +66,48 @@ def pretty_analysis_key(key: str) -> str:
 
 # Human-readable names for variables and enumerated values (shared with archetype reports)
 NAME_MAP = {
-  "hemodynamic_state": "Hemodynamic state",
+  "blood_pressure_state": "Blood pressure state",
   "heart_rate_state": "Heart rate state",
-  "has_myocardial_injury": "Myocardial injury",
-  "low_cardiac_output_state": "Low cardiac output",
+  "has_elevated_troponin": "Elevated troponin",
+  "decreased_cardiac_output": "Decreased cardiac output",
   "shock_index": "Shock index (HR/SBP)",
-  "has_any_aki": "Acute kidney injury",
-  "has_severe_aki": "Severe acute kidney injury",
-  "aki_severity_stage": "AKI stage",
-  "anemia_severity": "Anemia severity",
-  "organ_dysfunction_score": "Organ dysfunction score",
-  "has_anticoagulation_derangement": "Coagulation derangement",
-  "liver_dysfunction_type": "Liver dysfunction",
-  "is_malnourished_proxy": "Low albumin",
-  "has_barotrauma_risk": "Barotrauma risk",
-  "has_high_peep_requirement": "High PEEP requirement",
-  "has_hypoxemic_failure": "Hypoxemic respiratory failure",
-  "has_hypercapnic_failure": "Hypercapnic respiratory failure",
+  "has_creatinine_elevation": "Creatinine elevation",
+  "has_severe_creatinine_elevation": "Severe creatinine elevation",
+  "creatinine_elevation_stage": "Creatinine elevation stage",
+  "hemoglobin_level_category": "Hemoglobin level category",
+  "severe_lab_abnormality_count": "Severe lab abnormality count",
+  "has_prolonged_coagulation": "Prolonged coagulation",
+  "hepatic_lab_abnormality_type": "Hepatic lab abnormality state",
+  "has_low_albumin": "Low albumin",
+  "has_high_plateau_pressure": "High plateau pressure",
+  "has_high_peep_set": "High PEEP set",
+  "has_low_oxygen_saturation": "Low oxygen saturation",
+  "has_elevated_co2": "Elevated CO2",
   "respiratory_rate_state": "Respiratory rate state",
   "pf_ratio": "P/F ratio",
-  "ards_severity": "ARDS severity",
+  "pf_ratio_category": "P/F ratio category",
   "bun_creatinine_ratio": "BUN/Creatinine ratio",
   "creatinine_trend": "Creatinine 24h trend",
   "gcs_level": "GCS level",
-  "unconfounded_neuro_impairment": "Unconfounded neurologic impairment",
+  "severe_gcs_impairment_unconfounded_by_ventilation": "Severe GCS impairment (unconfounded)",
   "has_hyperlactatemia": "Hyperlactatemia",
-  "shock_severity": "Shock severity (lactate/pH)",
+  "lactate_and_ph_severity": "Metabolic stress severity (Lactate/pH)",
   "lactate_trend": "Lactate 24h trend",
   "acid_base_state": "Acid-base state",
-  "has_metabolic_acidosis": "Metabolic acidosis",
+  "has_low_bicarb_with_acidemia": "Low bicarb (with acidemia)",
   "anion_gap_corrected": "Albumin-corrected anion gap",
   "glucose_state": "Glucose state",
   "sodium_state": "Sodium state",
   "potassium_state": "Potassium state",
-  "has_neutrophilia": "Neutrophilia",
-  "has_neutropenia": "Neutropenia",
-  "is_on_ventilator": "On ventilator",
-  "has_invasive_hemo_monitoring": "Invasive hemodynamic monitoring",
+  "has_high_neutrophil_count": "High neutrophil count",
+  "has_low_neutrophil_count": "Low neutrophil count",
+  "has_mechanical_ventilation_data": "Mechanical ventilation data",
+  "has_cvp_or_pap_measurements": "CVP or PAP measurements",
   "has_hypocalcemia_ionized": "Ionized hypocalcemia",
   "has_hypomagnesemia": "Hypomagnesemia",
   "has_hypophosphatemia": "Hypophosphatemia",
-  "thrombocytopenia_severity": "Thrombocytopenia severity",
-  "leukocyte_state": "Leukocyte count state",
+  "platelet_count_category": "Platelet count category",
+  "wbc_count_state": "WBC count state",
   "hr_volatility": "Heart rate volatility",
   "sbp_volatility": "Systolic blood pressure volatility",
   "map_volatility": "MAP volatility",
@@ -117,24 +117,26 @@ NAME_MAP = {
   "sirs_wbc_criterion": "SIRS white blood cell criterion",
   "sirs_temp_criterion": "SIRS temperature criterion",
   "sirs_hr_criterion": "SIRS heart-rate criterion",
-  "has_sirs": "Systemic inflammatory response syndrome (SIRS)",
-  "has_effusion": "Pleural or ascitic effusion",
+  "meets_sirs_criteria": "Meets SIRS criteria",
+  "has_effusion_fluid_labs": "Effusion fluid labs",
+  "temporal_concentration": "Late-window temporal concentration",
 }
 
 VALUE_MAP = {
-  ("liver_dysfunction_type", "Synthetic_Dysfunction"): "Synthetic liver dysfunction",
-  ("anemia_severity", "Moderate"): "Moderate anemia",
-  ("aki_severity_stage", "Stage_2"): "AKI stage 2",
-  ("aki_severity_stage", "Stage_3"): "AKI stage 3",
+  ("hepatic_lab_abnormality_type", "Synthetic_Dysfunction"): "Synthetic hepatic dysfunction",
+  ("hemoglobin_level_category", "Moderate"): "Moderate anemia",
+  ("creatinine_elevation_stage", "Stage_2"): "Creatinine elevation stage 2",
+  ("creatinine_elevation_stage", "Stage_3"): "Creatinine elevation stage 3",
 }
 
 def beautify_var_name(name: str) -> str:
   if name in NAME_MAP:
     return NAME_MAP[name]
   words = name.replace("has_", "").replace("is_", "").replace("_", " ").strip()
-  words = re.sub(r"\baki\b", "AKI", words, flags=re.IGNORECASE)
+  words = re.sub(r"\bcreatinine\b", "creatinine", words, flags=re.IGNORECASE)
   words = re.sub(r"\bwbc\b", "WBC", words, flags=re.IGNORECASE)
   words = re.sub(r"\brr\b", "respiratory rate", words, flags=re.IGNORECASE)
+  words = re.sub(r"\baki\b", "creatinine elevation", words, flags=re.IGNORECASE)
   return words[:1].upper() + words[1:]
 
 def pretty_condition(expr: str) -> str:

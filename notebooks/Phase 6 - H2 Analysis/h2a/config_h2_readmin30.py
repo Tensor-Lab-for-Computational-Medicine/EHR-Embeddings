@@ -27,7 +27,7 @@ class ConfigH2:
         self.ICUSTAY_IDS_VAL_PATH = os.path.join(num_dir, 'icustay_ids_val.pkl')
 
         # Baseline (numeric) model
-        self.BASELINE_MODEL_PATH = os.path.join(num_dir, 'readmission_30', 'model_1_xgboost_baseline_calibrated.pkl')
+        self.BASELINE_MODEL_PATH = os.path.join(num_dir, 'readmission_30', 'model_1_xgboost_baseline.pkl')
 
         # Embedding model and data (text-embedding-005, prefer calibrated models)
         self.CHAMPION_ARM = 'F1_P0'

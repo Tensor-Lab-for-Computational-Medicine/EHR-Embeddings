@@ -1,28 +1,87 @@
 PHASE V META-ANALYSIS
-Significant tests (p<0.05): 13
-Significant tests (q<0.05 global BH-FDR): 12
-Significant tests (q_family<0.05 per-family BH-FDR): 12
-Significant by family (q_family<0.05): density:9, imputation:3
-Top meta-features with q_family<0.05: imputation_proportion:3, input_character_count:3, total_measurement_events:3, unique_feature_count:3
+Significant tests (p<0.05): 59
+Significant tests (q<0.05 global BH-FDR): 54
+Significant tests (q_family<0.05 per-family BH-FDR): 57
+Significant by family (q_family<0.05): density:23, imputation:11, temporal:7, volatility:16
+Top meta-features with q_family<0.05: total_measurement_events:12, imputation_proportion:11, unique_feature_count:11, aggregate_slope:8, aggregate_stddev:8, temporal_concentration:7
 
 Per-archetype significant differences (per-family FDR):
-- SM_false_alarm | rule: has_anticoagulation_derangement==True AND has_neutrophilia==True AND is_malnourished_proxy==True (rank=6, coverage=592 (11.9%), lift=1.807, target=23.3 vs base=12.9)
-  * total_measurement_events [density] (higher_in_error): med_error=46.833, med_success=38.116, effect=8.716, p=0.00124, q_family=0.00371, n_err=138, n_suc=454
-  * imputation_proportion [imputation] (higher_in_success): med_error=0.615, med_success=0.644, effect=-0.029, p=0.00621, q_family=0.00621, n_err=138, n_suc=454
-  * unique_feature_count [density] (higher_in_error): med_error=40.000, med_success=37.000, effect=3.000, p=0.00621, q_family=0.00932, n_err=138, n_suc=454
-  * input_character_count [density] (higher_in_error): med_error=8.557, med_success=8.522, effect=0.035, p=0.0434, q_family=0.0434, n_err=138, n_suc=454
+- NM_false_alarm | rule: has_creatinine_elevation==True (rank=1, coverage=1194 (25.5%), lift=2.219, target=51.6 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.083, med_success=0.143, effect=-0.226, p=1.42e-20, q_family=2.84e-20, n_err=616, n_suc=578
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.392, med_success=0.497, effect=-0.104, p=7.61e-15, q_family=7.61e-15, n_err=616, n_suc=578
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.731, med_success=0.683, effect=0.048, p=4.83e-08, q_family=4.83e-08, n_err=616, n_suc=578
+  * unique_feature_count [density] (higher_in_success): med_error=28.000, med_success=33.000, effect=-5.000, p=4.83e-08, q_family=9.65e-08, n_err=616, n_suc=578
+  * total_measurement_events [density] (higher_in_success): med_error=27.420, med_success=36.552, effect=-9.132, p=4.46e-07, q_family=4.46e-07, n_err=616, n_suc=578
 
-- SM_false_alarm | rule: has_neutrophilia==True AND is_malnourished_proxy==True (rank=2, coverage=742 (14.9%), lift=1.776, target=22.9 vs base=12.9)
-  * total_measurement_events [density] (higher_in_error): med_error=44.367, med_success=37.108, effect=7.259, p=0.000777, q_family=0.00233, n_err=170, n_suc=572
-  * imputation_proportion [imputation] (higher_in_success): med_error=0.625, med_success=0.654, effect=-0.029, p=0.00254, q_family=0.00254, n_err=170, n_suc=572
-  * unique_feature_count [density] (higher_in_error): med_error=39.000, med_success=36.000, effect=3.000, p=0.00254, q_family=0.00381, n_err=170, n_suc=572
-  * input_character_count [density] (higher_in_error): med_error=8.526, med_success=8.493, effect=0.033, p=0.0264, q_family=0.0264, n_err=170, n_suc=572
+- NM_false_alarm | rule: has_creatinine_elevation==True AND has_elevated_troponin==True (rank=7, coverage=501 (10.7%), lift=2.404, target=55.9 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.065, med_success=0.248, effect=-0.313, p=1.36e-13, q_family=2.72e-13, n_err=280, n_suc=221
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.412, med_success=0.530, effect=-0.117, p=3.25e-10, q_family=3.25e-10, n_err=280, n_suc=221
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.716, med_success=0.625, effect=0.091, p=2.58e-06, q_family=2.58e-06, n_err=280, n_suc=221
+  * unique_feature_count [density] (higher_in_success): med_error=29.500, med_success=39.000, effect=-9.500, p=2.58e-06, q_family=5.17e-06, n_err=280, n_suc=221
+  * total_measurement_events [density] (higher_in_success): med_error=29.951, med_success=41.647, effect=-11.696, p=1.4e-05, q_family=1.4e-05, n_err=280, n_suc=221
 
-- SM_false_alarm | rule: is_malnourished_proxy==True (rank=1, coverage=1086 (21.8%), lift=1.613, target=20.8 vs base=12.9)
-  * imputation_proportion [imputation] (higher_in_success): med_error=0.635, med_success=0.663, effect=-0.029, p=0.00019, q_family=0.00019, n_err=226, n_suc=860
-  * total_measurement_events [density] (higher_in_error): med_error=41.820, med_success=35.049, effect=6.771, p=0.000362, q_family=0.000543, n_err=226, n_suc=860
-  * unique_feature_count [density] (higher_in_error): med_error=38.000, med_success=35.000, effect=3.000, p=0.00019, q_family=0.000543, n_err=226, n_suc=860
-  * input_character_count [density] (higher_in_error): med_error=8.497, med_success=8.464, effect=0.033, p=0.0263, q_family=0.0263, n_err=226, n_suc=860
+- NM_false_alarm | rule: has_creatinine_elevation==True AND has_high_neutrophil_count==True (rank=3, coverage=705 (15.1%), lift=2.221, target=51.6 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.083, med_success=0.184, effect=-0.267, p=2.84e-17, q_family=5.68e-17, n_err=364, n_suc=341
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.411, med_success=0.515, effect=-0.104, p=7.51e-11, q_family=7.51e-11, n_err=364, n_suc=341
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.702, med_success=0.635, effect=0.067, p=1.8e-07, q_family=1.8e-07, n_err=364, n_suc=341
+  * unique_feature_count [density] (higher_in_success): med_error=31.000, med_success=38.000, effect=-7.000, p=1.8e-07, q_family=3.6e-07, n_err=364, n_suc=341
+  * total_measurement_events [density] (higher_in_success): med_error=29.781, med_success=39.246, effect=-9.465, p=2.94e-05, q_family=2.94e-05, n_err=364, n_suc=341
+
+- NM_false_alarm | rule: has_creatinine_elevation==True AND has_high_neutrophil_count==True AND has_prolonged_coagulation==True (rank=6, coverage=518 (11.1%), lift=2.267, target=52.7 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.057, med_success=0.240, effect=-0.298, p=2.81e-14, q_family=5.61e-14, n_err=273, n_suc=245
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.421, med_success=0.544, effect=-0.123, p=1.37e-10, q_family=1.37e-10, n_err=273, n_suc=245
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.683, med_success=0.615, effect=0.067, p=6.78e-07, q_family=6.78e-07, n_err=273, n_suc=245
+  * unique_feature_count [density] (higher_in_success): med_error=33.000, med_success=40.000, effect=-7.000, p=6.78e-07, q_family=1.36e-06, n_err=273, n_suc=245
+  * total_measurement_events [density] (higher_in_success): med_error=32.363, med_success=44.379, effect=-12.016, p=5.08e-06, q_family=5.08e-06, n_err=273, n_suc=245
+
+- NM_false_alarm | rule: has_creatinine_elevation==True AND has_prolonged_coagulation==True (rank=2, coverage=857 (18.3%), lift=2.298, target=53.4 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.054, med_success=0.216, effect=-0.270, p=1.13e-19, q_family=2.26e-19, n_err=458, n_suc=399
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.412, med_success=0.533, effect=-0.121, p=2.75e-16, q_family=2.75e-16, n_err=458, n_suc=399
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.712, med_success=0.654, effect=0.058, p=1.48e-08, q_family=1.48e-08, n_err=458, n_suc=399
+  * unique_feature_count [density] (higher_in_success): med_error=30.000, med_success=36.000, effect=-6.000, p=1.48e-08, q_family=2.95e-08, n_err=458, n_suc=399
+  * total_measurement_events [density] (higher_in_success): med_error=30.840, med_success=42.349, effect=-11.509, p=5.43e-08, q_family=5.43e-08, n_err=458, n_suc=399
+
+- NM_false_alarm | rule: has_creatinine_elevation==True AND hemoglobin_level_category=='Moderate' (rank=5, coverage=509 (10.9%), lift=2.442, target=56.8 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.092, med_success=0.126, effect=-0.218, p=1.02e-11, q_family=2.04e-11, n_err=289, n_suc=220
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.389, med_success=0.489, effect=-0.100, p=7.63e-10, q_family=7.63e-10, n_err=289, n_suc=220
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.712, med_success=0.678, effect=0.034, p=0.00183, q_family=0.00183, n_err=289, n_suc=220
+  * unique_feature_count [density] (higher_in_success): med_error=30.000, med_success=33.500, effect=-3.500, p=0.00183, q_family=0.00366, n_err=289, n_suc=220
+  * total_measurement_events [density] (higher_in_success): med_error=27.825, med_success=35.703, effect=-7.878, p=0.00639, q_family=0.00639, n_err=289, n_suc=220
+
+- NM_false_alarm | rule: has_severe_creatinine_elevation==True (rank=4, coverage=531 (11.4%), lift=2.6, target=60.5 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.074, med_success=0.194, effect=-0.268, p=5.34e-18, q_family=1.07e-17, n_err=321, n_suc=210
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.405, med_success=0.518, effect=-0.113, p=1.62e-11, q_family=1.62e-11, n_err=321, n_suc=210
+  * imputation_proportion [imputation] (higher_in_error): med_error=0.721, med_success=0.649, effect=0.072, p=1.72e-07, q_family=1.72e-07, n_err=321, n_suc=210
+  * unique_feature_count [density] (higher_in_success): med_error=29.000, med_success=36.500, effect=-7.500, p=1.72e-07, q_family=3.44e-07, n_err=321, n_suc=210
+  * total_measurement_events [density] (higher_in_success): med_error=28.010, med_success=42.489, effect=-14.479, p=4.39e-06, q_family=4.39e-06, n_err=321, n_suc=210
+
+- NM_false_alarm | rule: hepatic_lab_abnormality_type=='Synthetic_Dysfunction' (rank=6, coverage=1039 (22.2%), lift=1.672, target=38.9 vs base=23.3)
+  * aggregate_stddev [volatility] (higher_in_success): med_error=-0.065, med_success=0.140, effect=-0.205, p=1.43e-12, q_family=2.85e-12, n_err=404, n_suc=635
+  * aggregate_slope [volatility] (higher_in_success): med_error=0.411, med_success=0.497, effect=-0.086, p=2.25e-09, q_family=2.25e-09, n_err=404, n_suc=635
+
+- SM_false_alarm | rule: has_high_neutrophil_count==True AND has_low_albumin==True (rank=2, coverage=494 (12.1%), lift=1.768, target=21.1 vs base=11.9)
+  * total_measurement_events [density] (higher_in_error): med_error=44.803, med_success=37.664, effect=7.139, p=0.0117, q_family=0.0234, n_err=104, n_suc=390
+  * imputation_proportion [imputation] (higher_in_success): med_error=0.625, med_success=0.644, effect=-0.019, p=0.0385, q_family=0.0385, n_err=104, n_suc=390
+  * unique_feature_count [density] (higher_in_error): med_error=39.000, med_success=37.000, effect=2.000, p=0.0385, q_family=0.0385, n_err=104, n_suc=390
+
+- SM_false_alarm | rule: has_hypocalcemia_ionized==True AND has_low_albumin==True (rank=7, coverage=412 (10.1%), lift=1.896, target=22.6 vs base=11.9)
+  * total_measurement_events [density] (higher_in_error): med_error=56.620, med_success=44.964, effect=11.656, p=0.0217, q_family=0.0434, n_err=93, n_suc=319
+
+- SM_false_alarm | rule: has_low_albumin==True (rank=1, coverage=753 (18.5%), lift=1.628, target=19.4 vs base=11.9)
+  * total_measurement_events [density] (higher_in_error): med_error=42.510, med_success=35.347, effect=7.162, p=0.0034, q_family=0.00679, n_err=146, n_suc=607
+  * imputation_proportion [imputation] (higher_in_success): med_error=0.635, med_success=0.663, effect=-0.029, p=0.00783, q_family=0.00783, n_err=146, n_suc=607
+  * unique_feature_count [density] (higher_in_error): med_error=38.000, med_success=35.000, effect=3.000, p=0.00783, q_family=0.00783, n_err=146, n_suc=607
+
+- SM_false_alarm | rule: has_low_albumin==True AND has_prolonged_coagulation==True (rank=3, coverage=557 (13.7%), lift=1.689, target=20.1 vs base=11.9)
+  * total_measurement_events [density] (higher_in_error): med_error=47.137, med_success=38.287, effect=8.851, p=0.00286, q_family=0.00572, n_err=112, n_suc=445
+  * imputation_proportion [imputation] (higher_in_success): med_error=0.620, med_success=0.644, effect=-0.024, p=0.0276, q_family=0.0276, n_err=112, n_suc=445
+  * unique_feature_count [density] (higher_in_error): med_error=39.500, med_success=37.000, effect=2.500, p=0.0276, q_family=0.0276, n_err=112, n_suc=445
+
+- SM_false_alarm | rule: has_low_albumin==True AND hepatic_lab_abnormality_type=='Synthetic_Dysfunction' (rank=4, coverage=456 (11.2%), lift=1.768, target=21.1 vs base=11.9)
+  * total_measurement_events [density] (higher_in_error): med_error=46.945, med_success=39.272, effect=7.673, p=0.00304, q_family=0.00609, n_err=96, n_suc=360
+  * imputation_proportion [imputation] (higher_in_success): med_error=0.606, med_success=0.644, effect=-0.038, p=0.0109, q_family=0.0109, n_err=96, n_suc=360
+  * unique_feature_count [density] (higher_in_error): med_error=41.000, med_success=37.000, effect=4.000, p=0.0109, q_family=0.0109, n_err=96, n_suc=360
+  * temporal_concentration [temporal] (higher_in_success): med_error=0.066, med_success=0.077, effect=-0.011, p=0.0195, q_family=0.0195, n_err=96, n_suc=360
 
 
 Notes on BH-FDR (per-family):

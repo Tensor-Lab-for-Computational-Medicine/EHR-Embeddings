@@ -1,25 +1,23 @@
-# save as print_denominator.py and run from repo root:
-#   python print_denominator.py
-import sys, os, re, pickle
-from pathlib import Path
+import pickle
 import pandas as pd
+import numpy as np
 
-# Add h2b to import path
-h2b_dir = Path.cwd() / "notebooks" / "Phase 6 - H2 Analysis" / "h2b"
-sys.path.insert(0, str(h2b_dir))
+with open(r"D:\Projects\EHR Embeddings\notebooks\Phase 6 - H2 Analysis\h2a\h2_results\h2a_to_h2b_artifact.pkl", 'rb') as f:
+    art = pickle.load(f)
 
-from config_h2_readmin30 import ConfigH2 as C  # adjust if you use a different config
-cfg = C()
+y_true = np.array(art['y_true'])
+nm_proba = np.array(art['nm_proba'])
 
-# Load X_test numeric matrix
-with open(cfg.X_TEST_NUM_PATH, "rb") as f:
-    X = pickle.load(f)
-df = X if isinstance(X, pd.DataFrame) else pd.DataFrame(X)
+# Compute 90% Sensitivity Threshold
+from sklearn.metrics import roc_curve
+fpr, tpr, thresholds = roc_curve(y_true, nm_proba)
+idx_90sens = np.where(tpr >= 0.90)[0]
+t_90sens = thresholds[idx_90sens[0]] if len(idx_90sens) > 0 else 0.0
 
-# Count unique feature families from *_mean_count and *_mean_count_6h
-cols = [c for c in df.columns if c.endswith("_mean_count") or c.endswith("_mean_count_6h")]
-families = {re.sub(r"_mean_count(_6h)?$", "", c) for c in cols}
+# Compute 90% Specificity Threshold
+idx_90spec = np.where(1 - fpr >= 0.90)[0]
+t_90spec = thresholds[idx_90spec[-1]] if len(idx_90spec) > 0 else 1.0
 
-print(f"Unique feature families (denominator): {len(families)}")
-# Optional: print a few names to sanity-check
-print("Sample families:", sorted(list(families))[:10])
+print(f"Original Youden NM Threshold: {art['thresholds']['nm']}")
+print(f"90% Sens Threshold: {t_90sens}")
+print(f"90% Spec Threshold: {t_90spec}")

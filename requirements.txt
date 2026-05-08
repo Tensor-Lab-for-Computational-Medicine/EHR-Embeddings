@@ -1,0 +1,11 @@
+# Pip installs aligned with environment.yml (conda env name: mimic_legacy).
+# Prefer: conda env create -f environment.yml && conda activate mimic_legacy
+matplotlib>=3.5,<4
+numpy==1.21.6
+pandas==0.24.2
+scikit-learn==1.0.2
+scipy==1.7.3
+seaborn==0.12.2
+shap>=0.41
+tables==3.5.1
+xgboost==1.6.2

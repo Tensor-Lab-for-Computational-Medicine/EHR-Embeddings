@@ -12,12 +12,12 @@ if %errorlevel% == 0 (
     echo Conda detected. Setting up environment...
 
     REM Create environment from YAML file (recommended)
-    echo Creating environment from mimic-legacy_environment.yml...
-    conda env create -f mimic-legacy_environment.yml
+    echo Creating environment from environment.yml...
+    conda env create -f environment.yml
 
     echo.
     echo Environment created successfully!
-    echo To activate: conda activate mimic-legacy
+    echo To activate: conda activate mimic_legacy
     echo.
 
 ) else (
@@ -25,7 +25,7 @@ if %errorlevel% == 0 (
     echo https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html
     echo.
     echo Alternatively, you can use pip to install packages:
-    echo pip install -r mimic-legacy_requirements.txt
+    echo pip install -r requirements.txt
 )
 
 echo Setup complete!

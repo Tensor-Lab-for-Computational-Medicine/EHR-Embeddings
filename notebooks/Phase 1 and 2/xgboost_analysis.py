@@ -40,12 +40,12 @@ class Config:
         self.GAP_TIME = config.get('GAP_TIME', 6)
         self.TARGET_VARIABLES = config.get('TARGET_VARIABLES', ['mort_hosp', 'los_3', 'los_7', 'readmission_30', 'intervention_vent', 'intervention_vaso'])
         self.SEED = config.get('SEED', 42)
-        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 15)
+        self.N_OPTUNA_TRIALS = config.get('N_OPTUNA_TRIALS', 25)
         self.OPTUNA_TIMEOUT = config.get('OPTUNA_TIMEOUT', 1800)
-        self.REUSE_EXISTING_STUDY = config.get('REUSE_EXISTING_STUDY', True)
+        self.REUSE_EXISTING_STUDY = config.get('REUSE_EXISTING_STUDY', False)
         self.CALIBRATION_ENABLED = config.get('CALIBRATION_ENABLED', True)
         self.CALIBRATION_METHOD = config.get('CALIBRATION_METHOD', 'isotonic')  # 'isotonic' or 'sigmoid'
-        self.VAL_CAL_FRACTION = config.get('VAL_CAL_FRACTION', 0.5)  # Fraction of original val used for calibration
+        self.VAL_CAL_FRACTION = config.get('VAL_CAL_FRACTION', 0.1)  # Restore 0.1 calibration split for baseline consistency
         
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
 
@@ -80,8 +80,7 @@ def load_preprocessed_data(config):
     
     data = {}
     for key, filepath in cache_files.items():
-        with open(filepath, 'rb') as f:
-            data[key] = pickle.load(f)
+        data[key] = pd.read_pickle(filepath)
     
     # Extract only the target variable we're analyzing from the multi-target y data
     y_train = data['y_train'][config.TARGET_VARIABLE]
@@ -141,6 +140,10 @@ def _clean_features_and_labels(X: pd.DataFrame, y: pd.Series, expected_binary: b
 
 def split_validation_set(X_val, y_val, config):
     """Split the original validation set into tuning and calibration subsets (stratified)."""
+    if config.VAL_CAL_FRACTION <= 0:
+        logging.info("Using full validation set for both tuning and calibration (sequential reuse)")
+        return X_val, X_val, y_val, y_val
+    
     logging.info(
         f"Splitting validation set: {1 - config.VAL_CAL_FRACTION:.2f} for tuning, {config.VAL_CAL_FRACTION:.2f} for calibration"
     )
@@ -327,26 +330,35 @@ def tune_xgboost(X_train, y_train, X_val, y_val, config):
     logging.info(f"Creating new Optuna study with {config.N_OPTUNA_TRIALS} trials...")
     study = optuna.create_study(direction='maximize')
     
-    scale_pos_weight = (y_train == 0).sum() / (y_train == 1).sum()
-    
     def objective(trial):
+        # Calculate base scale_pos_weight
+        pos_count = (y_train == 1).sum()
+        neg_count = (y_train == 0).sum()
+        base_spw = neg_count / max(1, pos_count)
+        
         params = {
             'objective': 'binary:logistic',
-            'n_estimators': trial.suggest_int('n_estimators', 100, 1000, step=50),
-            'learning_rate': trial.suggest_float('learning_rate', 1e-3, 0.3, log=True),
-            'max_depth': trial.suggest_int('max_depth', 3, 10),
-            'subsample': trial.suggest_float('subsample', 0.5, 1.0),
-            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
-            'gamma': trial.suggest_float('gamma', 1e-8, 1.0, log=True),
-            'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
-            'scale_pos_weight': scale_pos_weight,
+            'n_estimators': trial.suggest_int('n_estimators', 500, 2000, step=100),
+            'learning_rate': trial.suggest_float('learning_rate', 1e-3, 1e-2, log=True),
+            'max_depth': trial.suggest_int('max_depth', 4, 8),
+            'subsample': trial.suggest_float('subsample', 0.7, 0.9),
+            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.7, 0.9),
+            'gamma': trial.suggest_float('gamma', 1.0, 10.0, log=True),
+            'min_child_weight': trial.suggest_int('min_child_weight', 15, 40),
+            'reg_alpha': trial.suggest_float('reg_alpha', 1.0, 50.0, log=True),
+            'reg_lambda': trial.suggest_float('reg_lambda', 1.0, 50.0, log=True),
+            'scale_pos_weight': trial.suggest_float('scale_pos_weight', max(1.0, base_spw * 0.9), base_spw * 1.3),
             'random_state': config.SEED,
-            'n_jobs': -1
+            'n_jobs': -1,
+            'early_stopping_rounds': 100,
+            'eval_metric': 'auc'
         }
         
         model = xgb.XGBClassifier(**params)
-        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], eval_metric='auc',
-                  early_stopping_rounds=30, verbose=False)
+        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
+        
+        # Save the actual number of trees used before early stopping
+        trial.set_user_attr('best_n_estimators', model.best_iteration + 1)
         
         return roc_auc_score(y_val, model.predict_proba(X_val)[:, 1])
 
@@ -358,7 +370,15 @@ def tune_xgboost(X_train, y_train, X_val, y_val, config):
     logging.info(f"Study saved to {study_path}")
     
     logging.info(f"Best validation AUROC: {study.best_value:.4f}")
-    return study.best_params
+    
+    # Retrieve true hyperparameters
+    best_params = study.best_params.copy()
+    if 'best_n_estimators' in study.best_trial.user_attrs:
+        best_n = study.best_trial.user_attrs['best_n_estimators']
+        logging.info(f"Correcting n_estimators from Optuna suggestion {best_params.get('n_estimators')} to actual early-stopped value {best_n}")
+        best_params['n_estimators'] = best_n
+        
+    return best_params
 
 def train_final_model(X_train, X_val_tune, y_train, y_val_tune, best_params, config):
     """Train final model on combined train+val_tune data."""
@@ -487,10 +507,24 @@ def main(config_dict=None):
     
     # Load preprocessed data
     X_train, X_val, X_test, y_train, y_val, y_test, scaler, imputation_values = load_preprocessed_data(config)
+    
+    # Drop zero-variance columns before training to ensure SHAP stability
+    logging.info("Dropping zero-variance features...")
+    cols_to_keep = X_train.columns[X_train.std() > 0]
+    X_train = X_train[cols_to_keep]
+    X_val = X_val[cols_to_keep]
+    X_test = X_test[cols_to_keep]
+    
     # Clean labels and align features for each split
     X_train, y_train = _clean_features_and_labels(X_train, y_train, expected_binary=True)
     X_val, y_val = _clean_features_and_labels(X_val, y_val, expected_binary=True)
     X_test, y_test = _clean_features_and_labels(X_test, y_test, expected_binary=True)
+    
+    # Explicitly log prevalence
+    for name, labels in [('train', y_train), ('val', y_val), ('test', y_test)]:
+        pos = (labels == 1).sum()
+        total = len(labels)
+        logging.info(f"Class distribution ({name}): {pos}/{total} ({pos/total:.2%})")
     logging.info("Cleaned labels and aligned features for train/val/test; proceeding to splits")
     
     # Split validation into tuning and calibration subsets only if calibration is enabled
@@ -519,7 +553,7 @@ def main(config_dict=None):
     logging.info(f"Test Brier: {brier['point_estimate']:.4f} (95% CI: {brier['ci_lower']:.4f}-{brier['ci_upper']:.4f}); Calibration used: {results['calibration_alignment'].get('used_method')}")
     
     y_pred = (model.predict_proba(X_test)[:, 1] >= 0.5).astype(int)
-    print(f"\nClassification Report:\n{classification_report(y_test, y_pred)}")
+    print(f"\nClassification Report:\n{classification_report(y_test, y_pred, zero_division=1)}")
     print(f"\nConfusion Matrix:\n{results['confusion_matrix']}")
     
     # Save all artifacts

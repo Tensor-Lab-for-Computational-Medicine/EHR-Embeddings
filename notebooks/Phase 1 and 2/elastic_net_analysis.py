@@ -20,7 +20,7 @@ class Config:
         config = config_dict if config_dict else {}
         
         # Explicitly define all attributes to avoid linter errors
-        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'intervention_vent')  # This is the variable we are predicting
+        self.TARGET_VARIABLE = config.get('TARGET_VARIABLE', 'readmission_30')  # This is the variable we are predicting
         self.INPUT_DIR = config.get('INPUT_DIR', 'notebooks\Phase 1 and 2\phase_1_outputs')  # Where to load data from
         self.OUTPUT_DIR = os.path.join(self.INPUT_DIR, self.TARGET_VARIABLE)  # Where to save results
 
@@ -51,18 +51,23 @@ def get_cache_prefix(config):
     return prefix
 
 def load_preprocessed_data(config):
-    """Load preprocessed data from cache files."""
-    prefix = get_cache_prefix(config)
-    cache_files = {
-        key: os.path.join(config.INPUT_DIR, f'{prefix}_{key}.pkl')
-        for key in ['X_train', 'X_val', 'X_test', 'y_train', 'y_val', 'y_test', 'scaler', 'imputation_values']
-    }
+    """Load preprocessed data using fixed filenames; fallback to prefixed if needed."""
+    keys = ['X_train', 'X_val', 'X_test', 'y_train', 'y_val', 'y_test', 'scaler', 'imputation_values']
+    fixed_files = {key: os.path.join(config.INPUT_DIR, f'{key}.pkl') for key in keys}
+    use_fixed = all(os.path.exists(path) for path in fixed_files.values())
     
-    missing_files = [f for f in cache_files.values() if not os.path.exists(f)]
-    if missing_files:
-        raise FileNotFoundError(f"Missing preprocessed data files: {missing_files}")
-    
-    logging.info(f"Loading preprocessed data with prefix: {prefix}")
+    if use_fixed:
+        cache_files = fixed_files
+        logging.info("Loading preprocessed data from fixed filenames (override mode)")
+    else:
+        prefix = get_cache_prefix(config)
+        cache_files = {key: os.path.join(config.INPUT_DIR, f'{prefix}_{key}.pkl') for key in keys}
+        missing_files = [f for f in cache_files.values() if not os.path.exists(f)]
+        if missing_files:
+            raise FileNotFoundError(f"Missing preprocessed data files: {missing_files}")
+        logging.info(f"Loading preprocessed data with prefix: {prefix}")
+
+
     data = {}
     for key, filepath in cache_files.items():
         with open(filepath, 'rb') as f:

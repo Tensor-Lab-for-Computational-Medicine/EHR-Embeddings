@@ -11,12 +11,12 @@ if command -v conda &> /dev/null; then
     echo "Conda detected. Setting up environment..."
 
     # Create environment from YAML file (recommended)
-    echo "Creating environment from mimic-legacy_environment.yml..."
-    conda env create -f mimic-legacy_environment.yml
+    echo "Creating environment from environment.yml..."
+    conda env create -f environment.yml
 
     echo ""
     echo "Environment created successfully!"
-    echo "To activate: conda activate mimic-legacy"
+    echo "To activate: conda activate mimic_legacy"
     echo ""
 
 else
@@ -24,7 +24,7 @@ else
     echo "https://docs.conda.io/projects/conda/en/latest/user-guide/install/"
     echo ""
     echo "Alternatively, you can use pip to install packages:"
-    echo "pip install -r mimic-legacy_requirements.txt"
+    echo "pip install -r requirements.txt"
 fi
 
 echo "Setup complete!"

@@ -107,7 +107,7 @@ def format_continuous(series):
     return f"{series.median():.1f} [{series.quantile(0.25):.1f}-{series.quantile(0.75):.1f}]"
 
 def format_categorical(series, total_n):
-    return f"{series.sum():,} ({series.sum()/total_n*100:.1f}\\%)"
+    return f"{series.sum():,} ({series.sum()/total_n*100:.1f})"
 
 def format_p_value(p):
     if pd.isna(p): return "-"
@@ -127,7 +127,7 @@ def generate_table_row(df_full, label, col_name, is_categorical=False, category_
         else:
             subset = df_full[col_name].astype(bool)
         count = subset.sum()
-        row['Total Cohort'] = f"{count:,} ({count/n_total*100:.1f}\\%)"
+        row['Total Cohort'] = f"{count:,} ({count/n_total*100:.1f})"
     else:
         row['Total Cohort'] = format_continuous(df_full[col_name])
 
@@ -144,7 +144,7 @@ def generate_table_row(df_full, label, col_name, is_categorical=False, category_
                 subset_split = df_split[col_name].astype(bool)
             
             count_split = subset_split.sum()
-            row[split_name] = f"{count_split:,} ({count_split/n_split*100:.1f}\\%)"
+            row[split_name] = f"{count_split:,} ({count_split/n_split*100:.1f})"
         else:
             row[split_name] = format_continuous(df_split[col_name])
 

@@ -122,3 +122,12 @@ Desktop.ini
 # Temporary files
 *.tmp
 *.temp
+
+# Exploratory work not in the manuscript (keep locally only; never commit)
+notebooks/Phase 7/
+notebooks/Phase 8/
+
+# Medication-pipeline / vocab assets used only by exploratory phases (local only)
+data/meds_cohort_split_filtered/
+data/meds_processed_db/
+data/OMOP_Vocabulary/

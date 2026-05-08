@@ -1,9 +1,0 @@
-PHASE V META-ANALYSIS
-Significant tests (p<0.05): 1
-Significant tests (q<0.05 global BH-FDR): 0
-Significant tests (q_family<0.05 per-family BH-FDR): 0
-
-Notes on BH-FDR (per-family):
-- q_values are Benjamini-Hochberg adjusted within each (analysis, rule, family).
-- When family size m=1, q equals p. For small m, the worst-ranked test can also have q==p due to the monotone step.
-- The implementation enforces q_value_family >= p_value to avoid downward bias.
