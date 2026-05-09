@@ -1,18 +1,14 @@
-# Environment and Configuration
-.env
-.env.local
-.env.*.local
-__MACOSX/
+# Project specific - Data, Cache and Logs (STRICT IGNORE)
+data/
+!data/README.md
 cache/
-*.ckpt
-checkpoint
-checkpoint/*
-checkpoints/
-*.checkpoint
-*.checkpoint.index
-
-notebooks/Phase 5/embedding_model_results/text-embedding-large-exp-03-07/mort_hosp/tuner/
-
+logs/
+manuscript_figures/
+outputs/
+temp/
+tmp/
+notebooks/Phase_5/embedding_model_results/
+.env
 
 # Python
 __pycache__/
@@ -76,30 +72,29 @@ ENV/
 env.bak/
 venv.bak/
 
-# Project specific - Cache and temporary files
-cache/
-*.joblib
-*.pkl
-*.npy
-notebooks/Phase 3/phase_3_serialized_data/
-notebooks/Phase 4/phase_4_embeddings/
-
-# Project specific - Large data files
-data/raw/*.h5
-data/raw/*.hdf5
-data/processed/
-outputs/models/
-
-
-# Data files (may contain sensitive information)
+# Data files (STRICT IGNORE)
 *.csv
 *.json
 *.xlsx
 *.xls
 *.zip
+*.h5
+*.hdf5
+*.joblib
+*.pkl
+*.npy
+
+# Manuscript and exploratory files
+*.pdf
+*.pptx
+*.docx
+*.txt
+!README.md
+!requirements.txt
+!abstract.md
+!ENVIRONMENT_README.md
 
 # Logs
-logs/
 *.log
 
 # IDE
@@ -124,8 +119,21 @@ Desktop.ini
 *.temp
 
 # Exploratory work not in the manuscript (keep locally only; never commit)
-notebooks/Phase 7/
-notebooks/Phase 8/
+notebooks/Phase_7/
+notebooks/Phase_8/
+
+# Specific output folders to ignore
+notebooks/Phase_1-2/phase_1_outputs/
+notebooks/Phase_4/figures/
+notebooks/Phase_6/h2a/h2_results/
+notebooks/Phase_6/h2a/h2_results_readmission_30/
+notebooks/Phase_6/h2b/outputs/
+!notebooks/Phase_1-2/phase_1_outputs/README.md
+
+notebooks/Phase_1-2/model_evaluation_outputs/
+notebooks/Phase_3/Embeddings/
+notebooks/Phase_3/phase_3_serialized_data/
+notebooks/Phase_4/phase_4_embeddings/
 
 # Medication-pipeline / vocab assets used only by exploratory phases (local only)
 data/meds_cohort_split_filtered/

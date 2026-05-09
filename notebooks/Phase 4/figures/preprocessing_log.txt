@@ -1,4 +1,0 @@
-2025-12-09 16:10:10,084 [INFO] - Loading data...
-2025-12-09 16:10:12,518 [INFO] - Created LOS targets: los_3, los_7
-2025-12-09 16:10:13,468 [INFO] - Age filtered: 32550 patients, 2080959 records
-2025-12-09 16:10:15,991 [INFO] - Engineering features for 6 categories

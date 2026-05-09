@@ -1,342 +1,105 @@
-# EHR Embeddings with Google Gemini API
-
-A comprehensive Python environment for utilizing Google's Gemini embedding API to encode Electronic Health Record (EHR) data and build machine learning models for clinical predictions.
-
-## 🚀 Features
-
-- **Google Gemini Integration**: Seamless integration with Google's Gemini embedding API
-- **EHR Text Processing**: Specialized preprocessing for medical text data
-- **Embedding Caching**: Intelligent caching system to reduce API calls and costs
-- **ML Pipeline**: Complete machine learning pipeline with multiple algorithms
-- **Model Evaluation**: Comprehensive model evaluation and comparison tools
-- **Hyperparameter Tuning**: Automated hyperparameter optimization
-- **Jupyter Notebooks**: Interactive examples and tutorials
-
-## 📋 Requirements
-
-- Python 3.8+
-- Google API key for Gemini
-- Required packages (see `requirements.txt`)
-
-## 🛠️ Installation
-
-### Quick Setup
-
-1. **Clone or download the project**
-2. **Run the setup script**:
-   ```bash
-   python setup.py
-   ```
-
-### Manual Setup
-
-1. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Create directories**:
-   ```bash
-   mkdir -p data embeddings_cache models logs
-   ```
-
-3. **Set up environment variables**:
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your Google API key
-   ```
-
-## 🔑 API Key Setup
-
-1. Get your Google API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Add it to your `.env` file:
-   ```
-   GOOGLE_API_KEY=your_actual_api_key_here
-   ```
-
-## 📖 Usage
-
-### Basic Example
-
-```python
-from src.embeddings import GeminiEmbedder
-from src.ml_pipeline import EHRMLPipeline, create_sample_ehr_data
-
-# Initialize embedder
-embedder = GeminiEmbedder()
-
-# Create sample EHR data
-data = create_sample_ehr_data(n_samples=100)
-
-# Generate embeddings
-text_data = data['chief_complaint'] + " | " + data['diagnosis']
-embeddings = embedder.embed_batch(text_data.tolist())
-
-# Train ML models
-ml_pipeline = EHRMLPipeline(task_type="classification")
-X_train, X_test, y_train, y_test = ml_pipeline.prepare_data(
-    df=data, target_column='readmission_risk'
-)
-results = ml_pipeline.train_models(X_train, y_train)
-```
-
-### Run Complete Example
-
-```bash
-python example_usage.py
-```
-
-### Jupyter Notebook
-
-```bash
-jupyter notebook notebook_example.ipynb
-```
-
-## 📁 Project Structure
-
-```
-ehr_embeddings/
-├── src/                   # Source code
-│   ├── __init__.py
-│   ├── embeddings.py      # Gemini API integration
-│   ├── ml_pipeline.py     # ML pipeline and models
-│   └── README.md          # Source documentation
-├── data/                  # Data storage
-│   ├── raw/               # Raw, unprocessed data
-│   │   ├── all_hourly_data.h5  # Main EHR dataset (7.2GB)
-│   │   └── mimic_legacy.txt    # Legacy MIMIC data
-│   ├── processed/         # Processed data files
-│   └── README.md          # Data documentation
-├── notebooks/             # Jupyter notebooks
-│   ├── h5_first_5_rows.ipynb   # Data exploration
-│   ├── example_usage.ipynb     # Usage examples
-│   └── README.md               # Notebook documentation
-├── outputs/               # Generated outputs
-│   ├── figures/           # Plots and visualizations
-│   ├── models/            # Trained ML models
-│   ├── reports/           # Analysis reports
-│   └── README.md          # Output documentation
-├── docs/                  # Project documentation
-│   └── EHR Embeddings Analysis Plan.md
-├── cache/                 # Cached embeddings
-│   ├── *.pkl              # Cached embedding files
-│   └── README.md          # Cache documentation
-├── logs/                  # Log files
-├── config.py              # Configuration management
-├── requirements.txt       # Python dependencies
-├── setup.py              # Setup script
-├── example_usage.py      # Complete usage example
-├── README.md             # This file
-├── .gitignore            # Git ignore rules
-└── __pycache__/          # Python cache files
-```
-
-## 🧩 Core Components
-
-### 1. GeminiEmbedder (`src/embeddings.py`)
-
-Main class for generating embeddings using Google's Gemini API:
-
-- **Text preprocessing** for medical data
-- **Batch processing** with rate limiting
-- **Intelligent caching** to reduce API costs
-- **Error handling** with exponential backoff
-
-Key methods:
-- `embed_text(text)`: Generate embedding for single text
-- `embed_batch(texts)`: Process multiple texts efficiently
-- `embed_ehr_data(dataframe)`: Process entire EHR datasets
-
-### 2. EHRMLPipeline (`src/ml_pipeline.py`)
-
-Complete machine learning pipeline:
-
-- **Multiple algorithms**: Random Forest, XGBoost, LightGBM, SVM, Logistic Regression
-- **Automated preprocessing**: Feature scaling, encoding
-- **Cross-validation**: Robust model evaluation
-- **Hyperparameter tuning**: Grid search optimization
-- **Model persistence**: Save/load trained models
-
-Key methods:
-- `prepare_data()`: Prepare embeddings for ML
-- `train_models()`: Train multiple models with CV
-- `evaluate_model()`: Comprehensive model evaluation
-- `hyperparameter_tuning()`: Automated parameter optimization
-
-## 🎯 Use Cases
-
-### Clinical Prediction Tasks
-
-1. **Readmission Risk**: Predict patient readmission probability
-2. **Diagnosis Classification**: Classify conditions from clinical notes
-3. **Length of Stay**: Predict hospital stay duration
-4. **Adverse Events**: Identify risk of complications
-5. **Treatment Response**: Predict treatment effectiveness
-
-### Supported Data Types
-
-- **Clinical Notes**: Doctor's notes, discharge summaries
-- **Chief Complaints**: Patient-reported symptoms
-- **Diagnosis Codes**: ICD-10 codes with descriptions
-- **Medication Lists**: Drug names and dosages
-- **Lab Results**: Test results with interpretations
-
-## ⚙️ Configuration
-
-Configure the system via environment variables in `.env`:
-
-```bash
-# API Configuration
-GOOGLE_API_KEY=your_api_key
-EMBEDDING_MODEL=models/embedding-001
-
-# Processing
-BATCH_SIZE=100
-MAX_RETRIES=3
-
-# Storage
-EHR_DATA_PATH=data/ehr_data.csv
-EMBEDDINGS_CACHE_DIR=embeddings_cache/
-MODEL_OUTPUT_DIR=models/
-```
-
-## 📊 Model Performance
-
-The pipeline supports various evaluation metrics:
-
-### Classification Tasks
-- Accuracy, Precision, Recall, F1-score
-- ROC curves and AUC scores
-- Confusion matrices
-- Classification reports
-
-### Regression Tasks
-- MSE, MAE, RMSE
-- R² scores
-- Residual analysis
-
-## 🔧 Advanced Features
-
-### Embedding Caching
-Automatic caching reduces API costs:
-```python
-# Embeddings are automatically cached
-embedder = GeminiEmbedder()
-embeddings = embedder.embed_batch(texts, use_cache=True)
-```
-
-### Hyperparameter Tuning
-Automated optimization for better performance:
-```python
-tuning_results = ml_pipeline.hyperparameter_tuning(
-    X_train, y_train, 
-    model_name="random_forest"
-)
-```
-
-### Feature Importance
-Understand model decisions:
-```python
-importance_df = ml_pipeline.get_feature_importance()
-```
-
-## 🔒 Privacy & Security
-
-### HIPAA Compliance Considerations
-
-- **Data Anonymization**: Remove PHI before embedding
-- **Local Processing**: Embeddings can be cached locally
-- **API Security**: Use secure API key management
-- **Audit Logging**: Track all data processing
-
-### Best Practices
-
-1. **Remove PHI** before generating embeddings
-2. **Use environment variables** for API keys
-3. **Implement access controls** for sensitive data
-4. **Monitor API usage** and costs
-5. **Regular security audits** of the pipeline
-
-## 📈 Performance Optimization
-
-### Embedding Generation
-- Use batch processing for efficiency
-- Implement caching to avoid regenerating embeddings
-- Monitor API rate limits
-
-### Model Training
-- Use cross-validation for robust evaluation
-- Implement early stopping for deep learning models
-- Consider ensemble methods for better performance
-
-### Memory Management
-- Process large datasets in chunks
-- Use efficient data structures (numpy arrays)
-- Clear memory after processing batches
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **API Key Not Found**:
-   ```
-   ValueError: Google API key is required
-   ```
-   Solution: Set `GOOGLE_API_KEY` in your `.env` file
-
-2. **Rate Limiting**:
-   ```
-   Error: API rate limit exceeded
-   ```
-   Solution: Reduce `BATCH_SIZE` in configuration
-
-3. **Memory Issues**:
-   ```
-   MemoryError: Unable to allocate array
-   ```
-   Solution: Process data in smaller batches
-
-4. **Import Errors**:
-   ```
-   ModuleNotFoundError: No module named 'src'
-   ```
-   Solution: Run from project root directory
-
-### Debugging
-
-Enable detailed logging:
-```python
-import logging
-logging.basicConfig(level=logging.DEBUG)
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📜 License
-
-This project is provided as-is for educational and research purposes. Please ensure compliance with all applicable regulations when handling medical data.
-
-## 🔗 Resources
-
-- [Google Gemini API Documentation](https://ai.google.dev/docs)
-- [Scikit-learn Documentation](https://scikit-learn.org/stable/)
-- [HIPAA Guidelines](https://www.hhs.gov/hipaa/index.html)
-- [Medical NLP Best Practices](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6371183/)
-
-## 💬 Support
-
-For questions and support:
-1. Check the troubleshooting section
-2. Review the example notebook
-3. Run the example script to verify setup
-4. Check configuration in `.env` file
+# Numeric versus Embedding Pipelines For Optimized Clinical Risk Prediction
+
+**Authors:** Aaron Ge<sup>1,2</sup>, Jialong Wu<sup>3</sup>, Xueyao Wu<sup>4</sup>, Jeya Balaji Balasubramanian<sup>4</sup>, Varun Nautiyal<sup>5</sup>, Rishi Jayakumar<sup>6</sup>, Chy Murali<sup>2</sup>, Angela Lee<sup>2</sup>, Andrew Nguyen<sup>2</sup>, Matthew Allen<sup>7</sup>, Chang Shu<sup>7</sup>, Clayton Brown<sup>1,2</sup>, Shuo Chen<sup>1,2</sup>, Katarina Zeder<sup>1,2</sup>, Jonas De Almeida<sup>4</sup>, Florence Doo<sup>1,2</sup>, Bradley A. Maron<sup>1,2</sup>*
+
+**Affiliations:**
+1. University of Maryland-Institute of Health Computing, University of Maryland, School of Medicine, Baltimore, MD, USA
+2. University of Maryland, School of Medicine, Baltimore, MD, USA
+3. Department of Computer Science, Whiting School of Engineering, Johns Hopkins University, Baltimore, MD, USA
+4. Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Maryland, USA
+5. Department of Computer Science, College of Computer, Mathematical, and Natural Science, University of Maryland, College Park, MD, USA
+6. Department of Exercise and Nutrition Sciences, Milken Institute School of Public Health, George Washington University, Foggy Bottom, DC, USA
+7. University of California, San Francisco, School of Medicine, San Francisco, CA, USA
+
+*\*Corresponding author: Dr. Bradley A. Maron (BMaron@som.umaryland.edu)*
 
 ---
 
-**Note**: This tool processes medical data. Always ensure compliance with relevant privacy regulations and institutional policies before using with real patient data. # EHR-Embeddings
+## 📄 Abstract
+
+**Background:** Clinical risk prediction models typically use structured numerical inputs such as lab values and their statistical summaries. Semantic text embeddings offer an alternative: structured data are written out as text and compressed into dense vectors by a foundation model. However, prior head-to-head comparisons of traditional machine learning (ML) and embedding-based clinical prediction models have focused primarily on aggregate metrics such as discrimination, calibration, and fairness. Systematic analyses focusing on model disagreement, differences in the basis for failure, and their respective utility for individual patient-level classification tasks is limited.
+
+**Methods:** We retrospectively analyzed 22,591 intensive care unit (ICU) patients from the MIMIC-III database and compared a **Numerical Model (NM)** trained on 458 structured features with a **Semantic Model (SM)** trained on semantic embeddings using the same XGBoost classifier for both. The models were tested across six prediction tasks: in-hospital mortality, 30-day readmission, mechanical ventilation, vasopressor initiation, and 3-day and 7-day ICU length of stay. We measured model discordance, used linear probes to quantify embedding encoding fidelity, SHAP analysis to characterize predictive features, subgroup discovery to identify clinical error archetypes across 53 phenotypes, and meta-feature analysis to examine whether errors were systematically linked to input data properties.
+
+**Results:** The NM outperformed SM for five acute outcomes including mortality (AUROC 0.901 vs. 0.835, p < 0.001); by contrast, the SM outperformed NM for readmission (0.662 vs. 0.590, p = 0.003). The models failed mostly on non-overlapping patients: 80.7% of mortality false positives and 87.6% of readmission false positives were unique to one model. The embedding preserved measurement frequencies at high fidelity (R² = 0.38 to 0.75) but poorly encoded clinically critical values, notably albumin (R² = 0.231 for mortality, 0.046 for readmission). SM errors concentrated in patients with coagulopathy, hypoalbuminemia, and inflammatory markers, and were consistently associated with high input data density and physiological volatility across all archetypes. NM errors concentrated in patients with creatinine elevation and synthetic hepatic dysfunction, where its acute-severity feature space could not distinguish reversible from irreversible organ dysfunction.
+
+**Conclusions:** Feature representation determines not just aggregate accuracy but which patients a model fails on and why, which are insights otherwise invisible to traditional AUROC comparisons. The embedding's selective degradation of quantitative clinical variables produced predictable, coherent failure modes that were further amplified by input data density. This observation has direct implications for how embedding-based models should be evaluated before clinical deployment.
+
+**Keywords:** Electronic health records; Foundation models; Feature engineering; Clinical risk prediction; Intensive care unit; Model discordance; Subgroup analysis.
+
+---
+
+## 🛠️ Project Structure & Reproduction
+
+This repository contains the code necessary to reproduce the findings of the study. The pipeline is divided into **six sequential phases**.
+
+### 📁 Directory Layout
+
+| Path | Description |
+|------|-------------|
+| `notebooks/Phase_1-2` | Tabular preprocessing and Numerical Model (NM) baseline training. |
+| `notebooks/Phase_3` | Text dataset construction and semantic embedding generation (Vertex/Gemini). |
+| `notebooks/Phase_4` | Supervised training and supervised analysis of the Semantic Model (SM). |
+| `notebooks/Phase_5` | Model comparison, hyperparameter tuning, and champion model selection. |
+| `notebooks/Phase_6` | Analysis of discordance, archetyping, and meta-feature characterization. |
+| `manuscript_figures/` | Publication-ready figures and LaTeX tables generated by the pipeline. |
+| `data/` | Data staging (MIMIC-III). See `data/README.md` for requirements. |
+| `docs/` | Detailed technical layouts and reproducibility documentation. |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Environment Setup
+
+The study was conducted using **Python 3.7.16** and a pinned scientific stack to ensure reproducibility.
+
+**Option A: Conda (Recommended)**
+```bash
+conda env create -f environment.yml
+conda activate mimic_legacy
+```
+
+**Option B: Pip**
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Data Access
+This project uses the **MIMIC-III v1.4** database. Users must have credentialed access via [PhysioNet](https://physionet.org/).
+- Place raw data (e.g., `all_hourly_data.h5`) in `data/raw/`.
+- Refer to `data/README.md` for details on expected files and structure.
+
+### 3. API Configuration
+Semantic embeddings were generated using Google Gemini/Vertex AI.
+- Create a `.env` file in the root directory.
+- Add your API credentials:
+  ```env
+  GOOGLE_API_KEY=your_actual_api_key_here
+  ```
+
+---
+
+## 📊 Analysis Pipeline
+
+To reproduce the study results, follow the phases in order:
+
+1.  **Preprocessing & NM Baselines**: Run scripts in `notebooks/Phase_1-2/` to generate `phase_1_outputs/`.
+2.  **Embedding Generation**: Execute `notebooks/Phase_3/` scripts to generate clinical text and fetch embeddings.
+3.  **SM Training**: Run Phase_4 configs (`config_embedding_analysis_*.py`) to train embedding-based models.
+4.  **Comparison**: Use Phase_5 notebooks to compare NM and SM performance across all tasks.
+5.  **Failure Analysis**: Run Phase_6 `h2a` (discordance) and `h2b` (archetyping) modules to characterize why and where models fail.
+
+---
+
+## 📜 Citation
+
+If you use this code or our findings in your research, please cite:
+
+> Ge, A., Wu, J., Wu, X., et al. (2026). Numeric versus Embedding Pipelines For Optimized Clinical Risk Prediction. *Manuscript in Preparation*.
+
+---
+
+## 🔒 Privacy & Security
+
+**Important**: This repository does NOT contain patient data. Users are responsible for complying with HIPAA regulations and the PhysioNet Data Use Agreement when working with MIMIC-III data. Ensure all PHI is removed or appropriately de-identified before using external embedding APIs.

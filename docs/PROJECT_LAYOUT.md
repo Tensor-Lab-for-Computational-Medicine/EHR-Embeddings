@@ -20,7 +20,6 @@ Many generated artifacts (PNGs, PDFs, pickles, embeddings) are large or sensitiv
 | `notebooks/` | Study code by phase (**1–6** for the manuscript); exploratory code may exist locally but is ignored |
 | `cache/` | Cached embeddings / intermediates (gitignored patterns apply) |
 | `logs/` | Runtime logs |
-| `.cursor/rules/` | Editor/agent conventions |
 
 Miscellaneous drafts at repo root (`abstract.md`, slides, `.xlsx`) are editorial; consolidate new manuscript outputs under `docs/` or `manuscript_figures/` as you prefer.
 
@@ -75,6 +74,4 @@ scripts/
 | `requirements.txt` | Pip mirror / complement where conda is not used |
 | `setup_environment.bat` / `setup_environment.sh` | `conda env create -f environment.yml` |
 
-## Known drift vs root README
-
-The marketing-style `README.md` still references `src/` and `setup.py`, which are not in this repo. The active manuscript pipeline lives under `notebooks/` Phases **1–6** and `manuscript_figures/`. Root `requirements.txt` supports pip installs; treat **this file** as the structural and reproducibility reference until `README.md` is rewritten.
+The `README.md` has been updated to reflect the study results and current repository structure. The active manuscript pipeline lives under `notebooks/` Phases **1–6** and `manuscript_figures/`. Root `requirements.txt` supports pip installs.
