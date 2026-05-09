@@ -6,8 +6,8 @@ class ConfigH2:
        current_dir = os.path.dirname(os.path.abspath(__file__))
        self.NOTEBOOKS_DIR = os.path.abspath(os.path.join(current_dir, '..', '..'))
        # Outputs
-       self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results')
-       self.H2A_OUTPUT_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase_6', 'h2a', 'h2_results')
+       self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results', 'mort_hosp')
+       self.H2A_OUTPUT_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase_6', 'h2a', 'h2_results', 'mort_hosp')
        # Minimal inputs used by h2b
        self.X_TEST_NUM_PATH = os.path.join(self.NOTEBOOKS_DIR, 'Phase_1-2', 'phase_1_outputs', 'X_test.pkl')
        self.SCALER_PATH = os.path.join(self.NOTEBOOKS_DIR, 'Phase_1-2', 'phase_1_outputs', 'scaler.pkl')

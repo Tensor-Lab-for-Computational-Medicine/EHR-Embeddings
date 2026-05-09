@@ -228,17 +228,22 @@ def _augment_and_prune_rules(
     test_success_idx: pd.Index,
     alpha: float = 0.05,
 ):
-    if df_rules is None or df_rules.empty:
-        return df_rules
-    # Build train/test population masks and targets
+    # Global populations and targets for coverage/lift
+    n_tr_total = int(len(X_train))
+    n_ts_total = int(len(X_test))
+    
+    ytr_global = pd.Series(0, index=X_train.index)
+    ytr_global.loc[ytr_global.index.isin(train_error_idx)] = 1
+    yts_global = pd.Series(0, index=X_test.index)
+    yts_global.loc[yts_global.index.isin(test_error_idx)] = 1
+
+    # Local populations for Fisher's exact test (statistical significance of the differential failure)
     pop_tr = train_error_idx.union(train_success_idx)
     pop_ts = test_error_idx.union(test_success_idx)
-    Xtr = X_train.loc[X_train.index.isin(pop_tr)]
-    Xts = X_test.loc[X_test.index.isin(pop_ts)]
-    ytr = pd.Series(0, index=Xtr.index)
-    ytr.loc[ytr.index.isin(train_error_idx)] = 1
-    yts = pd.Series(0, index=Xts.index)
-    yts.loc[yts.index.isin(test_error_idx)] = 1
+    Xtr_local = X_train.loc[X_train.index.isin(pop_tr)]
+    Xts_local = X_test.loc[X_test.index.isin(pop_ts)]
+    ytr_local = ytr_global.loc[pop_tr]
+    yts_local = yts_global.loc[pop_ts]
 
     pvals = []
     pvals_ts = []
@@ -251,67 +256,83 @@ def _augment_and_prune_rules(
     ts_baseline_rate = []
     wracc_ts = []
     members_ts = []
-    n_ts = int(len(Xts))
+
     for _, r in df_rules.iterrows():
-        rule = r.get('rule') or r.get('rule_str')
-        mtr = _mask_for_rule(str(rule), Xtr)
-        mts = _mask_for_rule(str(rule), Xts)
-        # Train contingency
-        a = int(((mtr == True) & (ytr == 1)).sum())
-        b = int(((mtr == True) & (ytr == 0)).sum())
-        c = int(((mtr == False) & (ytr == 1)).sum())
-        d = int(((mtr == False) & (ytr == 0)).sum())
+        rule = str(r.get('rule') or r.get('rule_str'))
+        
+        # Mask against full populations for global coverage and lift
+        mtr_full = _mask_for_rule(rule, X_train)
+        mts_full = _mask_for_rule(rule, X_test)
+        
+        # Mask against local populations for Fisher's test
+        mtr_local = mtr_full.loc[pop_tr]
+        mts_local = mts_full.loc[pop_ts]
+
+        # Train contingency (local)
+        a = int(((mtr_local == True) & (ytr_local == 1)).sum())
+        b = int(((mtr_local == True) & (ytr_local == 0)).sum())
+        c = int(((mtr_local == False) & (ytr_local == 1)).sum())
+        d = int(((mtr_local == False) & (ytr_local == 0)).sum())
         try:
             from scipy.stats import fisher_exact
             _, p = fisher_exact([[a, b], [c, d]], alternative='two-sided')
         except Exception:
-            # Fallback: simple heuristic p if scipy missing
             p = 1.0
         pvals.append(float(p))
-        # Test contingency
-        a_ts = int(((mts == True) & (yts == 1)).sum())
-        b_ts = int(((mts == True) & (yts == 0)).sum())
-        c_ts = int(((mts == False) & (yts == 1)).sum())
-        d_ts = int(((mts == False) & (yts == 0)).sum())
+
+        # Test contingency (local)
+        a_ts = int(((mts_local == True) & (yts_local == 1)).sum())
+        b_ts = int(((mts_local == True) & (yts_local == 0)).sum())
+        c_ts = int(((mts_local == False) & (yts_local == 1)).sum())
+        d_ts = int(((mts_local == False) & (yts_local == 0)).sum())
         try:
             from scipy.stats import fisher_exact as _fisher
             _, p_ts = _fisher([[a_ts, b_ts], [c_ts, d_ts]], alternative='two-sided')
         except Exception:
             p_ts = 1.0
         pvals_ts.append(float(p_ts))
-        lifts_tr.append(_compute_lift(mtr, ytr))
-        lifts_ts.append(_compute_lift(mts, yts))
-        cov_tr.append(int(mtr.sum()))
-        cov_ts_val = int(mts.sum())
+
+        # Global metrics
+        lifts_tr.append(_compute_lift(mtr_full, ytr_global))
+        lifts_ts.append(_compute_lift(mts_full, yts_global))
+        
+        cov_tr.append(int(mtr_full.sum()))
+        cov_ts_val = int(mts_full.sum())
         cov_ts.append(cov_ts_val)
-        cov_ts_pct.append(round((100.0 * cov_ts_val / n_ts), 1) if n_ts else 0.0)
-        base_rate = float(yts.mean()) if yts.size else 0.0
-        rate_in_sg = float(yts[mts].mean()) if cov_ts_val > 0 else 0.0
+        cov_ts_pct.append(round((100.0 * cov_ts_val / n_ts_total), 1) if n_ts_total else 0.0)
+        
+        # Outcome share in the subgroup
+        rate_in_sg = float(yts_global[mts_full].mean()) if cov_ts_val > 0 else 0.0
         ts_target_share.append(round(rate_in_sg * 100.0, 1))
-        ts_baseline_rate.append(round(base_rate * 100.0, 1))
-        wracc_ts.append(((cov_ts_val / n_ts) * (rate_in_sg - base_rate)) if n_ts else 0.0)
+        
+        # Baseline rate of the target in the WHOLE test set
+        base_rate_global = float(yts_global.mean()) if n_ts_total else 0.0
+        ts_baseline_rate.append(round(base_rate_global * 100.0, 1))
+        
+        # WRAcc (global)
+        wracc_ts.append(((cov_ts_val / n_ts_total) * (rate_in_sg - base_rate_global)) if n_ts_total else 0.0)
+        
         try:
-            members_ts.append("|".join(map(str, Xts.index[mts].tolist())))
+            members_ts.append("|".join(map(str, X_test.index[mts_full].tolist())))
         except Exception:
             members_ts.append("")
+
     qvals = _fdr_bh(pvals, alpha=alpha)
     qvals_ts = _fdr_bh(pvals_ts, alpha=alpha)
     out = df_rules.copy()
-    # Overwrite significance with TEST-based values for final pruning/selection
     out['p_value'] = pvals_ts
     out['q_value'] = qvals_ts
     out['lift_train'] = np.round(lifts_tr, 3)
     out['lift_test'] = np.round(lifts_ts, 3)
     out['coverage_train'] = cov_tr
     out['coverage_test'] = cov_ts
-    # Overwrite key metrics to reflect TEST population only (unseen battleground)
     out['coverage_pct'] = cov_ts_pct
     out['target_share'] = ts_target_share
     out['baseline_rate'] = ts_baseline_rate
     out['quality_WRAcc'] = wracc_ts
     out['members'] = members_ts
-    keep = (out['q_value'] <= alpha) & (out['lift_test'] >= 1.0) & (out['lift_test'] >= 0.7 * out['lift_train'])
     
+    keep = (out['q_value'] <= alpha) & (out['lift_test'] >= 1.0) & (out['lift_test'] >= 0.7 * out['lift_train'])
     out = out.loc[keep].reset_index(drop=True)
     out['lift'], out['coverage'] = out['lift_test'], out['coverage_test']
     return out

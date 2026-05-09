@@ -48,7 +48,7 @@ class ConfigH2:
         self.LABEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase_3', 'phase_3_serialized_data', 'readmission_30')
 
         # Outputs
-        self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results_readmission_30')
+        self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results', 'readmission_30')
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
 
         # Core settings required by runner

@@ -286,8 +286,14 @@ def save_meta_table(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int):
     ("n (success)", "r"),
   ]
 
-  def fmt_num(x, nd=3):
-    return "-" if pd.isna(x) else f"{float(x):.{nd}f}"
+  def fmt_num(x, feat_name="", nd=3):
+    if pd.isna(x):
+      return "-"
+    val = float(x)
+    # For clinical counts, round to the nearest integer to avoid confusing medians (e.g. 10.5)
+    if any(k in str(feat_name).lower() for k in ["count", "event"]):
+      return f"{int(round(val)):,}"
+    return f"{val:.{nd}f}"
 
   def fmt_q(x):
     if pd.isna(x):
@@ -303,23 +309,15 @@ def save_meta_table(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int):
   rule_order = list(dict.fromkeys(tidy.get("Rule_pretty", pd.Series([""] * len(tidy))).tolist()))
   for grp in rule_order:
     grp_label = latex_escape(grp) if grp else "Unspecified"
-    # Aggregate counts per rule for context
-    gdf = tidy.loc[tidy["Rule_pretty"] == grp]
-    try:
-      grp_err = int(pd.to_numeric(gdf.get("n_err", pd.Series(dtype=float)), errors="coerce").fillna(0).sum())
-      grp_suc = int(pd.to_numeric(gdf.get("n_suc", pd.Series(dtype=float)), errors="coerce").fillna(0).sum())
-      counts_str = f" \\textit{{(n err: {grp_err:,}, n suc: {grp_suc:,})}}"
-    except Exception:
-      counts_str = ""
-    rows.append([fr"\multicolumn{{{len(headers)}}}{{l}}{{\textbf{{Rule: {grp_label}}}{counts_str}}}"])
+    rows.append([fr"\multicolumn{{{len(headers)}}}{{l}}{{\textbf{{Rule: {grp_label}}}}}}}"])
     for _, r in tidy.loc[tidy["Rule_pretty"] == grp].iterrows():
       comparison = latex_escape(r.get("Comparison_pretty", r.get("Comparison", "")))
       feat = latex_escape(r.get("Meta_pretty", r.get("Meta-feature", r.get("meta_feature", ""))))
       fam = latex_escape(r.get("Family_pretty", r.get("Family", r.get("family", ""))))
       direction = latex_escape(r.get("Direction_pretty", r.get("Direction", r.get("direction", ""))))
-      med_err = fmt_num(r.get("Median (error)", r.get("median_subgroup_error", np.nan)))
-      med_suc = fmt_num(r.get("Median (success)", r.get("median_concordant_success", np.nan)))
-      effect = fmt_num(r.get("Effect", r.get("effect_size", np.nan)))
+      med_err = fmt_num(r.get("Median (error)", r.get("median_subgroup_error", np.nan)), feat_name=feat)
+      med_suc = fmt_num(r.get("Median (success)", r.get("median_concordant_success", np.nan)), feat_name=feat)
+      effect = fmt_num(r.get("Effect", r.get("effect_size", np.nan)), feat_name=feat)
       pval = fmt_q(r.get("p", r.get("p_value", np.nan)))
       qf = fmt_q(r.get("q_family (per-family BH-FDR)", r.get("q_value_family", np.nan)))
       nerr = "-" if pd.isna(r.get("n_err")) else f"{int(r.get('n_err', 0)):,}"
@@ -380,8 +378,8 @@ def main():
 
   base = Path(__file__).resolve().parent
   default_roots = [
-    str(base / "h2_results"),
-    str(base / "h2_results_readmission_30"),
+    str(base / "h2_results" / "mort_hosp"),
+    str(base / "h2_results" / "readmission_30"),
   ]
   roots = args.roots if args.roots else default_roots
   out_root = Path(args.out) if args.out else (base / "outputs")

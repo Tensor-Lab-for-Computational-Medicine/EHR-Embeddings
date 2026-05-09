@@ -147,6 +147,7 @@ def main():
     # Subgroup fallback removed for concise script
     parser.add_argument('--phenotypes_test_path', type=str, default=None, help='Path to X_test_phenotypes.pkl; if omitted, attempts default artifact location.')
     parser.add_argument('--phase', type=str, default='IV', help='Which phase subgroups to analyze: IV or IVB')
+    parser.add_argument('--scaler_path', type=str, default=None, help='Path to the scaler.pkl used in Phase 1 to inverse-transform features to raw units.')
     parser.add_argument('--debug_fdr', action='store_true', help='Enable verbose debug logging for BH-FDR calculations')
     args = parser.parse_args()
 
@@ -165,7 +166,25 @@ def main():
         X_test = pd.read_pickle(cfg.X_TEST_NUM_PATH)
     if not isinstance(X_test, pd.DataFrame):
         X_test = pd.DataFrame(X_test)
-    # Note: Inverse scaling not required for Phase V meta-features; using current scale
+    
+    # --- Inverse Scaling to Raw Units ---
+    if args.scaler_path:
+        print(f"Inverse scaling X_test using {args.scaler_path}...")
+        try:
+            with open(args.scaler_path, 'rb') as f:
+                scaler = pickle.load(f)
+            # Only transform columns present in scaler
+            feature_names = scaler.get_feature_names_out()
+            numeric_cols = [c for c in feature_names if c in X_test.columns]
+            if numeric_cols:
+                X_test[numeric_cols] = scaler.inverse_transform(X_test[numeric_cols])
+                # Special handling for counts: ensure non-negative and integer-interpretable
+                count_cols = [c for c in numeric_cols if '_count' in c]
+                for c in count_cols:
+                    X_test[c] = X_test[c].clip(lower=0).round()
+                print(f"Successfully inverse scaled {len(numeric_cols)} numeric columns.")
+        except Exception as e:
+            print(f"Warning: Inverse scaling failed: {e}. Proceeding with scaled units.")
 
     meta = compute_meta_features(X_test)
     # character counts logic removed
