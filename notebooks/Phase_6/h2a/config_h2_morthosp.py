@@ -35,7 +35,7 @@ class ConfigH2:
         self.EMBEDDING_DATA_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase_4', 'phase_4_embeddings', self.CHAMPION_ARM)
 
         # Labels
-        self.LABEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase_3', 'phase_3_serialized_data')
+        self.LABEL_DIR = os.path.join(self.NOTEBOOKS_DIR, 'Phase_3', 'phase_3_serialized_data', 'mort_hosp')
 
         # Outputs
         self.OUTPUT_DIR = os.path.join(current_dir, 'h2_results')

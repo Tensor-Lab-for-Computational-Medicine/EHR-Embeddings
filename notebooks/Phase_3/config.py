@@ -7,13 +7,13 @@ import os
 
 # --- Core Paths ---
 # Directory where the preprocessed pickle files from Phase 1 are stored.
-PREPROCESSED_DATA_DIR = 'notebooks\Phase 1 and 2\phase_1_outputs'
+PREPROCESSED_DATA_DIR = os.path.join('notebooks', 'Phase_1-2', 'phase_1_outputs')
 
 # Directory where the reference ranges file is located.
-REFERENCE_RANGES_PATH = 'data/Lab_reference_ranges.csv'
+REFERENCE_RANGES_PATH = os.path.join('data', 'Lab_reference_ranges.csv')
 
 # Base directory where all serialized text files will be saved.
-SERIALIZED_OUTPUT_DIR = 'notebooks/Phase 3/phase_3_serialized_data/'
+SERIALIZED_OUTPUT_DIR = os.path.join('notebooks', 'Phase_3', 'phase_3_serialized_data')
 
 # --- Experiment Definitions ---
 
