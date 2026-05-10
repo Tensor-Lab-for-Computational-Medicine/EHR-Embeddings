@@ -4,10 +4,17 @@ import numpy as np
 import scipy.stats as stats
 from sklearn.model_selection import train_test_split
 import logging
+import sys
+from pathlib import Path
+
+# Add parent directory to path for utility imports
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from manuscript_table_utils import save_manuscript_html, TABLES_OUTPUT_DIR
 
 # Configuration
 HDF_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'raw', 'all_hourly_data.h5')
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'phase_1_outputs')
+OUTPUT_DIR = TABLES_OUTPUT_DIR
+LEGACY_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'phase_1_outputs')
 SEED = 42
 STRATIFICATION_TARGET = 'mort_hosp'
 
@@ -115,9 +122,13 @@ def format_p_value(p):
     if p > 0.99: return ">0.99"
     return f"{p:.3f}"
 
-def generate_table_row(df_full, label, col_name, is_categorical=False, category_value=None, indent=False, calc_p=True):
-    """Generate a row for the table with stats for each split and p-value."""
-    row = {'Characteristic': f"\\hspace{{1em}}{label}" if indent else label}
+def generate_table_row(df_full, label, col_name, is_categorical=False, category_value=None, indent=0, calc_p=True):
+    """Generate a row for the table with stats for each split and p-value.
+    indent: 0 for no indent, 1 for category (4 spaces), 2 for subcategory (8 spaces)
+    """
+    # Use explicit tags for robust indentation detection in the utility
+    prefix = f"[INDENT{indent}]" if indent > 0 else ""
+    row = {'Characteristic': f"{prefix}{label}"}
     
     # Total Cohort
     n_total = len(df_full)
@@ -167,7 +178,7 @@ def generate_table_row(df_full, label, col_name, is_categorical=False, category_
 
 def add_header_row(label):
     return {
-        'Characteristic': f"\\textbf{{{label}}}",
+        'Characteristic': f"<b>{label}</b>",
         'Total Cohort': '', 'Training Set': '', 'Validation Set': '', 'Test Set': '', 'P-value': ''
     }
 
@@ -200,7 +211,69 @@ def main():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
         
-    df_patients = load_data()
+    csv_path = os.path.join(OUTPUT_DIR, 'cohort_table_1.csv')
+
+    # Try to load raw data first to ensure we use the latest formatting logic
+    try:
+        df_patients = load_data()
+        logging.info("Successfully loaded raw data. Generating fresh table...")
+    except Exception as e:
+        logging.warning(f"Could not load raw data (likely missing pytables/HDF5): {e}")
+        # Fallback to existing CSV
+        actual_csv_path = csv_path if os.path.exists(csv_path) else os.path.join(LEGACY_OUTPUT_DIR, 'cohort_table_1.csv')
+        
+        if os.path.exists(actual_csv_path):
+            logging.info(f"Found existing CSV at {actual_csv_path}. Attempting to regenerate standardized HTML...")
+            table_df = pd.read_csv(actual_csv_path)
+            
+            # Refined cleanup: Standardize indentation using explicit tags
+            for idx, row in table_df.iterrows():
+                char_val = str(row.iloc[0])
+                p_val = str(row.iloc[-1])
+                # A row is a subcategory if it has an indent marker AND no p-value
+                has_indent = '\\hspace{1em}' in char_val or char_val.startswith('    ') or char_val.startswith('&nbsp;&nbsp;&nbsp;&nbsp;')
+                no_pval = pd.isna(row.iloc[-1]) or p_val.strip() == '' or p_val == 'nan'
+                
+                if has_indent and no_pval:
+                    char_val = char_val.replace('\\hspace{1em}', '[INDENT2]').replace('    ', '[INDENT2]').replace('&nbsp;&nbsp;&nbsp;&nbsp;', '[INDENT2]')
+                elif has_indent:
+                    char_val = char_val.replace('\\hspace{1em}', '[INDENT1]').replace('    ', '[INDENT1]').replace('&nbsp;&nbsp;&nbsp;&nbsp;', '[INDENT1]')
+                table_df.iat[idx, 0] = char_val
+                    
+            for col in table_df.columns:
+                if col != table_df.columns[0]:
+                    # Handle existing spaces - converting to explicit tags for detection
+                    table_df[col] = table_df[col].astype(str).str.replace(r'^\s{8}', '[INDENT2]', regex=True)
+                    table_df[col] = table_df[col].astype(str).str.replace(r'^\s{4}', '[INDENT1]', regex=True)
+                    
+                    # LaTeX cleanup - converting to explicit tags for detection
+                    table_df[col] = table_df[col].str.replace(r'\\hspace\{2em\}', '[INDENT2]', regex=True)
+                    table_df[col] = table_df[col].str.replace(r'\\hspace\{1em\}', '[INDENT1]', regex=True)
+                    
+                    # Standardize &nbsp; prefixes if they exist
+                    table_df[col] = table_df[col].str.replace(r'^(&nbsp;){8}', '[INDENT2]', regex=True)
+                    table_df[col] = table_df[col].str.replace(r'^(&nbsp;){4}', '[INDENT1]', regex=True)
+                
+                # Visual cleanup
+                table_df[col] = table_df[col].astype(str).str.replace(r'\\textbf\{(.*?)\}', r'<b>\1</b>', regex=True)
+                table_df[col] = table_df[col].str.replace(r'\\newline', '<br>', regex=True)
+                table_df[col] = table_df[col].str.replace('nan', '', regex=False)
+            
+            # Standardize column names (CSV might have \newline)
+            table_df.columns = [c.replace(r'\newline', '<br>') for c in table_df.columns]
+            
+            html_path = save_manuscript_html(
+                table_df, 
+                "Cohort Characteristics", 
+                "Table_N_Cohort_Characteristics", 
+                OUTPUT_DIR,
+                table_number="N"
+            )
+            logging.info(f"Professional HTML table regenerated from CSV: {html_path}")
+            return
+        else:
+            logging.error("No raw data or existing CSV found. Cannot proceed.")
+            return
     
     # Load predefined splits instead of recreating them
     split_ids = load_split_ids()
@@ -261,11 +334,11 @@ def main():
     
     # 1. Demographics
     rows.append(add_header_row('Demographics'))
-    rows.append(generate_table_row(df_patients, 'Age, median [IQR], y', 'age', is_categorical=False, indent=True))
+    rows.append(generate_table_row(df_patients, 'Age, median [IQR], y', 'age', is_categorical=False, indent=1))
     
     # Sex
-    rows.append({'Characteristic': '\\hspace{1em}Sex, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(calculate_p_values(df_patients, 'sex_female', True))})
-    rows.append(generate_table_row(df_patients, 'Female', 'sex_female', is_categorical=True, indent=True, calc_p=False))
+    rows.append({'Characteristic': '[INDENT1]Sex, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(calculate_p_values(df_patients, 'sex_female', True))})
+    rows.append(generate_table_row(df_patients, 'Female', 'sex_female', is_categorical=True, indent=2, calc_p=False))
     # We could add Male here if desired, but usually Female % is sufficient for binary. 
     # To be explicit like Table 1 usually is:
     # rows.append(generate_table_row(df_patients, 'Male', ...)) 
@@ -273,55 +346,56 @@ def main():
     # Race/Ethnicity
     # Calculate overall p-value for the race_group variable first
     race_p = calculate_p_values(df_patients, 'race_group', True)
-    rows.append({'Characteristic': '\\hspace{1em}Race and Ethnicity, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(race_p)})
+    rows.append({'Characteristic': '[INDENT1]Race and Ethnicity, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(race_p)})
     
     for race in ['White', 'Black', 'Asian', 'Hispanic', 'Other']:
         # For individual rows, we don't show p-value if we showed the omnibus p-value above
-        rows.append(generate_table_row(df_patients, race, 'race_group', is_categorical=True, category_value=race, indent=True, calc_p=False))
+        rows.append(generate_table_row(df_patients, race, 'race_group', is_categorical=True, category_value=race, indent=2, calc_p=False))
 
     # 2. Clinical Characteristics
     rows.append(add_header_row('Clinical Characteristics'))
     
     # Admission Type
     adm_p = calculate_p_values(df_patients, 'admission_group', True)
-    rows.append({'Characteristic': '\\hspace{1em}Admission Type, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(adm_p)})
-    rows.append(generate_table_row(df_patients, 'Emergency/Urgent', 'admission_group', is_categorical=True, category_value='Emergency', indent=True, calc_p=False))
-    rows.append(generate_table_row(df_patients, 'Elective', 'admission_group', is_categorical=True, category_value='Elective', indent=True, calc_p=False))
+    rows.append({'Characteristic': '[INDENT1]Admission Type, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(adm_p)})
+    rows.append(generate_table_row(df_patients, 'Emergency/Urgent', 'admission_group', is_categorical=True, category_value='Emergency', indent=2, calc_p=False))
+    rows.append(generate_table_row(df_patients, 'Elective', 'admission_group', is_categorical=True, category_value='Elective', indent=2, calc_p=False))
     
     # Service
     srv_p = calculate_p_values(df_patients, 'service_group', True)
-    rows.append({'Characteristic': '\\hspace{1em}Primary Service, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(srv_p)})
-    rows.append(generate_table_row(df_patients, 'Medical', 'service_group', is_categorical=True, category_value='Medical', indent=True, calc_p=False))
-    rows.append(generate_table_row(df_patients, 'Surgical', 'service_group', is_categorical=True, category_value='Surgical', indent=True, calc_p=False))
+    rows.append({'Characteristic': '[INDENT1]Primary Service, No.', 'Total Cohort': '', 'Training Set': '', 'P-value': format_p_value(srv_p)})
+    rows.append(generate_table_row(df_patients, 'Medical', 'service_group', is_categorical=True, category_value='Medical', indent=2, calc_p=False))
+    rows.append(generate_table_row(df_patients, 'Surgical', 'service_group', is_categorical=True, category_value='Surgical', indent=2, calc_p=False))
     
     # Severity
     if df_patients['oasis'].notna().any() or df_patients['sofa'].notna().any():
-         rows.append({'Characteristic': '\\hspace{1em}Severity at Admission, median [IQR]', 'Total Cohort': '', 'Training Set': '', 'P-value': ''})
+         rows.append({'Characteristic': '[INDENT1]Severity at Admission, median [IQR]', 'Total Cohort': '', 'Training Set': '', 'P-value': ''})
          if df_patients['oasis'].notna().any():
-            rows.append(generate_table_row(df_patients, 'OASIS Score', 'oasis', is_categorical=False, indent=True))
+            rows.append(generate_table_row(df_patients, 'OASIS Score', 'oasis', is_categorical=False, indent=2))
          if df_patients['sofa'].notna().any():
-            rows.append(generate_table_row(df_patients, 'SOFA Score', 'sofa', is_categorical=False, indent=True))
+            rows.append(generate_table_row(df_patients, 'SOFA Score', 'sofa', is_categorical=False, indent=2))
     
     # 3. Outcomes
     rows.append(add_header_row('Outcomes'))
     if 'mort_hosp' in df_patients.columns:
-        rows.append(generate_table_row(df_patients, 'Hospital Mortality, No.', 'mort_hosp', is_categorical=True, indent=True))
+        rows.append(generate_table_row(df_patients, 'Hospital Mortality, No.', 'mort_hosp', is_categorical=True, indent=1))
     if 'readmission_30' in df_patients.columns:
-        rows.append(generate_table_row(df_patients, '30-Day Readmission, No.', 'readmission_30', is_categorical=True, indent=True))
+        rows.append(generate_table_row(df_patients, '30-Day Readmission, No.', 'readmission_30', is_categorical=True, indent=1))
     if 'los_icu' in df_patients.columns and df_patients['los_icu'].notna().any():
-        rows.append(generate_table_row(df_patients, 'Length of Stay, median [IQR], d', 'los_icu', is_categorical=False, indent=True))
+        rows.append(generate_table_row(df_patients, 'Length of Stay, median [IQR], d', 'los_icu', is_categorical=False, indent=1))
         
     # Create DataFrame
     table_df = pd.DataFrame(rows)
     
     # Rename columns for the display/LaTeX
     col_map = {
-        'Total Cohort': f'Total Cohort\\newline(N={n_total:,})',
-        'Training Set': f'Training Set\\newline(N={n_train:,})',
-        'Validation Set': f'Validation Set\\newline(N={n_val:,})',
-        'Test Set': f'Test Set\\newline(N={n_test:,})',
+        'Total Cohort': f'Total Cohort<br>(N={n_total:,})',
+        'Training Set': f'Training Set<br>(N={n_train:,})',
+        'Validation Set': f'Validation Set<br>(N={n_val:,})',
+        'Test Set': f'Test Set<br>(N={n_test:,})',
         'P-value': 'P Value'
     }
+
     table_df = table_df.rename(columns=col_map)
     
     # Fill NaN with empty strings for clean look
@@ -332,53 +406,16 @@ def main():
     table_df.to_csv(csv_path, index=False)
     logging.info(f"Table saved to {csv_path}")
 
-    # Generate LaTeX
-    latex_table = table_df.to_latex(
-        index=False, 
-        escape=False, # We manually escaped % and added latex commands
-        column_format='lccccc', 
-        header=[c.replace('\\newline', ' ') for c in table_df.columns] # Simple header for text representation if needed, but we override in wrapper
-    )
-    
-    # Custom Table Header Generation for Multiline Headers
-    headers = table_df.columns
-    header_row = f"{headers[0]} & " + " & ".join([f"\\makecell[c]{{{h}}}" for h in headers[1:]]) + " \\\\"
 
-    # Extract body only (remove booktabs wrapper generated by pandas if any, though standard to_latex is basic)
-    # We will reconstruct the table with adjustbox and makecell
-    body = []
-    for _, row in table_df.iterrows():
-        # Clean up row to string
-        row_str = " & ".join([str(x) for x in row.values]) + " \\\\"
-        body.append(row_str)
-    body_str = "\n".join(body)
-
-    latex_standalone = (
-        "\\documentclass[border=0pt]{standalone}\n"
-        "\\usepackage{booktabs}\n"
-        "\\usepackage[T1]{fontenc}\n"
-        "\\usepackage[utf8]{inputenc}\n"
-        "\\usepackage{adjustbox}\n"
-        "\\usepackage{makecell}\n"
-        "\\usepackage{multirow}\n"
-        "\\renewcommand\\theadfont{\\bfseries}\n"
-        "\\begin{document}\n"
-        "\\begin{adjustbox}{width=\\textwidth}\n"
-        "\\begin{tabular}{lccccc}\n"
-        "\\toprule\n"
-        + header_row + "\n"
-        "\\midrule\n"
-        + body_str + "\n"
-        "\\bottomrule\n"
-        "\\end{tabular}\n"
-        "\\end{adjustbox}\n"
-        "\\end{document}\n"
+    # Generate HTML (for Google Docs)
+    html_path = save_manuscript_html(
+        table_df, 
+        "Cohort Characteristics", 
+        "Table_N_Cohort_Characteristics", 
+        OUTPUT_DIR,
+        table_number="N"
     )
-    
-    tex_path = os.path.join(OUTPUT_DIR, 'cohort_table_1.tex')
-    with open(tex_path, 'w', encoding='utf-8') as f:
-        f.write(latex_standalone)
-    logging.info(f"LaTeX table saved to {tex_path}")
+    logging.info(f"Professional HTML table saved to {html_path}")
 
     # Markdown
     print("\nCohort Description Table:")

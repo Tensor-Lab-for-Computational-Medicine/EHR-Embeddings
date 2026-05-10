@@ -7,6 +7,7 @@ manuscript_figures/
 outputs/
 temp/
 tmp/
+Submission/
 notebooks/Phase_5/embedding_model_results/
 .env
 

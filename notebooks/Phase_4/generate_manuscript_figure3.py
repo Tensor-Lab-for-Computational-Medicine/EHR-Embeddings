@@ -17,15 +17,22 @@ import matplotlib.patches as mpatches
 from sklearn.metrics import roc_auc_score
 from statsmodels.stats.multitest import multipletests
 from scipy import stats
+import sys
+
+# Add parent directory to path for utility imports
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from manuscript_table_utils import save_manuscript_html, TABLES_OUTPUT_DIR, FIGURES_OUTPUT_DIR
 
 # --- Configuration ---
 
 # Directories for input results and output figures.
 # Corrected BASE_DIR as per user request.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-RESULTS_DIR = BASE_DIR / 'notebooks/Phase 5/embedding_model_results'
-BASELINE_RESULTS_DIR = BASE_DIR / 'notebooks/Phase 1 and 2/phase_1_outputs'
-OUTPUT_DIR = BASE_DIR / 'manuscript_figures'
+RESULTS_DIR = BASE_DIR / 'notebooks/Phase_5/embedding_model_results'
+BASELINE_RESULTS_DIR = BASE_DIR / 'notebooks/Phase_1-2/phase_1_outputs'
+# We now use centralized paths from manuscript_table_utils
+OUTPUT_FIGURE_DIR = FIGURES_OUTPUT_DIR
+OUTPUT_TABLE_DIR = TABLES_OUTPUT_DIR
 
 # Define the structure of your experiment for ordering and labeling.
 REPRESENTATIONS = ['Baseline', 'F1', 'F2', 'F3']
@@ -53,7 +60,8 @@ TASK_LABELS = {
 
 def setup_environment() -> None:
     """Set up logging configuration and create the output directory."""
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    OUTPUT_FIGURE_DIR.mkdir(exist_ok=True, parents=True)
+    OUTPUT_TABLE_DIR.mkdir(exist_ok=True, parents=True)
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(levelname)s] - %(message)s',
@@ -169,7 +177,7 @@ def _load_pickle_file(filepath: Path) -> Optional[Dict[str, Any]]:
 
 def save_figure(fig: plt.Figure, filename: str, sub_dir: Optional[str] = None) -> None:
     """Save a matplotlib figure to the output directory."""
-    save_dir = OUTPUT_DIR / sub_dir if sub_dir else OUTPUT_DIR
+    save_dir = FIGURES_OUTPUT_DIR / sub_dir if sub_dir else FIGURES_OUTPUT_DIR
     save_dir.mkdir(exist_ok=True)
     save_path = save_dir / filename
     fig.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -793,37 +801,22 @@ def generate_results_table(df: pd.DataFrame, filename: str) -> None:
     df_table['Prompt'] = df_table['Prompt'].map(PROMPT_LABELS)
     df_table['Task'] = df_table['Task'].map(TASK_LABELS)
     
-    # Sanitize LaTeX special chars
-    df_table['Task'] = df_table['Task'].astype(str).str.replace('>', '\\textgreater{}', regex=False)
-    df_table['Model'] = df_table['Model'].astype(str).str.replace('_', '\\_', regex=False)
-    
     table_cols = ['Task', 'Representation', 'Prompt', 'Model', 'AUROC (95% CI)', 'AUPRC (95% CI)']
     df_table = df_table[table_cols]
-    
-    # Escape percent in headers
-    df_table = df_table.rename(columns={
-        'AUROC (95% CI)': 'AUROC (95\\% CI)',
-        'AUPRC (95% CI)': 'AUPRC (95\\% CI)'
-    })
-    
-    latex_table = df_table.to_latex(index=False, escape=False)
-    save_path = OUTPUT_DIR / filename
-    save_path.write_text(latex_table, encoding='utf-8')
-    # Standalone wrapper for direct compilation in TeXworks (cropped to table)
-    latex_table_standalone = (
-        "\\documentclass[border=0pt]{standalone}\n"
-        "\\usepackage{booktabs}\n"
-        "\\usepackage[T1]{fontenc}\n"
-        "\\usepackage[utf8]{inputenc}\n"
-        "\\usepackage{adjustbox}\n"
-        "\\begin{document}\n"
-        "\\begin{adjustbox}{width=\\textwidth}\n"
-        + latex_table +
-        "\n\\end{adjustbox}\n"
-        "\\end{document}\n"
+
+
+    # Generate Professional HTML Table (for Google Docs)
+    html_filename = "Table_N_Full_Performance_Results"
+    save_manuscript_html(
+        df_table, 
+        "Full Performance Results Across All Experimental Arms", 
+        html_filename, 
+        OUTPUT_TABLE_DIR,
+        compact=True,
+        table_number="N"
     )
-    (OUTPUT_DIR / (Path(filename).stem + '_standalone.tex')).write_text(latex_table_standalone, encoding='utf-8')
-    logging.info(f"LaTeX tables saved to: {save_path} and standalone version")
+    logging.info(f"Professional HTML table saved: {OUTPUT_TABLE_DIR / (html_filename + '.html')}")
+
 
 
 # --- Main Execution ---
@@ -960,10 +953,10 @@ def main():
                 
                 if num_val > sem_val:
                     # Numeric wins
-                    num_str = f"\\textbf{{{num_str}}}{stars}"
+                    num_str = f"<b>{num_str}</b>{stars}"
                 else:
                     # Semantic wins
-                    sem_str = f"\\textbf{{{sem_str}}}{stars}"
+                    sem_str = f"<b>{sem_str}</b>{stars}"
             
             semantic_formatted.append(sem_str)
             numeric_formatted.append(num_str)
@@ -982,39 +975,16 @@ def main():
             'Champion Semantic AUROC (95% CI)': semantic_formatted,
             'p-value': p_val_strings
         })
-        # Sanitize symbols for LaTeX rendering
-        table_champion['Task'] = table_champion['Task'].astype(str).str.replace('>', '\\textgreater{}', regex=False)
-        table_champion['Champion Semantic'] = table_champion['Champion Semantic'].astype(str).str.replace('_', '\\_', regex=False)
-        
-        # Rename for LaTeX
-        table_champion = table_champion.rename(columns={
-            'Numeric Baseline AUROC (95% CI)': 'Numeric Baseline AUROC (95\\% CI)',
-            'Champion Semantic AUROC (95% CI)': 'Champion Semantic AUROC (95\\% CI)'
-        }).sort_values('Task')
 
-        latex_champion = table_champion.to_latex(index=False, escape=False)
-        out_champ = OUTPUT_DIR / 'table_champion_semantic_vs_numeric.tex'
-        out_champ.write_text(latex_champion, encoding='utf-8')
-        # Standalone wrapper for TeXworks
-        latex_champion_standalone = (
-            "\\documentclass{article}\n"
-            "\\usepackage{booktabs}\n"
-            "\\usepackage{geometry}\n"
-            "\\usepackage[T1]{fontenc}\n"
-            "\\usepackage[utf8]{inputenc}\n"
-            "\\usepackage{adjustbox}\n"
-            "\\geometry{margin=1in}\n"
-            "\\begin{document}\n"
-            "\\begin{table}[ht]\n"
-            "\\centering\n"
-            "\\begin{adjustbox}{width=\\textwidth}\n"
-            + latex_champion +
-            "\n\\end{adjustbox}\n"
-            "\\end{table}\n"
-            "\\end{document}\n"
+        # Generate HTML
+        save_manuscript_html(
+            table_champion,
+            "Comparative Performance Analysis: Champion Semantic Models vs. Best Numeric Baseline",
+            "Table_N_Champion_Comparative_Analysis",
+            OUTPUT_TABLE_DIR,
+            table_number="N"
         )
-        (OUTPUT_DIR / 'table_champion_semantic_vs_numeric_standalone.tex').write_text(latex_champion_standalone, encoding='utf-8')
-        logging.info(f"LaTeX table saved: {out_champ} and standalone version")
+        logging.info("Professional HTML table saved: Table_2_Champion_Analysis.html")
     except Exception as e:
         logging.warning(f"Failed to generate champion vs baseline LaTeX table: {e}")
 
@@ -1030,31 +1000,17 @@ def main():
             'Best Numeric Model': best_num['Best Numeric Model'],
             'AUROC (95% CI)': [_fmt_ci(best_num['AUROC'].iloc[i], best_num['AUROC_CI_Lower'].iloc[i], best_num['AUROC_CI_Upper'].iloc[i]) for i in range(len(best_num))]
         })
-        # Sanitize symbols for LaTeX rendering
-        table_numeric['Task'] = table_numeric['Task'].astype(str).str.replace('>', '\\textgreater{}', regex=False)
-        table_numeric['Best Numeric Model'] = table_numeric['Best Numeric Model'].astype(str).str.replace('_', '\\_', regex=False)
-        table_numeric = table_numeric.rename(columns={
-            'AUROC (95% CI)': 'AUROC (95\\% CI)'
-        }).sort_values('Task')
 
-        latex_numeric = table_numeric.to_latex(index=False, escape=False)
-        out_num = OUTPUT_DIR / 'table_best_numeric_baseline.tex'
-        out_num.write_text(latex_numeric, encoding='utf-8')
-        # Standalone wrapper for TeXworks
-        latex_numeric_standalone = (
-            "\\documentclass[border=0pt]{standalone}\n"
-            "\\usepackage{booktabs}\n"
-            "\\usepackage[T1]{fontenc}\n"
-            "\\usepackage[utf8]{inputenc}\n"
-            "\\usepackage{adjustbox}\n"
-            "\\begin{document}\n"
-            "\\begin{adjustbox}{width=\\textwidth}\n"
-            + latex_numeric +
-            "\n\\end{adjustbox}\n"
-            "\\end{document}\n"
+
+        # Generate HTML
+        save_manuscript_html(
+            table_numeric,
+            "Independent Performance of Numeric Baseline Models per Task",
+            "Table_N_Numeric_Baseline_Performance",
+            OUTPUT_TABLE_DIR,
+            table_number="N"
         )
-        (OUTPUT_DIR / 'table_best_numeric_baseline_standalone.tex').write_text(latex_numeric_standalone, encoding='utf-8')
-        logging.info(f"LaTeX table saved: {out_num} and standalone version")
+        logging.info("Professional HTML table saved: Table_S10_Numeric_Baselines.html")
     except Exception as e:
         logging.warning(f"Failed to generate best numeric baseline LaTeX table: {e}")
     

@@ -252,10 +252,21 @@ def _augment_and_prune_rules(
     cov_tr = []
     cov_ts = []
     cov_ts_pct = []
+    ts_slice_cov_pct = []
     ts_target_share = []
     ts_baseline_rate = []
     wracc_ts = []
     members_ts = []
+
+    # Determine if this is a comparative (discordance) analysis for p-value method
+    is_comparative = analysis_key.lower().startswith('ivb')
+    from scipy.stats import fisher_exact
+    try:
+        from scipy.stats import binomtest as _binomtest
+        def _get_binom_p(k, n): return _binomtest(k, n, p=0.5).pvalue
+    except ImportError:
+        from scipy.stats import binom_test as _binomtest
+        def _get_binom_p(k, n): return _binomtest(k, n, p=0.5)
 
     for _, r in df_rules.iterrows():
         rule = str(r.get('rule') or r.get('rule_str'))
@@ -264,32 +275,38 @@ def _augment_and_prune_rules(
         mtr_full = _mask_for_rule(rule, X_train)
         mts_full = _mask_for_rule(rule, X_test)
         
-        # Mask against local populations for Fisher's test
+        # Mask against local populations for statistical tests
         mtr_local = mtr_full.loc[pop_tr]
         mts_local = mts_full.loc[pop_ts]
 
-        # Train contingency (local)
+        # Train contingency/stats
         a = int(((mtr_local == True) & (ytr_local == 1)).sum())
         b = int(((mtr_local == True) & (ytr_local == 0)).sum())
         c = int(((mtr_local == False) & (ytr_local == 1)).sum())
         d = int(((mtr_local == False) & (ytr_local == 0)).sum())
-        try:
-            from scipy.stats import fisher_exact
-            _, p = fisher_exact([[a, b], [c, d]], alternative='two-sided')
-        except Exception:
-            p = 1.0
+        
+        if is_comparative:
+            p = _get_binom_p(a, a + b) if (a + b) > 0 else 1.0
+        else:
+            try:
+                _, p = fisher_exact([[a, b], [c, d]], alternative='two-sided')
+            except Exception:
+                p = 1.0
         pvals.append(float(p))
 
-        # Test contingency (local)
+        # Test contingency/stats
         a_ts = int(((mts_local == True) & (yts_local == 1)).sum())
         b_ts = int(((mts_local == True) & (yts_local == 0)).sum())
         c_ts = int(((mts_local == False) & (yts_local == 1)).sum())
         d_ts = int(((mts_local == False) & (yts_local == 0)).sum())
-        try:
-            from scipy.stats import fisher_exact as _fisher
-            _, p_ts = _fisher([[a_ts, b_ts], [c_ts, d_ts]], alternative='two-sided')
-        except Exception:
-            p_ts = 1.0
+        
+        if is_comparative:
+            p_ts = _get_binom_p(a_ts, a_ts + b_ts) if (a_ts + b_ts) > 0 else 1.0
+        else:
+            try:
+                _, p_ts = fisher_exact([[a_ts, b_ts], [c_ts, d_ts]], alternative='two-sided')
+            except Exception:
+                p_ts = 1.0
         pvals_ts.append(float(p_ts))
 
         # Global metrics
@@ -300,6 +317,11 @@ def _augment_and_prune_rules(
         cov_ts_val = int(mts_full.sum())
         cov_ts.append(cov_ts_val)
         cov_ts_pct.append(round((100.0 * cov_ts_val / n_ts_total), 1) if n_ts_total else 0.0)
+        
+        # SLICE coverage (within the relevant FP+TN or FN+TP slice)
+        n_ts_slice = int(len(pop_ts))
+        cov_ts_slice_val = int(mts_local.sum())
+        ts_slice_cov_pct.append(round((100.0 * cov_ts_slice_val / n_ts_slice), 1) if n_ts_slice else 0.0)
         
         # Outcome share in the subgroup
         rate_in_sg = float(yts_global[mts_full].mean()) if cov_ts_val > 0 else 0.0
@@ -327,6 +349,7 @@ def _augment_and_prune_rules(
     out['coverage_train'] = cov_tr
     out['coverage_test'] = cov_ts
     out['coverage_pct'] = cov_ts_pct
+    out['slice_coverage_pct'] = ts_slice_cov_pct
     out['target_share'] = ts_target_share
     out['baseline_rate'] = ts_baseline_rate
     out['quality_WRAcc'] = wracc_ts
@@ -378,7 +401,11 @@ def _run_subgroup_discovery(X_features: pd.DataFrame, y_target: pd.Series, max_d
     df = df.reset_index(drop=True)
     cover_sets = [set(data.index[_safe_cover_mask(r['subgroup'], data)]) for _, r in df.iterrows()]
     kept_idx, kept_sets = [], []
-    for i in list(df.sort_values('quality', ascending=False).index):
+    # Stable sorting: break ties in quality using the subgroup string representation
+    # 'subgroup' is the column name in pysubgroup result dataframes
+    df['subgroup_str'] = df['subgroup'].astype(str)
+    sorted_indices = df.sort_values(['quality', 'subgroup_str'], ascending=[False, True]).index
+    for i in list(sorted_indices):
         cs = cover_sets[i]
         if all(_jaccard(cs, ks) <= j_thresh for ks in kept_sets):
             kept_idx.append(i)
@@ -576,6 +603,7 @@ def _rule_record(family: str, key: str, r: pd.Series, depth_val: int) -> dict:
         'rule_str': r.get('rule', ''),
         'coverage': int(r.get('coverage', 0)),
         'coverage_pct': float(r.get('coverage_pct', 0.0)),
+        'slice_coverage_pct': float(r.get('slice_coverage_pct', 0.0)),
         'lift': float(r.get('lift', 0.0)),
         'quality_WRAcc': float(r.get('quality_WRAcc', 0.0)),
         'target_share': float(r.get('target_share', 0.0)),
@@ -594,6 +622,7 @@ def main():
     args = parser.parse_args()
 
     cfg = _load_config(args.config_file)
+    np.random.seed(42)
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
     # Resolve depths

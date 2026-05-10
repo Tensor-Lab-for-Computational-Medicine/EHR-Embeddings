@@ -1,8 +1,10 @@
 import os
 import argparse
 import importlib.util
-import pandas as pd
 import re
+import pickle
+import numpy as np
+import pandas as pd
 
 
 def _load_config(config_file: str = None):
@@ -140,14 +142,91 @@ def _load_all_candidates(base_dir: str, phase: str) -> pd.DataFrame:
     if not rows:
         return pd.DataFrame()
     out = pd.concat(rows, ignore_index=True)
-    # Ensure unified 'rule' column exists (final_subgroups use 'rule_str')
-    if 'rule' not in out.columns:
-        if 'rule_str' in out.columns:
-            out['rule'] = out['rule_str']
-        else:
-            out['rule'] = ''
-    out['rule'] = out['rule'].astype(str).apply(_normalize_rule_case)
+    
+    # Handle column name variations
+    if 'rule' not in out.columns and 'rule_str' in out.columns:
+        out = out.rename(columns={'rule_str': 'rule'})
+        
+    if 'rule' in out.columns:
+        out['rule'] = out['rule'].astype(str).apply(_normalize_rule_case)
     return out
+
+
+def _validate_on_test_set(df: pd.DataFrame, cfg, phase: str):
+    """Calculate robust Absolute Error Ratios on the test set for every candidate."""
+    if phase.upper() != 'IVB':
+        return df # Only Phase IVB needs this comparative correction
+        
+    print("Performing pre-selection validation on held-out test set...")
+    
+    # Load test artifacts
+    art_path = os.path.join(cfg.H2A_OUTPUT_DIR, 'h2a_to_h2b_artifact.pkl')
+    with open(art_path, 'rb') as f:
+        art = pickle.load(f)
+    
+    # Load phenotypes
+    phenos_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'feature_engineering', 'artifacts', 'X_test_phenotypes.pkl')
+    phenos = pd.read_pickle(phenos_path)
+    
+    y_true = art['y_true']
+    nm_wrong = (art['nm_pred'] != y_true)
+    sm_wrong = (art['sm_pred'] != y_true)
+    
+    ratios = []
+    for idx, row in df.iterrows():
+        rule_str = row['rule']
+        ak = row['analysis_key'].lower()
+        
+        # In Phase IVB (Comparative), the suffix indicates the WINNER.
+        # In Phase IV (Independent), it indicates the LOSER/FAILING model.
+        if "ivb_" in ak.lower():
+            is_nm_failing = "_sm" in ak.lower()
+        else:
+            is_nm_failing = "nm_" in ak.lower() or "_nm" in ak.lower()
+
+        err_a = nm_wrong if is_nm_failing else sm_wrong
+        err_b = sm_wrong if is_nm_failing else nm_wrong
+        
+        try:
+            # Robust rule evaluation on test set
+            parts = str(rule_str).split(" AND ")
+            mask = pd.Series(True, index=phenos.index)
+            for part in parts:
+                part = part.strip()
+                # Support spaces in variable names and both [a:b[ and [a:b] formats
+                m_int = re.match(r"([^:]+):\s*([\[\(])\s*([^:]+)\s*:\s*([^\]\)|\[]+)\s*([\]\)|\[])$", part)
+                if m_int:
+                    col, lbr, start, end, rbr = m_int.groups()
+                    col = col.strip()
+                    mask &= (phenos[col] >= float(start)) & (phenos[col] < float(end))
+                else:
+                    if '==' in part:
+                        col, val = [s.strip() for s in part.split('==')]
+                        val = val.strip("'").strip('"')
+                        if val.lower() == 'true': mask &= (phenos[col] == True)
+                        elif val.lower() == 'false': mask &= (phenos[col] == False)
+                        else: mask &= (phenos[col].astype(str).str.replace('_', ' ') == val.replace('_', ' '))
+                    else:
+                        mask &= (phenos[part] == True)
+            
+            # Target outcome class filter
+            target_val = 1 if any(x in ak for x in ['deceased', 'readmitted', 'deaths', 'miss']) else 0
+            combined_mask = mask & (y_true == target_val)
+            
+            if combined_mask.sum() == 0:
+                ratios.append(0.0)
+                continue
+                
+            rate_a = err_a[combined_mask].mean()
+            rate_b = err_b[combined_mask].mean()
+            
+            ratio = rate_a / rate_b if rate_b > 0 else (2.0 if rate_a > 0 else 1.0)
+            ratios.append(ratio)
+        except Exception:
+            ratios.append(0.0)
+            
+    df['test_validated_ratio'] = ratios
+    return df
 
 def main():
     ap = argparse.ArgumentParser(description='Cross-depth archetype selection for Phase IV and IVB')
@@ -160,6 +239,8 @@ def main():
     args = ap.parse_args()
 
     cfg = _load_config(args.config_file)
+    import numpy as np
+    np.random.seed(42)
     base_dir = cfg.OUTPUT_DIR
     os.makedirs(base_dir, exist_ok=True)
 
@@ -176,14 +257,25 @@ def main():
         _write_empty(base_dir, args.phase)
         return
 
+    # CORE CORRECTION: Validate every candidate on the test set BEFORE selection
+    all_candidates = _validate_on_test_set(all_candidates, cfg, args.phase)
+
     # Phase 1: quantitative pruning before any clustering
     if not {'coverage', 'lift'}.issubset(set(all_candidates.columns)):
         missing = sorted(list({'coverage', 'lift'} - set(all_candidates.columns)))
         print(f"Error: Missing required columns for pruning: {', '.join(missing)}")
         return
+    
+    # Filter by coverage and lift
     pruned = all_candidates[(all_candidates['coverage'] >= args.min_coverage) & (all_candidates['lift'] >= args.min_lift)].copy()
+    
+    # CORE CORRECTION: Filter out non-gaps for Phase IVB (ratio <= 1.0)
+    if args.phase.upper() == 'IVB' and 'test_validated_ratio' in pruned.columns:
+        # Keep only archetypes that show a real performance gap on the test set
+        pruned = pruned[pruned['test_validated_ratio'] > 1.001].copy()
+        
     if pruned.empty:
-        print('No candidates remain after quantitative pruning. Adjust thresholds or review inputs.')
+        print('No candidates remain after quantitative pruning and test validation. Adjust thresholds or review inputs.')
         _write_empty(base_dir, args.phase)
         return
 
@@ -201,13 +293,14 @@ def main():
         else:
             sub = sub.copy()
             sub['member_set'] = [set()]*len(sub)
-        # Seed clusters prioritizing strongest signal (WRAcc/Lift) → coverage → parsimony
+        # Seed clusters prioritizing validated impact (Ratio)
         sub = sub.copy()
         sub['n_conditions'] = sub['rule'].astype(str).apply(_count_conditions)
-        if 'quality_WRAcc' in sub.columns:
-            order = list(sub.sort_values(['quality_WRAcc','lift','coverage','n_conditions'], ascending=[False, False, False, True]).index)
-        else:
-            order = list(sub.sort_values(['lift','coverage','n_conditions'], ascending=[False, False, True]).index)
+        
+        sort_metrics = ['test_validated_ratio', 'lift', 'coverage'] if args.phase.upper() == 'IVB' else ['quality_WRAcc', 'lift', 'coverage']
+        ascending = [False, False, False]
+        
+        order = list(sub.sort_values(sort_metrics + ['n_conditions','rule'], ascending=ascending + [True, True]).index)
         used = set()
         clusters = []
         # If no member IDs are available, warn and skip clustering to avoid silent failure
@@ -246,7 +339,9 @@ def main():
                 except Exception:
                     return 999
             cand['_depth_num'] = cand['source_depth'].apply(depth_num) if 'source_depth' in cand.columns else 999
-            cand = cand.sort_values(['n_conditions','lift','coverage','_depth_num'], ascending=[True, False, False, True])
+            # Tie-break with rule string
+            sort_metrics = ['test_validated_ratio', 'lift', 'coverage'] if args.phase.upper() == 'IVB' else ['lift', 'coverage']
+            cand = cand.sort_values(['n_conditions'] + sort_metrics + ['_depth_num','rule'], ascending=[True] + [False]*len(sort_metrics) + [True, True])
             winners.append(cand.iloc[0])
         if winners:
             winners_rows.append(pd.DataFrame(winners))
@@ -291,12 +386,17 @@ def main():
             except Exception:
                 return 999
         tmp['_depth_num'] = tmp['source_depth'].apply(_depth_num2) if 'source_depth' in tmp.columns else 999
-        if 'quality_WRAcc' in tmp.columns:
-            sort_keys = ['quality_WRAcc','lift','coverage','n_conditions','_depth_num']
-            ascending = [False, False, False, True, True]
+        # Final sorting for capping: prioritize validated ratio for Phase IVB
+        if args.phase.upper() == 'IVB' and 'test_validated_ratio' in tmp.columns:
+            sort_keys = ['test_validated_ratio', 'lift', 'coverage', 'n_conditions', '_depth_num', 'rule']
+            ascending = [False, False, False, True, True, True]
+        elif 'quality_WRAcc' in tmp.columns:
+            sort_keys = ['quality_WRAcc','lift','coverage','n_conditions','_depth_num','rule']
+            ascending = [False, False, False, True, True, True]
         else:
-            sort_keys = ['lift','coverage','n_conditions','_depth_num']
-            ascending = [False, False, True, True]
+            sort_keys = ['lift','coverage','n_conditions','_depth_num','rule']
+            ascending = [False, False, True, True, True]
+            
         tmp = tmp.sort_values(sort_keys, ascending=ascending)
         if args.phase.upper() == 'IVB' and {'battleground','advantaged_model'}.issubset(tmp.columns):
             group_cols = ['battleground','advantaged_model']
@@ -307,7 +407,9 @@ def main():
         else:
             final = tmp.head(args.max_archetypes)
     out_name = 'final_archetypes.csv' if args.phase.upper() == 'IV' else 'final_archetypes_ivb.csv'
-    final.to_csv(os.path.join(base_dir, out_name), index=False)
+    # Ensure test_validated_ratio is preserved in the final output
+    cols_to_keep = [c for c in final.columns if not str(c).startswith('_')]
+    final[cols_to_keep].to_csv(os.path.join(base_dir, out_name), index=False)
     print(f'Wrote {final.shape[0]} archetypes to {os.path.join(base_dir, out_name)}')
 
 

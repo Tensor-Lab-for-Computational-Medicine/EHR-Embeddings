@@ -129,7 +129,7 @@ def _bh_fdr(pvals: pd.Series) -> pd.Series:
     out = pd.Series(np.nan, index=s.index, dtype=float)
     if m == 0:
         return out
-    order = not_na.sort_values().index
+    order = not_na.sort_values(kind='mergesort').index
     pv = not_na.loc[order].to_numpy(dtype=float)
     ranks = np.arange(1, m + 1, dtype=float)
     adj = pv * (m / ranks)
@@ -152,12 +152,17 @@ def main():
     args = parser.parse_args()
 
     cfg = _load_config(args.config_file)
+    np.random.seed(42)
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     out_dir = os.path.join(cfg.OUTPUT_DIR, 'phase_v_meta')
     os.makedirs(out_dir, exist_ok=True)
 
-    with open(os.path.join(cfg.H2A_OUTPUT_DIR, 'h2a_to_h2b_artifact.pkl'), 'rb') as f:
-        art = pickle.load(f)
+    art_path = os.path.join(cfg.H2A_OUTPUT_DIR, 'h2a_to_h2b_artifact.pkl')
+    try:
+        with open(art_path, 'rb') as f:
+            art = pickle.load(f)
+    except Exception:
+        art = pd.read_pickle(art_path)
 
     try:
         with open(cfg.X_TEST_NUM_PATH, 'rb') as f:
@@ -203,10 +208,12 @@ def main():
             final_df = final_df[final_df['analysis_family'] == 'IVB_discordance'].copy()
     # idx_map will be built after phenotype load to robustly use ICU stay ids
 
+    rule_col = 'rule_str' if 'rule_str' in final_df.columns else 'rule'
+
     # Helper to fetch archetype context for reporting
     def _ctx(analysis_key: str, rule_str: str) -> str:
         try:
-            m = final_df[(final_df['analysis_key'] == analysis_key) & (final_df['rule_str'] == rule_str)]
+            m = final_df[(final_df['analysis_key'] == analysis_key) & (final_df[rule_col] == rule_str)]
             if m.empty:
                 return ''
             r = m.iloc[0]
@@ -316,7 +323,7 @@ def main():
     rows = []
     for _, r in final_df.iterrows():
         key = r['analysis_key']
-        rule = r['rule_str']
+        rule = r[rule_col]
         if args.phase.lower() == 'iv':
             title_map = {
                 'SM_miss': 'SM False Negatives vs Concordant True Positives',

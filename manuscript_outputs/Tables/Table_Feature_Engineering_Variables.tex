@@ -1,0 +1,12 @@
+\begin{tabular}{l p{4.5cm} p{5.5cm} c}
+\toprule
+Engineering Category & Representative Variables & Engineered Statistics & N Features per Variable \\
+\midrule
+High-Frequency Physiological & Heart rate, Systolic BP, Diastolic BP, Mean arterial pressure, Respiratory rate, SpO₂ (pulse ox), Temperature & Last value, Mean (24h), Min (24h), Max (24h), Std Dev (24h), Measurement count (24h), Measurement count (6h), Slope (24h), Slope (6h) & 9 \\
+Labile Lab & Sodium, Potassium, Chloride, Bicarbonate, BUN, Creatinine, Glucose, Hemoglobin, Hematocrit, WBC, Platelets, Bilirubin (total), ALT, AST, Alkaline phosphatase, Lactate, Albumin, Phosphate, Magnesium, Calcium (total), Calcium (ionized), pH, PaO₂, PaCO₂, Base excess, Anion gap, INR, PT, PTT & Last value, Mean (24h), Std Dev (24h), Measurement count (24h), Slope (24h) & 5 \\
+Stable Index & GCS (total, verbal, motor, eye), Height, Weight, BMI, FiO₂, PEEP, Tidal volume, Urine output & Last value, Measurement count (24h) & 2 \\
+Sparse Dynamic & Troponin I/T, BNP/proBNP, CK, CK-MB, Lipase, Amylase, Cortisol, TSH, Free T4, LDH, Fibrinogen, D-dimer, Procalcitonin, ESR, CRP & Last value, Mean (24h), Measurement count (24h), Slope (24h) & 4 \\
+Static & Height, Weight & First recorded value, Measurement count & 2 \\
+Event-Driven & Vasopressor administration (binary), Mechanical ventilation status (binary) & Last value, Measurement count (24h) & 2 \\
+\bottomrule
+\end{tabular}

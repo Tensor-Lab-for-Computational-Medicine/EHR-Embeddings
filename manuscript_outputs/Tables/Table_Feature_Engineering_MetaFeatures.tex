@@ -1,0 +1,12 @@
+\begin{tabular}{l l p{9cm}}
+\toprule
+Family & Meta-feature & Derivation \\
+\midrule
+Density & Total measurement events & Total observed measurement burden per patient. For each clinical feature family, the maximum available count across 24h and 6h count features is used, then summed across families to avoid double-counting the same measurement stream. \\
+Density & Number of measured feature families & Number of distinct clinical feature families with at least one recorded measurement after combining 24h and 6h count features. \\
+Temporality & Late-window measurement concentration & Proportion of measurement events occurring in the final 6 hours of the 24h observation window: sum of 6h measurement counts divided by sum of 24h measurement counts. Higher values indicate measurements were concentrated closer to prediction time. \\
+Volatility & Average within-stay variability & Mean of per-feature-family standard deviation summaries across available clinical variables. Higher values indicate more variable physiology during the observation window. \\
+Volatility & Average absolute trend magnitude & Mean absolute value of per-feature-family temporal slopes, using 24h slopes when available and 6h slopes as fallback. Absolute values measure trend strength regardless of direction. \\
+Imputation & Unmeasured feature-family proportion & Proportion of canonical clinical feature families with no recorded measurement. Higher values indicate greater missingness and greater reliance on imputed values. \\
+\bottomrule
+\end{tabular}

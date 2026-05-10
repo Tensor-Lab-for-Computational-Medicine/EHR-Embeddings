@@ -8,6 +8,7 @@ import logging
 import argparse
 import importlib
 import sys
+import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lib.runner import run_h2a_analysis
@@ -31,6 +32,7 @@ def main():
     args = parser.parse_args()
 
     config = _resolve_config(args.config)
+    np.random.seed(42)
 
     # Force the baseline model to use the xgboost numeric model, rather than the champion numeric model
     if hasattr(config, 'BASELINE_MODEL_PATH'):

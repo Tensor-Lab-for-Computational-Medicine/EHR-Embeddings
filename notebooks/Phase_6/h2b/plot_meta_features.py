@@ -1,10 +1,20 @@
+from typing import Optional
+
+import glob
 import os
 import re
+import textwrap
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 import matplotlib.transforms as transforms
+
+# Repo root: notebooks/Phase_6/h2b -> ../../../
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_REPO_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
+MANUSCRIPT_FIGURES_DIR = os.path.join(_REPO_ROOT, "manuscript_outputs", "Figures")
 
 # Reuse beauty functions
 NAME_MAP = {
@@ -117,13 +127,25 @@ def pretty_rule(rule: str) -> str:
     parts = re.split(r"\s+AND\s+", rule)
     return "; ".join([pretty_condition(p) for p in parts if str(p).strip()])
 
+def pretty_analysis_label(analysis: str) -> str:
+    s = str(analysis or "").strip().lower()
+    if s == "nm_false_alarm":
+        return "Subgroup Analysis: NM False Positives"
+    if s == "sm_false_alarm":
+        return "Subgroup Analysis: SM False Positives"
+    if s == "nm_miss":
+        return "Subgroup Analysis: NM Misses"
+    if s == "sm_miss":
+        return "Subgroup Analysis: SM Misses"
+    return str(analysis).replace("_", " ").strip().title()
+
 META_FEAT_MAP = {
-    'total_measurement_events': 'Total\nevents',
-    'unique_feature_count': 'Unique\nfeatures',
-    'temporal_concentration': 'Late-Window\nConcentration',
-    'aggregate_stddev': 'Volatility\n(StdDev)',
-    'aggregate_slope': 'Trend\nMagnitude',
-    'imputation_proportion': 'Imputation\n%',
+    'total_measurement_events': 'Total events',
+    'unique_feature_count': 'Measured feature\nfamilies',
+    'temporal_concentration': 'Final 6h / 24h\nevent proportion',
+    'aggregate_stddev': 'Within-stay\nvariability',
+    'aggregate_slope': 'Absolute trend\nmagnitude',
+    'imputation_proportion': 'Unmeasured family\nproportion',
 }
 
 FAMILIES = {
@@ -135,23 +157,69 @@ FAMILIES = {
     'imputation_proportion': 'Imputation',
 }
 
+
+def _find_phase_v_meta_iv_csv(base_dir: str, dataset: str) -> Optional[str]:
+    """Resolve Phase V meta CSV; paths match h2b ConfigH2 OUTPUT_DIR / generate_manuscript_table."""
+    if dataset == "mortality":
+        dirs_try = [
+            ("h2_results", "mort_hosp", "phase_v_meta"),
+            ("h2_results", "phase_v_meta"),
+        ]
+        needle = "mort_hosp"
+    else:
+        dirs_try = [
+            ("h2_results", "readmission_30", "phase_v_meta"),
+            ("h2_results_readmission_30", "phase_v_meta"),
+        ]
+        needle = "readmission_30"
+    for tag in ("IV", "IVB"):
+        fn = f"phase_v_meta_results_{tag}.csv"
+        for parts in dirs_try:
+            p = os.path.join(base_dir, *parts, fn)
+            if os.path.isfile(p):
+                return p
+    pattern = os.path.join(base_dir, "h2_results", "**", "phase_v_meta", "phase_v_meta_results_*.csv")
+    matches = [
+        m for m in glob.glob(pattern, recursive=True)
+        if needle in m.replace("/", os.sep) and os.path.basename(m).startswith("phase_v_meta_results_")
+    ]
+    for tag in ("IV", "IVB"):
+        fn = f"phase_v_meta_results_{tag}.csv"
+        same = [m for m in matches if os.path.basename(m) == fn]
+        if same:
+            return same[0]
+    return matches[0] if matches else None
+
+
 def load_data():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Mortality
-    p_mort = os.path.join(base_dir, 'h2_results', 'phase_v_meta', 'phase_v_meta_results_IV.csv')
-    df_mort = pd.read_csv(p_mort) if os.path.exists(p_mort) else pd.DataFrame()
-    if not df_mort.empty: df_mort['dataset'] = 'Mortality'
-        
-    # Readmission
-    p_readm = os.path.join(base_dir, 'h2_results_readmission_30', 'phase_v_meta', 'phase_v_meta_results_IV.csv')
-    df_readm = pd.read_csv(p_readm) if os.path.exists(p_readm) else pd.DataFrame()
-    if not df_readm.empty: df_readm['dataset'] = 'Readmission'
-        
+    base_dir = _SCRIPT_DIR
+
+    p_mort = _find_phase_v_meta_iv_csv(base_dir, "mortality")
+    p_readm = _find_phase_v_meta_iv_csv(base_dir, "readmission")
+
+    df_mort = pd.read_csv(p_mort) if p_mort else pd.DataFrame()
+    if not df_mort.empty:
+        df_mort = _align_to_manuscript_meta_selection(base_dir, df_mort, "mortality")
+        df_mort["dataset"] = "Mortality"
+        print(f"Loaded mortality Phase V meta: {p_mort}")
+
+    df_readm = pd.read_csv(p_readm) if p_readm else pd.DataFrame()
+    if not df_readm.empty:
+        df_readm = _align_to_manuscript_meta_selection(base_dir, df_readm, "readmission")
+        df_readm["dataset"] = "Readmission"
+        print(f"Loaded readmission Phase V meta: {p_readm}")
+
     df = pd.concat([df_mort, df_readm], ignore_index=True)
-    if df.empty: return df
+    if df.empty:
+        print(
+            "No Phase V meta CSV loaded. Expected e.g. "
+            "h2_results/mort_hosp/phase_v_meta/phase_v_meta_results_IV.csv "
+            "(see config_h2_morthosp OUTPUT_DIR)."
+        )
+        return df
     
     df['rule_pretty'] = df['rule'].apply(pretty_rule)
+    df['comparison_pretty'] = df['analysis'].apply(pretty_analysis_label)
     df['meta_pretty'] = df['meta_feature'].map(META_FEAT_MAP)
     df['family_pretty'] = df['meta_feature'].map(FAMILIES)
     
@@ -163,20 +231,60 @@ def load_data():
     
     return df
 
+
+def _align_to_manuscript_meta_selection(base_dir: str, meta_df: pd.DataFrame, dataset: str) -> pd.DataFrame:
+    """Mirror S6/S10 selection logic so plots match manuscript tables."""
+    ds_dir = "mort_hosp" if dataset == "mortality" else "readmission_30"
+    arch_path = os.path.join(base_dir, "h2_results", ds_dir, "final_archetypes.csv")
+    if not os.path.isfile(arch_path) or meta_df.empty:
+        return meta_df
+
+    adf = pd.read_csv(arch_path)
+    if not {"analysis_key", "rule", "q_value"}.issubset(adf.columns):
+        return meta_df
+    if not {"analysis", "rule"}.issubset(meta_df.columns):
+        return meta_df
+
+    ordered_pairs = []
+    for comp, group in adf.groupby("analysis_key"):
+        g = group.sort_values("q_value").head(8)
+        ordered_pairs.extend([(str(comp), str(r)) for r in g["rule"].astype(str)])
+    if not ordered_pairs:
+        return meta_df
+
+    order_map = {p: i for i, p in enumerate(ordered_pairs)}
+    df = meta_df.copy()
+    df["_meta_input_order"] = np.arange(len(df))
+    df = df[df.apply(lambda r: (str(r["analysis"]), str(r["rule"])) in order_map, axis=1)].copy()
+    if df.empty:
+        return df
+
+    df["_archetype_order"] = df.apply(lambda r: order_map[(str(r["analysis"]), str(r["rule"]))], axis=1)
+    report_df = df.copy()
+
+    sort_cols = [c for c in ["_archetype_order", "analysis", "rule", "_meta_input_order"] if c in report_df.columns]
+    return report_df.sort_values(sort_cols).copy() if sort_cols else report_df
+
 def generate_plot(df):
     if df.empty:
-        print("No data found.")
         return
-        
+
     datasets = ['Mortality', 'Readmission']
     meta_features = [
         'total_measurement_events', 'unique_feature_count', 'temporal_concentration',
         'aggregate_stddev', 'aggregate_slope',
         'imputation_proportion'
     ]
-    
-    # Filter to only these meta features
-    df = df[df['meta_feature'].isin(meta_features)]
+
+    # Filter to pre-specified meta features and display only statistically significant rows.
+    df_f = df[df['meta_feature'].isin(meta_features)].copy()
+    df_f['q_value_family'] = pd.to_numeric(df_f['q_value_family'], errors='coerce')
+    df_f = df_f[df_f['q_value_family'] < 0.05]
+    if df_f.empty:
+        avail = sorted(df['meta_feature'].dropna().unique().tolist()) if 'meta_feature' in df.columns else []
+        print(f"No significant rows after meta_feature filter; available meta_feature values: {avail[:20]}...")
+        return
+    df = df_f
     
     # Colors
     colors = {'SM': '#1f77b4', 'NM': '#ff7f0e'}  # Blue for SM, Orange for NM
@@ -187,19 +295,37 @@ def generate_plot(df):
             print(f"{ds} - No Data")
             continue
             
-        fig = plt.figure(figsize=(16, max(6, len(df_ds['rule_pretty'].unique()) * 0.6)))
-        fig.suptitle(f"Cohort: {ds}", fontsize=18, fontweight='bold', y=1.05)
-        
-        # Get unique archetypes sorted by frequency or just alphabetical
-        rules = df_ds['rule_pretty'].unique()
-        rules = sorted(rules, key=lambda x: len(x)) # Simple heuristic sort
+        ordered_pairs = df_ds[["analysis", "comparison_pretty", "rule", "rule_pretty"]].drop_duplicates()
+        row_entries = []
+        current_comparison = None
+        for _, pair in ordered_pairs.iterrows():
+            comparison = str(pair["comparison_pretty"])
+            if comparison != current_comparison:
+                row_entries.append({
+                    "type": "header",
+                    "label": comparison,
+                    "key": None,
+                })
+                current_comparison = comparison
+            row_entries.append({
+                "type": "data",
+                "label": "  " + textwrap.fill(str(pair["rule_pretty"]), width=62, subsequent_indent="  "),
+                "key": (str(pair["analysis"]), str(pair["rule"])),
+            })
+
+        fig = plt.figure(figsize=(16, max(6.5, len(row_entries) * 0.48)))
+        fig.suptitle(f"Cohort: {ds}", fontsize=18, fontweight='bold', y=1.03)
         
         axes = fig.subplots(1, len(meta_features), sharey=True)
         if len(meta_features) == 1: axes = [axes]
         
-        # We need a unified y-axis
-        y_positions = np.arange(len(rules))[::-1]  # Reverse to have first at top
-        rule_to_y = {r: y for r, y in zip(rules, y_positions)}
+        y_positions = np.arange(len(row_entries))[::-1]
+        row_to_y = {
+            entry["key"]: y
+            for entry, y in zip(row_entries, y_positions)
+            if entry["type"] == "data"
+        }
+        labels = [entry["label"] for entry in row_entries]
         
         for ax, mf in zip(axes, meta_features):
             df_mf = df_ds[df_ds['meta_feature'] == mf]
@@ -214,18 +340,17 @@ def generate_plot(df):
             height = 0.35
             
             for _, row in df_mf.iterrows():
-                y = rule_to_y[row['rule_pretty']]
+                key = (str(row['analysis']), str(row['rule']))
+                if key not in row_to_y:
+                    continue
+                y = row_to_y[key]
                 val = row['rank_biserial']
-                sig = row['q_value_family'] < 0.05
                 mod = row['Model']
                 
                 c = colors.get(mod, 'gray')
-                alpha = 1.0 if sig else 0.3
+                alpha = 1.0
                 
-                # Offset y based on model
-                y_off = y + height/2 if mod == 'SM' else y - height/2
-                
-                ax.barh(y_off, val, height=height, color=c, alpha=alpha, edgecolor='none')
+                ax.barh(y, val, height=height, color=c, alpha=alpha, edgecolor='none')
                 
             ax.set_xlabel('Effect Size\n(Rank-Biserial)', fontsize=10)
             
@@ -237,22 +362,25 @@ def generate_plot(df):
             ax.set_xlim(-0.6, 0.6) # Standardized limits for comparability
             
         axes[0].set_yticks(y_positions)
-        axes[0].set_yticklabels(rules, fontsize=10)
-        axes[0].set_ylabel('Archetype Rule', fontsize=12)
+        axes[0].set_yticklabels(labels, fontsize=9)
+        for tick, entry in zip(axes[0].get_yticklabels(), row_entries):
+            if entry["type"] == "header":
+                tick.set_fontweight("bold")
+                tick.set_fontsize(10)
+        axes[0].set_ylabel('Comparison / Archetype Rule', fontsize=12)
         
         # Add custom legend to the whole figure
         legend_elements = [
             Patch(facecolor=colors['SM'], label='SM Error vs Success'),
             Patch(facecolor=colors['NM'], label='NM Error vs Success'),
-            Patch(facecolor='gray', alpha=1.0, label='Significant (q < 0.05)'),
-            Patch(facecolor='gray', alpha=0.3, label='Not Significant')
+            Patch(facecolor='gray', alpha=1.0, label='Displayed rows: q < 0.05')
         ]
         fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=12)
         
         plt.tight_layout()
         plt.subplots_adjust(wspace=0.35)
-        out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'outputs', f'meta_features_forest_plot_{ds.lower()}.png')
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        os.makedirs(MANUSCRIPT_FIGURES_DIR, exist_ok=True)
+        out_path = os.path.join(MANUSCRIPT_FIGURES_DIR, f"meta_features_forest_plot_{ds.lower()}.png")
         plt.savefig(out_path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         print(f"Saved figure to {out_path}")

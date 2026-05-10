@@ -3,6 +3,11 @@ import csv
 import logging
 from pathlib import Path
 import pandas as pd
+import sys
+
+# Add parent directory to path for utility imports
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from manuscript_table_utils import save_manuscript_html
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -11,7 +16,7 @@ from matplotlib.colors import ListedColormap
 
 # --- Configuration ---
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-RULES_CSV = BASE_DIR / 'notebooks' / 'Phase 6 - H2 Analysis' / 'feature_engineering' / 'feature_rules.csv'
+RULES_CSV = BASE_DIR / 'notebooks' / 'Phase_6' / 'feature_engineering' / 'feature_rules.csv'
 OUTPUT_DIR = BASE_DIR / 'manuscript_figures'
 
 def setup_environment() -> None:
@@ -282,30 +287,16 @@ def generate_dictionary_tables(df: pd.DataFrame) -> None:
         f.write("# Engineered Phenotype Dictionary\n\n")
         f.write(export_df.to_markdown(index=False))
             
-    # --- LaTeX ---
-    tex_path = OUTPUT_DIR / 'table_phenotype_dictionary.tex'
-    with open(tex_path, 'w', encoding='utf-8') as f:
-        # Use pandas built-in latex generator
-        latex_str = export_df.to_latex(
-            index=False, 
-            longtable=True, 
-            caption="Engineered Phenotype Dictionary Mapping", 
-            label="tab:phenotype_dict", 
-            column_format=">{\\raggedright\\arraybackslash}p{2.5cm} >{\\raggedright\\arraybackslash}p{3.5cm} p{1.8cm} >{\\raggedright\\arraybackslash}p{7.0cm} >{\\raggedright\\arraybackslash}p{3.5cm}"
-        )
-        # Add required document structure and packages for standalone compilation
-        standalone_latex = f"""\\documentclass[10pt]{{article}}
-\\usepackage{{longtable}}
-\\usepackage{{booktabs}}
-\\usepackage{{array}}
-\\usepackage[letterpaper, landscape, margin=0.5in]{{geometry}}
-\\begin{{document}}
-
-{latex_str}
-
-\\end{{document}}"""
-        f.write(standalone_latex)
         
+    # --- HTML (for Google Docs) ---
+    save_manuscript_html(
+        export_df,
+        "Engineered Phenotype Dictionary Mapping",
+        "table_phenotype_dictionary",
+        OUTPUT_DIR
+    )
+    logging.info(f"Professional HTML table saved to {OUTPUT_DIR / 'table_phenotype_dictionary.html'}")
+    
     logging.info(f"Saved dictionary tables to {OUTPUT_DIR}")
 
 def main():

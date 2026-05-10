@@ -5,6 +5,11 @@ import pandas as pd
 import numpy as np
 
 
+# Add parent directory to path for utility imports
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from manuscript_table_utils import save_manuscript_html, TABLES_OUTPUT_DIR
+
 RENAME = {
   "analysis": "Comparison",
   "rule": "Archetype rule",
@@ -23,21 +28,61 @@ RENAME = {
 
 
 def infer_dataset_tag(path: Path) -> str:
-  for parent in [path.parent, path.parent.parent]:
-    if parent and parent.name:
-      if "readmission" in parent.name.lower():
-        return "readmission_30"
-      if parent.name.lower().startswith("h2_results"):
-        return "mortality"
+  path_str = str(path).lower()
+  if "readmission" in path_str:
+    return "readmission_30"
+  if "mortality" in path_str or "mort_hosp" in path_str:
+    return "mortality"
   return path.parent.name or "dataset"
 
 
-def pretty_analysis_key(key: str) -> str:
+_IVB_ANALYSIS_ORDER = [
+    "IVB_deaths_SM", "IVB_deaths_NM", "IVB_survivors_SM", "IVB_survivors_NM",
+]
+
+
+def _pretty_unknown_analysis_key(s: str) -> str:
+  """Avoid str.capitalize(), which turns 'IVB deaths NM' into 'Ivb deaths nm'."""
+  words = str(s).replace("_", " ").strip().split()
+  out = []
+  for w in words:
+    u = w.upper()
+    if u == "IVB":
+      out.append("IVB")
+    elif u in ("SM", "NM", "FP", "FN"):
+      out.append(u)
+    elif w:
+      out.append(w[0].upper() + w[1:].lower())
+  return " ".join(out)
+
+
+def pretty_analysis_key(key: str, dataset: str = "") -> str:
   s = str(key or "").strip()
   sl = s.lower()
+  ds = str(dataset or "").lower()
+  is_readm = "readmission" in ds
+
+  if sl.startswith("ivb_"):
+    if is_readm:
+      ivb = {
+          "ivb_survivors_sm": "Non-readmitted discordance — SM correct (NM false positive)",
+          "ivb_survivors_nm": "Non-readmitted discordance — NM correct (SM false positive)",
+          "ivb_deaths_sm": "Readmitted discordance — SM correct (NM miss)",
+          "ivb_deaths_nm": "Readmitted discordance — NM correct (SM miss)",
+      }
+    else:
+      ivb = {
+          "ivb_survivors_sm": "Survivors discordance — SM correct (NM false positive)",
+          "ivb_survivors_nm": "Survivors discordance — NM correct (SM false positive)",
+          "ivb_deaths_sm": "Deceased discordance — SM correct (NM miss)",
+          "ivb_deaths_nm": "Deceased discordance — NM correct (SM miss)",
+      }
+    if sl in ivb:
+      return ivb[sl]
+
   exact = {
-    "sm_false_alarm": "SM false alarms (FP)",
-    "nm_false_alarm": "NM false alarms (FP)",
+    "sm_false_alarm": "SM false positives (FP)",
+    "nm_false_alarm": "NM false positives (FP)",
     "sm_miss": "SM misses (FN)",
     "nm_miss": "NM misses (FN)",
     "sm_win": "SM advantage",
@@ -46,9 +91,9 @@ def pretty_analysis_key(key: str) -> str:
   if sl in exact:
     return exact[sl]
   if "false_alarm" in sl and "sm" in sl:
-    return "SM false alarms (FP)"
+    return "SM false positives (FP)"
   if "false_alarm" in sl and "nm" in sl:
-    return "NM false alarms (FP)"
+    return "NM false positives (FP)"
   if "miss" in sl and "sm" in sl:
     return "SM misses (FN)"
   if "miss" in sl and "nm" in sl:
@@ -61,7 +106,7 @@ def pretty_analysis_key(key: str) -> str:
     return "SM advantage—deceased"
   if "deceased" in sl and "nm" in sl:
     return "NM advantage—deceased"
-  return s.replace("_", " ").strip().capitalize()
+  return _pretty_unknown_analysis_key(s)
 
 
 # Human-readable names for variables and enumerated values (shared with archetype reports)
@@ -119,7 +164,12 @@ NAME_MAP = {
   "sirs_hr_criterion": "SIRS heart-rate criterion",
   "meets_sirs_criteria": "Meets SIRS criteria",
   "has_effusion_fluid_labs": "Effusion fluid labs",
-  "temporal_concentration": "Late-window temporal concentration",
+  "total_measurement_events": "Total measurement events",
+  "unique_feature_count": "Number of measured feature families",
+  "temporal_concentration": "Late-window measurement concentration",
+  "aggregate_stddev": "Average within-stay variability",
+  "aggregate_slope": "Average absolute trend magnitude",
+  "imputation_proportion": "Unmeasured feature-family proportion",
 }
 
 VALUE_MAP = {
@@ -141,13 +191,13 @@ def beautify_var_name(name: str) -> str:
 
 def pretty_condition(expr: str) -> str:
   expr = str(expr or "").strip()
-  m = re.match(r"^([A-Za-z0-9_]+)\s*:\s*([\[\(])\s*([^:]+)\s*:\s*([^\]\)]+)\s*([\]\)])$", expr)
+  # Regex for intervals like feat: [a:b[ or feat: [a:b]
+  m = re.match(r"^([A-Za-z0-9_]+)\s*:\s*([\[\(])\s*([^:]+)\s*:\s*([^\]\)|\[]+)\s*([\]\)|\[])$", expr)
   if m:
     var, lbr, a, b, rbr = m.groups()
     name = beautify_var_name(var)
-    lb = ">=" if lbr == "[" else ">"
-    rb = "<=" if rbr == "]" else "<"
-    return f"{name} in {lb} {a}, {rb} {b}"
+    # Always use closed brackets for manuscript [a:b]
+    return f"{name}: [{a}:{b}]"
 
   m = re.match(r"^([A-Za-z0-9_]+)\s*==\s*'([^']+)'\s*$", expr)
   if m:
@@ -238,27 +288,49 @@ def save_meta_table(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int):
   if not cols:
     return
 
-  tidy = df[cols].copy().rename(columns=RENAME)
-  # Pretty comparison label
+  is_comparative = "ivb" in tag.lower()
+  mode_prefix = "Comparative" if is_comparative else "Independent"
+
+  tidy = df[cols].copy()
+  ak_raw = tidy["analysis"].astype(str).copy() if "analysis" in tidy.columns else None
+  tidy = tidy.rename(columns=RENAME)
+
+  dataset_hint = (
+      str(df["dataset"].iloc[0])
+      if "dataset" in df.columns and len(df)
+      else tag.split("_")[0]
+  )
+
   if "Comparison" in tidy.columns:
-    tidy["Comparison_pretty"] = tidy["Comparison"].astype(str).map(pretty_analysis_key)
+    tidy["Comparison_pretty"] = tidy["Comparison"].astype(str).map(
+        lambda k: pretty_analysis_key(k, dataset_hint)
+    )
   else:
     tidy["Comparison_pretty"] = ""
 
-  # Sort by family q-value, then p-value, then |effect|
-  sort_cols = [c for c in ["q_family (per-family BH-FDR)", "p", "Effect"] if c in tidy.columns]
-  sort_asc = [True, True, False][: len(sort_cols)]
+  def _ivb_panel_rank(ak: str) -> int:
+    a = str(ak).strip()
+    for i, ref in enumerate(_IVB_ANALYSIS_ORDER):
+      if a.lower() == ref.lower():
+        return i
+    return 50
+
+  tidy["_panel_order"] = (
+      ak_raw.map(_ivb_panel_rank) if ak_raw is not None else pd.Series(50, index=tidy.index)
+  )
+
+  sort_cols = [
+      c for c in [
+          "_panel_order",
+          "Comparison_pretty",
+          "q_family (per-family BH-FDR)",
+          "p",
+          "Effect",
+      ]
+      if c in tidy.columns
+  ]
+  sort_asc = [False if c == "Effect" else True for c in sort_cols]
   tidy = tidy.sort_values(sort_cols, ascending=sort_asc).head(top_k)
-
-  # Output path
-  out_dir.mkdir(parents=True, exist_ok=True)
-  tex_path = out_dir / f"top_meta_{tag}.tex"
-
-  # Prepare prettified rule text for grouping
-  rule_col = "Archetype rule" if "Archetype rule" in tidy.columns else ("Rule" if "Rule" in tidy.columns else None)
-  tidy["Rule_pretty"] = ""
-  if rule_col:
-    tidy["Rule_pretty"] = tidy[rule_col].astype(str).map(lambda s: "; ".join(pretty_rule(s)) if isinstance(s, str) and s else "")
 
   # Prettify simple categorical/value columns for readability
   def pretty_direction(val: str) -> str:
@@ -270,84 +342,40 @@ def save_meta_table(df: pd.DataFrame, out_dir: Path, tag: str, top_k: int):
   tidy["Direction_pretty"] = tidy.get("Direction", pd.Series("", index=tidy.index)).astype(str).map(pretty_direction)
   tidy["Family_pretty"] = tidy.get("Family", pd.Series("", index=tidy.index)).astype(str).map(lambda x: beautify_var_name(x))
   tidy["Meta_pretty"] = tidy.get("Meta-feature", pd.Series("", index=tidy.index)).astype(str).map(lambda x: beautify_var_name(x))
+  tidy["Rule_pretty"] = tidy.get("Archetype rule", pd.Series("", index=tidy.index)).astype(str).map(lambda s: "; ".join(pretty_rule(s)) if isinstance(s, str) and s else "")
 
-  # LaTeX headers and formatting (omit Rule column; we will group by it)
-  headers = [
-    ("Comparison", "l"),
-    ("Meta-feature", "l"),
-    ("Feature family", "l"),
-    ("Direction of difference", "l"),
-    ("Median (error)", "r"),
-    ("Median (success)", "r"),
-    ("Effect size", "r"),
-    ("p-value", "r"),
-    ("q (per-family BH-FDR)", "r"),
-    ("n (error)", "r"),
-    ("n (success)", "r"),
-  ]
+  # Prepare content for save_manuscript_html
+  report_rows = []
+  for _, r in tidy.iterrows():
+    report_rows.append({
+        "Comparison": r.get("Comparison_pretty", r.get("Comparison", "")),
+        "Archetype": r.get("Rule_pretty", ""),
+        "Meta-feature": r.get("Meta_pretty", ""),
+        "Family": r.get("Family_pretty", ""),
+        "Direction": r.get("Direction_pretty", ""),
+        "Median (error)": r.get("Median (error)", np.nan),
+        "Median (success)": r.get("Median (success)", np.nan),
+        "Effect": r.get("Effect", np.nan),
+        "q-value": r.get("q_family (per-family BH-FDR)", np.nan)
+    })
 
-  def fmt_num(x, feat_name="", nd=3):
-    if pd.isna(x):
-      return "-"
-    val = float(x)
-    # For clinical counts, round to the nearest integer to avoid confusing medians (e.g. 10.5)
-    if any(k in str(feat_name).lower() for k in ["count", "event"]):
-      return f"{int(round(val)):,}"
-    return f"{val:.{nd}f}"
+  if not report_rows:
+    return
 
-  def fmt_q(x):
-    if pd.isna(x):
-      return "-"
-    try:
-      xv = float(x)
-      return f"{xv:.2e}" if xv < 1e-3 else f"{xv:.3f}"
-    except Exception:
-      return latex_escape(str(x))
-
-  rows = []
-  # Preserve group order based on first appearance in the sorted, truncated data
-  rule_order = list(dict.fromkeys(tidy.get("Rule_pretty", pd.Series([""] * len(tidy))).tolist()))
-  for grp in rule_order:
-    grp_label = latex_escape(grp) if grp else "Unspecified"
-    rows.append([fr"\multicolumn{{{len(headers)}}}{{l}}{{\textbf{{Rule: {grp_label}}}}}}}"])
-    for _, r in tidy.loc[tidy["Rule_pretty"] == grp].iterrows():
-      comparison = latex_escape(r.get("Comparison_pretty", r.get("Comparison", "")))
-      feat = latex_escape(r.get("Meta_pretty", r.get("Meta-feature", r.get("meta_feature", ""))))
-      fam = latex_escape(r.get("Family_pretty", r.get("Family", r.get("family", ""))))
-      direction = latex_escape(r.get("Direction_pretty", r.get("Direction", r.get("direction", ""))))
-      med_err = fmt_num(r.get("Median (error)", r.get("median_subgroup_error", np.nan)), feat_name=feat)
-      med_suc = fmt_num(r.get("Median (success)", r.get("median_concordant_success", np.nan)), feat_name=feat)
-      effect = fmt_num(r.get("Effect", r.get("effect_size", np.nan)), feat_name=feat)
-      pval = fmt_q(r.get("p", r.get("p_value", np.nan)))
-      qf = fmt_q(r.get("q_family (per-family BH-FDR)", r.get("q_value_family", np.nan)))
-      nerr = "-" if pd.isna(r.get("n_err")) else f"{int(r.get('n_err', 0)):,}"
-      nsuc = "-" if pd.isna(r.get("n_suc")) else f"{int(r.get('n_suc', 0)):,}"
-      rows.append([comparison, feat, fam, direction, med_err, med_suc, effect, pval, qf, nerr, nsuc])
-
-  col_spec = "@{}" + "".join(col for _, col in headers) + "@{}"
-  header_line = " & ".join(latex_escape(h) for h, _ in headers) + r" \\" 
-
-  body_lines = [" & ".join(map(str, row)) + r" \\" for row in rows]
-
-  content = []
-  content.append(r"\documentclass[border=0pt]{standalone}")
-  content.append(r"\usepackage{booktabs}")
-  content.append(r"\usepackage[T1]{fontenc}")
-  content.append(r"\usepackage[utf8]{inputenc}")
-  content.append(r"\usepackage{adjustbox}")
-  content.append(r"\begin{document}")
-  content.append(r"\begin{adjustbox}{width=\textwidth}")
-  content.append(fr"\begin{{tabular}}{{{col_spec}}}")
-  content.append(r"\toprule")
-  content.append(header_line)
-  content.append(r"\midrule")
-  content.extend(body_lines)
-  content.append(r"\bottomrule")
-  content.append(r"\end{tabular}")
-  content.append(r"\end{adjustbox}")
-  content.append(r"\end{document}")
-
-  tex_path.write_text("\n".join(content), encoding="utf-8")
+  res_df = pd.DataFrame(report_rows)
+  
+  dataset_name = tag.split('_')[0].capitalize()
+  title = f"Meta-Feature Analysis ({mode_prefix}): {dataset_name}"
+  filename = f"Table_N_{dataset_name}_{mode_prefix}_Meta_Analysis_{tag}"
+  
+  save_manuscript_html(
+      res_df,
+      title,
+      filename,
+      TABLES_OUTPUT_DIR,
+      table_number="N",
+      compact=True
+  )
 
 
 def discover_meta_csvs(root_dirs: list[str]) -> list[Path]:
