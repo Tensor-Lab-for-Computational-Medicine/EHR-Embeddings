@@ -15,16 +15,6 @@ Tracked in Git:
 - selected manuscript-ready outputs in `manuscript_outputs/`;
 - environment files and documentation.
 
-Not tracked by design:
-
-- `data/raw/`, `data/processed/`, and large or derived local data files;
-- `.env` and API credentials;
-- `Submission/`;
-- preprocessed pickles, model files, embedding vectors, Optuna studies, logs, and most generated CSV/JSON/NumPy/Pickle files;
-- `notebooks/Phase_5/embedding_model_results/`, even though Phase 5 and Phase 6 consume results from that local tree.
-
-The `.gitignore` is intentionally strict. If you regenerate a file and Git does not see it, that is usually expected.
-
 ## Environment
 
 Recommended setup:
