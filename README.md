@@ -57,7 +57,7 @@ Place or confirm the following files before running the full pipeline:
 | `notebooks/Phase_6/feature_engineering/feature_rules.csv` | Tracked phenotype rule dictionary used for Phase 6 archetype and phenotype analyses. |
 | `.env` or cloud auth environment | Google/Vertex credentials if regenerating hosted embeddings. |
 
-The raw MIMIC-Extract file, derived processed data, and credentials are local-only and ignored by Git. The lab reference ranges and phenotype rules are intentionally shared in this repository.
+The raw MIMIC-Extract file, derived processed data, and credentials must be acquired on physionet. 
 
 ## Path Conventions
 
