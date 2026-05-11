@@ -1,6 +1,7 @@
 # Project specific - Data, Cache and Logs (STRICT IGNORE)
-data/
+data/*
 !data/README.md
+!data/Lab_reference_ranges.csv
 cache/
 logs/
 manuscript_figures/
@@ -75,6 +76,8 @@ venv.bak/
 
 # Data files (STRICT IGNORE)
 *.csv
+!data/Lab_reference_ranges.csv
+!notebooks/Phase_6/feature_engineering/feature_rules.csv
 *.json
 *.xlsx
 *.xls

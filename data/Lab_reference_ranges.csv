@@ -1,0 +1,105 @@
+feature_name,Male Lower Bound,Male Upper Bound,Female Lower Bound,Female Upper Bound,Units,Notes/Context
+diastolic blood pressure_mean,60,80,60,80,mmHg,Normal is <120/<80. Population averages vary by age. Hypertension Stage 1 is defined at 80-89 mmHg. 2
+heart rate_mean,60,100,60,100,bpm,Resting rate is influenced by fitness; athletes may have rates as low as 40 bpm. Women's resting rates are often 5-10 bpm higher than men's. 3
+mean blood pressure_mean,70,100,70,100,mmHg,Also known as Mean Arterial Pressure (MAP). A value <60-65 mmHg raises concern for inadequate organ perfusion. 2
+oxygen saturation_mean,95,100,95,100,%,SpO2. Values may be lower in older adults or those with chronic lung disease. A value <92% requires urgent attention. 32
+respiratory rate_mean,12,18,12,18,breaths/min,Normal range for adults at rest. Can be slightly higher in older adults. 7
+systolic blood pressure_mean,90,120,90,120,mmHg,Normal is <120/<80. Population averages vary by age. Hypertension Stage 1 is defined at 130-139 mmHg. 2
+temperature_mean,36.1,37.2,36.1,37.2,°C,Average is ~97.9°F (36.6°C). Ranges vary by measurement site and time of day. 44
+fraction inspired oxygen_mean,N/A,N/A,N/A,N/A,%,"Therapeutic target. Set to achieve target oxygen saturation, ideally <60% to avoid toxicity. 51"
+fraction inspired oxygen set_mean,N/A,N/A,N/A,N/A,%,"Therapeutic target. Set to achieve target oxygen saturation, ideally <60% to avoid toxicity. 51"
+peak inspiratory pressure_mean,N/A,N/A,N/A,N/A,cmH2O,"Monitored value, not a set range. Influenced by airway resistance and lung compliance. 51"
+plateau pressure_mean,N/A,30,N/A,30,cmH2O,Therapeutic target. Goal is <30 cmH2O to prevent lung injury (barotrauma). 51
+positive end-expiratory pressure_mean,5,N/A,5,N/A,cmH2O,Therapeutic target. Typically set at ≥5 cmH2O to prevent alveolar collapse. 51
+positive end-expiratory pressure set_mean,5,N/A,5,N/A,cmH2O,Therapeutic target. Typically set at ≥5 cmH2O to prevent alveolar collapse. 51
+respiratory rate set_mean,12,20,12,20,breaths/min,Therapeutic target. May be increased up to 35 to maintain adequate ventilation with low tidal volumes. 51
+tidal volume observed_mean,N/A,N/A,N/A,N/A,mL/kg IBW,Monitored value. Corresponds to the set tidal volume.
+tidal volume set_mean,4,8,4,8,mL/kg IBW,Therapeutic target based on Ideal Body Weight (IBW) for lung protection. 51
+tidal volume spontaneous_mean,N/A,N/A,N/A,N/A,mL/kg IBW,Monitored value. Volume of patient-triggered breaths.
+cardiac index_mean,2.5,4,2.5,4,L/min/m²,Cardiac output indexed to body surface area. 28
+cardiac output thermodilution_mean,4,8,4,8,L/min,"Thermodilution (TD) is a common measurement method, often preferred over estimated Fick. 28"
+cardiac output fick_mean,4,8,4,8,L/min,Fick method is another way to measure cardiac output. Direct Fick is the gold standard but rarely used. Estimated Fick has limitations. 54
+central venous pressure_mean,2,6,2,6,mmHg,Some sources cite 0-8 mmHg. Reflects right ventricular preload. 28
+glascow coma scale total_mean,N/A,N/A,N/A,N/A,Points (3-15),Clinical scoring system. A score ≤8 indicates severe impairment. Not a lab value. 60
+pulmonary artery pressure mean_mean,10,20,10,20,mmHg,Mean Pulmonary Artery Pressure (MPAP). Reflects right ventricular afterload. 28
+pulmonary artery pressure systolic_mean,15,25,15,25,mmHg,Pulmonary Artery Systolic Pressure (PASP). 28
+pulmonary capillary wedge pressure_mean,6,12,6,12,mmHg,Also known as PCWP or PAWP. Reflects left ventricular preload. 28
+systemic vascular resistance_mean,800,1200,800,1200,dynes·sec/cm⁵,A measure of left ventricular afterload. 28
+anion gap_mean,4,12,4,12,mmol/L,Calculated value ([Na+]−([Cl−]+[HCO3−​])). Should be corrected for low albumin. 63
+bicarbonate_mean,22,29,22,29,mmol/L,Also reported as CO2. Venous/serum value. Primary metabolic buffer. 68
+co2_mean,22,29,22,29,mmol/L,Refers to serum bicarbonate in a metabolic panel. 68
+"""co2 (etco2, pco2, etc.)_mean""",35,45,35,45,mmHg,"This typically refers to End-Tidal CO2 (EtCO2), which approximates arterial PCO2 in healthy individuals. 75"
+lactate_mean,0.5,1,0.5,1,mmol/L,Resting venous level. Levels >4 mmol/L define lactic acidosis. 81
+lactic acid_mean,0.5,1,0.5,1,mmol/L,Same as lactate. Resting venous level. Levels >4 mmol/L define lactic acidosis. 81
+partial pressure of carbon dioxide_mean,35,45,35,45,mmHg,Arterial PCO2 (PaCO2). Primary indicator of alveolar ventilation. 28
+partial pressure of oxygen_mean,80,100,80,100,mmHg,Arterial PO2 (PaO2). Measures oxygen dissolved in arterial blood. 28
+ph_mean,7.35,7.45,7.35,7.45,-,Arterial pH. A measure of blood acidity. 28
+venous pvo2_mean,35,40,35,40,mmHg,Mixed Venous pO2. Reflects overall balance of oxygen delivery and tissue consumption. 84
+blood urea nitrogen_mean,8,24,6,21,mg/dL,BUN. Waste product of protein metabolism cleared by kidneys. 68
+calcium_mean,8.5,10.5,8.5,10.5,mg/dL,Total Calcium. Must be interpreted in the context of albumin levels. 68
+calcium ionized_mean,4.6,5.3,4.6,5.3,mg/dL,Measures the physiologically active form of calcium; preferred in critically ill patients. 68
+creatinine_mean,0.74,1.35,0.59,1.04,mg/dL,Waste product of muscle metabolism; more specific marker of kidney function than BUN. 68
+glucose_mean,70,100,70,100,mg/dL,Fasting glucose. Primary energy source for cells. 68
+potassium_mean,3.6,5.2,3.6,5.2,mEq/L,"Major intracellular cation, critical for cardiac function. 68"
+potassium serum_mean,3.6,5.2,3.6,5.2,mEq/L,Same as Potassium. 68
+sodium_mean,135,145,135,145,mEq/L,"Major extracellular cation, critical for fluid balance. 68"
+chloride_mean,98,107,98,107,mEq/L,Major extracellular anion. 68
+hematocrit_mean,41,53,36,46,%,Hct. Percentage of blood volume occupied by red blood cells. 68
+hemoglobin_mean,13.5,17.5,12,16,g/dL,Hgb. Oxygen-carrying protein in red blood cells. 68
+platelets_mean,150,400,150,400,x 10⁹/L,Cells responsible for blood clotting. 68
+red blood cell count_mean,4.3,5.9,3.5,5.5,x 10¹²/L,RBC. Count of red blood cells. 68
+white blood cell count_mean,4,11,4,11,x 10⁹/L,WBC. Total count of all white blood cells. 68
+fibrinogen_mean,200,400,200,400,mg/dL,Measures a key clotting protein. 94
+partial thromboplastin time_mean,25,35,25,35,seconds,PTT/aPTT. Measures intrinsic pathway. Lab-dependent. 68
+prothrombin time inr_mean,0.9,1.1,0.9,1.1,-,INR. Standardized ratio for non-anticoagulated patients. Therapeutic targets vary. 68
+prothrombin time pt_mean,10,13.5,10,13.5,seconds,PT. Measures extrinsic pathway. Lab-dependent; INR is the standardized value. 68
+alanine aminotransferase_mean,7,55,7,45,U/L,ALT. Liver enzyme. Some guidelines suggest stricter upper limits for higher sensitivity. 68
+albumin_mean,3.5,5,3.5,5,g/dL,"Main protein in plasma, synthesized by the liver. 68"
+alkaline phosphate_mean,40,129,35,104,U/L,ALP. Liver and bone enzyme. 68
+asparate aminotransferase_mean,8,48,8,43,U/L,AST. Liver and muscle enzyme. 68
+bilirubin_mean,0.1,1.2,0.1,1.2,mg/dL,"Total Bilirubin. Product of heme breakdown, processed by the liver. 68"
+cholesterol_mean,N/A,200,N/A,200,mg/dL,Total Cholesterol. Desirable target for cardiovascular risk reduction. 68
+cholesterol hdl_mean,40,N/A,50,N/A,mg/dL,"""Good"" cholesterol. Higher levels (>60) are protective. 68"
+cholesterol ldl_mean,N/A,100,N/A,100,mg/dL,"""Bad"" cholesterol. Optimal target. Lower targets (<70) for high-risk patients. 68"
+lactate dehydrogenase_mean,100,225,100,225,U/L,LDH. Non-specific marker of tissue damage. 68
+magnesium_mean,1.7,2.2,1.7,2.2,mg/dL,Essential mineral and enzyme cofactor. 68
+phosphate_mean,2.5,4.5,2.5,4.5,mg/dL,Also known as Phosphorous. Essential for bone health and cellular energy. 68
+phosphorous_mean,2.5,4.5,2.5,4.5,mg/dL,Same as Phosphate. 68
+total protein_mean,6.3,7.9,6.3,7.9,g/dL,Measures the total amount of protein in the blood. 68
+troponin-i_mean,N/A,0.04,N/A,0.04,ng/mL,"Conventional assay. High-sensitivity assays have different, lower cutoffs. 4"
+troponin-t_mean,N/A,0.01,N/A,0.01,ng/mL,"Conventional assay. High-sensitivity assays have different, lower cutoffs. 4"
+basophils_mean,0,0.2,0,0.2,x 10⁹/L,Absolute count. More clinically relevant than percentage. 90
+eosinophils_mean,0,0.5,0,0.5,x 10⁹/L,Absolute count. More clinically relevant than percentage. 90
+lymphocytes_mean,1,4.8,1,4.8,x 10⁹/L,Absolute count. More clinically relevant than percentage. 90
+lymphocytes percent_mean,N/A,N/A,N/A,N/A,%,Absolute lymphocyte count is the clinically preferred metric.
+mean corpuscular hemoglobin_mean,26,34,26,34,pg,MCH. Average amount of hemoglobin per red blood cell. 68
+mean corpuscular hemoglobin concentration_mean,31,36,31,36,g/dL,MCHC. Average concentration of hemoglobin inside a red blood cell. 68
+mean corpuscular volume_mean,80,100,80,100,fL,MCV. Average size of red blood cells. 68
+monocytes_mean,0.1,0.8,0.1,0.8,x 10⁹/L,Absolute count. More clinically relevant than percentage. 90
+neutrophils_mean,1.8,7.7,1.8,7.7,x 10⁹/L,Absolute count. More clinically relevant than percentage. 90
+albumin ascites_mean,N/A,N/A,N/A,N/A,g/dL,"Not a ""normal"" value. Used to calculate Serum-Ascites Albumin Gradient (SAAG) to determine cause of effusion. 121"
+albumin pleural_mean,N/A,N/A,N/A,N/A,g/dL,"Not a ""normal"" value. Used in Light's Criteria to classify pleural effusions. 124"
+albumin urine_mean,N/A,17,N/A,25,mg/g,Albumin-to-Creatinine Ratio (ACR). A general cutoff of <30 mg/g is considered normal. 67
+calcium urine_mean,N/A,250,N/A,200,mg/24h,24-hour collection. Clinical cutoffs for kidney stone risk; highly diet-dependent. 67
+chloride urine_mean,110,250,110,250,mEq/24h,24-hour collection. Reflects dietary intake and volume status. 67
+creatinine ascites_mean,N/A,N/A,N/A,N/A,mg/dL,Not normally present. High levels can indicate bladder perforation. 122
+creatinine body fluid_mean,N/A,N/A,N/A,N/A,mg/dL,"Term is too generic. Reference range depends on the specific body fluid (e.g., pleural, ascitic)."
+creatinine pleural_mean,N/A,N/A,N/A,N/A,mg/dL,Not a standard test for pleural fluid analysis.
+creatinine urine_mean,7.1,17.7,5.3,15.9,mmol/24h,24-hour collection. Reflects muscle mass and kidney function. 67
+height_mean,N/A,N/A,N/A,N/A,cm,"Anthropometric measurement. Used to calculate BMI, BSA, and Ideal Body Weight (IBW)."
+lactate dehydrogenase pleural_mean,N/A,N/A,N/A,N/A,IU/L,"Not a ""normal"" value. Used in Light's Criteria. Transudates typically have LDH <200 IU/L. 124"
+lymphocytes ascites_mean,N/A,N/A,N/A,N/A,cells/µL,"Not a ""normal"" value. Predominance helps determine the cause of the effusion. 121"
+lymphocytes atypical_mean,0,2,0,2,% of lymphocytes,Also called reactive lymphocytes. Presence of >10-20% is a classic finding in viral infections like mononucleosis. 142
+lymphocytes atypical csl_mean,0,2,0,2,% of lymphocytes,Same as Atypical Lymphocytes. CSL is likely a lab-specific term. 142
+lymphocytes body fluid_mean,N/A,N/A,N/A,N/A,cells/µL,"Term is too generic. Reference range depends on the specific body fluid (e.g., CSF, pleural)."
+lymphocytes pleural_mean,N/A,N/A,N/A,N/A,cells/µL,"Not a ""normal"" value. Predominance helps determine the cause of the effusion (e.g., TB, malignancy). 124"
+monocytes csl_mean,0.1,0.8,0.1,0.8,x 10⁹/L,Same as Monocytes (absolute). CSL is likely a lab-specific term. 90
+post void residual_mean,N/A,50,N/A,50,mL,PVR. Volume of urine remaining in the bladder after urination. >100-200 mL is considered abnormal. 150
+red blood cell count csf_mean,0,5,0,5,/µL,Cerebrospinal Fluid. Normally acellular. 152
+red blood cell count ascites_mean,N/A,N/A,N/A,N/A,cells/µL,"Normally absent. A count >10,000 cells/µL is considered hemorrhagic. 122"
+red blood cell count pleural_mean,N/A,N/A,N/A,N/A,cells/µL,"Normally absent. A count >100,000 cells/µL suggests hemothorax. 124"
+red blood cell count urine_mean,0,5,0,5,/hpf,Number of red blood cells per high-power field in microscopic analysis. 86
+total protein urine_mean,N/A,0.2,N/A,0.2,g/24h,24-hour collection. Measures total protein excreted over 24 hours. 67
+weight_mean,N/A,N/A,N/A,N/A,kg,Anthropometric measurement. Used to calculate BMI and BSA.
+white blood cell count urine_mean,0,5,0,5,/hpf,Number of white blood cells per high-power field in microscopic analysis. 86
+ph urine_mean,4.5,8,4.5,8,-,Measures the acidity or alkalinity of urine. 68

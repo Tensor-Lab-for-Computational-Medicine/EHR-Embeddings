@@ -11,12 +11,14 @@ Tracked in Git:
 - code for Phases 1-6 under `notebooks/`;
 - the current DeLong statistical analysis script in `notebooks/Phase_5/delong_statistical_analysis.py`;
 - phenotype rules in `notebooks/Phase_6/feature_engineering/feature_rules.csv`;
+- data staging notes in `data/README.md`;
+- lab reference ranges in `data/Lab_reference_ranges.csv`;
 - selected manuscript-ready outputs in `manuscript_outputs/`;
 - environment files and documentation.
 
 Not tracked by design:
 
-- `data/raw/`, `data/processed/`, and local data files such as `data/Lab_reference_ranges.csv`;
+- `data/raw/`, `data/processed/`, and large or derived local data files;
 - `.env` and API credentials;
 - `Submission/`;
 - preprocessed pickles, model files, embedding vectors, Optuna studies, logs, and most generated CSV/JSON/NumPy/Pickle files;
@@ -45,16 +47,17 @@ Run commands from the repository root unless a command explicitly changes direct
 
 ## Required Local Inputs
 
-Place the following local files before running the full pipeline:
+Place or confirm the following files before running the full pipeline:
 
 | Local path | Purpose |
 |---|---|
-| `data/raw/all_hourly_data.h5` | Main MIMIC-derived hourly EHR HDF5 input. |
-| `data/processed/eda_results_corrected/feature_classification.csv` | Feature category map used during Phase 1-2 feature engineering. |
-| `data/Lab_reference_ranges.csv` | Sex-specific reference ranges used by F2 text representation high/low/normal flags. |
+| `data/raw/all_hourly_data.h5` | Main MIMIC-Extract hourly EHR HDF5 input. Download/supply locally from the MIMIC-Extract release bucket: `https://console.cloud.google.com/storage/browser/mimic_extract;tab=objects?pli=1&prefix=&forceOnObjectsSortingFiltering=false`. The upstream extraction code is at `https://github.com/MLforHealth/MIMIC_Extract`. |
+| `data/processed/eda_results_corrected/feature_classification.csv` | Feature category map used during Phase 1-2 feature engineering. This derived helper file remains local unless explicitly released. |
+| `data/Lab_reference_ranges.csv` | Tracked sex-specific reference ranges used by F2 text representation high/low/normal flags. |
+| `notebooks/Phase_6/feature_engineering/feature_rules.csv` | Tracked phenotype rule dictionary used for Phase 6 archetype and phenotype analyses. |
 | `.env` or cloud auth environment | Google/Vertex credentials if regenerating hosted embeddings. |
 
-These files are local-only and ignored by Git.
+The raw MIMIC-Extract file, derived processed data, and credentials are local-only and ignored by Git. The lab reference ranges and phenotype rules are intentionally shared in this repository.
 
 ## Path Conventions
 
