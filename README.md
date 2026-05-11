@@ -1,105 +1,383 @@
 # Numeric versus Embedding Pipelines For Optimized Clinical Risk Prediction
 
-**Authors:** Aaron Ge<sup>1,2</sup>, Jialong Wu<sup>3</sup>, Xueyao Wu<sup>4</sup>, Jeya Balaji Balasubramanian<sup>4</sup>, Varun Nautiyal<sup>5</sup>, Rishi Jayakumar<sup>6</sup>, Chy Murali<sup>2</sup>, Angela Lee<sup>2</sup>, Andrew Nguyen<sup>2</sup>, Matthew Allen<sup>7</sup>, Chang Shu<sup>7</sup>, Clayton Brown<sup>1,2</sup>, Shuo Chen<sup>1,2</sup>, Katarina Zeder<sup>1,2</sup>, Jonas De Almeida<sup>4</sup>, Florence Doo<sup>1,2</sup>, Bradley A. Maron<sup>1,2</sup>*
+This repository contains the analysis code and selected manuscript exports for a clinical risk prediction study comparing structured numerical features with semantic embedding features derived from the same EHR data.
 
-**Affiliations:**
-1. University of Maryland-Institute of Health Computing, University of Maryland, School of Medicine, Baltimore, MD, USA
-2. University of Maryland, School of Medicine, Baltimore, MD, USA
-3. Department of Computer Science, Whiting School of Engineering, Johns Hopkins University, Baltimore, MD, USA
-4. Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Maryland, USA
-5. Department of Computer Science, College of Computer, Mathematical, and Natural Science, University of Maryland, College Park, MD, USA
-6. Department of Exercise and Nutrition Sciences, Milken Institute School of Public Health, George Washington University, Foggy Bottom, DC, USA
-7. University of California, San Francisco, School of Medicine, San Francisco, CA, USA
+The repository is designed for reproducibility of the manuscript workflow, but it intentionally does not version raw patient data, embedding arrays, fitted model artifacts, API credentials, or submission-package files. Those artifacts must be regenerated or supplied locally.
 
-*\*Corresponding author: Dr. Bradley A. Maron (BMaron@som.umaryland.edu)*
+## Reproducibility Scope
 
----
+Tracked in Git:
 
-## 📄 Abstract
+- code for Phases 1-6 under `notebooks/`;
+- the current DeLong statistical analysis script in `notebooks/Phase_5/delong_statistical_analysis.py`;
+- phenotype rules in `notebooks/Phase_6/feature_engineering/feature_rules.csv`;
+- selected manuscript-ready outputs in `manuscript_outputs/`;
+- environment files and documentation.
 
-**Background:** Clinical risk prediction models typically use structured numerical inputs such as lab values and their statistical summaries. Semantic text embeddings offer an alternative: structured data are written out as text and compressed into dense vectors by a foundation model. However, prior head-to-head comparisons of traditional machine learning (ML) and embedding-based clinical prediction models have focused primarily on aggregate metrics such as discrimination, calibration, and fairness. Systematic analyses focusing on model disagreement, differences in the basis for failure, and their respective utility for individual patient-level classification tasks is limited.
+Not tracked by design:
 
-**Methods:** We retrospectively analyzed 22,591 intensive care unit (ICU) patients from the MIMIC-III database and compared a **Numerical Model (NM)** trained on 458 structured features with a **Semantic Model (SM)** trained on semantic embeddings using the same XGBoost classifier for both. The models were tested across six prediction tasks: in-hospital mortality, 30-day readmission, mechanical ventilation, vasopressor initiation, and 3-day and 7-day ICU length of stay. We measured model discordance, used linear probes to quantify embedding encoding fidelity, SHAP analysis to characterize predictive features, subgroup discovery to identify clinical error archetypes across 53 phenotypes, and meta-feature analysis to examine whether errors were systematically linked to input data properties.
+- `data/raw/`, `data/processed/`, and local data files such as `data/Lab_reference_ranges.csv`;
+- `.env` and API credentials;
+- `Submission/`;
+- preprocessed pickles, model files, embedding vectors, Optuna studies, logs, and most generated CSV/JSON/NumPy/Pickle files;
+- `notebooks/Phase_5/embedding_model_results/`, even though Phase 5 and Phase 6 consume results from that local tree.
 
-**Results:** The NM outperformed SM for five acute outcomes including mortality (AUROC 0.901 vs. 0.835, p < 0.001); by contrast, the SM outperformed NM for readmission (0.662 vs. 0.590, p = 0.003). The models failed mostly on non-overlapping patients: 80.7% of mortality false positives and 87.6% of readmission false positives were unique to one model. The embedding preserved measurement frequencies at high fidelity (R² = 0.38 to 0.75) but poorly encoded clinically critical values, notably albumin (R² = 0.231 for mortality, 0.046 for readmission). SM errors concentrated in patients with coagulopathy, hypoalbuminemia, and inflammatory markers, and were consistently associated with high input data density and physiological volatility across all archetypes. NM errors concentrated in patients with creatinine elevation and synthetic hepatic dysfunction, where its acute-severity feature space could not distinguish reversible from irreversible organ dysfunction.
+The `.gitignore` is intentionally strict. If you regenerate a file and Git does not see it, that is usually expected.
 
-**Conclusions:** Feature representation determines not just aggregate accuracy but which patients a model fails on and why, which are insights otherwise invisible to traditional AUROC comparisons. The embedding's selective degradation of quantitative clinical variables produced predictable, coherent failure modes that were further amplified by input data density. This observation has direct implications for how embedding-based models should be evaluated before clinical deployment.
+## Environment
 
-**Keywords:** Electronic health records; Foundation models; Feature engineering; Clinical risk prediction; Intensive care unit; Model discordance; Subgroup analysis.
+Recommended setup:
 
----
-
-## 🛠️ Project Structure & Reproduction
-
-This repository contains the code necessary to reproduce the findings of the study. The pipeline is divided into **six sequential phases**.
-
-### 📁 Directory Layout
-
-| Path | Description |
-|------|-------------|
-| `notebooks/Phase_1-2` | Tabular preprocessing and Numerical Model (NM) baseline training. |
-| `notebooks/Phase_3` | Text dataset construction and semantic embedding generation (Vertex/Gemini). |
-| `notebooks/Phase_4` | Supervised training and supervised analysis of the Semantic Model (SM). |
-| `notebooks/Phase_5` | Model comparison, hyperparameter tuning, and champion model selection. |
-| `notebooks/Phase_6` | Analysis of discordance, archetyping, and meta-feature characterization. |
-| `manuscript_figures/` | Publication-ready figures and LaTeX tables generated by the pipeline. |
-| `data/` | Data staging (MIMIC-III). See `data/README.md` for requirements. |
-| `docs/` | Detailed technical layouts and reproducibility documentation. |
-
----
-
-## 🚀 Getting Started
-
-### 1. Environment Setup
-
-The study was conducted using **Python 3.7.16** and a pinned scientific stack to ensure reproducibility.
-
-**Option A: Conda (Recommended)**
 ```bash
 conda env create -f environment.yml
 conda activate mimic_legacy
 ```
 
-**Option B: Pip**
+Fallback:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Data Access
-This project uses the **MIMIC-III v1.4** database. Users must have credentialed access via [PhysioNet](https://physionet.org/).
-- Place raw data (e.g., `all_hourly_data.h5`) in `data/raw/`.
-- Refer to `data/README.md` for details on expected files and structure.
+The checked environment is centered on Python `3.7.16`, XGBoost `1.6.2`, scikit-learn `1.0.2`, NumPy `1.21.6`, SciPy `1.7.3`, and pandas-compatible legacy code.
 
-### 3. API Configuration
-Semantic embeddings were generated using Google Gemini/Vertex AI.
-- Create a `.env` file in the root directory.
-- Add your API credentials:
-  ```env
-  GOOGLE_API_KEY=your_actual_api_key_here
-  ```
+Run commands from the repository root unless a command explicitly changes directories.
 
----
+## Required Local Inputs
 
-## 📊 Analysis Pipeline
+Place the following local files before running the full pipeline:
 
-To reproduce the study results, follow the phases in order:
+| Local path | Purpose |
+|---|---|
+| `data/raw/all_hourly_data.h5` | Main MIMIC-derived hourly EHR HDF5 input. |
+| `data/processed/eda_results_corrected/feature_classification.csv` | Feature category map used during Phase 1-2 feature engineering. |
+| `data/Lab_reference_ranges.csv` | Sex-specific reference ranges used by F2 text representation high/low/normal flags. |
+| `.env` or cloud auth environment | Google/Vertex credentials if regenerating hosted embeddings. |
 
-1.  **Preprocessing & NM Baselines**: Run scripts in `notebooks/Phase_1-2/` to generate `phase_1_outputs/`.
-2.  **Embedding Generation**: Execute `notebooks/Phase_3/` scripts to generate clinical text and fetch embeddings.
-3.  **SM Training**: Run Phase_4 configs (`config_embedding_analysis_*.py`) to train embedding-based models.
-4.  **Comparison**: Use Phase_5 notebooks to compare NM and SM performance across all tasks.
-5.  **Failure Analysis**: Run Phase_6 `h2a` (discordance) and `h2b` (archetyping) modules to characterize why and where models fail.
+These files are local-only and ignored by Git.
 
----
+## Path Conventions
 
-## 📜 Citation
+The tracked folder names use underscores:
 
-If you use this code or our findings in your research, please cite:
+- `notebooks/Phase_1-2`
+- `notebooks/Phase_3`
+- `notebooks/Phase_4`
+- `notebooks/Phase_5`
+- `notebooks/Phase_6`
 
-> Ge, A., Wu, J., Wu, X., et al. (2026). Numeric versus Embedding Pipelines For Optimized Clinical Risk Prediction. *Manuscript in Preparation*.
+Some older scripts/configs still contain historical paths with spaces, such as `notebooks/Phase 4` or `notebooks/Phase 5`. Before a clean rerun, confirm that any paths in the configs you are using point to the underscored folders above, or create local compatibility copies/junctions. The downstream manuscript and Phase 6 code currently expect the underscored layout.
 
----
+## Pipeline Overview
 
-## 🔒 Privacy & Security
+| Phase | Role | Main tracked entry points | Main local outputs |
+|---|---|---|---|
+| Phase 1-2 | Cohort preprocessing, subject-level splits, tabular features, numerical baselines. | `data_preprocessing_LOS.py`, `xgboost_analysis.py`, `elastic_net_analysis.py` | `notebooks/Phase_1-2/phase_1_outputs/` |
+| Phase 3 | Text representations and task label CSVs. | `create_text_dataset.py`, `text_generator.py`, `config.py` | `notebooks/Phase_3/phase_3_serialized_data/` |
+| Phase 4 | XGBoost on embedding arrays; manuscript figures; probe/SHAP analyses. | `xgboost_embedding_analysis.py`, `config_embedding_analysis_*.py`, `generate_manuscript_figure3.py`, `map_clinical_to_embeddings_combined.py` | embedding folders under Phase 4; model results under Phase 5 |
+| Phase 5 | DeLong statistical comparison only. | `delong_statistical_analysis.py` | `notebooks/Phase_5/statistical_analysis_output/` |
+| Phase 6 | H2a/H2b discordance, archetypes, phenotypes, and meta-feature analyses. | `run_exploration.bat`, `h2a/`, `h2b/`, `feature_engineering/` | ignored H2 result folders; selected exports to `manuscript_outputs/` |
 
-**Important**: This repository does NOT contain patient data. Users are responsible for complying with HIPAA regulations and the PhysioNet Data Use Agreement when working with MIMIC-III data. Ensure all PHI is removed or appropriately de-identified before using external embedding APIs.
+## Step 1: Preprocess Tabular Data
+
+Run preprocessing after local data inputs are in place. This invocation writes the fixed filenames expected by the newer downstream scripts:
+
+```powershell
+@'
+import sys
+sys.path.insert(0, r"notebooks\Phase_1-2")
+import data_preprocessing_LOS
+
+data_preprocessing_LOS.main({
+    "OUTPUT_DIR": r"notebooks\Phase_1-2\phase_1_outputs",
+    "USE_PREFIXED_FILENAMES": False,
+})
+'@ | python -
+```
+
+This creates subject-level train, validation, and test splits. The split is generated by the project code, not by an external predefined benchmark:
+
+- split unit: `subject_id`;
+- test fraction: `25%`;
+- validation fraction: `12.5%` of the train+validation pool;
+- stratification target: `mort_hosp`;
+- seed: `42`;
+- saved ICU stay ID files: `icustay_ids_train.pkl`, `icustay_ids_val.pkl`, `icustay_ids_test.pkl`.
+
+Expected local outputs:
+
+```text
+notebooks/Phase_1-2/phase_1_outputs/
+  X_train.pkl
+  X_val.pkl
+  X_test.pkl
+  y_train.pkl
+  y_val.pkl
+  y_test.pkl
+  scaler.pkl
+  label_encoders.pkl
+  imputation_values.pkl
+  icustay_ids_train.pkl
+  icustay_ids_val.pkl
+  icustay_ids_test.pkl
+```
+
+Create compatibility copies with the historical prefix used by the Phase 3 text serializer:
+
+```powershell
+@'
+from pathlib import Path
+import shutil
+
+out = Path(r"notebooks\Phase_1-2\phase_1_outputs")
+prefix = "preprocessed_mort_hosp_los_3_los_7_readmission_30_intervention_vent_intervention_vaso_trends_True_window_24_gap_6_seed_42"
+names = [
+    "X_train", "X_val", "X_test",
+    "y_train", "y_val", "y_test",
+    "scaler", "label_encoders", "imputation_values",
+    "icustay_ids_train", "icustay_ids_val", "icustay_ids_test",
+]
+
+for name in names:
+    fixed = out / f"{name}.pkl"
+    prefixed = out / f"{prefix}_{name}.pkl"
+    if fixed.exists() and not prefixed.exists():
+        shutil.copy2(fixed, prefixed)
+    elif prefixed.exists() and not fixed.exists():
+        shutil.copy2(prefixed, fixed)
+'@ | python -
+```
+
+After this step, both fixed names and prefixed names should exist. They should refer to the same deterministic split because both conventions are derived from the same Phase 1-2 preprocessing run.
+
+## Step 2: Train Numerical Baselines
+
+The baseline scripts are parameterized through their `Config` classes. To reproduce all six tasks, call `main(config_dict=...)` for each target.
+
+Example XGBoost sweep:
+
+```powershell
+@'
+import sys
+sys.path.insert(0, r"notebooks\Phase_1-2")
+import xgboost_analysis
+
+targets = [
+    "mort_hosp",
+    "los_3",
+    "los_7",
+    "readmission_30",
+    "intervention_vent",
+    "intervention_vaso",
+]
+
+for target in targets:
+    xgboost_analysis.main({
+        "TARGET_VARIABLE": target,
+        "INPUT_DIR": r"notebooks\Phase_1-2\phase_1_outputs",
+        "CALIBRATION_ENABLED": True,
+        "CALIBRATION_METHOD": "isotonic",
+    })
+'@ | python -
+```
+
+Example ElasticNet sweep:
+
+```powershell
+@'
+import sys
+sys.path.insert(0, r"notebooks\Phase_1-2")
+import elastic_net_analysis
+
+targets = [
+    "mort_hosp",
+    "los_3",
+    "los_7",
+    "readmission_30",
+    "intervention_vent",
+    "intervention_vaso",
+]
+
+for target in targets:
+    elastic_net_analysis.main({
+        "TARGET_VARIABLE": target,
+        "INPUT_DIR": r"notebooks\Phase_1-2\phase_1_outputs",
+    })
+'@ | python -
+```
+
+Expected per-task outputs are written under:
+
+```text
+notebooks/Phase_1-2/phase_1_outputs/<target>/
+```
+
+## Step 3: Generate Text Representations
+
+Confirm `data/Lab_reference_ranges.csv` exists, then run:
+
+```powershell
+python notebooks\Phase_3\create_text_dataset.py
+```
+
+Expected local outputs:
+
+```text
+notebooks/Phase_3/phase_3_serialized_data/
+  <target>_train_labels.csv
+  <target>_val_labels.csv
+  <target>_test_labels.csv
+  F1_P0/train/*.txt
+  ...
+  F3_P5/test/*.txt
+```
+
+The F2 representation uses `data/Lab_reference_ranges.csv` for sex-specific high/low/normal flags.
+
+## Step 4: Generate Embeddings
+
+Embedding-generation scripts and batch/API helpers are local/generated in this project and may be ignored. Regenerate or supply embeddings so that Phase 4 configs can find `.npy` arrays in their expected local directories.
+
+Models evaluated in the manuscript result tree include:
+
+- `embedding-001`;
+- `text-embedding-004`;
+- `text-embedding-005`;
+- `text-embedding-large-exp-03-07`;
+- `MedEmbed-small`;
+- `NeuML_pubmedbert-base-embeddings`.
+
+Embedding arrays are not L2-normalized before XGBoost in the tracked training code.
+
+## Step 5: Train Semantic Models
+
+Run `notebooks/Phase_4/xgboost_embedding_analysis.py` using the desired config import at the top of that file. The script currently runs one embedding-config/target combination at a time.
+
+Before running, confirm the imported config in `xgboost_embedding_analysis.py`, for example:
+
+```python
+from config_embedding_analysis_text_embedding_005 import Config
+```
+
+Then:
+
+```powershell
+python notebooks\Phase_4\xgboost_embedding_analysis.py
+```
+
+Expected local outputs:
+
+```text
+notebooks/Phase_5/embedding_model_results/<embedding_model>/<target>/
+  model_<arm>.pkl
+  model_<arm>_calibrated.pkl
+  results_<arm>.pkl
+  optuna_study_*.pkl
+  embedding_analysis_log.txt
+```
+
+That whole result tree is ignored by Git. Phase 5 and Phase 6 require it to exist locally.
+
+Champion semantic arms referenced by later analyses:
+
+| Task | Champion arm | Embedding model |
+|---|---|---|
+| `mort_hosp` | `F3_P5` | `text-embedding-004` |
+| `readmission_30` | `F1_P0` | `text-embedding-005` |
+| `los_3` | `F3_P1` | `text-embedding-004` |
+| `los_7` | `F3_P2` | `text-embedding-005` |
+| `intervention_vent` | `F3_P0` | `text-embedding-004` |
+| `intervention_vaso` | `F3_P2` | `text-embedding-004` |
+
+## Step 6: Run DeLong Statistical Comparisons
+
+Phase 5 currently contains only the DeLong comparison script. It consumes local ignored result files from:
+
+```text
+notebooks/Phase_5/embedding_model_results/
+```
+
+Run:
+
+```powershell
+python notebooks\Phase_5\delong_statistical_analysis.py
+```
+
+Expected local output:
+
+```text
+notebooks/Phase_5/statistical_analysis_output/
+```
+
+## Step 7: Run Discordance, Archetype, And Meta-Feature Analyses
+
+From the repository root, run the Phase 6 batch script. Edit `PYTHON_EXE` inside `run_exploration.bat` first if your conda environment path differs from the local path in the file.
+
+```powershell
+notebooks\Phase_6\run_exploration.bat h2b\config_h2_morthosp.py
+```
+
+By default, this runs mortality and then readmission unless `skip_readmin` is passed. It also builds phenotype artifacts if they do not already exist.
+
+Important parameters embedded in the Phase 6 workflow:
+
+- phenotype rules: `notebooks/Phase_6/feature_engineering/feature_rules.csv`;
+- number of phenotype rules: `53`;
+- subgroup discovery depths: `2,3,4,5,6,7`;
+- beam width/result set size: `200`;
+- final archetype minimum test coverage: `75` patients;
+- final archetype minimum test lift: `1.5`;
+- archetype Jaccard deduplication threshold: `0.75`;
+- maximum reported archetypes: `8`.
+
+Expected local outputs include:
+
+```text
+notebooks/Phase_6/feature_engineering/artifacts/
+notebooks/Phase_6/h2a/h2_results/
+notebooks/Phase_6/h2b/h2_results/
+```
+
+These generated folders are ignored except for intentionally tracked source files.
+
+## Step 8: Regenerate Manuscript Outputs
+
+Selected committed outputs live under:
+
+```text
+manuscript_outputs/Figures/
+manuscript_outputs/Tables/
+```
+
+Useful tracked exporters include:
+
+```powershell
+python notebooks\generate_phase3_methodology_tables.py
+python notebooks\Phase_4\generate_manuscript_figure3.py
+python notebooks\Phase_4\generate_phenotype_visualizations.py
+python notebooks\Phase_6\h2b\generate_phase_v_meta_tables.py
+python notebooks\Phase_6\h2b\generate_archetype_reports.py
+python notebooks\Phase_6\h2b\generate_manuscript_table.py
+```
+
+Some exporters depend on local ignored model/result artifacts. Run them after the phase outputs they consume exist.
+
+## Validation Checklist
+
+Before comparing manuscript numbers, confirm:
+
+- `notebooks/Phase_1-2/phase_1_outputs/` contains `X_*`, `y_*`, scaler, label encoders, and split ID pickles;
+- task label CSVs exist under `notebooks/Phase_3/phase_3_serialized_data/`;
+- embedding `.npy` files exist for all required arms and splits;
+- `notebooks/Phase_5/embedding_model_results/` contains `results_<arm>.pkl` for the models/tasks being compared;
+- Phase 6 champion model paths in `h2a/config_h2_*.py` resolve to existing local files;
+- `data/Lab_reference_ranges.csv` exists locally for F2 reproducibility;
+- commands are run from repo root, except the Phase 6 batch file, which changes into `notebooks/Phase_6` internally.
+
+## Privacy And Credentials
+
+Do not commit raw MIMIC data, PHI, API keys, embedding vectors, fitted patient-level artifacts, or `Submission/`. Users are responsible for complying with the PhysioNet data use agreement, HIPAA, institutional policy, and any applicable restrictions before sending text representations to external embedding APIs.
+
+## Citation
+
+Ge, A., Wu, J., Wu, X., et al. Numeric versus Embedding Pipelines For Optimized Clinical Risk Prediction. Manuscript in preparation.
