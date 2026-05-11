@@ -9,7 +9,6 @@ The repository is designed for reproducibility of the manuscript workflow, but i
 Tracked in Git:
 
 - code for Phases 1-6 under `notebooks/`;
-- the current DeLong statistical analysis script in `notebooks/Phase_5/delong_statistical_analysis.py`;
 - phenotype rules in `notebooks/Phase_6/feature_engineering/feature_rules.csv`;
 - data staging notes in `data/README.md`;
 - lab reference ranges in `data/Lab_reference_ranges.csv`;
